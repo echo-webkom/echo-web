@@ -24,7 +24,7 @@ using ssh:
 
 **3. Run the development build with**
 
-    yarn start
+    yarn dev
 
 **4. ...or build the project with**
 
