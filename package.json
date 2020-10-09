@@ -1,51 +1,64 @@
 {
-    "name": "gatsby-starter-default",
-    "private": true,
-    "description": "A simple starter to get up and developing quickly with Gatsby",
+    "name": "echo.uib.no",
     "version": "0.1.0",
-    "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+    "private": true,
     "dependencies": {
-        "@types/react-helmet": "^6.1.0",
-        "dotenv": "^8.2.0",
-        "gatsby": "^2.24.67",
-        "gatsby-image": "^2.4.20",
-        "gatsby-plugin-manifest": "^2.4.33",
-        "gatsby-plugin-offline": "^3.2.30",
-        "gatsby-plugin-react-helmet": "^3.3.12",
-        "gatsby-plugin-sharp": "^2.6.38",
-        "gatsby-transformer-sharp": "^2.5.16",
-        "prop-types": "^15.7.2",
-        "react": "^16.12.0",
-        "react-dom": "^16.12.0",
-        "react-helmet": "^6.1.0",
-        "typescript": "^4.0.3"
-    },
-    "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^4.4.0",
-        "@typescript-eslint/parser": "^4.4.0",
-        "eslint": "^7.10.0",
-        "eslint-config-airbnb": "^18.2.0",
-        "eslint-config-airbnb-typescript": "^11.0.0",
-        "eslint-config-prettier": "^6.12.0",
-        "eslint-plugin-import": "^2.22.1",
-        "eslint-plugin-jsx-a11y": "^6.3.1",
-        "eslint-plugin-prettier": "^3.1.4",
-        "eslint-plugin-react": "^7.21.3",
-        "eslint-plugin-react-hooks": "^4.1.2",
-        "gatsby-source-contentful": "^2.3.51",
-        "husky": "^4.3.0",
-        "lint-staged": "^10.4.0",
-        "prettier": "2.1.2"
+        "@testing-library/jest-dom": "^4.2.4",
+        "@testing-library/react": "^9.3.2",
+        "@testing-library/user-event": "^7.1.2",
+        "@types/jest": "^24.0.0",
+        "@types/node": "^12.0.0",
+        "@types/react": "^16.9.0",
+        "@types/react-dom": "^16.9.0",
+        "elliptic": "^6.5.3",
+        "http-proxy": "^1.18.1",
+        "node-forge": "^0.10.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-scripts": "3.4.3",
+        "selfsigned": "^1.10.8",
+        "typescript": "~3.7.2",
+        "websocket-extensions": "^0.1.4"
     },
     "scripts": {
-        "build": "gatsby build",
-        "dev": "gatsby develop",
-        "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-        "start": "npm run develop",
-        "serve": "gatsby serve",
-        "clean": "gatsby clean",
-        "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
-        "lint": "tsc --noEmit && eslint src/**/*.{tsx}"
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "format": "prettier --write src/**/*.ts{,x}",
+        "lint": "tsc --noEmit && eslint src/**/*.ts{,x}"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.1.1",
+        "@typescript-eslint/parser": "^4.1.1",
+        "eslint": "7.2.0",
+        "eslint-config-airbnb": "18.2.0",
+        "eslint-config-airbnb-typescript": "^10.0.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-import": "^2.21.2",
+        "eslint-plugin-jest": "^24.0.1",
+        "eslint-plugin-jsx-a11y": "^6.3.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "eslint-plugin-react": "^7.20.0",
+        "eslint-plugin-react-hooks": "4.0.0",
+        "husky": ">=4",
+        "lint-staged": ">=10",
+        "prettier": "^2.1.2"
     },
     "husky": {
         "hooks": {
@@ -53,7 +66,7 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx}": [
+        "*{.js,jsx,ts,tsx}": [
             "eslint --fix",
             "prettier --write"
         ],
