@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Text } from '@chakra-ui/core';
 
 interface Props {
     children: React.ReactNode;
@@ -8,8 +9,8 @@ interface Props {
 const Layout = ({ children }: Props): JSX.Element => {
     return (
         <>
-            <p>echo - Fagutvalget for informatikk</p>
             {children}
+            <Text>echo – Fagutvalget for informatikk</Text>
         </>
     );
 };
