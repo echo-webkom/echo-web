@@ -1,0 +1,23 @@
+import React from 'react';
+import { Flex, IconButton, Icon, Image } from '@chakra-ui/core';
+
+import logo from '../assets/echo-logo-very-wide-logo-only.png';
+import logoText from '../assets/echo-logo-very-wide-text-only.png';
+
+const Header = (): JSX.Element => {
+    return (
+        <Flex align="center" justify="center" p="20px">
+            <Flex align="center" justify={{ base: 'space-between', sm: 'center' }} w="500px">
+                <Image src={logo} alt="logo" htmlWidth="30%" />
+                <Image display={{ base: 'none', sm: 'block' }} src={logoText} alt="logo-text" htmlWidth="50%" />
+                <IconButton display={{ base: 'block', sm: 'none' }} aria-label="show navbar">
+                    <Icon viewBox="0 0 20 20" color="black.400" boxSize="10">
+                        <path fill="currentColor" d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                    </Icon>
+                </IconButton>
+            </Flex>
+        </Flex>
+    );
+};
+
+export default Header;

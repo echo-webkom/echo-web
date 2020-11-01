@@ -1,6 +1,11 @@
+import React from 'react';
 import { extendTheme, mode } from '@chakra-ui/core';
 
+// color palette
 const palette = {
+    transparent: 'transparent',
+    black: '#1E1E1E',
+    white: '#F7F7F7',
     naplesYellow: {
         300: '#FFF6AA',
         400: '#F2D865',
@@ -19,17 +24,14 @@ const palette = {
     },
 };
 
+// global config
 const config = {
     useSystemColorMode: false,
     initialColorMode: 'light',
 };
 
+// theme
 export const theme = extendTheme({
     config,
-    colors: {
-        transparent: 'transparent',
-        black: '#1E1E1E',
-        white: '#F7F7F7',
-        palette,
-    },
+    colors: palette,
 });
