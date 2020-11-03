@@ -1,6 +1,10 @@
-import { extendTheme, mode } from '@chakra-ui/core';
+import { extendTheme } from '@chakra-ui/core';
 
+// color palette
 const palette = {
+    transparent: 'transparent',
+    black: '#1E1E1E',
+    white: '#F7F7F7',
     naplesYellow: {
         300: '#FFF6AA',
         400: '#F2D865',
@@ -19,17 +23,24 @@ const palette = {
     },
 };
 
+// global config
 const config = {
     useSystemColorMode: false,
     initialColorMode: 'light',
 };
 
+// theme
 export const theme = extendTheme({
-    config,
-    colors: {
-        transparent: 'transparent',
-        black: '#1E1E1E',
-        white: '#F7F7F7',
-        palette,
+    styles: {
+        global: ({ colorMode }) => ({
+            body: {
+                fontFamily: 'body',
+                color: colorMode === 'dark' ? palette.white : palette.black,
+                bg: colorMode === 'dark' ? palette.black : palette.white,
+                lineHeight: 'base',
+            },
+        }),
     },
+    config,
+    colors: palette,
 });
