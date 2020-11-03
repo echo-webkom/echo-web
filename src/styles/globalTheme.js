@@ -1,5 +1,4 @@
 import { extendTheme } from '@chakra-ui/core';
-import { mode } from '@chakra-ui/core';
 
 // color palette
 const palette = {

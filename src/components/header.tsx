@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
+import { IoIosMenu } from 'react-icons/io';
 import {
+    Center,
     Flex,
     IconButton,
-    Icon,
     Image,
     useColorModeValue,
     useDisclosure,
@@ -37,11 +38,12 @@ const Header = (): JSX.Element => {
                         onClick={onOpen}
                         display={{ base: 'block', sm: 'none' }}
                         aria-label="show navbar"
-                    >
-                        <Icon viewBox="0 0 20 20" color="black.400" boxSize="10">
-                            <path fill="currentColor" d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-                        </Icon>
-                    </IconButton>
+                        icon={
+                            <Center>
+                                <IoIosMenu size="2.5em" />
+                            </Center>
+                        }
+                    />
                 </Flex>
             </Flex>
             <NavBar />

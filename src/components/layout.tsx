@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, Button, useColorMode } from '@chakra-ui/core';
+import { Center, IconButton, useColorMode } from '@chakra-ui/core';
+import { VscColorMode } from 'react-icons/vsc';
 
 import Header from './header';
 
@@ -13,9 +14,19 @@ const Layout = ({ children }: Props): JSX.Element => {
 
     return (
         <>
-            <Button pos="fixed" bottom="15px" right="15px" onClick={toggleColorMode}>
-                Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-            </Button>
+            <IconButton
+                variant="unstyled"
+                icon={
+                    <Center>
+                        <VscColorMode size="2em" />
+                    </Center>
+                }
+                aria-label="toggle color mode"
+                pos="fixed"
+                bottom="15px"
+                right="15px"
+                onClick={toggleColorMode}
+            />
             <Header />
             {children}
         </>
