@@ -8,7 +8,7 @@ import echoLogo from '../assets/echo.png';
 
 const Footer = (): JSX.Element => {
     return (
-        <Box w="100%" h="15%" position="fixed" bottom="0" bgColor="blue.900" overflow="hidden">
+        <Box w="100%" h="10%" position="fixed" bottom="0" bgColor="blue.900" overflow="hidden">
             <Image src={echoLogo} boxSize="md" />
         </Box>
     );

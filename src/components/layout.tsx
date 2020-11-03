@@ -4,6 +4,7 @@ import { Center, IconButton, useColorMode } from '@chakra-ui/core';
 import { VscColorMode } from 'react-icons/vsc';
 
 import Header from './header';
+import Footer from './footer';
 
 interface Props {
     children: React.ReactNode;
@@ -28,6 +29,7 @@ const Layout = ({ children }: Props): JSX.Element => {
                 onClick={toggleColorMode}
             />
             <Header />
+            <Footer />
             {children}
         </>
     );
