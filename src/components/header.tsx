@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { Flex, IconButton, Icon, Image } from '@chakra-ui/core';
+import { Flex, IconButton, Icon, Image, useColorModeValue } from '@chakra-ui/core';
 
 import NavBar from './navbar';
 
-import logo from '../assets/echo-logo-very-wide-logo-only.png';
-import logoText from '../assets/echo-logo-very-wide-text-only.png';
+import imgLogo from '../assets/echo-logo-very-wide-logo-only.png';
+import imgLogoText from '../assets/echo-logo-very-wide-text-only.png';
+import imgLogoTextWhite from '../assets/echo-logo-very-wide-text-only-white.png';
 
 const Header = (): JSX.Element => {
     const [show, setShow] = useState(false);
+    const logoText = useColorModeValue(imgLogoText, imgLogoTextWhite);
 
     return (
         <>
             <Flex align="center" justify="center" p="20px">
                 <Flex align="center" justify={{ base: 'space-between', sm: 'center' }} w="500px">
-                    <Image src={logo} alt="logo" htmlWidth="30%" />
+                    <Image src={imgLogo} alt="logo" htmlWidth="30%" />
                     <Image display={{ base: 'none', sm: 'block' }} src={logoText} alt="logo-text" htmlWidth="50%" />
                     <IconButton
                         onClick={() => setShow((prevShow) => !prevShow)}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { extendTheme, mode } from '@chakra-ui/core';
+import { extendTheme } from '@chakra-ui/core';
+import { mode } from '@chakra-ui/core';
 
 // color palette
 const palette = {
@@ -32,6 +32,16 @@ const config = {
 
 // theme
 export const theme = extendTheme({
+    styles: {
+        global: ({ colorMode }) => ({
+            body: {
+                fontFamily: 'body',
+                color: colorMode === 'dark' ? palette.white : palette.black,
+                bg: colorMode === 'dark' ? palette.black : palette.white,
+                lineHeight: 'base',
+            },
+        }),
+    },
     config,
     colors: palette,
 });
