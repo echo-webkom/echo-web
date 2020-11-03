@@ -10,11 +10,11 @@ interface Props {
 }
 
 const Layout = ({ children }: Props): JSX.Element => {
-    const { colorMode, toggleColorMode } = useColorMode();
+    const { colorMode, toggleColorMode } = useColorMode(); // hook for toggling and using color mode
 
     return (
         <>
-            <IconButton
+            <IconButton // button for toggling color mode
                 variant="unstyled"
                 icon={
                     <Center>

@@ -47,7 +47,13 @@ const Header = (): JSX.Element => {
                 </Flex>
             </Flex>
             <NavBar />
-            <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={menuButtonRef}>
+            <Drawer
+                /* TODO: make own component for this drawer perhaps */
+                isOpen={isOpen}
+                placement="right"
+                onClose={onClose}
+                finalFocusRef={menuButtonRef}
+            >
                 <DrawerOverlay>
                     <DrawerContent>
                         <DrawerCloseButton />
