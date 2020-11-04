@@ -24,7 +24,7 @@ const Layout = ({ children }: Props): JSX.Element => {
                 }
                 aria-label="toggle color mode"
                 pos="fixed"
-                bottom="15px"
+                top="15px"
                 right="15px"
                 onClick={toggleColorMode}
             />
