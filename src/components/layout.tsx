@@ -29,8 +29,8 @@ const Layout = ({ children }: Props): JSX.Element => {
                 onClick={toggleColorMode}
             />
             <Header />
-            <Footer />
             {children}
+            <Footer />
         </>
     );
 };

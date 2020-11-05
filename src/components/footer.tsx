@@ -12,16 +12,7 @@ import echoLogo from '../assets/echo-logo-very-wide-text-only-white.png';
 
 const Footer = (): JSX.Element => {
     return (
-        <Flex
-            align="center"
-            justify="center"
-            w="100%"
-            h="15%"
-            position="fixed"
-            bottom="0"
-            bgColor="blue.900"
-            overflow="hidden"
-        >
+        <Flex align="center" justify="center" w="100%" h="15%" bottom="0" bgColor="blue.900" overflow="hidden">
             <Flex top="10%" position="relative">
                 <SimpleGrid columns={2} h="200px" w="200px" position="relative">
                     <AiOutlineFacebook size="70px" color="#F7F7F7" />

@@ -1,18 +1,25 @@
 import React from 'react';
 
-import { Box, Image } from '@chakra-ui/core';
+import { Flex, Image, Text, SimpleGrid } from '@chakra-ui/core';
 
-interface Props {
+interface EventData {
     imageSrc: string;
     imageAlt: string;
+    title: string;
+    description: string;
 }
 
-const Event = ({ imageSrc, imageAlt }: Props): JSX.Element => {
+const Event = ({ imageSrc, imageAlt, title, description }: EventData): JSX.Element => {
     return (
-        <Box>
-            <h1>Generisk Konsulentselskap AS</h1>
-            <Image size="200px" src={imageSrc} alt={imageAlt} />
-        </Box>
+        <Flex justifyContent="center" align="center">
+            <SimpleGrid columns={2}>
+                <SimpleGrid rows={2}>
+                    <Text fontSize="3xl">{title}</Text>
+                    <Text fontSize="m">{description}</Text>
+                </SimpleGrid>
+                <Image width="300px" src={imageSrc} alt={imageAlt} />
+            </SimpleGrid>
+        </Flex>
     );
 };
 
