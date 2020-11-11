@@ -5,6 +5,18 @@ const palette = {
     transparent: 'transparent',
     black: '#1E1E1E',
     white: '#F7F7F7',
+    gray: {
+        50: '#F5F5F5',
+        100: '#DFDFDF',
+        200: '#C8C8C8',
+        300: '#B2B2B2',
+        400: '#9C9C9C',
+        500: '#868686',
+        600: '#6F6F6F',
+        700: '#595959',
+        800: '#434343',
+        900: '#2D2D2D',
+    },
     naplesYellow: {
         300: '#FFF6AA',
         400: '#F2D865',
