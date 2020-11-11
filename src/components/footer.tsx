@@ -1,11 +1,15 @@
 import React from 'react';
-import { Image, Box, SimpleGrid, Center, Flex, Text } from '@chakra-ui/core';
+import { Image, Box, SimpleGrid, Center, Flex, Text, useColorModeValue } from '@chakra-ui/core';
 
 import { FiMail } from 'react-icons/fi';
 import { FaFacebook, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';
-import echoLogo from '../assets/echo-logo-very-wide-text-only-white.png';
+import echoLogoBlack from '../assets/echo-logo-very-wide-text-only.png';
+import echoLogoWhite from '../assets/echo-logo-very-wide-text-only-white.png';
 
 const Footer = (): JSX.Element => {
+    const logo = useColorModeValue(echoLogoBlack, echoLogoWhite);
+    const bg = useColorModeValue('metallicSeaweed.400', 'metallicSeaweed.600');
+
     return (
         <SimpleGrid
             columns={[1, 2, 3]}
@@ -13,7 +17,7 @@ const Footer = (): JSX.Element => {
             alignItems="center"
             spacingX="3em"
             spacingY="3em"
-            bg="blue.900"
+            bg={bg}
             w="100%"
             pt="4em"
             pb="2em"
@@ -27,7 +31,7 @@ const Footer = (): JSX.Element => {
                 <FaTwitter size="4em" />
                 <FaGithub size="4em" />
             </SimpleGrid>
-            <Image display={['none', null, 'block']} htmlWidth="300px" fit="contain" src={echoLogo} />
+            <Image display={['none', null, 'block']} htmlWidth="300px" fit="contain" src={logo} />
             <SimpleGrid columns={1} spacing="3" fontSize="lg" maxWidth="170px" textAlign="center">
                 <SimpleGrid columns={2} spacing="2" alignItems="center">
                     <FiMail size="2em" />
