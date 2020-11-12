@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Header from './header';
 import Footer from './footer';
+import Footer2 from './footer2';
 
 interface Props {
     children: React.ReactNode;
@@ -13,7 +14,7 @@ const Layout = ({ children }: Props): JSX.Element => {
         <>
             <Header />
             {children}
-            <Footer />
+            <Footer2 />
         </>
     );
 };
