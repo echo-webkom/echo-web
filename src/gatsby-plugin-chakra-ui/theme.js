@@ -42,7 +42,7 @@ const config = {
 };
 
 // theme
-export const theme = extendTheme({
+const theme = extendTheme({
     styles: {
         global: ({ colorMode }) => ({
             body: {
@@ -56,3 +56,5 @@ export const theme = extendTheme({
     config,
     colors: palette,
 });
+
+export default theme;
