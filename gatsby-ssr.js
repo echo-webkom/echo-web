@@ -1,7 +1,7 @@
 import React from 'react';
 import { ColorModeScript } from '@chakra-ui/core';
 
-import { theme } from './src/styles/globalTheme';
+import theme from './src/gatsby-plugin-chakra-ui/theme';
 
 export const onRenderBody = ({ setPreBodyComponents }) => {
     setPreBodyComponents([

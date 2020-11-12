@@ -10123,6 +10123,11 @@ markdown-table@^2.0.0:
   dependencies:
     repeat-string "^1.0.0"
 
+markdown-to-jsx@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-7.0.1.tgz#7b3be496f30701f09e9308c4efabf0177ecd9251"
+  integrity sha512-0agsmQtnoAzGt2fO8jgoFL5wvDUbpjoIfQffErQZmP66BxaWMBGifsAo0RRuye+2Ydlp7csX6X6HpF2xaL6J1w==
+
 md5-file@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/md5-file/-/md5-file-5.0.0.tgz#e519f631feca9c39e7f9ea1780b63c4745012e20"
