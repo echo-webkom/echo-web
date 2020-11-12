@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Calendar from 'react-calendar';
 import { Box, Button, SimpleGrid, Menu, MenuItem, MenuButton, MenuList, Center, Text } from '@chakra-ui/core';
 import { FaChevronDown } from 'react-icons/fa';
 
@@ -6,8 +7,8 @@ import Event from './event';
 import logo from '../assets/consulting.jpg';
 
 enum ViewOptions {
-    List,
-    Calendar,
+    ViewList,
+    ViewCalendar,
 }
 
 const showStuff = (viewOption: ViewOptions): JSX.Element => {
@@ -38,13 +39,11 @@ const showStuff = (viewOption: ViewOptions): JSX.Element => {
 
     const cal = (
         <Center>
-            <Box m="100px" p="100px" border="2px">
-                <Text fontSize="3xl">Kul kalender</Text>
-            </Box>
+            <Calendar />
         </Center>
     );
 
-    if (viewOption === ViewOptions.List) return list;
+    if (viewOption === ViewOptions.ViewList) return list;
 
     return cal;
 };
@@ -61,7 +60,7 @@ const EventBox = (): JSX.Element => {
                             Visning
                         </MenuButton>
                         <MenuList>
-                            <MenuItem onClick={() => changeView(ViewOptions.List)}>Liste</MenuItem>
+                            <MenuItem onClick={() => changeView(ViewOptions.ViewList)}>Liste</MenuItem>
                             <MenuItem onClick={() => changeView(ViewOptions.Calendar)}>Kalender</MenuItem>
                         </MenuList>
                     </Menu>
