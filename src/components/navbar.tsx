@@ -11,7 +11,7 @@ import {
     DrawerContent,
     DrawerCloseButton,
     useColorMode,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 
 interface NavProps {
     toggleColorMode: () => void;

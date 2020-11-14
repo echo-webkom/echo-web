@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
-import { Box, Center, Flex, IconButton, Image, useColorModeValue, useDisclosure } from '@chakra-ui/core'; // wow very bloat
+import { Box, Center, Flex, IconButton, Image, useColorModeValue, useDisclosure } from '@chakra-ui/react'; // wow very bloat
 
 import NavBar from './navbar';
 

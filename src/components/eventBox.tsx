@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Grid } from '@chakra-ui/core';
+import { Box, Grid } from '@chakra-ui/react';
 
 import Event from './event';
 import logo from '../assets/consulting.jpg';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorModeScript } from '@chakra-ui/core';
+import { ColorModeScript } from '@chakra-ui/react';
 
 import theme from './src/gatsby-plugin-chakra-ui/theme';
 

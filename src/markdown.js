@@ -1,4 +1,4 @@
-import { Image, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/core';
+import { Image, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/react';
 
 const MapMarkdownChakra = {
     overrides: {
