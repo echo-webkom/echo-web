@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Image, Box, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/core';
+import { Link, Image, Box, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { FiMail } from 'react-icons/fi';
 import { FaFacebook, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';

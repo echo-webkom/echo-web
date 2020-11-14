@@ -1,6 +1,6 @@
 import React from 'react';
 import { graphql } from 'gatsby';
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import MapMarkdownChakra from '../markdown';
 
