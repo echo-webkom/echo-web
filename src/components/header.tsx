@@ -1,19 +1,6 @@
 import React, { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
-import {
-    Center,
-    Flex,
-    IconButton,
-    Image,
-    useColorModeValue,
-    useDisclosure,
-    Drawer,
-    DrawerBody,
-    DrawerHeader,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-} from '@chakra-ui/core'; // wow very bloat
+import { Box, Center, Flex, IconButton, Image, useColorModeValue, useDisclosure } from '@chakra-ui/react'; // wow very bloat
 
 import NavBar from './navbar';
 
@@ -23,11 +10,13 @@ import imgLogoTextWhite from '../assets/echo-logo-very-wide-text-only-white.png'
 
 const Header = (): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer
-    const menuButtonRef = useRef(null); // ref hook for drawer button
+    const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
     const logoText = useColorModeValue(imgLogoText, imgLogoTextWhite); // logo version based on color mode
+    const bg = useColorModeValue('gray.100', 'gray.900'); // defining color mode colors
+    const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
-        <>
+        <Box bg={bg} mb="40px" pb="15px" borderBottom="1px" borderColor={borderBg}>
             <Flex align="center" justify="center" p="20px">
                 <Flex align="center" justify={{ base: 'space-between', sm: 'center' }} w="500px">
                     <Image src={imgLogo} alt="logo" htmlWidth="30%" />
@@ -46,28 +35,8 @@ const Header = (): JSX.Element => {
                     />
                 </Flex>
             </Flex>
-            <NavBar />
-            <Drawer
-                /* TODO: make own component for this drawer perhaps */
-                isOpen={isOpen}
-                placement="right"
-                onClose={onClose}
-                finalFocusRef={menuButtonRef}
-            >
-                <DrawerOverlay>
-                    <DrawerContent>
-                        <DrawerCloseButton />
-                        <DrawerHeader>Navigasjon</DrawerHeader>
-                        <DrawerBody>
-                            <p>hjem</p>
-                            <p>organisasjon</p>
-                            <p>bedrift</p>
-                            <p>om oss</p>
-                        </DrawerBody>
-                    </DrawerContent>
-                </DrawerOverlay>
-            </Drawer>
-        </>
+            <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
+        </Box>
     );
 };
 

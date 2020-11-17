@@ -1,44 +1,83 @@
 import React from 'react';
-import { Image, Box, SimpleGrid, Heading, Flex, Text } from '@chakra-ui/core';
+import { Link, Image, Box, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 
-import { AiOutlineFacebook } from 'react-icons/ai';
-import { FiFacebook, FiTwitter, FiInstagram, FiGithub } from 'react-icons/fi';
-import instaLogo from '../assets/insta.png';
-import facebookLogo from '../assets/facebook.png';
-import githubLogo from '../assets/github.png';
-import twitterLogo from '../assets/twitter.png';
-import echo from '../assets/echo.png';
-import echoLogo from '../assets/echo-logo-very-wide-text-only-white.png';
+import { FiMail } from 'react-icons/fi';
+import { FaFacebook, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';
+import echoLogoBlack from '../assets/echo-logo-very-wide-text-only.png';
+import echoLogoWhite from '../assets/echo-logo-very-wide-text-only-white.png';
 
 const Footer = (): JSX.Element => {
+    const logo = useColorModeValue(echoLogoBlack, echoLogoWhite);
+    const bg = useColorModeValue('gray.100', 'gray.900');
+    const borderBg = useColorModeValue('mardiGras.400', 'naplesYellow.400');
+
     return (
-        <Flex align="center" justify="center" w="100%" h="15%" bottom="0" bgColor="blue.900" overflow="hidden">
-            <Flex top="10%" position="relative">
-                <SimpleGrid columns={2} h="200px" w="200px" position="relative">
-                    <AiOutlineFacebook size="70px" color="#F7F7F7" />
-                    <FiInstagram size="70px" color="#F7F7F7" />
-                    <FiTwitter size="70px" color="#F7F7F7" />
-                    <FiGithub size="70px" color="#F7F7F7" />
-                </SimpleGrid>
-            </Flex>
-            <Flex align="center" justify="center" bgSize="sm">
-                <Image src={echoLogo} htmlWidth="30%" overflow="hidden" align="center" top="10px" />
-            </Flex>
-            <Flex top="0">
-                <Text top="0" fontSize="5xl" color="#F7F7F7" align="center">
-                    Kontakt
-                    <Text top="0" fontSize="md" color="#F7F7F7">
-                        echo@uib.no
-                        <Text top="0" fontSize="md" color="#F7F7F7">
-                            Thormøhlensgate 55
-                            <Text top="0" fontSize="md" color="#F7F7F7">
-                                5069 Bergen
-                            </Text>
-                        </Text>
-                    </Text>
-                </Text>
-            </Flex>
-        </Flex>
+        <SimpleGrid
+            columns={[1, 2, 3]}
+            justifyItems="center"
+            alignItems="center"
+            spacingX="3em"
+            spacingY="3em"
+            borderTopWidth="0.1em"
+            borderTopColor={borderBg}
+            bgColor={bg}
+            w="100%"
+            pt="4em"
+            pb="2em"
+            pl="1em"
+            pr="1em"
+            mt="5em"
+            bottom="0"
+            pos="absolute"
+        >
+            <SimpleGrid columns={2} spacing="3">
+                <Link href="https://facebook.com/groups/informatikk" isExternal>
+                    <Box
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                        color={borderBg}
+                    >
+                        <FaFacebook size="4em" />
+                    </Box>
+                </Link>
+                <Link href="https://github.com/echo-webkom/echo.uib.no" isExternal>
+                    <Box
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                        color={borderBg}
+                    >
+                        <FaGithub size="4em" />
+                    </Box>
+                </Link>
+                <Link href="mailto:echo@uib.no" isExternal>
+                    <Box
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                        color={borderBg}
+                    >
+                        <FiMail size="4em" />
+                    </Box>
+                </Link>
+                <Link href="https://instagram.com/echo_uib" isExternal>
+                    <Box
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                        color={borderBg}
+                    >
+                        <FaInstagram size="4em" />
+                    </Box>
+                </Link>
+            </SimpleGrid>
+            <Image display={['none', null, 'block']} htmlWidth="300px" fit="contain" src={logo} />
+            <SimpleGrid columns={1} spacing="3" fontSize="lg" maxWidth="170px" textAlign="center">
+                <Link href="mailto:echo.uib.no">
+                    <Text color={borderBg}>echo@uib.no</Text>
+                </Link>
+                <Text color={borderBg}>Thormøhlensgate 55</Text>
+                <Text color={borderBg}>5069 Bergen</Text>
+                <Text color={borderBg}>Org nr: 000 000 000</Text>
+            </SimpleGrid>
+        </SimpleGrid>
     );
 };
 

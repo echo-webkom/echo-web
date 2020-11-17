@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
-import { Box, Button, SimpleGrid, Menu, MenuItem, MenuButton, MenuList, Center, Text } from '@chakra-ui/core';
+import { Box, Button, SimpleGrid, Menu, MenuItem, MenuButton, MenuList, Center, Text } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
 
 import Event from './event';

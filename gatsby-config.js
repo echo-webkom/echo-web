@@ -28,6 +28,13 @@ module.exports = {
         `gatsby-transformer-sharp`,
         `gatsby-plugin-sharp`,
         {
+            resolve: '@chakra-ui/gatsby-plugin',
+            options: {
+                isResettingCSS: true,
+                isUsingColorMode: true,
+            },
+        },
+        {
             resolve: `gatsby-plugin-manifest`,
             options: {
                 name: `echo - Fagutvalget for informatikk`,
@@ -42,6 +49,21 @@ module.exports = {
         {
             resolve: `gatsby-source-contentful`,
             options: contentfulConfig,
+        },
+        {
+            resolve: `gatsby-transformer-remark`,
+            options: {
+                // CommonMark mode (default: true)
+                commonmark: true,
+                // Footnotes mode (default: true)
+                footnotes: true,
+                // Pedantic mode (default: true)
+                pedantic: true,
+                // GitHub Flavored Markdown mode (default: true)
+                gfm: true,
+                // Plugins configs
+                plugins: [],
+            },
         },
     ],
 };

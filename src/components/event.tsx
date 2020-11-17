@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Flex, Image, Text, SimpleGrid } from '@chakra-ui/core';
+import { Flex, Image, Text, SimpleGrid } from '@chakra-ui/react';
 
 interface EventData {
     imageSrc: string;
