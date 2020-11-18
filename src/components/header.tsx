@@ -4,9 +4,9 @@ import { Box, Center, Flex, IconButton, Image, useColorModeValue, useDisclosure 
 
 import NavBar from './navbar';
 
-import imgLogo from '../assets/echo-logo-very-wide-logo-only.png';
-import imgLogoText from '../assets/echo-logo-very-wide-text-only.png';
-import imgLogoTextWhite from '../assets/echo-logo-very-wide-text-only-white.png';
+const imgLogo = '/echo-logo-very-wide-logo-only.png';
+const imgLogoText = '/echo-logo-very-wide-text-only.png';
+const imgLogoTextWhite = '/echo-logo-very-wide-text-only-white.png';
 
 const Header = (): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer

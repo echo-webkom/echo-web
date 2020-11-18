@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Box, Grid } from '@chakra-ui/react';
-
+import { Grid } from '@chakra-ui/react';
 import Event from './event';
-import logo from '../assets/consulting.jpg';
+
+const logo = '/consulting.png';
 
 const EventBox = (): JSX.Element => {
     return (

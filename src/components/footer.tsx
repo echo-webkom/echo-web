@@ -2,9 +2,10 @@ import React from 'react';
 import { Link, Image, Box, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { FiMail } from 'react-icons/fi';
-import { FaFacebook, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';
-import echoLogoBlack from '../assets/echo-logo-very-wide-text-only.png';
-import echoLogoWhite from '../assets/echo-logo-very-wide-text-only-white.png';
+import { FaFacebook, FaInstagram, FaGithub } from 'react-icons/fa';
+
+const echoLogoBlack = '/echo-logo-very-wide-text-only.png';
+const echoLogoWhite = '/echo-logo-very-wide-text-only-white.png';
 
 const Footer = (): JSX.Element => {
     const logo = useColorModeValue(echoLogoBlack, echoLogoWhite);
