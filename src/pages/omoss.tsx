@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Box, Heading, Center, Text, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/core';
+import { Box, Heading, Center, Text, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import EventBox from '../components/eventBox';
 
 const testPage1 = 'test1test1test1test1test1test1test1test1test1';
 const testPage2 = 'test2test2test2test2test2test2test2test2test2';
@@ -39,7 +38,6 @@ const OmOssPage = (): JSX.Element => (
                 </TabPanel>
             </TabPanels>
         </Tabs>
-        <EventBox />
     </Layout>
 );
 

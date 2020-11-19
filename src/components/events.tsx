@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
 
-import logo from '../assets/consulting.jpg';
+const logo = '/consulting.png';
 
 enum ViewOptions {
     ViewList,
