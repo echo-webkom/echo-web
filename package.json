@@ -60,7 +60,8 @@
         "dev": "next dev",
         "start": "next start",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-        "lint": "tsc --noEmit && eslint src/**/*.{tsx}"
+        "lint": "tsc --noEmit && eslint src/**/*.{tsx}",
+        "test": "jest"
     },
     "husky": {
         "hooks": {
