@@ -94,14 +94,14 @@ PostPage.getInitialProps = async ({ query }: NextPageContext) => {
     );
 
     const rawPost = await res.json();
-    const post = {
+    const formattedPost = {
         title: rawPost.data.postCollection.items[0].title,
         slug: rawPost.data.postCollection.items[0].slug,
         body: rawPost.data.postCollection.items[0].body,
         publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
         author: rawPost.data.postCollection.items[0].author,
     };
-    return { post };
+    return { post: formattedPost };
 };
 
 PostPage.defaultProps = {
