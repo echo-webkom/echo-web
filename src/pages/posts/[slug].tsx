@@ -11,11 +11,7 @@ import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
 import { Post } from '../../lib';
 
-interface Props {
-    post?: Post;
-}
-
-const PostPage = ({ post }: Props): JSX.Element => {
+const PostPage = ({ post }: { post?: Post }): JSX.Element => {
     return (
         <Layout>
             {!post && <Text>Loading...</Text>}
@@ -110,12 +106,12 @@ PostPage.getInitialProps = async ({ query }: NextPageContext) => {
 
 PostPage.defaultProps = {
     post: {
-        title: 'Post Title',
-        slug: 'post',
+        title: 'title',
+        slug: 'slug',
         body: '',
-        publishedAt: '',
+        publishedAt: '2020-01-01T00:00:00.000Z',
         author: {
-            authorName: '',
+            authorName: 'Author McAuthor',
         },
     },
 };
