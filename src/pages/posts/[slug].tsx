@@ -76,22 +76,19 @@ const GET_POST_BY_SLUG = `
 `;
 
 PostPage.getInitialProps = async ({ query }: NextPageContext) => {
-    const res = await fetch(
-        `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
-            },
-            body: JSON.stringify({
-                query: GET_POST_BY_SLUG,
-                variables: {
-                    slug: query.slug,
-                },
-            }),
+    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
         },
-    );
+        body: JSON.stringify({
+            query: GET_POST_BY_SLUG,
+            variables: {
+                slug: query.slug,
+            },
+        }),
+    });
 
     const rawPost = await res.json();
     const formattedPost = {
