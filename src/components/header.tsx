@@ -16,7 +16,7 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
-        <Box bg={bg} mb="40px" pb="15px" borderBottom="1px" borderColor={borderBg}>
+        <Box bg={bg} mb="40px" pb="15px" borderBottom="1px" borderColor={borderBg} data-testid="header-standard">
             <Flex align="center" justify="center" p="20px">
                 <Flex align="center" justify={{ base: 'space-between', sm: 'center' }} w="500px">
                     <Image src={imgLogo} alt="logo" htmlWidth="30%" />
