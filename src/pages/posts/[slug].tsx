@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
+import React from 'react';
+import { NextPageContext } from 'next';
 import { Box, Text, Flex, Center } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
@@ -10,52 +9,22 @@ import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
+import { Post } from '../../lib';
 
-const GET_POST_BY_SLUG = gql`
-    query GetPostBySlug($slug: String!) {
-        postCollection(where: { slug: $slug }) {
-            total
-            items {
-                title
-                slug
-                body
-                author {
-                    authorName
-                }
-                sys {
-                    firstPublishedAt
-                }
-            }
-        }
-    }
-`;
+interface Props {
+    post?: Post;
+}
 
-const PostPage = (): JSX.Element => {
-    const router = useRouter();
-    const { slug } = router.query;
-
-    const [shouldSkip, setShouldSkip] = useState(true);
-    const { loading, error, data } = useQuery(GET_POST_BY_SLUG, {
-        variables: { slug: router.query.slug },
-        skip: shouldSkip,
-    });
-
-    useEffect(() => {
-        if (slug) {
-            setShouldSkip(false);
-        }
-    }, [slug]);
-
+const PostPage = ({ post }: Props): JSX.Element => {
     return (
         <Layout>
-            <SEO title={slug as string} />
-            <Box maxW="4xl">
-                {loading && <Text>Loading...</Text>}
-                {error && <Text>Error {error.message}</Text>}
-                {!loading && !error && data && (
-                    <>
+            {!post && <Text>Loading...</Text>}
+            {post && (
+                <>
+                    <SEO title={post.title} />
+                    <Box maxW="4xl">
                         <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
-                            <Markdown options={MapMarkdownChakra}>{data.postCollection.items[0].body}</Markdown>
+                            <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
                         </Box>
                         <Flex
                             justifyContent="space-between"
@@ -75,20 +44,80 @@ const PostPage = (): JSX.Element => {
                                         <CgProfile />
                                     </Box>
                                 </Center>
-                                av {data.postCollection.items[0].author.authorName}
+                                av {post.author.authorName}
                             </Text>
                             <Text display="flex">
                                 <Center mr="2">
                                     <BiCalendar />
                                 </Center>
-                                {moment(data.postCollection.items[0].sys.publishedAt).format('DD. MMM YYYY')}
+                                {moment(post.publishedAt).format('DD. MMM YYYY')}
                             </Text>
                         </Flex>
-                    </>
-                )}
-            </Box>
+                    </Box>
+                </>
+            )}
         </Layout>
     );
+};
+
+const GET_POST_BY_SLUG = `
+    query ($slug: String!) {
+        postCollection(where: { slug: $slug }) {
+            total
+            items {
+                title
+                slug
+                body
+                author {
+                    authorName
+                }
+                sys {
+                    firstPublishedAt
+                }
+            }
+        }
+    }
+`;
+
+PostPage.getInitialProps = async ({ query }: NextPageContext) => {
+    const res = await fetch(
+        `https://graphql.contentful.com/content/v1/spaces/${process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+                query: GET_POST_BY_SLUG,
+                variables: {
+                    slug: query.slug,
+                },
+            }),
+        },
+    );
+
+    const rawPost = await res.json();
+    const post = {
+        title: rawPost.data.postCollection.items[0].title,
+        slug: rawPost.data.postCollection.items[0].slug,
+        body: rawPost.data.postCollection.items[0].body,
+        publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
+        author: rawPost.data.postCollection.items[0].author,
+    };
+    return { post };
+};
+
+PostPage.defaultProps = {
+    post: {
+        title: 'Post Title',
+        slug: 'post',
+        body: '',
+        publishedAt: '',
+        author: {
+            authorName: '',
+        },
+    },
 };
 
 export default PostPage;
