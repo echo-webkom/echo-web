@@ -5,12 +5,12 @@ import Header from '../header';
 
 describe('Header', () => {
     test('renders without crashing', () => {
-        const { getByText } = render(<Header />);
+        render(<Header />);
         expect(screen.getByTestId(/header-standard/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {
-        const { getByText } = render(<Header />);
+        render(<Header />);
         expect(screen.getByText(/Hjem/i)).toBeInTheDocument();
         expect(screen.getByText(/Organisasjon/i)).toBeInTheDocument();
         expect(screen.getByText(/Bedrift/i)).toBeInTheDocument();

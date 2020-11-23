@@ -11,7 +11,7 @@ interface Props {
 
 const Layout = ({ children }: Props): JSX.Element => {
     return (
-        <Box pos="relative" minHeight="100vh">
+        <Box pos="relative" minHeight="100vh" data-testid="layout">
             <Header />
             <Box pl="10%" pr="10%" pb={['450px', '260px']}>
                 {children}
