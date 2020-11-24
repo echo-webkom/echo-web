@@ -3,5 +3,6 @@ export default {
     author: {
         name: 'echo Webkom',
     },
+
     description: 'The website of echo - Fagutvalget for informatikk',
 };
