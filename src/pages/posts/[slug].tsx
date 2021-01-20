@@ -1,5 +1,5 @@
 import React from 'react';
-import { NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { Box, Text, Flex, Center } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
@@ -11,11 +11,15 @@ import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
 import { Post } from '../../lib';
 
-const PostPage = ({ post }: { post?: Post }): JSX.Element => {
+const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
+    const router = useRouter();
+
     return (
         <Layout>
-            {!post && <Text>Loading...</Text>}
-            {post && (
+            {router.isFallback && <Text>Loading...</Text>}
+            {!router.isFallback && !post && <Text>Post not found</Text>}
+            {error && !router.isFallback && <Text>{error}</Text>}
+            {post && !router.isFallback && !error && (
                 <>
                     <SEO title={post.title} />
                     <Box maxW="4xl">
@@ -34,20 +38,18 @@ const PostPage = ({ post }: { post?: Post }): JSX.Element => {
                             pt="1"
                             pb="1"
                         >
-                            <Text display="flex">
-                                <Center>
-                                    <Box mr="2">
-                                        <CgProfile />
-                                    </Box>
+                            <Flex>
+                                <Center mr="2">
+                                    <CgProfile />
                                 </Center>
-                                av {post.author.authorName}
-                            </Text>
-                            <Text display="flex">
+                                <Text>av {post.author.authorName}</Text>
+                            </Flex>
+                            <Flex>
                                 <Center mr="2">
                                     <BiCalendar />
                                 </Center>
-                                {moment(post.publishedAt).format('DD. MMM YYYY')}
-                            </Text>
+                                <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
+                            </Flex>
                         </Flex>
                     </Box>
                 </>
@@ -56,10 +58,19 @@ const PostPage = ({ post }: { post?: Post }): JSX.Element => {
     );
 };
 
+const GET_POSTS = `
+    query {
+        postCollection(limit: 10) {
+            items {
+                slug
+            }
+        }
+    }
+`;
+
 const GET_POST_BY_SLUG = `
     query ($slug: String!) {
         postCollection(where: { slug: $slug }) {
-            total
             items {
                 title
                 slug
@@ -75,7 +86,29 @@ const GET_POST_BY_SLUG = `
     }
 `;
 
-PostPage.getInitialProps = async ({ query }: NextPageContext) => {
+export const getStaticPaths = async () => {
+    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+            query: GET_POSTS,
+        }),
+    });
+
+    const json = await res.json();
+    const paths = json.data.postCollection.items.map((post: { slug: any }) => ({
+        params: {
+            slug: post.slug,
+        },
+    }));
+
+    return { paths, fallback: true };
+};
+
+export const getStaticProps = async ({ params }: { params: { slug: string } }) => {
     const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
         method: 'POST',
         headers: {
@@ -85,20 +118,38 @@ PostPage.getInitialProps = async ({ query }: NextPageContext) => {
         body: JSON.stringify({
             query: GET_POST_BY_SLUG,
             variables: {
-                slug: query.slug,
+                slug: params.slug,
             },
         }),
     });
 
-    const rawPost = await res.json();
-    const formattedPost = {
-        title: rawPost.data.postCollection.items[0].title,
-        slug: rawPost.data.postCollection.items[0].slug,
-        body: rawPost.data.postCollection.items[0].body,
-        publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
-        author: rawPost.data.postCollection.items[0].author,
+    if (res.ok) {
+        const rawPost = await res.json();
+
+        if (rawPost.data.postCollection.items.length <= 0) {
+            return {
+                props: {
+                    post: null,
+                },
+            };
+        }
+
+        const formattedPost = {
+            title: rawPost.data.postCollection.items[0].title,
+            slug: rawPost.data.postCollection.items[0].slug,
+            body: rawPost.data.postCollection.items[0].body,
+            publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
+            author: rawPost.data.postCollection.items[0].author,
+        };
+
+        return { props: { post: formattedPost }, revalidate: 1 };
+    }
+
+    return {
+        props: {
+            error: 'An error occured, please try again later.',
+        },
     };
-    return { post: formattedPost };
 };
 
 PostPage.defaultProps = {
@@ -111,6 +162,7 @@ PostPage.defaultProps = {
             authorName: 'Author McAuthor',
         },
     },
+    error: '',
 };
 
 export default PostPage;
