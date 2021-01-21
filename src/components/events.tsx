@@ -48,7 +48,7 @@ const Events = (): JSX.Element => {
 
     return (
         <Center>
-            <Box pt="100px" w="900px">
+            <Box pt="100px" w="900px" data-testid="events">
                 <Center>
                     <Menu autoSelect={false}>
                         <MenuButton as={Button} rightIcon={<FaChevronDown />}>

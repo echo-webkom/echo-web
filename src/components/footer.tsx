@@ -30,6 +30,7 @@ const Footer = (): JSX.Element => {
             mt="5em"
             bottom="0"
             pos="absolute"
+            data-testid="footer-standard"
         >
             <SimpleGrid columns={2} spacing="3">
                 <Link href="https://facebook.com/groups/informatikk" isExternal>

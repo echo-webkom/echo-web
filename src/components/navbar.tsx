@@ -47,7 +47,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
 
     return (
         <>
-            <Center>
+            <Center data-testid="navbar-standard">
                 <Flex display={{ base: 'none', sm: 'flex' }} align="center" justify="space-between" w="480px">
                     <Nav toggleColorMode={toggleColorMode} />
                 </Flex>
