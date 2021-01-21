@@ -22,7 +22,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
             {post && !router.isFallback && !error && (
                 <>
                     <SEO title={post.title} />
-                    <Box maxW="4xl">
+                    <Box>
                         <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
                             <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
                         </Box>
