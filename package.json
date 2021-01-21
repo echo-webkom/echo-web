@@ -5,8 +5,6 @@
     "version": "0.2.0",
     "author": "echo Webkom",
     "dependencies": {
-        "@apollo/client": "^3.2.7",
-        "@apollo/react-hooks": "^4.0.0",
         "@chakra-ui/react": "^1.0.0",
         "@chakra-ui/system": "^1.0.0",
         "@chakra-ui/theme": "^1.0.0",

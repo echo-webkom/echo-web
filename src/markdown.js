@@ -1,4 +1,4 @@
-import { Image, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/react';
+import { Box, Image, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/react';
 
 const MapMarkdownChakra = {
     overrides: {
@@ -63,7 +63,7 @@ const MapMarkdownChakra = {
             },
         },
         blockquote: {
-            component: Text,
+            component: Box,
             props: {
                 borderLeftWidth: '0.25em',
                 pl: '2em',
