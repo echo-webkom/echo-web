@@ -9,22 +9,22 @@ import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Post } from '../../lib';
+import { Event } from '../../lib';
 
-const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
+const EventPage = ({ evnt, error }: { evnt?: Event; error?: string }): JSX.Element => {
     const router = useRouter();
 
     return (
         <Layout>
             {router.isFallback && <Text>Loading...</Text>}
-            {!router.isFallback && !post && <Text>Post not found</Text>}
+            {!router.isFallback && !evnt && <Text>evnt not found</Text>}
             {error && !router.isFallback && <Text>{error}</Text>}
-            {post && !router.isFallback && !error && (
+            {evnt && !router.isFallback && !error && (
                 <>
-                    <SEO title={post.title} />
+                    <SEO title={evnt.title} />
                     <Box>
                         <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
-                            <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
+                            <Markdown options={MapMarkdownChakra}>{evnt.body}</Markdown>
                         </Box>
                         <Flex
                             justifyContent="space-between"
@@ -42,13 +42,13 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                 <Center mr="2">
                                     <CgProfile />
                                 </Center>
-                                <Text>av {post.author.authorName}</Text>
+                                <Text>av {evnt.author.authorName}</Text>
                             </Flex>
                             <Flex>
                                 <Center mr="2">
                                     <BiCalendar />
                                 </Center>
-                                <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
+                                <Text>{moment(evnt.publishedAt).format('DD. MMM YYYY')}</Text>
                             </Flex>
                         </Flex>
                     </Box>
@@ -58,9 +58,9 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
     );
 };
 
-const GET_POSTS = `
+const GET_EVENTS = `
     query {
-        postCollection(limit: 10) {
+        eventCollection(limit: 10) {
             items {
                 slug
             }
@@ -68,18 +68,23 @@ const GET_POSTS = `
     }
 `;
 
-const GET_POST_BY_SLUG = `
+const GET_EVENT_BY_SLUG = `
     query ($slug: String!) {
-        postCollection(where: { slug: $slug }) {
+        eventCollection(where: { slug: $slug }) {
             items {
                 title
                 slug
+                date
+                spots
                 body
-                author {
-                    authorName
+                image {
+                    url
                 }
                 sys {
                     firstPublishedAt
+                }
+                author {
+                    authorName
                 }
             }
         }
@@ -94,14 +99,14 @@ export const getStaticPaths = async () => {
             Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-            query: GET_POSTS,
+            query: GET_EVENTS,
         }),
     });
 
     const json = await res.json();
-    const paths = json.data.postCollection.items.map((post: { slug: any }) => ({
+    const paths = json.data.eventCollection.items.map((event: { slug: any }) => ({
         params: {
-            slug: post.slug,
+            slug: event.slug,
         },
     }));
 
@@ -109,6 +114,7 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps = async ({ params }: { params: { slug: string } }) => {
+    console.log(params.slug);
     const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
         method: 'POST',
         headers: {
@@ -116,33 +122,38 @@ export const getStaticProps = async ({ params }: { params: { slug: string } }) =
             Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-            query: GET_POST_BY_SLUG,
+            query: GET_EVENT_BY_SLUG,
             variables: {
                 slug: params.slug,
             },
         }),
     });
 
-    if (res.ok) {
-        const rawPost = await res.json();
+    console.log(res);
 
-        if (rawPost.data.postCollection.items.length <= 0) {
+    if (res.ok) {
+        const rawEvent = await res.json();
+
+        if (rawEvent.data.eventCollection.items.length <= 0) {
             return {
                 props: {
-                    post: null,
+                    event: null,
                 },
             };
         }
 
-        const formattedPost = {
-            title: rawPost.data.postCollection.items[0].title,
-            slug: rawPost.data.postCollection.items[0].slug,
-            body: rawPost.data.postCollection.items[0].body,
-            publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
-            author: rawPost.data.postCollection.items[0].author,
+        const formattedEvent = {
+            title: rawEvent.data.eventCollection.items[0].title,
+            slug: rawEvent.data.eventCollection.items[0].slug,
+            date: rawEvent.data.eventCollection.items[0].date,
+            spots: rawEvent.data.eventCollection.items[0].spots,
+            body: rawEvent.data.eventCollection.items[0].body,
+            image: rawEvent.data.eventCollection.items[0].image.url,
+            publishedAt: rawEvent.data.eventCollection.items[0].sys.firstPublishedAt,
+            author: rawEvent.data.eventCollection.items[0].author,
         };
 
-        return { props: { post: formattedPost }, revalidate: 1 };
+        return { props: { evnt: formattedEvent }, revalidate: 1 };
     }
 
     return {
@@ -152,11 +163,14 @@ export const getStaticProps = async ({ params }: { params: { slug: string } }) =
     };
 };
 
-PostPage.defaultProps = {
-    post: {
+EventPage.defaultProps = {
+    evnt: {
         title: 'title',
         slug: 'slug',
+        date: '2020-01-01T00:00:00.000Z',
+        spots: 0,
         body: '',
+        imageUrl: '',
         publishedAt: '2020-01-01T00:00:00.000Z',
         author: {
             authorName: 'Author McAuthor',
@@ -165,4 +179,4 @@ PostPage.defaultProps = {
     error: '',
 };
 
-export default PostPage;
+export default EventPage;
