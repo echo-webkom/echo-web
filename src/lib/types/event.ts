@@ -7,6 +7,7 @@ export interface Event {
     spots: number;
     body: string;
     imageUrl: string;
+    location: string;
     publishedAt: string;
     author: Author;
 }
