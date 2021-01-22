@@ -129,8 +129,6 @@ export const getStaticProps = async ({ params }: { params: { slug: string } }) =
         }),
     });
 
-    console.log(res);
-
     if (res.ok) {
         const rawEvent = await res.json();
 
