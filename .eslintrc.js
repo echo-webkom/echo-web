@@ -27,6 +27,7 @@ module.exports = {
         SharedArrayBuffer: 'readonly',
     },
     rules: {
+        'no-console': 2,
         'linebreak-style': 'off',
         'prettier/prettier': [
             'error',
