@@ -147,7 +147,7 @@ export const getStaticProps = async ({ params }: { params: { slug: string } }) =
 
     return {
         props: {
-            error: 'An error occured, please try again later.',
+            error: 'An error has occured, please try again later.',
         },
     };
 };
