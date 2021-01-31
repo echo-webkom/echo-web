@@ -20,8 +20,8 @@ interface NavProps {
 const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
     <>
         <p>Hjem</p>
-        <p>Organisasjon</p>
-        <p>Bedrift</p>
+        <p>For studenter</p>
+        <p>For bedrifter</p>
         <p>Om oss</p>
         <IconButton // button for toggling color mode
             variant="unstyled"
