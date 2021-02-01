@@ -24,21 +24,19 @@ const testPage3 =
 
 const OmOssPage = (): JSX.Element => {
     const borderBg = useColorModeValue('mardiGras.400', 'naplesYellow.400');
+    const textColor = useColorModeValue('black', 'white');
     return (
         <Layout>
             <SEO title="Om Oss" />
-            <Heading size="lg">
-                <Center>Om Oss</Center>
-            </Heading>
-            <Tabs defaultIndex={0} align="center" variant="soft-rounded" variantColor="#231300" orientation="vertical">
-                <TabList margin="1%" marginBottom="0">
-                    <Tab>For Studenter</Tab>
-                    <Tab>For Bedrifter</Tab>
-                    <Tab>Om Oss</Tab>
+            <Tabs defaultIndex={0} align="start" variant="soft-rounded" colorScheme="mardiGras" orientation="vertical">
+                <TabList padding="2" width="20%" margin="1%" marginBottom="0">
+                    <Tab textColor={textColor}> For Studenter</Tab>
+                    <Tab textColor={textColor}> For Bedrifter</Tab>
+                    <Tab textColor={textColor}> Om Oss</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                        <Box padding="5" borderWidth="0.1em" border={borderBg}>
+                        <Box padding="5" borderWidth="0.1em" borderColor={borderBg}>
                             <Text fontSize="md"> {testPage1} </Text>
                         </Box>
                     </TabPanel>
