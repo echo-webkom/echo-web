@@ -31,24 +31,24 @@ const OmOssPage = (): JSX.Element => {
                 <Center>Om Oss</Center>
             </Heading>
             <Tabs defaultIndex={0} align="center" variant="soft-rounded" variantColor="#231300" orientation="vertical">
-                <TabList margin="20%" marginTop="1%" marginBottom="0">
-                    <Tab>Visste du at?</Tab>
-                    <Tab>Kontakt Oss</Tab>
-                    <Tab>Styret</Tab>
+                <TabList margin="1%" marginBottom="0">
+                    <Tab>For Studenter</Tab>
+                    <Tab>For Bedrifter</Tab>
+                    <Tab>Om Oss</Tab>
                 </TabList>
-                <TabPanels margin="20%" marginBottom="0" marginTop="0">
+                <TabPanels>
                     <TabPanel>
                         <Box padding="5" borderWidth="0.1em" border={borderBg}>
                             <Text fontSize="md"> {testPage1} </Text>
                         </Box>
                     </TabPanel>
                     <TabPanel>
-                        <Box>
+                        <Box padding="5">
                             <Text fontSize="md"> {testPage2} </Text>
                         </Box>
                     </TabPanel>
                     <TabPanel>
-                        <Box>
+                        <Box padding="5">
                             <Text fontSize="md"> {testPage3} </Text>
                         </Box>
                     </TabPanel>
