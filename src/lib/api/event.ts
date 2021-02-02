@@ -11,6 +11,30 @@ const GET_PATHS = `
     }
 `;
 
+const GET_N_EVENTS = `
+    query ($n: Int!) {
+        eventCollection(limit: $n) {
+            items {
+                title
+                slug
+                date
+                spots
+                body
+                image {
+                    url
+                }
+                location
+                sys {
+                    firstPublishedAt
+                }
+                author {
+                    authorName
+                }
+            }
+        }
+    }
+`;
+
 const GET_EVENT_BY_SLUG = `
     query ($slug: String!) {
         eventCollection(where: { slug: $slug }) {
@@ -39,6 +63,14 @@ const EventAPI = {
     getPaths: (): Promise<AxiosResponse> =>
         API.post('', {
             query: GET_PATHS,
+        }),
+
+    getEvents: (n: number): Promise<AxiosResponse> =>
+        API.post('', {
+            query: GET_N_EVENTS,
+            variables: {
+                n,
+            },
         }),
 
     getEventBySlug: (slug: string): Promise<AxiosResponse> =>
