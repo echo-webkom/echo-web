@@ -1,4 +1,6 @@
 import React from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
 import { Box, Text, Flex, Center } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
@@ -10,6 +12,7 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
 import { Post } from '../../lib';
+import PostAPI from '../../lib/api/post';
 
 const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
     const router = useRouter();
@@ -58,98 +61,54 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
     );
 };
 
-const GET_POSTS = `
-    query {
-        postCollection(limit: 10) {
-            items {
-                slug
-            }
-        }
+export const getStaticPaths: GetStaticPaths = async () => {
+    try {
+        const { data } = await PostAPI.getPaths();
+
+        return {
+            paths: data.data.postCollection.items.map((post: { slug: string }) => ({
+                params: {
+                    slug: post.slug,
+                },
+            })),
+            fallback: true,
+        };
+    } catch (error) {
+        return { paths: [], fallback: true };
     }
-`;
-
-const GET_POST_BY_SLUG = `
-    query ($slug: String!) {
-        postCollection(where: { slug: $slug }) {
-            items {
-                title
-                slug
-                body
-                author {
-                    authorName
-                }
-                sys {
-                    firstPublishedAt
-                }
-            }
-        }
-    }
-`;
-
-export const getStaticPaths = async () => {
-    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-            query: GET_POSTS,
-        }),
-    });
-
-    const json = await res.json();
-    const paths = json.data.postCollection.items.map((post: { slug: any }) => ({
-        params: {
-            slug: post.slug,
-        },
-    }));
-
-    return { paths, fallback: true };
 };
 
-export const getStaticProps = async ({ params }: { params: { slug: string } }) => {
-    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-            query: GET_POST_BY_SLUG,
-            variables: {
-                slug: params.slug,
-            },
-        }),
-    });
+interface Params extends ParsedUrlQuery {
+    slug: string;
+}
 
-    if (res.ok) {
-        const rawPost = await res.json();
+export const getStaticProps: GetStaticProps = async (context) => {
+    const { slug } = context.params as Params;
 
-        if (rawPost.data.postCollection.items.length <= 0) {
-            return {
-                props: {
-                    post: null,
+    try {
+        const { data } = await PostAPI.getPostBySlug(slug);
+        return {
+            props: {
+                post: {
+                    title: data.data.postCollection.items[0].title,
+                    slug: data.data.postCollection.items[0].slug,
+                    body: data.data.postCollection.items[0].body,
+                    publishedAt: data.data.postCollection.items[0].sys.firstPublishedAt,
+                    author: data.data.postCollection.items[0].author,
                 },
-            };
-        }
-
-        const formattedPost = {
-            title: rawPost.data.postCollection.items[0].title,
-            slug: rawPost.data.postCollection.items[0].slug,
-            body: rawPost.data.postCollection.items[0].body,
-            publishedAt: rawPost.data.postCollection.items[0].sys.firstPublishedAt,
-            author: rawPost.data.postCollection.items[0].author,
+                error: null,
+            },
+            revalidate: 1,
         };
-
-        return { props: { post: formattedPost }, revalidate: 1 };
+    } catch (error) {
+        return {
+            props: {
+                post: {},
+                error: `Event '${slug}' not found`,
+            },
+            revalidate: 1,
+        };
     }
-
-    return {
-        props: {
-            error: 'An error has occured, please try again later.',
-        },
-    };
 };
 
 PostPage.defaultProps = {

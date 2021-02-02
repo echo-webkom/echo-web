@@ -1,4 +1,6 @@
 import React from 'react';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
 import { Box, Text, Button, Grid, GridItem, Image, Heading, useColorModeValue } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
@@ -10,6 +12,8 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
 import { Event } from '../../lib';
+
+import EventAPI from '../../lib/api/event';
 
 const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Element => {
     const router = useRouter();
@@ -74,108 +78,57 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
     );
 };
 
-const GET_EVENTS = `
-    query {
-        eventCollection(limit: 10) {
-            items {
-                slug
-            }
-        }
+export const getStaticPaths: GetStaticPaths = async () => {
+    try {
+        const { data } = await EventAPI.getPaths();
+
+        const paths = data.data.eventCollection.items.map((event: { slug: string }) => ({
+            params: {
+                slug: event.slug,
+            },
+        }));
+
+        return { paths, fallback: true };
+    } catch (error) {
+        return { paths: [], fallback: true };
     }
-`;
-
-const GET_EVENT_BY_SLUG = `
-    query ($slug: String!) {
-        eventCollection(where: { slug: $slug }) {
-            items {
-                title
-                slug
-                date
-                spots
-                body
-                image {
-                    url
-                }
-                location
-                sys {
-                    firstPublishedAt
-                }
-                author {
-                    authorName
-                }
-            }
-        }
-    }
-`;
-
-export const getStaticPaths = async () => {
-    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-            query: GET_EVENTS,
-        }),
-    });
-
-    const json = await res.json();
-    const paths = json.data.eventCollection.items.map((event: { slug: any }) => ({
-        params: {
-            slug: event.slug,
-        },
-    }));
-
-    return { paths, fallback: true };
 };
 
-export const getStaticProps = async ({ params }: { params: { slug: string } }) => {
-    const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-            query: GET_EVENT_BY_SLUG,
-            variables: {
-                slug: params.slug,
-            },
-        }),
-    });
+interface Params extends ParsedUrlQuery {
+    slug: string;
+}
 
-    if (res.ok) {
-        const rawEvent = await res.json();
+export const getStaticProps: GetStaticProps = async (context) => {
+    const { slug } = context.params as Params;
 
-        if (rawEvent.data.eventCollection.items.length <= 0) {
-            return {
-                props: {
-                    event: null,
+    try {
+        const { data } = await EventAPI.getEventBySlug(slug);
+        return {
+            props: {
+                event: {
+                    title: data?.data.eventCollection.items[0].title,
+                    slug: data?.data.eventCollection.items[0].slug,
+                    date: data?.data.eventCollection.items[0].date,
+                    spots: data?.data.eventCollection.items[0].spots,
+                    body: data?.data.eventCollection.items[0].body,
+                    imageUrl: data?.data.eventCollection.items[0].image.url,
+                    location: data?.data.eventCollection.items[0].location,
+                    publishedAt: data?.data.eventCollection.items[0].sys.firstPublishedAt,
+                    author: data?.data.eventCollection.items[0].author,
                 },
-            };
-        }
-
-        const formattedEvent = {
-            title: rawEvent.data.eventCollection.items[0].title,
-            slug: rawEvent.data.eventCollection.items[0].slug,
-            date: rawEvent.data.eventCollection.items[0].date,
-            spots: rawEvent.data.eventCollection.items[0].spots,
-            body: rawEvent.data.eventCollection.items[0].body,
-            imageUrl: rawEvent.data.eventCollection.items[0].image.url,
-            location: rawEvent.data.eventCollection.items[0].location,
-            publishedAt: rawEvent.data.eventCollection.items[0].sys.firstPublishedAt,
-            author: rawEvent.data.eventCollection.items[0].author,
+                error: null,
+            },
+            revalidate: 1,
         };
-
-        return { props: { event: formattedEvent }, revalidate: 1 };
+    } catch (error) {
+        return {
+            props: {
+                event: {},
+                error: `Event '${slug}' not found`,
+            },
+            revalidate: 1,
+        };
     }
-
-    return {
-        props: {
-            error: 'An error has occured, please try again later.',
-        },
-    };
 };
 
 EventPage.defaultProps = {
