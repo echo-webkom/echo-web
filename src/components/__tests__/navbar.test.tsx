@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from './testing-utils';
 import NavBar from '../navbar';
