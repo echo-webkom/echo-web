@@ -15,7 +15,7 @@ const PostCollectionPage = ({ posts }: { posts: Array<Post> }): JSX.Element => {
                 {posts.length !== 0 && (
                     <VStack divider={<StackDivider borderColor="gray.200" />} spacing={8} align="stretch" width="50%">
                         {posts.map((post: Post) => {
-                            return <PostPreview post={post} />;
+                            return <PostPreview key={post.slug} post={post} />;
                         })}
                     </VStack>
                 )}
