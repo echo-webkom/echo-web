@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Box, Text, Flex, Center } from '@chakra-ui/react';
+import { Box, Text, Flex, Center, Heading } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
@@ -24,6 +24,9 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                     <SEO title={post.title} />
                     <Box>
                         <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
+                            <Heading mb="0.5em" mt="0.5em">
+                                {post.title}
+                            </Heading>
                             <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
                         </Box>
                         <Flex
