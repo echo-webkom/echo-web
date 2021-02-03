@@ -62,6 +62,9 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                             </GridItem>
                             <GridItem colStart={2} colSpan={3} rowSpan={2}>
                                 <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" bg={boxBg}>
+                                    <Heading mb="0.5em" mt="0.5em">
+                                        {event.title}
+                                    </Heading>
                                     <Markdown options={MapMarkdownChakra}>{event.body}</Markdown>
                                 </Box>
                             </GridItem>
