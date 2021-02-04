@@ -164,7 +164,7 @@ const Queries = {
             },
         },
     },
-    postsBySlug: {
+    postBySlug: {
         data: {
             postCollection: {
                 items: [
