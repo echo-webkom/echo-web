@@ -1,2 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[8],{"i6+/":function(e,t,n){"use strict";n.r(t);var a=n("q1tI"),o=n.n(a),u=n("9Dj+"),l=n("H8eV");t.default=function(){return o.a.createElement(u.a,null,o.a.createElement(l.a,{title:"404: Not found"}),o.a.createElement("h1",null,"404: Not Found"),o.a.createElement("p",null,"bruh moment opportunity"))}}}]);
-//# sourceMappingURL=component---src-pages-404-tsx-98d4750b59626fc779a8.js.map
