@@ -14,6 +14,13 @@
         "isolatedModules": true,
         "jsx": "preserve"
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "src/components/__tests__/testing-utils.js",
+        "src/components/__tests__/testing-utils.js",
+        "jest.setup.js"
+    ],
     "exclude": ["node_modules"]
 }
