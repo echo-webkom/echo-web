@@ -1,60 +1,55 @@
-import { Center, VStack, StackDivider, Text } from '@chakra-ui/react';
 import React from 'react';
 
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import PostAPI from '../../lib/api/post';
 import { Author, Post } from '../../lib';
-import PostPreview from '../../components/post-preview';
 import Layout from '../../components/layout';
+import PostList from '../../components/post-list';
 
-const PostCollectionPage = ({ posts }: { posts: Array<Post> }): JSX.Element => {
+const PostCollectionPage = ({ posts, totalPosts }: { posts: Array<Post>; totalPosts: number }): JSX.Element => {
     return (
         <Layout>
-            <Center>
-                {posts.length === 0 && <Text>No posts found</Text>}
-                {posts.length !== 0 && (
-                    <VStack divider={<StackDivider borderColor="gray.200" />} spacing={8} align="stretch" width="50%">
-                        {posts.map((post: Post) => {
-                            return <PostPreview key={post.slug} post={post} />;
-                        })}
-                    </VStack>
-                )}
-            </Center>
+            <PostList postCollection={posts} totalPosts={totalPosts} />
         </Layout>
     );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+    const page = parseInt(query.page as string, 10) || 1;
+
     try {
-        const { data } = await PostAPI.getPosts(10);
+        const posts = await PostAPI.getPosts(page * 4);
+        const totalPosts = (await PostAPI.getTotalPosts()).data.data.postCollection.items.length;
         return {
             props: {
-                posts: data.data.postCollection.items.map(
-                    (post: {
-                        title: string;
-                        slug: string;
-                        body: string;
-                        sys: { firstPublishedAt: string };
-                        author: Author;
-                    }) => {
-                        return {
-                            title: post.title,
-                            slug: post.slug,
-                            body: post.body,
-                            publishedAt: post.sys.firstPublishedAt,
-                            author: post.author,
-                        };
-                    },
-                ),
+                posts: posts.data.data.postCollection.items
+                    .slice(page * 4 - 4, page * 4)
+                    .map(
+                        (post: {
+                            title: string;
+                            slug: string;
+                            body: string;
+                            sys: { firstPublishedAt: string };
+                            author: Author;
+                        }) => {
+                            return {
+                                title: post.title,
+                                slug: post.slug,
+                                body: post.body,
+                                publishedAt: post.sys.firstPublishedAt,
+                                author: post.author,
+                            };
+                        },
+                    ),
+                totalPosts,
             },
-            revalidate: 1,
         };
     } catch (error) {
         return {
             props: {
                 posts: [],
+                totalPosts: 0,
             },
-            revalidate: 1,
         };
     }
 };
