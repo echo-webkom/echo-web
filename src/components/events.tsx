@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Calendar from 'react-calendar';
 import {
     Box,
     Button,
@@ -14,6 +13,7 @@ import {
     Image,
 } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, add, getDate } from 'date-fns';
 
 const logo = '/consulting.png';
 
@@ -27,6 +27,14 @@ interface EventData {
     imageAlt: string;
     title: string;
     description: string;
+}
+
+interface WeeksWithDays {
+    week1: Array<Date>;
+    week2: Array<Date>;
+    week3: Array<Date>;
+    week4: Array<Date>;
+    week5: Array<Date>;
 }
 
 const Event = ({ imageSrc, imageAlt, title, description }: EventData): JSX.Element => {
@@ -43,8 +51,46 @@ const Event = ({ imageSrc, imageAlt, title, description }: EventData): JSX.Eleme
     );
 };
 
+/*
+const Week = ({ days }: { days: Array<number> }): JSX.Element => {
+    return (
+        <Box>
+            {days.map(day => <Text>{day}</Text>)}
+        </Box>
+    )
+};
+*/
+
+const Calendar = (): JSX.Element => {
+    const today: Date = new Date(Date.now());
+    const start = startOfMonth(today);
+    const end = endOfMonth(today);
+
+    const Days = (startx: Date, endx: Date): Array<Date> => {
+        if (getDate(startx) === getDate(endx)) {
+            return [endx];
+        }
+        const tempDates = Days(add(startx, { days: 1 }), endx);
+        tempDates.push(startx);
+        return tempDates;
+    };
+    const dates = Days(start, end).reverse();
+
+    return (
+        <Box>
+            {dates.map((date) =>
+                getDate(date) !== getDate(today) ? (
+                    <Text>{date.toString()}</Text>
+                ) : (
+                    <Text fontSize="xl">{date.toString()}</Text>
+                ),
+            )}
+        </Box>
+    );
+};
+
 const Events = (): JSX.Element => {
-    const [viewOption, changeView] = useState(ViewOptions.ViewList);
+    const [viewOption, changeView] = useState(ViewOptions.ViewCalendar);
 
     return (
         <Center>
