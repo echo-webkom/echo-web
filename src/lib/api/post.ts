@@ -1,9 +1,19 @@
 import { AxiosResponse } from 'axios';
 import API from './api';
 
-const GET_PATHS = `
+const GET_N_PATHS = `
+    query ($n: Int!) {
+        postCollection(limit: $n) {
+            items {
+                slug
+            }
+        }
+    }
+`;
+
+const GET_ALL_SLUGS = `
     query {
-        postCollection(limit: 10) {
+        postCollection {
             items {
                 slug
             }
@@ -50,7 +60,10 @@ const GET_POST_BY_SLUG = `
 const PostAPI = {
     getPaths: (): Promise<AxiosResponse> =>
         API.post('', {
-            query: GET_PATHS,
+            query: GET_N_PATHS,
+            variables: {
+                n: 10,
+            },
         }),
 
     getPosts: (n: number): Promise<AxiosResponse> =>
@@ -67,6 +80,11 @@ const PostAPI = {
             variables: {
                 slug,
             },
+        }),
+
+    getTotalPosts: (): Promise<AxiosResponse> =>
+        API.post('', {
+            query: GET_ALL_SLUGS,
         }),
 };
 
