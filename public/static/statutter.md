@@ -1,5 +1,6 @@
 Statutter
 ---
+
 ### Statutter for echo – Fagutvalget for informatikk
 
 #### FORMÅL
