@@ -1,5 +1,6 @@
-# Undergrupper
+Undergrupper
 ---
+
 ### Gnist
 
 Gnist er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på rekruttering og fullføring. De jobber tett sammen med instituttet og fakultetet om saker som angår frafallsproblematikk og rekruttering av nye studenter. Med støtte fra instituttet kan Gnist gjennomføre tiltak de mener vil være positivt for studentene på instituttet, både faglig og sosialt! Gnist arrangerer blant annet kræsjkurs, filmkvelder og kodekvelder, samt gjør rekrutteringsarbeid som å dra på skolebesøk til videregående skoler. 
