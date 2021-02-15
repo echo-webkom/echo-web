@@ -65,20 +65,15 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    try {
-        const { data } = await PostAPI.getPaths();
-
-        return {
-            paths: data.data.postCollection.items.map((post: { slug: string }) => ({
-                params: {
-                    slug: post.slug,
-                },
-            })),
-            fallback: true,
-        };
-    } catch (error) {
-        return { paths: [], fallback: true };
-    }
+    const paths = await PostAPI.getPaths();
+    return {
+        paths: paths.map((slug: string) => ({
+            params: {
+                slug,
+            },
+        })),
+        fallback: true,
+    };
 };
 
 interface Params extends ParsedUrlQuery {
@@ -87,31 +82,14 @@ interface Params extends ParsedUrlQuery {
 
 export const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
+    const { post, error } = await PostAPI.getPostBySlug(slug);
 
-    try {
-        const { data } = await PostAPI.getPostBySlug(slug);
-        return {
-            props: {
-                post: {
-                    title: data.data.postCollection.items[0].title,
-                    slug: data.data.postCollection.items[0].slug,
-                    body: data.data.postCollection.items[0].body,
-                    publishedAt: data.data.postCollection.items[0].sys.firstPublishedAt,
-                    author: data.data.postCollection.items[0].author,
-                },
-                error: null,
-            },
-            revalidate: 1,
-        };
-    } catch (error) {
-        return {
-            props: {
-                post: {},
-                error: `Event '${slug}' not found`,
-            },
-            revalidate: 1,
-        };
-    }
+    return {
+        props: {
+            post,
+            error,
+        },
+    };
 };
 
 PostPage.defaultProps = {
