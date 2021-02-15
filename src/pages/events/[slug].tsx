@@ -82,19 +82,15 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    try {
-        const { data } = await EventAPI.getPaths();
-
-        const paths = data.data.eventCollection.items.map((event: { slug: string }) => ({
+    const paths = await EventAPI.getPaths();
+    return {
+        paths: paths.map((slug: string) => ({
             params: {
-                slug: event.slug,
+                slug,
             },
-        }));
-
-        return { paths, fallback: true };
-    } catch (error) {
-        return { paths: [], fallback: true };
-    }
+        })),
+        fallback: true,
+    };
 };
 
 interface Params extends ParsedUrlQuery {
@@ -103,35 +99,14 @@ interface Params extends ParsedUrlQuery {
 
 export const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
+    const { event, error } = await EventAPI.getEventBySlug(slug);
 
-    try {
-        const { data } = await EventAPI.getEventBySlug(slug);
-        return {
-            props: {
-                event: {
-                    title: data?.data.eventCollection.items[0].title,
-                    slug: data?.data.eventCollection.items[0].slug,
-                    date: data?.data.eventCollection.items[0].date,
-                    spots: data?.data.eventCollection.items[0].spots,
-                    body: data?.data.eventCollection.items[0].body,
-                    imageUrl: data?.data.eventCollection.items[0].image.url,
-                    location: data?.data.eventCollection.items[0].location,
-                    publishedAt: data?.data.eventCollection.items[0].sys.firstPublishedAt,
-                    author: data?.data.eventCollection.items[0].author,
-                },
-                error: null,
-            },
-            revalidate: 1,
-        };
-    } catch (error) {
-        return {
-            props: {
-                event: {},
-                error: `Event '${slug}' not found`,
-            },
-            revalidate: 1,
-        };
-    }
+    return {
+        props: {
+            event,
+            error,
+        },
+    };
 };
 
 EventPage.defaultProps = {
