@@ -7,7 +7,7 @@ import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from '../schema';
 
 interface QueryBody {
     query: string;
-    variables: {
+    variables?: {
         n?: number;
         slug?: string;
     };
@@ -26,6 +26,7 @@ const server = setupServer(
                     return res(ctx.status(200), ctx.json(mockResponses.nEvents));
                 case GET_EVENT_BY_SLUG:
                     // simulate slug not found
+                    if (!variables) return res(ctx.status(400));
                     if (variables.slug !== mockResponses.eventBySlug.data.eventCollection.items[0].slug)
                         return res(ctx.status(400));
 
