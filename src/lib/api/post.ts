@@ -1,57 +1,16 @@
 import { Author, Post } from '..';
 import API from './api';
-
-const GET_PATHS = `
-    query {
-        postCollection(limit: 10) {
-            items {
-                slug
-            }
-        }
-    }
-`;
-
-const GET_N_POSTS = `
-    query ($n: Int!) {
-        postCollection(limit: $n) {
-            items {
-                title
-                slug
-                body
-                author {
-                    authorName
-                }
-                sys {
-                    firstPublishedAt
-                }
-            }
-        }
-    }
-`;
-
-const GET_POST_BY_SLUG = `
-    query ($slug: String!) {
-        postCollection(where: { slug: $slug }) {
-            items {
-                title
-                slug
-                body
-                author {
-                    authorName
-                }
-                sys {
-                    firstPublishedAt
-                }
-            }
-        }
-    }
-`;
+import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from './schema';
 
 const PostAPI = {
+    /**
+     * Get the slugs of the 10 lasts posts.
+     * This data is used to statically generate the pages of the 10 last published posts.
+     */
     getPaths: async (): Promise<Array<string>> => {
         try {
             const { data } = await API.post('', {
-                query: GET_PATHS,
+                query: GET_POST_PATHS,
             });
 
             return data.data.postCollection.items.map((post: { slug: string }) => post.slug);
@@ -60,6 +19,10 @@ const PostAPI = {
         }
     },
 
+    /**
+     * Get the n last published posts.
+     * @param n how many posts to retrieve
+     */
     getPosts: async (n: number): Promise<{ posts: Array<Post> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -97,6 +60,10 @@ const PostAPI = {
         }
     },
 
+    /**
+     * Get a post by its slug.
+     * @param slug the slug of the desired post.
+     */
     getPostBySlug: async (slug: string): Promise<{ post: Post | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {

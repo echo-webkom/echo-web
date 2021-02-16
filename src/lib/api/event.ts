@@ -1,69 +1,16 @@
 import { Event, Author } from '..';
 import API from './api';
-
-const GET_PATHS = `
-    query {
-        eventCollection(limit: 10) {
-            items {
-                slug
-            }
-        }
-    }
-`;
-
-const GET_N_EVENTS = `
-    query ($n: Int!) {
-        eventCollection(limit: $n) {
-            items {
-                title
-                slug
-                date
-                spots
-                body
-                image {
-                    url
-                }
-                location
-                sys {
-                    firstPublishedAt
-                }
-                author {
-                    authorName
-                }
-            }
-        }
-    }
-`;
-
-const GET_EVENT_BY_SLUG = `
-    query ($slug: String!) {
-        eventCollection(where: { slug: $slug }) {
-            items {
-                title
-                slug
-                date
-                spots
-                body
-                image {
-                    url
-                }
-                location
-                sys {
-                    firstPublishedAt
-                }
-                author {
-                    authorName
-                }
-            }
-        }
-    }
-`;
+import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
 
 const EventAPI = {
+    /**
+     * Get the slugs of the 10 lasts events.
+     * This data is used to statically generate the pages of the 10 last published events.
+     */
     getPaths: async (): Promise<Array<string>> => {
         try {
             const { data } = await API.post('', {
-                query: GET_PATHS,
+                query: GET_EVENT_PATHS,
             });
 
             return data.data.eventCollection.items.map((event: { slug: string }) => event.slug);
@@ -72,6 +19,10 @@ const EventAPI = {
         }
     },
 
+    /**
+     * Get the n last published events
+     * @param n how many events to retrieve
+     */
     getEvents: async (n: number): Promise<{ events: Array<Event> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -121,6 +72,10 @@ const EventAPI = {
         }
     },
 
+    /**
+     * Get an event by its slug
+     * @param slug the slug of the desired event
+     */
     getEventBySlug: async (slug: string): Promise<{ event: Event | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
