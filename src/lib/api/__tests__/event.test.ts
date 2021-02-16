@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import mockResponses from './mock-responses';
-import EventAPI from '../event';
+import { EventAPI } from '..';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from '../schema';
 
 interface QueryBody {

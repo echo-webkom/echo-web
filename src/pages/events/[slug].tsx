@@ -11,9 +11,9 @@ import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Event } from '../../lib';
+import { Event } from '../../lib/types';
 
-import EventAPI from '../../lib/api/event';
+import { EventAPI } from '../../lib/api';
 
 const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Element => {
     const router = useRouter();

@@ -1,4 +1,4 @@
-import { Author, Post } from '..';
+import { Author, Post } from '../types';
 import API from './api';
 import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from './schema';
 

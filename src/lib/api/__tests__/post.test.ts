@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import mockResponses from './mock-responses';
-import PostAPI from '../post';
+import { PostAPI } from '..';
 import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from '../schema';
 
 interface QueryBody {

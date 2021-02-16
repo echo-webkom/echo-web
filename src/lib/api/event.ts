@@ -1,4 +1,4 @@
-import { Event, Author } from '..';
+import { Event, Author } from '../types';
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
 
