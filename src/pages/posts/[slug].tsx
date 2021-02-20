@@ -2,7 +2,7 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Flex, Center } from '@chakra-ui/react';
+import { Box, Text, Flex, Center, Heading } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
@@ -11,8 +11,9 @@ import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Post } from '../../lib';
-import PostAPI from '../../lib/api/post';
+import { Post } from '../../lib/types';
+
+import { PostAPI } from '../../lib/api';
 
 const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
     const router = useRouter();
@@ -27,6 +28,9 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                     <SEO title={post.title} />
                     <Box>
                         <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
+                            <Heading mb="0.5em" mt="0.5em">
+                                {post.title}
+                            </Heading>
                             <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
                         </Box>
                         <Flex
@@ -62,20 +66,15 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    try {
-        const { data } = await PostAPI.getPaths();
-
-        return {
-            paths: data.data.postCollection.items.map((post: { slug: string }) => ({
-                params: {
-                    slug: post.slug,
-                },
-            })),
-            fallback: true,
-        };
-    } catch (error) {
-        return { paths: [], fallback: true };
-    }
+    const paths = await PostAPI.getPaths();
+    return {
+        paths: paths.map((slug: string) => ({
+            params: {
+                slug,
+            },
+        })),
+        fallback: true,
+    };
 };
 
 interface Params extends ParsedUrlQuery {
@@ -84,31 +83,14 @@ interface Params extends ParsedUrlQuery {
 
 export const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
+    const { post, error } = await PostAPI.getPostBySlug(slug);
 
-    try {
-        const { data } = await PostAPI.getPostBySlug(slug);
-        return {
-            props: {
-                post: {
-                    title: data.data.postCollection.items[0].title,
-                    slug: data.data.postCollection.items[0].slug,
-                    body: data.data.postCollection.items[0].body,
-                    publishedAt: data.data.postCollection.items[0].sys.firstPublishedAt,
-                    author: data.data.postCollection.items[0].author,
-                },
-                error: null,
-            },
-            revalidate: 1,
-        };
-    } catch (error) {
-        return {
-            props: {
-                post: {},
-                error: `Event '${slug}' not found`,
-            },
-            revalidate: 1,
-        };
-    }
+    return {
+        props: {
+            post,
+            error,
+        },
+    };
 };
 
 PostPage.defaultProps = {
