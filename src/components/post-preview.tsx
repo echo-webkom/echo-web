@@ -1,7 +1,7 @@
 import { Box, Heading, useColorModeValue, Link } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
-import { Post } from '../lib';
+import { Post } from '../lib/types';
 import MapMarkdownChakra from '../markdown';
 
 const PostPreview = ({ post, className }: { post: Post; className: string }): JSX.Element => {
