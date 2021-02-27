@@ -138,6 +138,7 @@ const GET_N_BEDPRESES = `
                 sys {
                     firstPublishedAt
                 }
+                registrationTime
             }
         }
     }
@@ -169,6 +170,7 @@ const GET_BEDPRES_BY_SLUG = `
                 sys {
                     firstPublishedAt
                 }
+                registrationTime
             }
         }
     }

@@ -1,6 +1,19 @@
-import { Box, Heading, Img, Link, Grid, SimpleGrid, Text, GridItem, Divider, Stack, Button } from '@chakra-ui/react';
+import {
+    Box,
+    Heading,
+    Img,
+    Link,
+    Grid,
+    SimpleGrid,
+    Text,
+    GridItem,
+    Divider,
+    Stack,
+    Button,
+    Center,
+} from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
@@ -17,6 +30,7 @@ import MapMarkdownChakra from '../../markdown';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
+    const formattedRegDate = moment(bedpres.registrationTime).format('DD. MMM YYYY, HH:mm');
 
     return (
         <Layout>
@@ -45,15 +59,27 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             </SimpleGrid>
                             <Divider my=".5em" />
                             <Text>Påmelding:</Text>
-                            <Stack>
-                                {bedpres.registrationLinks.map((regLink) => (
-                                    <Link href={regLink.link} style={{ textDecoration: 'none' }} isExternal>
-                                        <Button w="100%" colorScheme="teal">
-                                            {regLink.description}
-                                        </Button>
-                                    </Link>
-                                ))}
-                            </Stack>
+                            {!bedpres.registrationLinks && (
+                                <Center my="3">
+                                    <Text fontSize="1.5em">Åpner {formattedRegDate}</Text>
+                                </Center>
+                            )}
+                            {bedpres.registrationLinks && (
+                                <Stack>
+                                    {bedpres.registrationLinks.map((regLink) => (
+                                        <Link
+                                            key={regLink.link}
+                                            href={regLink.link}
+                                            style={{ textDecoration: 'none' }}
+                                            isExternal
+                                        >
+                                            <Button w="100%" colorScheme="teal">
+                                                {regLink.description}
+                                            </Button>
+                                        </Link>
+                                    ))}
+                                </Stack>
+                            )}
                             <Divider my=".5em" />
                             <SimpleGrid columns={2} alignItems="center">
                                 <CgProfile size="2em" />
@@ -79,23 +105,11 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
     );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await BedpresAPI.getPaths();
-    return {
-        paths: paths.map((slug: string) => ({
-            params: {
-                slug,
-            },
-        })),
-        fallback: true,
-    };
-};
-
 interface Params extends ParsedUrlQuery {
     slug: string;
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
 

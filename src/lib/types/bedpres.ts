@@ -15,4 +15,5 @@ export interface Bedpres {
         description: string;
     }>;
     publishedAt: string;
+    registrationTime: string;
 }

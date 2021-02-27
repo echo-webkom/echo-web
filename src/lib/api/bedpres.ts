@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Author, Bedpres } from '../types';
 import API from './api';
 import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
@@ -47,6 +48,7 @@ const BedpresAPI = {
                         sys: {
                             firstPublishedAt: string;
                         };
+                        registrationTime: string;
                     }) => {
                         return {
                             title: bedpres.title,
@@ -60,6 +62,7 @@ const BedpresAPI = {
                             companyLink: bedpres.companyLink,
                             registrationLinks: bedpres.registrationLinksCollection.items,
                             publishedAt: bedpres.sys.firstPublishedAt,
+                            registrationTime: bedpres.registrationTime,
                         };
                     },
                 ),
@@ -93,8 +96,11 @@ const BedpresAPI = {
                     location: data.data.bedpresCollection.items[0].location,
                     author: data.data.bedpresCollection.items[0].author,
                     companyLink: data.data.bedpresCollection.items[0].companyLink,
-                    registrationLinks: data.data.bedpresCollection.items[0].registrationLinksCollection.items,
+                    registrationLinks: moment(data.data.bedpresCollection.items[0].registrationTime).isBefore(moment())
+                        ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
+                        : null,
                     publishedAt: data.data.bedpresCollection.items[0].sys.firstPublishedAt,
+                    registrationTime: data.data.bedpresCollection.items[0].registrationTime,
                 },
                 error: null,
             };
