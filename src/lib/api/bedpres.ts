@@ -1,6 +1,6 @@
-import { Bedpres } from '../types';
+import { Author, Bedpres } from '../types';
 import API from './api';
-import { GET_BEDPRES_PATHS, GET_BEDPRES_BY_SLUG } from './schema';
+import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 
 const BedpresAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -12,6 +12,64 @@ const BedpresAPI = {
             return data.data.bedpresCollection.items.map((bedpres: { slug: string }) => bedpres.slug);
         } catch (error) {
             return [];
+        }
+    },
+
+    getBedpreses: async (n: number): Promise<{ bedpreses: Array<Bedpres> | null; error: string | null }> => {
+        try {
+            const { data } = await API.post('', {
+                query: GET_N_BEDPRESES,
+                variables: {
+                    n,
+                },
+            });
+
+            return {
+                bedpreses: data.data.bedpresCollection.items.map(
+                    (bedpres: {
+                        title: string;
+                        slug: string;
+                        date: string;
+                        spots: number;
+                        body: string;
+                        logo: {
+                            url: string;
+                        };
+                        location: string;
+                        author: Author;
+                        companyLink: string;
+                        registrationLinksCollection: {
+                            items: Array<{
+                                link: string;
+                                description: string;
+                            }>;
+                        };
+                        sys: {
+                            firstPublishedAt: string;
+                        };
+                    }) => {
+                        return {
+                            title: bedpres.title,
+                            slug: bedpres.slug,
+                            date: bedpres.date,
+                            spots: bedpres.spots,
+                            body: bedpres.body,
+                            logoUrl: bedpres.logo.url,
+                            location: bedpres.location,
+                            author: bedpres.author,
+                            companyLink: bedpres.companyLink,
+                            registrationLinks: bedpres.registrationLinksCollection.items,
+                            publishedAt: bedpres.sys.firstPublishedAt,
+                        };
+                    },
+                ),
+                error: null,
+            };
+        } catch (error) {
+            return {
+                bedpreses: null,
+                error: `Error retrieveing ${n} bedpreses`,
+            };
         }
     },
 

@@ -112,6 +112,37 @@ const GET_BEDPRES_PATHS = `
     }
 `;
 
+const GET_N_BEDPRESES = `
+    query ($n: Int!) {
+        bedpresCollection(limit: $n) {
+            items {
+                title
+                slug
+                date
+                spots
+                body
+                logo {
+                    url
+                }
+                location
+                author {
+                    authorName
+                }
+                companyLink
+                registrationLinksCollection {
+                    items {
+                        link
+                        description
+                    }
+                }
+                sys {
+                    firstPublishedAt
+                }
+            }
+        }
+    }
+`;
+
 const GET_BEDPRES_BY_SLUG = `
     query ($slug: String!) {
         bedpresCollection(where: { slug: $slug }) {
@@ -151,5 +182,6 @@ export {
     GET_N_POSTS,
     GET_POST_BY_SLUG,
     GET_BEDPRES_PATHS,
+    GET_N_BEDPRESES,
     GET_BEDPRES_BY_SLUG,
 };
