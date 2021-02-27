@@ -57,6 +57,7 @@ describe('getBedpresBySlug', () => {
             registrationLinks:
                 mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationLinksCollection.items,
             publishedAt: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].sys.firstPublishedAt,
+            registrationTime: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationTime,
         });
     });
 
@@ -93,6 +94,7 @@ describe('getBedpreses', () => {
                 registrationLinks:
                     mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationLinksCollection.items,
                 publishedAt: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].sys.firstPublishedAt,
+                registrationTime: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationTime,
             },
         ]);
     });

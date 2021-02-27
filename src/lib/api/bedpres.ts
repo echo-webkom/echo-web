@@ -60,7 +60,11 @@ const BedpresAPI = {
                             location: bedpres.location,
                             author: bedpres.author,
                             companyLink: bedpres.companyLink,
-                            registrationLinks: bedpres.registrationLinksCollection.items,
+                            registrationLinks: moment(data.data.bedpresCollection.items[0].registrationTime).isBefore(
+                                moment(),
+                            )
+                                ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
+                                : null,
                             publishedAt: bedpres.sys.firstPublishedAt,
                             registrationTime: bedpres.registrationTime,
                         };

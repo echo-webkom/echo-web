@@ -229,6 +229,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2021-02-24T14:11:07.592Z',
                         },
+                        registrationTime: '2021-02-27T21:04:00.000Z',
                     },
                 ],
             },
@@ -269,6 +270,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2021-02-24T14:11:07.592Z',
                         },
+                        registrationTime: '2021-02-27T21:04:00.000Z',
                     },
                 ],
             },
