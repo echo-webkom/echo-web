@@ -1,7 +1,9 @@
 import React, { RefObject } from 'react';
+import NextLink from 'next/link';
 import { VscColorMode } from 'react-icons/vsc';
 import {
     Center,
+    Text,
     Flex,
     IconButton,
     Drawer,
@@ -11,18 +13,33 @@ import {
     DrawerContent,
     DrawerCloseButton,
     useColorMode,
+    Link,
 } from '@chakra-ui/react';
+
+const NavLink = ({ href, text }: { href: string; text: string }) => {
+    return (
+        <Link as={NextLink} href={href}>
+            <Text cursor="pointer">{text}</Text>
+        </Link>
+    );
+};
 
 interface NavProps {
     toggleColorMode: () => void;
 }
 
 const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
-    <>
-        <p>Hjem</p>
-        <p>Organisasjon</p>
-        <p>Bedrift</p>
-        <p>Om oss</p>
+    <Flex
+        w="100%"
+        fontSize={{ sm: 'sm', lg: 'lg' }}
+        justifyContent="space-between"
+        textAlign="end"
+        alignItems="flex-end"
+    >
+        <NavLink text="Hjem" href="/" />
+        <NavLink text="For Studenter" href="/for-studenter" />
+        <NavLink text="For Bedrifter" href="/for-bedrifter" />
+        <NavLink text="Om echo" href="/om-oss" />
         <IconButton // button for toggling color mode
             variant="unstyled"
             icon={
@@ -33,7 +50,7 @@ const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
             aria-label="toggle color mode"
             onClick={toggleColorMode}
         />
-    </>
+    </Flex>
 );
 
 interface Props {

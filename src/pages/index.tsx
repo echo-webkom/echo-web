@@ -18,7 +18,7 @@ const IndexPage = ({ posts }: { posts: Array<Post> }): JSX.Element => (
 
 export const getServerSideProps: GetServerSideProps = async () => {
     try {
-        const { posts } = await PostAPI.getPosts(2);
+        const { posts } = await PostAPI.getPosts(4);
         return {
             props: {
                 posts,
