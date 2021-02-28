@@ -14,6 +14,7 @@ import {
     Image,
 } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
+import ContentBox from './content-box';
 
 const logo = '/consulting.png';
 
@@ -31,7 +32,7 @@ interface EventData {
 
 const Event = ({ imageSrc, imageAlt, title, description }: EventData): JSX.Element => {
     return (
-        <Flex justifyContent="center" align="center">
+        <Flex as={ContentBox} justifyContent="center" align="center">
             <SimpleGrid columns={2}>
                 <SimpleGrid rows={2}>
                     <Text fontSize="3xl">{title}</Text>

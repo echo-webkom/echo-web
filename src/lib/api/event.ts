@@ -102,7 +102,7 @@ const EventAPI = {
         } catch (error) {
             return {
                 event: null,
-                error: `Event '${slug} not found`,
+                error: `Event '${slug}' not found`,
             };
         }
     },

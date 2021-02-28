@@ -2,7 +2,7 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Flex, Center, Heading } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Heading, Divider } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
@@ -14,6 +14,7 @@ import MapMarkdownChakra from '../../markdown';
 import { Post } from '../../lib/types';
 
 import { PostAPI } from '../../lib/api';
+import ContentBox from '../../components/content-box';
 
 const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
     const router = useRouter();
@@ -27,37 +28,28 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                 <>
                     <SEO title={post.title} />
                     <Box>
-                        <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" mb="1em">
-                            <Heading mb="0.5em" mt="0.5em">
-                                {post.title}
-                            </Heading>
-                            <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
-                        </Box>
-                        <Flex
-                            justifyContent="space-between"
-                            display={['block', null, 'flex']}
-                            spacing="5"
-                            borderWidth="1px"
-                            borderRadius="0.75em"
-                            overflow="hidden"
-                            pl="6"
-                            pr="6"
-                            pt="1"
-                            pb="1"
-                        >
-                            <Flex>
-                                <Center mr="2">
-                                    <CgProfile />
-                                </Center>
-                                <Text>av {post.author.authorName}</Text>
-                            </Flex>
-                            <Flex>
-                                <Center mr="2">
-                                    <BiCalendar />
-                                </Center>
-                                <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
-                            </Flex>
-                        </Flex>
+                        <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
+                            <GridItem colSpan={1} rowStart={[2, null, null, null]} as={ContentBox}>
+                                <Grid templateColumns="min-content auto" gap="3" alignItems="center">
+                                    <CgProfile size="2em" />
+                                    <Text>{post.author.authorName}</Text>
+                                    <BiCalendar size="2em" />
+                                    <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
+                                </Grid>
+                            </GridItem>
+                            <GridItem
+                                colStart={[1, null, null, 2]}
+                                rowStart={[1, null, null, null]}
+                                colSpan={[1, null, null, 3]}
+                                rowSpan={2}
+                            >
+                                <ContentBox>
+                                    <Heading mb="0.2em">{post.title}</Heading>
+                                    <Divider mb="1em" />
+                                    <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
+                                </ContentBox>
+                            </GridItem>
+                        </Grid>
                     </Box>
                 </>
             )}
