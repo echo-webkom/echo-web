@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
-import { Box, Center, Flex, IconButton, Image, useColorModeValue, useDisclosure } from '@chakra-ui/react'; // wow very bloat
+import { Box, Center, Flex, IconButton, Img, useColorModeValue, useDisclosure } from '@chakra-ui/react'; // wow very bloat
 
 import NavBar from './navbar';
 
@@ -19,8 +19,8 @@ const Header = (): JSX.Element => {
         <Box bg={bg} mb="40px" pb="15px" borderBottom="1px" borderColor={borderBg} data-testid="header-standard">
             <Flex align="center" justify="center" p="20px">
                 <Flex align="center" justify={{ base: 'space-between', sm: 'center' }} w="500px">
-                    <Image src={imgLogo} alt="logo" htmlWidth="30%" />
-                    <Image display={{ base: 'none', sm: 'block' }} src={logoText} alt="logo-text" htmlWidth="50%" />
+                    <Img src={imgLogo} alt="logo" htmlWidth="30%" />
+                    <Img display={{ base: 'none', sm: 'block' }} src={logoText} alt="logo-text" htmlWidth="50%" />
                     <IconButton
                         variant="unstyled"
                         ref={menuButtonRef}
