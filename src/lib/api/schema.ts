@@ -102,4 +102,88 @@ const GET_POST_BY_SLUG = `
     }
 `;
 
-export { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG, GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG };
+const GET_BEDPRES_PATHS = `
+    query {
+        bedpresCollection(limit: 10) {
+            items {
+                slug
+            }
+        }
+    }
+`;
+
+const GET_N_BEDPRESES = `
+    query ($n: Int!) {
+        bedpresCollection(limit: $n) {
+            items {
+                title
+                slug
+                date
+                spots
+                body
+                logo {
+                    url
+                }
+                location
+                author {
+                    authorName
+                }
+                companyLink
+                registrationLinksCollection {
+                    items {
+                        link
+                        description
+                    }
+                }
+                sys {
+                    firstPublishedAt
+                }
+                registrationTime
+            }
+        }
+    }
+`;
+
+const GET_BEDPRES_BY_SLUG = `
+    query ($slug: String!) {
+        bedpresCollection(where: { slug: $slug }) {
+            items {
+                title
+                slug
+                date
+                spots
+                body
+                logo {
+                    url
+                }
+                location
+                author {
+                    authorName
+                }
+                companyLink
+                registrationLinksCollection {
+                    items {
+                        link
+                        description
+                    }
+                }
+                sys {
+                    firstPublishedAt
+                }
+                registrationTime
+            }
+        }
+    }
+`;
+
+export {
+    GET_EVENT_PATHS,
+    GET_N_EVENTS,
+    GET_EVENT_BY_SLUG,
+    GET_POST_PATHS,
+    GET_N_POSTS,
+    GET_POST_BY_SLUG,
+    GET_BEDPRES_PATHS,
+    GET_N_BEDPRESES,
+    GET_BEDPRES_BY_SLUG,
+};
