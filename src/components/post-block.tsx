@@ -13,7 +13,7 @@ const PostCard = ({ post }: { post: Post }): JSX.Element => {
                     display="block"
                     width="100%"
                     pb="100%"
-                    boxShadow="xl"
+                    boxShadow="lg"
                     role="group"
                     bg="white"
                     cursor="pointer"
@@ -48,7 +48,7 @@ const PostCard = ({ post }: { post: Post }): JSX.Element => {
 const PostBlock = ({ posts }: { posts: Array<Post> }): JSX.Element => {
     return (
         <Center>
-            <SimpleGrid w="90%" gap="20px" columns={{ sm: 4, md: 8, xl: 12 }} overflow="hidden">
+            <SimpleGrid w="90%" gap="20px" columns={{ sm: 4, md: 8, xl: 12 }} overflow="hidden" pb="2rem">
                 {posts.map((post) => (
                     <GridItem key={post.slug} colSpan={4}>
                         <PostCard post={post} />
