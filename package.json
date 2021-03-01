@@ -12,6 +12,7 @@
         "@emotion/styled": "^11.0.0",
         "axios": "^0.21.1",
         "contentful": "^8.1.7",
+        "date-fns": "^2.16.1",
         "dotenv": "^8.2.0",
         "framer-motion": "^3.2.2-rc.1",
         "graphql": "^15.4.0",

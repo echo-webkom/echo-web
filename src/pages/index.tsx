@@ -1,86 +1,41 @@
 import React from 'react';
+import { GetStaticProps } from 'next';
 
-import {
-    useColorModeValue,
-    HStack,
-    Img,
-    Stack,
-    Text,
-    Heading,
-    ListItem,
-    UnorderedList,
-    SimpleGrid,
-    Box,
-    Divider,
-} from '@chakra-ui/react';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import Events from '../components/events';
-import ContentBox from '../components/content-box';
+import EventBlock from '../components/event-block';
+import PostBlock from '../components/post-block';
+import { Event, Post } from '../lib/types';
+import EventAPI from '../lib/api/event';
+import PostAPI from '../lib/api/post';
 
-const echoLogoWhite = '/echo-logo-very-wide-text-only-white.png';
-const echoLogoBlack = '/echo-logo-very-wide-text-only.png';
-const bekkLogo = '/bekk.png';
+const IndexPage = ({ events, posts }: { events: Array<Event>; posts: Array<Post> }): JSX.Element => (
+    <Layout>
+        <SEO title="Home" />
+        <PostBlock posts={posts} />
+        <EventBlock events={events} />
+    </Layout>
+);
 
-const IndexPage = (): JSX.Element => {
-    const echoLogo = useColorModeValue(echoLogoBlack, echoLogoWhite);
-    const bekkFilter = useColorModeValue('invert(1)', 'invert(0)');
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const { events } = await EventAPI.getEvents(3);
+        const { posts } = await PostAPI.getPosts(2);
 
-    return (
-        <Layout>
-            <SEO title="Home" />
-            <SimpleGrid columns={[1, null, 2]} spacing="5">
-                <Stack spacing="5">
-                    <ContentBox>
-                        <Heading>echo</Heading>
-                        <Divider mb="3" />
-                        <HStack>
-                            <Box>
-                                <Text>
-                                    skdfj aølsdkjf aløskjf aløskdjf aølsdkjf aølsdkjf aølskdjf aølsdkj falsødkj
-                                    faølsdkfj aølsdkjf aølsjk dfaøls jkdfaøljks d skdfj aølsdkjf aløskjf aløskdjf
-                                    aølsdkjf aølsdkjf aølskdjf aølsdkj falsødkj faølsdkfj aølsdkjf aølsjk dfaøls
-                                    jkdfaøljks d
-                                </Text>
-                            </Box>
-                            <Img src={echoLogo} htmlWidth="300px" />
-                        </HStack>
-                    </ContentBox>
-                    <ContentBox>
-                        <Heading>Bekk</Heading>
-                        <Divider mb="3" />
-                        <HStack>
-                            <Box>
-                                <Text>
-                                    skdfj aølsdkjf aløskjf aløskdjf aølsdkjf aølsdkjf aølskdjf aølsdkj falsødkj
-                                    faølsdkfj aølsdkjf aølsjk dfaøls jkdfaøljks d skdfj aølsdkjf aløskjf aløskdjf
-                                    aølsdkjf aølsdkjf aølskdjf aølsdkj falsødkj faølsdkfj aølsdkjf aølsjk dfaøls
-                                    jkdfaøljks d skdfj aølsdkjf aløskjf aløskdjf aølsdkjf
-                                </Text>
-                            </Box>
-                            <Img src={bekkLogo} filter={bekkFilter} htmlWidth="300px" />
-                        </HStack>
-                    </ContentBox>
-                    <ContentBox>
-                        <Heading>Arrangementer</Heading>
-                        <Divider mb="3" />
-                        <UnorderedList>
-                            <ListItem>
-                                <Text>Filmkveld med Tilde</Text>
-                            </ListItem>
-                            <ListItem>
-                                <Text>Kahoot med Gnist</Text>
-                            </ListItem>
-                            <ListItem>
-                                <Text>echo-wan med echo-lan-klanen</Text>
-                            </ListItem>
-                        </UnorderedList>
-                    </ContentBox>
-                </Stack>
-                <Events />
-            </SimpleGrid>
-        </Layout>
-    );
+        return {
+            props: {
+                events,
+                posts,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                posts: [],
+                events: [],
+            },
+        };
+    }
 };
 
 export default IndexPage;
