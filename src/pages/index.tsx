@@ -1,26 +1,30 @@
 import React from 'react';
+import { GetStaticProps } from 'next';
 
-import { GetServerSideProps } from 'next';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import Events from '../components/events';
+import EventBlock from '../components/event-block';
 import PostBlock from '../components/post-block';
+import { Event, Post } from '../lib/types';
+import EventAPI from '../lib/api/event';
 import PostAPI from '../lib/api/post';
-import { Post } from '../lib/types';
 
-const IndexPage = ({ posts }: { posts: Array<Post> }): JSX.Element => (
+const IndexPage = ({ events, posts }: { events: Array<Event>; posts: Array<Post> }): JSX.Element => (
     <Layout>
         <SEO title="Home" />
         <PostBlock posts={posts} />
-        <Events />
+        <EventBlock events={events} />
     </Layout>
 );
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     try {
+        const { events } = await EventAPI.getEvents(3);
         const { posts } = await PostAPI.getPosts(2);
+
         return {
             props: {
+                events,
                 posts,
             },
         };
@@ -28,6 +32,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         return {
             props: {
                 posts: [],
+                events: [],
             },
         };
     }
