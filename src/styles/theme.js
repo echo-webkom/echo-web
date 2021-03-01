@@ -4,7 +4,7 @@ import { extendTheme } from '@chakra-ui/react';
 const palette = {
     transparent: 'transparent',
     black: '#1E1E1E',
-    white: '#F7F7F7',
+    white: '#FFFFFF',
     gray: {
         50: '#F5F5F5',
         100: '#DFDFDF',
@@ -59,8 +59,8 @@ const theme = extendTheme({
         global: ({ colorMode }) => ({
             body: {
                 fontFamily: 'body',
-                color: colorMode === 'dark' ? palette.white : palette.black,
-                bg: colorMode === 'dark' ? palette.black : palette.white,
+                color: colorMode === 'dark' ? palette.gray[100] : palette.black,
+                bg: colorMode === 'dark' ? palette.black : palette.gray[100],
                 lineHeight: 'base',
             },
         }),
