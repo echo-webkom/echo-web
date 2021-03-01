@@ -1,57 +1,34 @@
 import React from 'react';
 
-import { GetServerSideProps } from 'next';
-import PostAPI from '../../lib/api/post';
-import { Author, Post } from '../../lib/types';
+import { GetStaticProps } from 'next';
+import { PostAPI } from '../../lib/api';
+import { Post } from '../../lib/types';
 import Layout from '../../components/layout';
 import PostList from '../../components/post-list';
 
-const PostCollectionPage = ({ posts, totalPosts }: { posts: Array<Post>; totalPosts: number }): JSX.Element => {
+const PostCollectionPage = ({ posts }: { posts: Array<Post> }): JSX.Element => {
     return (
         <Layout>
-            <PostList postCollection={posts} totalPosts={totalPosts} />
+            <PostList posts={posts} />
         </Layout>
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-    const page = parseInt(query.page as string, 10) || 1;
+export const getStaticProps: GetStaticProps = async () => {
+    const { posts } = await PostAPI.getPosts(0); // 0 for all posts
 
-    try {
-        const posts = await PostAPI.getPosts(page * 4);
-        const totalPosts = (await PostAPI.getTotalPosts()).data.data.postCollection.items.length;
+    if (posts) {
         return {
             props: {
-                posts: posts.data.data.postCollection.items
-                    .slice(page * 4 - 4, page * 4)
-                    .map(
-                        (post: {
-                            title: string;
-                            slug: string;
-                            body: string;
-                            sys: { firstPublishedAt: string };
-                            author: Author;
-                        }) => {
-                            return {
-                                title: post.title,
-                                slug: post.slug,
-                                body: post.body,
-                                publishedAt: post.sys.firstPublishedAt,
-                                author: post.author,
-                            };
-                        },
-                    ),
-                totalPosts,
-            },
-        };
-    } catch (error) {
-        return {
-            props: {
-                posts: [],
-                totalPosts: 0,
+                posts,
             },
         };
     }
+    return {
+        props: {
+            posts: [],
+        },
+    };
 };
 
 export default PostCollectionPage;
