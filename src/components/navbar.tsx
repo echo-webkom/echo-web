@@ -3,6 +3,8 @@ import NextLink from 'next/link';
 import { VscColorMode } from 'react-icons/vsc';
 import {
     Center,
+    Box,
+    Grid,
     Text,
     Flex,
     IconButton,
@@ -19,7 +21,9 @@ import {
 const NavLink = ({ href, text }: { href: string; text: string }) => {
     return (
         <Link as={NextLink} href={href}>
-            <Text cursor="pointer">{text}</Text>
+            <Text cursor="pointer" fontSize={{ sm: 'sm', md: 'md', lg: 'lg', xl: '2xl' }}>
+                {text}
+            </Text>
         </Link>
     );
 };
@@ -35,6 +39,7 @@ const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
         justifyContent="space-between"
         textAlign="end"
         alignItems="flex-end"
+        pl={{ lg: '0.5rem', xl: '2rem' }}
     >
         <NavLink text="Hjem" href="/" />
         <NavLink text="For Studenter" href="/for-studenter" />
@@ -64,11 +69,11 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
 
     return (
         <>
-            <Center data-testid="navbar-standard">
-                <Flex display={{ base: 'none', sm: 'flex' }} align="center" justify="space-between" w="480px">
+            <Box data-testid="navbar-standard" flex="2 1 auto">
+                <Flex display={['none', null, null, 'flex']} align="center" justify="space-between" w="full">
                     <Nav toggleColorMode={toggleColorMode} />
                 </Flex>
-            </Center>
+            </Box>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 <DrawerOverlay>
                     <DrawerContent>
