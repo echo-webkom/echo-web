@@ -6,8 +6,8 @@ import NavBar from './navbar';
 
 const imgLogo = '/echo-logo-black.svg';
 const imgLogoWhite = '/echo-logo-white.svg';
-const imgLogoText = '/echo-logo-very-wide-text-only.png';
-const imgLogoTextWhite = '/echo-logo-very-wide-text-only-white.png';
+const imgLogoText = '/echo-logo-very-wide.png';
+const imgLogoTextWhite = '/echo-logo-very-wide-white.png';
 
 const HeaderLogo = ({
     logoImg,
@@ -21,21 +21,9 @@ const HeaderLogo = ({
     bg: string;
 }) => {
     return (
-        <Box
-            position="relative"
-            px="2.5rem"
-            py="1rem"
-            bg={bg}
-            shadow="lg"
-            align="center"
-            wrap="nowrap"
-            minWidth="300px"
-            minHeight="100px"
-            w="300px"
-            h="100px"
-        >
-            <Img src={logoImg} alt="logo" float="left" w="40%" maxHeight="100%" />
-            <Img src={textImg} alt="logo-text" float="left" w="60%" maxHeight="100%" />
+        <Box maxW="300px" position="relative" p="1em" bg={bg} shadow="lg" align="center" wrap="nowrap">
+            <Img src={logoImg} alt="logo" float="left" maxHeight="100%" w="90px" h="90px" display={['block', 'none']} />
+            <Img src={textImg} alt="logo-text" float="left" maxHeight="100%" display={['none', 'block']} />
             {messageText && (
                 <Text
                     bg="purple.400"
@@ -65,24 +53,25 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
-        <Box mb="1rem" pb="1rem" borderBottom="1px" borderColor={borderBg} data-testid="header-standard">
-            <Flex w="70%" h="120px" m="auto" justify="space-between" alignItems="flex-end">
-                <HeaderLogo bg={bg} messageText="" logoImg={logo} textImg={logoText} />
-                <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
-                <IconButton
-                    variant="unstyled"
-                    ref={menuButtonRef}
-                    onClick={onOpen}
-                    display={['block', null, null, 'none']}
-                    aria-label="show navbar"
-                    icon={
-                        <Center>
-                            <IoIosMenu size="2.5em" />
-                        </Center>
-                    }
-                    border="2px"
-                />
-            </Flex>
+        <Box my="1rem" pb="1rem" borderBottom="1px" borderColor={borderBg} data-testid="header-standard">
+            <Center>
+                <Flex w={['90%', '70%']} h="120px" justify="space-between" alignItems="flex-end">
+                    <HeaderLogo bg={bg} messageText="" logoImg={logo} textImg={logoText} />
+                    <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
+                    <IconButton
+                        variant="unstyled"
+                        ref={menuButtonRef}
+                        onClick={onOpen}
+                        display={['block', null, null, 'none']}
+                        aria-label="show navbar"
+                        icon={
+                            <Center>
+                                <IoIosMenu size="2.5em" />
+                            </Center>
+                        }
+                    />
+                </Flex>
+            </Center>
         </Box>
     );
 };

@@ -16,12 +16,13 @@ import {
     DrawerCloseButton,
     useColorMode,
     Link,
+    Stack,
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text }: { href: string; text: string }) => {
     return (
         <Link as={NextLink} href={href}>
-            <Text cursor="pointer" fontSize={{ sm: 'sm', md: 'md', lg: 'lg', xl: '2xl' }}>
+            <Text cursor="pointer" transition="ease-in-out 0.2s" _hover={{ textDecoration: 'underline' }}>
                 {text}
             </Text>
         </Link>
@@ -34,8 +35,9 @@ interface NavProps {
 
 const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
     <Flex
+        flexDirection={['column', null, null, 'row']}
         w="100%"
-        fontSize={{ sm: 'sm', lg: 'lg' }}
+        fontSize={['3xl', null, null, 'lg', '2xl']}
         justifyContent="space-between"
         textAlign="end"
         alignItems="flex-end"
