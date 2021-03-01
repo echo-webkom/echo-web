@@ -11,8 +11,9 @@ import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Post } from '../../lib';
-import PostAPI from '../../lib/api/post';
+import { Post } from '../../lib/types';
+
+import { PostAPI } from '../../lib/api';
 
 const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
     const router = useRouter();

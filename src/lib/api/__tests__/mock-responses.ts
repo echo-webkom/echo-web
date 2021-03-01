@@ -1,4 +1,4 @@
-const Queries = {
+const mockResponses = {
     nEvents: {
         data: {
             eventCollection: {
@@ -185,4 +185,4 @@ const Queries = {
     },
 };
 
-export default Queries;
+export default mockResponses;
