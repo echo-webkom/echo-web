@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, SimpleGrid, Center, Text, Flex, Image, useColorModeValue } from '@chakra-ui/react';
+import { LinkBox, LinkOverlay, Box, SimpleGrid, Center, Text, Flex, Image, useColorModeValue } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
+import NextLink from 'next/link';
 import { ImLocation, ImTicket } from 'react-icons/im';
 import { format } from 'date-fns';
 
@@ -18,12 +19,14 @@ const EventBox = ({ event }: { event: Event }): JSX.Element => {
     const boxBg = useColorModeValue('gray.100', 'gray.900');
 
     return (
-        <Box borderWidth="1px" borderRadius="0.75em" pl="6" pr="6" bg={boxBg} padding="2em">
+        <LinkBox borderWidth="1px" borderRadius="0.75em" pl="6" pr="6" bg={boxBg} padding="2em">
             <SimpleGrid columns={2}>
                 <SimpleGrid rows={2}>
                     <Flex>
                         <Text fontSize="4xl" fontWeight="bold">
-                            {event.title}
+                            <NextLink href={`events/${event.slug}`} passHref>
+                                <LinkOverlay>{event.title}</LinkOverlay>
+                            </NextLink>
                         </Text>
                     </Flex>
                     <SimpleGrid rows={3}>
@@ -47,7 +50,7 @@ const EventBox = ({ event }: { event: Event }): JSX.Element => {
                 </SimpleGrid>
                 <Image width="300px" src={event.imageUrl} alt="Bilde" />
             </SimpleGrid>
-        </Box>
+        </LinkBox>
     );
 };
 
