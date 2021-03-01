@@ -1,15 +1,15 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-        
+
 import Layout from '../components/layout';
 import SEO from '../components/seo';
 import EventBlock from '../components/event-block';
 import PostBlock from '../components/post-block';
 import { Event, Post } from '../lib/types';
 import EventAPI from '../lib/api/event';
-import PostAPI from '../lib/apo/post';
+import PostAPI from '../lib/api/post';
 
-const IndexPage = ({ events }: { events: Array<Event> }, { posts }: { post: Array<Post> } ): JSX.Element => (
+const IndexPage = ({ events, posts }: { events: Array<Event>; posts: Array<Post> }): JSX.Element => (
     <Layout>
         <SEO title="Home" />
         <PostBlock posts={posts} />
@@ -29,11 +29,12 @@ export const getStaticProps: GetStaticProps = async () => {
             },
         };
     } catch (error) {
-      return {
-        props: {
-            posts: [],
-            events: [],
-        }
+        return {
+            props: {
+                posts: [],
+                events: [],
+            },
+        };
     }
 };
 

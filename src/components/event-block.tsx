@@ -4,10 +4,17 @@ import { BiCalendar } from 'react-icons/bi';
 import { ImLocation, ImTicket } from 'react-icons/im';
 import { format } from 'date-fns';
 
-import { Event } from '../lib';
+import { Event } from '../lib/types';
 
-const EventBox = ({ event }: Event): JSX.Element => {
-    const publishedAtStr = format(new Date(event.publishedAt), 'd. MMMM yyyy');
+const publishedAtStr = (publishedAt: string): string => {
+    try {
+        return format(new Date(publishedAt), 'PPP');
+    } catch (error) {
+        return 'Ugyldig dato';
+    }
+};
+
+const EventBox = ({ event }: { event: Event }): JSX.Element => {
     const boxBg = useColorModeValue('gray.100', 'gray.900');
 
     return (
@@ -22,7 +29,7 @@ const EventBox = ({ event }: Event): JSX.Element => {
                     <SimpleGrid rows={3}>
                         <Flex pt="0.5em">
                             <BiCalendar size="2em" />
-                            <Text pl="0.5em">{publishedAtStr}</Text>
+                            <Text pl="0.5em">{publishedAtStr(event.publishedAt)}</Text>
                         </Flex>
                         <Flex pt="0.5em">
                             <ImLocation size="2em" />
@@ -47,11 +54,11 @@ const EventBox = ({ event }: Event): JSX.Element => {
 const EventBlock = ({ events }: { events: Array<Event> }): JSX.Element => {
     return (
         <Center>
-            <Box pt="100px" w="900px" data-testid="events">
+            <Box pt="100px" w="900px" data-testid="event-block">
                 <Box border="5px">
                     <SimpleGrid p="50px" spacing={10}>
                         {events.map((event: Event) => {
-                            return <EventBox event={event} />;
+                            return <EventBox key={event.slug} event={event} />;
                         })}
                     </SimpleGrid>
                 </Box>
