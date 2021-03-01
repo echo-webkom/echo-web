@@ -67,8 +67,8 @@ const Footer = (): JSX.Element => {
             </SimpleGrid>
             <Image display={['none', null, 'block']} htmlWidth="300px" fit="contain" src={echoLogoWhite} />
             <SimpleGrid columns={1} spacing="3" fontSize="lg" maxWidth="170px" textAlign="center">
-                <Link href="mailto:echo.uib.no">
-                    <Text color={color}>echo@uib.no</Text>
+                <Link href="mailto:echo@uib.no">
+                    <Text color={color}>echo(at)uib.no</Text>
                 </Link>
                 <Text color={color}>Thormøhlensgate 55</Text>
                 <Text color={color}>5069 Bergen</Text>

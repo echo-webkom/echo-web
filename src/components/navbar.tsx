@@ -4,8 +4,6 @@ import { VscColorMode } from 'react-icons/vsc';
 import {
     Center,
     Box,
-    Grid,
-    Text,
     Flex,
     IconButton,
     Drawer,
@@ -16,16 +14,17 @@ import {
     DrawerCloseButton,
     useColorMode,
     Link,
-    Stack,
+    LinkBox,
+    LinkOverlay,
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text }: { href: string; text: string }) => {
     return (
-        <Link as={NextLink} href={href}>
-            <Text cursor="pointer" transition="ease-in-out 0.2s" _hover={{ textDecoration: 'underline' }}>
-                {text}
-            </Text>
-        </Link>
+        <LinkBox>
+            <NextLink href={href} passHref>
+                <LinkOverlay as={Link}>{text}</LinkOverlay>
+            </NextLink>
+        </LinkBox>
     );
 };
 

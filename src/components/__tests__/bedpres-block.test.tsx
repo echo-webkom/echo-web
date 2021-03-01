@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from './testing-utils';
-import EventBlock from '../event-block';
+import BedpresBlock from '../bedpres-block';
 import { Event } from '../../lib/types/event';
 
 const testEvents: Array<Event> = [
@@ -45,7 +45,7 @@ const testEvents: Array<Event> = [
 
 describe('EventBlock', () => {
     test('renders without crashing', () => {
-        render(<EventBlock events={testEvents} />);
+        render(<BedpresBlock events={testEvents} />);
         expect(screen.getByTestId(/event-block/i)).toBeInTheDocument();
     });
 });
