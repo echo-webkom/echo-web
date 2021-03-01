@@ -1,6 +1,4 @@
-# Om oss
-
-## echo – Fagutvalget for informatikk
+# echo – Fagutvalget for informatikk
 
 echo består av 12 demokratisk valgte studenter. Vi er fagutvalget/linjeforeningen for informatikk ved Universitetet i Bergen, men har også et overordnet ansvar for studentsaker som angår det faglige ved instituttet. Vi jobber utelukkende med å gjøre studiehverdagen for oss informatikere bedre og er studentenes stemme opp mot instituttet, fakultetet og arbeidsmarkedet.
 
@@ -20,4 +18,4 @@ echo gjennomfører valg på slutten av hvert vårsemester. Her anbefaler vi alle
 
 Student hos oss? Meld deg inn i vår facebookside for å få med deg hva som skjer!
 
-Alle spørsmål kan rettes direkte til en av våre representanter eller på mail til e……@uib.no (klikk for å se e-post adresse).
+Alle spørsmål kan rettes direkte til en av våre representanter eller på mail til [echo(at)uib.no](mailto:echo@uib.no)
