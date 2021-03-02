@@ -71,7 +71,7 @@ const Footer = (): JSX.Element => {
                     <Text color={color}>echo(at)uib.no</Text>
                 </Link>
                 <Text color={color}>Thormøhlensgate 55</Text>
-                <Text color={color}>5069 Bergen</Text>
+                <Text color={color}>5008 Bergen</Text>
                 <Text color={color}>Org nr: 000 000 000</Text>
             </SimpleGrid>
         </SimpleGrid>

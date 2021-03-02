@@ -11,9 +11,5 @@ describe('Header', () => {
 
     test('renders correctly', () => {
         render(<Header />);
-        expect(screen.getByText(/Hjem/i)).toBeInTheDocument();
-        expect(screen.getByText(/Organisasjon/i)).toBeInTheDocument();
-        expect(screen.getByText(/Bedrift/i)).toBeInTheDocument();
-        expect(screen.getByText(/Om oss/i)).toBeInTheDocument();
     });
 });

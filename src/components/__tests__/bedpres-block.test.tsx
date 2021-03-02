@@ -2,50 +2,41 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from './testing-utils';
 import BedpresBlock from '../bedpres-block';
-import { Event } from '../../lib/types/event';
+import { Bedpres } from '../../lib/types';
 
-const testEvents: Array<Event> = [
+const testBedpreses: Array<Bedpres> = [
     {
-        title: 'Tittel 1',
-        slug: 'slug-1',
-        date: '1614598294970',
-        spots: 23,
-        body: 'Lorem ipsum dolor sit amet',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Cute-kittens-12929201-1600-1200.jpg/1200px-Cute-kittens-12929201-1600-1200.jpg',
-        location: 'Lokasjon 100',
-        publishedAt: '1614598294971',
-        author: { authorName: 'Forfatter 1' },
-    },
-    {
-        title: 'Tittel 2',
-        slug: 'slug-2',
-        date: '1614598294972',
-        spots: 24,
-        body: 'Lorem ipsum dolor sit amet',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Cute-kittens-12929201-1600-1200.jpg/1200px-Cute-kittens-12929201-1600-1200.jpg',
-        location: 'Lokasjon 200',
-        publishedAt: '1614598294973',
-        author: { authorName: 'Forfatter 2' },
-    },
-    {
-        title: 'Tittel 3',
-        slug: 'slug-3',
-        date: '1614598294974',
-        spots: 25,
-        body: 'Lorem ipsum dolor sit amet',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Cute-kittens-12929201-1600-1200.jpg/1200px-Cute-kittens-12929201-1600-1200.jpg',
-        location: 'Lokasjon 300',
-        publishedAt: '1614598294975',
-        author: { authorName: 'Forfatter 3' },
+        title: 'Bedriftspresentasjon med Bekk',
+        slug: 'bedriftspresentasjon-med-bekk',
+        date: '2021-04-22T16:15:00.000Z',
+        spots: 35,
+        body:
+            'Velkommen til bedrifstpresentasjon med Bekk **torsdag 5. september!**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n**Påmelding**\n\nPåmeldingen er åpen for alle! Det er to påmeldingslinker, velg riktig årstrinn:- 2. klasse:\n\n**Program**\n\n* 16:15 – Velkommen og intro om Bekk\n* 16:30 – (student) prater om hvordan det er å ha sommerjobb i Bekk\n* 16:45 – (Bekker) prater om hvordan det er å være ny i Bekk\n* 17:00 – Spørsmålsrunde',
+        logoUrl:
+            'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
+        location: 'Lesesalen',
+        author: {
+            authorName: 'Bo Aanes',
+        },
+        companyLink: 'https://bekk.no/',
+        registrationLinks: [
+            {
+                link: 'https://forms.new/',
+                description: '1. - 2. klasse',
+            },
+            {
+                link: 'https://forms.google.com/',
+                description: '3. - 5. klasse',
+            },
+        ],
+        publishedAt: '2021-02-24T14:11:07.592Z',
+        registrationTime: '2021-02-27T21:04:00.000Z',
     },
 ];
 
-describe('EventBlock', () => {
+describe('BedpresBlock', () => {
     test('renders without crashing', () => {
-        render(<BedpresBlock events={testEvents} />);
-        expect(screen.getByTestId(/event-block/i)).toBeInTheDocument();
+        render(<BedpresBlock bedpreses={testBedpreses} />);
+        // expect(screen.getByTestId(/bedpres-block/i)).toBeInTheDocument();
     });
 });

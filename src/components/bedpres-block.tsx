@@ -50,7 +50,7 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
 
 const BedpresBlock = ({ bedpreses }: { bedpreses: Array<Bedpres> }): JSX.Element => {
     return (
-        <ContentBox data-testid="event-block">
+        <ContentBox data-testid="bedpres-block">
             <Heading mb=".5em">Bedriftspresentasjoner</Heading>
             <Box>
                 <Stack spacing={5} divider={<StackDivider />}>
