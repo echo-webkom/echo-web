@@ -33,10 +33,10 @@ import ContentBox from '../../components/content-box';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
-    const formattedRegDate = moment(bedpres.registrationTime).format('DD. MMM YYYY, HH:mm');
 
+    const formattedRegDate = bedpres ? moment(bedpres.registrationTime).format('DD. MMM YYYY, HH:mm') : null;
     const time =
-        moment(bedpres.registrationTime).valueOf() - moment().valueOf() < 0
+        !bedpres || moment(bedpres.registrationTime).valueOf() - moment().valueOf() < 0
             ? 1000000
             : moment(bedpres.registrationTime).valueOf() - moment().valueOf();
 
