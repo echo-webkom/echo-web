@@ -34,6 +34,7 @@ interface NavProps {
 
 const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
     <Flex
+        display="none"
         flexDirection={['column', null, null, 'row']}
         w="100%"
         fontSize={['3xl', null, null, 'lg', '2xl']}
