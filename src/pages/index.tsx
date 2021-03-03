@@ -1,30 +1,54 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
 
+import { SimpleGrid, Stack, Img, Heading, Divider, Text, useColorModeValue } from '@chakra-ui/react';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import EventBlock from '../components/event-block';
+import BedpresBlock from '../components/bedpres-block';
 import PostBlock from '../components/post-block';
-import { Event, Post } from '../lib/types';
-import EventAPI from '../lib/api/event';
-import PostAPI from '../lib/api/post';
+import { Bedpres, Post } from '../lib/types';
+import { PostAPI, BedpresAPI } from '../lib/api';
+import ContentBox from '../components/content-box';
 
-const IndexPage = ({ events, posts }: { events: Array<Event>; posts: Array<Post> }): JSX.Element => (
-    <Layout>
-        <SEO title="Home" />
-        <PostBlock posts={posts} />
-        <EventBlock events={events} />
-    </Layout>
-);
+const echoLogoDark = '/echo-logo-very-wide-text-only.png';
+const echoLogoLight = '/echo-logo-very-wide-text-only-white.png';
+const bekkLogo = '/bekk.png';
+
+const IndexPage = ({ bedpreses, posts }: { bedpreses: Array<Bedpres>; posts: Array<Post> }): JSX.Element => {
+    const echoLogo = useColorModeValue(echoLogoDark, echoLogoLight);
+    const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
+
+    return (
+        <Layout>
+            <SEO title="Home" />
+            <SimpleGrid columns={[1, null, 2]} spacing="5" mb="5">
+                <Stack spacing="5">
+                    <ContentBox>
+                        <Heading>Hovedsamarbeidspartner</Heading>
+                        <Divider mb="1em" />
+                        <Img src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
+                    </ContentBox>
+                    <ContentBox>
+                        <Heading>Arrangementer</Heading>
+                        <Divider mb="3" />
+                        <Text>Kommer snart!</Text>
+                    </ContentBox>
+                </Stack>
+                <BedpresBlock bedpreses={bedpreses} />
+            </SimpleGrid>
+            <PostBlock posts={posts} />
+        </Layout>
+    );
+};
 
 export const getStaticProps: GetStaticProps = async () => {
     try {
-        const { events } = await EventAPI.getEvents(3);
+        const { bedpreses } = await BedpresAPI.getBedpreses(3);
         const { posts } = await PostAPI.getPosts(2);
 
         return {
             props: {
-                events,
+                bedpreses,
                 posts,
             },
         };
@@ -32,7 +56,7 @@ export const getStaticProps: GetStaticProps = async () => {
         return {
             props: {
                 posts: [],
-                events: [],
+                bedpreses: [],
             },
         };
     }

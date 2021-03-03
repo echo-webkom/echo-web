@@ -97,9 +97,9 @@ Informatikk sitt bryggelag er et samarbeidsprosjekt mellom echo og Institutt for
 
 ### Kontaktinformasjon
 
-Gnist: gnist@echo.uib.no
-Bedkom: bedkom@echo.uib.no
-Webkom: webkom@echo.uib.no
-Tilde:  tilde@echo.uib.no
-Makerspace: makerspace@echo.uib.no
-Bryggelaget: bryggelaget@echo.uib.no
+- Gnist: [gnist(at)echo.uib.no](gnist@echo.uib.no)
+- Bedkom: [bedkom(at)echo.uib.no](bedkom@echo.uib.no)
+- Webkom: [webkom(at)echo.uib.no](webkom@echo.uib.no)
+- Tilde:  [tilde(at)echo.uib.no](tilde@echo.uib.no)
+- Makerspace: [makerspace(at)echo.uib.no](makerspace@echo.uib.no)
+- Bryggelaget: [bryggelaget(at)echo.uib.no](bryggelaget@echo.uib.no)

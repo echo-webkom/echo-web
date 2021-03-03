@@ -2,7 +2,7 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Button, Grid, GridItem, Image, Heading, useColorModeValue } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Image, Heading } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
@@ -14,12 +14,10 @@ import MapMarkdownChakra from '../../markdown';
 import { Event } from '../../lib/types';
 
 import { EventAPI } from '../../lib/api';
+import ContentBox from '../../components/content-box';
 
 const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Element => {
     const router = useRouter();
-    const boxBg = useColorModeValue('gray.100', 'gray.900');
-    const buttonBg = useColorModeValue('gray.200', 'gray.800');
-    const buttonHoverBg = useColorModeValue('gray.300', 'gray.700');
 
     return (
         <Layout>
@@ -31,18 +29,8 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                     <SEO title={event.title} />
                     <Box>
                         <Grid templateRows="repeat(2, 1fr)" templateColumns="repeat(4, minmax(0, 1fr))" gap="4">
-                            <GridItem
-                                colSpan={1}
-                                borderWidth="1px"
-                                borderRadius="0.75em"
-                                overflow="hidden"
-                                pl="6"
-                                pr="6"
-                                pt="6"
-                                pb="6"
-                                bg={boxBg}
-                            >
-                                <Grid templateColumns="min-content auto" gap="3" alignItems="center" mb="6">
+                            <GridItem as={ContentBox} colSpan={1}>
+                                <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <ImTicket size="2em" />
                                     <Text>{event.spots} plasser</Text>
                                     <BiCalendar size="2em" />
@@ -50,28 +38,19 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                     <ImLocation size="2em" />
                                     <Text>{event.location}</Text>
                                 </Grid>
-                                <Button
-                                    w="100%"
-                                    h="4em"
-                                    bg={buttonBg}
-                                    _hover={{ bg: buttonHoverBg }}
-                                    borderRadius="0.75em"
-                                >
-                                    <Heading>PÅMELDING</Heading>
-                                </Button>
                             </GridItem>
                             <GridItem colStart={2} colSpan={3} rowSpan={2}>
-                                <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" pl="6" pr="6" bg={boxBg}>
+                                <ContentBox>
                                     <Heading mb="0.5em" mt="0.5em">
                                         {event.title}
                                     </Heading>
                                     <Markdown options={MapMarkdownChakra}>{event.body}</Markdown>
-                                </Box>
+                                </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>
-                                <Box borderWidth="1px" borderRadius="0.75em" overflow="hidden" bg="gray.900">
+                                <ContentBox noPadding>
                                     <Image src={event.imageUrl} alt="logo" />
-                                </Box>
+                                </ContentBox>
                             </GridItem>
                         </Grid>
                     </Box>
