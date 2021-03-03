@@ -28,14 +28,19 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
                 <Flex verticalAlign="middle">
                     <Img
                         htmlWidth="120px"
+                        htmlHeight="120px"
                         objectFit="cover"
                         borderRadius="100%"
                         src={bedpres.logoUrl}
                         alt="firmalogo"
                     />
-                    <Center ml="1em">
-                        <NextLink href={`bedpres/${bedpres.slug}`} passHref>
-                            <LinkOverlay>{bedpres.title}</LinkOverlay>
+                    <Center ml="2em">
+                        <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
+                            <LinkOverlay>
+                                <Heading fontWeight="regular" size="lg">
+                                    {bedpres.title}
+                                </Heading>
+                            </LinkOverlay>
                         </NextLink>
                     </Center>
                     <Spacer />

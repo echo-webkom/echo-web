@@ -24,9 +24,8 @@ const IndexPage = ({ bedpreses, posts }: { bedpreses: Array<Bedpres>; posts: Arr
             <SimpleGrid columns={[1, null, 2]} spacing="5" mb="5">
                 <Stack spacing="5">
                     <ContentBox>
-                        <Img src={echoLogo} htmlWidth="300px" />
-                    </ContentBox>
-                    <ContentBox>
+                        <Heading>Hovedsamarbeidspartner</Heading>
+                        <Divider mb="1em" />
                         <Img src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
                     </ContentBox>
                     <ContentBox>
