@@ -1,4 +1,4 @@
-public/
+.cache
 
 # Logs
 logs
@@ -56,9 +56,8 @@ typings/
 # dotenv environment variable files
 .env*
 
-# gatsby files
-.cache/
-public
+# next
+.next
 
 # Mac files
 .DS_Store
@@ -69,3 +68,6 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+#vs code
+.vscode/

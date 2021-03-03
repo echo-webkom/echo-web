@@ -1,6 +1,6 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
-import { useStaticQuery, graphql } from 'gatsby';
+import Head from 'next/head';
+import config from '../config';
 
 interface Props {
     description?: string;
@@ -8,55 +8,25 @@ interface Props {
 }
 
 function SEO({ description, title }: Props): JSX.Element {
-    const { site } = useStaticQuery(
-        graphql`
-            query {
-                site {
-                    siteMetadata {
-                        title
-                        description
-                        author
-                    }
-                }
-            }
-        `,
-    );
-
-    const metaDescription = description || site.siteMetadata.description;
+    const metaDescription = description || config.description;
+    const defaultTitle = config.title;
 
     return (
-        <Helmet
-            htmlAttributes={{
-                lang: 'no',
-            }}
-            title={title}
-            titleTemplate={`%s | ${site.title}`}
-            defaultTitle="echo - Fagutvalget for informatikk"
-            meta={[
-                {
-                    name: `description`,
-                    content: metaDescription,
-                },
-                {
-                    property: `og:title`,
-                    content: title,
-                },
-                {
-                    property: `og:description`,
-                    content: metaDescription,
-                },
-                {
-                    property: `og:type`,
-                    content: `website`,
-                },
-            ]}
-        />
+        <Head>
+            <title>{`${title} | ${defaultTitle}`}</title>
+            <meta name="robots" content="follow, index" />
+            <meta content={metaDescription} name="description" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content={title} />
+            <meta property="og:description" content={metaDescription} />
+            <meta property="og:site_name" content={defaultTitle} />
+        </Head>
     );
 }
 
 SEO.defaultProps = {
-    description: 'echo - Fagutvalget for informatikk',
-    title: 'echo - Fagutvalget for informatikk',
+    description: config.description,
+    title: config.title,
 };
 
 export default SEO;
