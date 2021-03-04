@@ -2,7 +2,7 @@
     "name": "echo",
     "private": true,
     "description": "echo - Fagutvalget for informatikk",
-    "version": "0.2.0",
+    "version": "0.1.0",
     "author": "echo Webkom",
     "dependencies": {
         "@chakra-ui/react": "^1.2.1",
