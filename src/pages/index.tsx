@@ -10,12 +10,19 @@ import { Bedpres, Post } from '../lib/types';
 import { PostAPI, BedpresAPI } from '../lib/api';
 import ContentBox from '../components/content-box';
 
-const echoLogoDark = '/echo-logo-very-wide-text-only.png';
-const echoLogoLight = '/echo-logo-very-wide-text-only-white.png';
 const bekkLogo = '/bekk.png';
 
-const IndexPage = ({ bedpreses, posts }: { bedpreses: Array<Bedpres>; posts: Array<Post> }): JSX.Element => {
-    const echoLogo = useColorModeValue(echoLogoDark, echoLogoLight);
+const IndexPage = ({
+    bedpreses,
+    bedpresError,
+    posts,
+    postsError,
+}: {
+    bedpreses: Array<Bedpres>;
+    bedpresError: string;
+    posts: Array<Post>;
+    postsError: string;
+}): JSX.Element => {
     const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
 
     return (
@@ -34,32 +41,25 @@ const IndexPage = ({ bedpreses, posts }: { bedpreses: Array<Bedpres>; posts: Arr
                         <Text>Kommer snart!</Text>
                     </ContentBox>
                 </Stack>
-                <BedpresBlock bedpreses={bedpreses} />
+                <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
             </SimpleGrid>
-            <PostBlock posts={posts} />
+            <PostBlock posts={posts} error={postsError} />
         </Layout>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    try {
-        const { bedpreses } = await BedpresAPI.getBedpreses(3);
-        const { posts } = await PostAPI.getPosts(2);
+    const bedpresesResponse = await BedpresAPI.getBedpreses(3);
+    const postsResponse = await PostAPI.getPosts(2);
 
-        return {
-            props: {
-                bedpreses,
-                posts,
-            },
-        };
-    } catch (error) {
-        return {
-            props: {
-                posts: [],
-                bedpreses: [],
-            },
-        };
-    }
+    return {
+        props: {
+            bedpreses: bedpresesResponse.bedpreses,
+            bedpresError: bedpresesResponse.error,
+            posts: postsResponse.posts,
+            postsError: postsResponse.error,
+        },
+    };
 };
 
 export default IndexPage;

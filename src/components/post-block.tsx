@@ -45,16 +45,19 @@ const PostCard = ({ post }: { post: Post }): JSX.Element => {
     );
 };
 
-const PostBlock = ({ posts }: { posts: Array<Post> }): JSX.Element => {
+const PostBlock = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     return (
         <Center>
-            <SimpleGrid w="90%" gap="20px" columns={{ sm: 4, md: 8, xl: 12 }} overflow="hidden" pb="2rem">
-                {posts.map((post) => (
-                    <GridItem key={post.slug} colSpan={4}>
-                        <PostCard post={post} />
-                    </GridItem>
-                ))}
-            </SimpleGrid>
+            {posts && !error && (
+                <SimpleGrid w="90%" gap="20px" columns={{ sm: 4, md: 8, xl: 12 }} overflow="hidden" pb="2rem">
+                    {posts.map((post) => (
+                        <GridItem key={post.slug} colSpan={4}>
+                            <PostCard post={post} />
+                        </GridItem>
+                    ))}
+                </SimpleGrid>
+            )}
+            {!posts && error && <Text>{error}</Text>}
         </Center>
     );
 };
