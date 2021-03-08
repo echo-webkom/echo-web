@@ -1,5 +1,4 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
 import { render } from './testing-utils';
 import BedpresBlock from '../bedpres-block';
 import { Bedpres } from '../../lib/types';
