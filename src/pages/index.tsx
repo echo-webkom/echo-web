@@ -29,7 +29,7 @@ const IndexPage = ({
         <Layout>
             <SEO title="Home" />
             <SimpleGrid columns={[1, null, 2]} spacing="5" mb="5">
-                <Stack spacing="5">
+                <Stack minW="0" spacing="5">
                     <ContentBox>
                         <Heading>Hovedsamarbeidspartner</Heading>
                         <Divider mb="1em" />

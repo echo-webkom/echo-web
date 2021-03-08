@@ -12,6 +12,7 @@ import {
     Heading,
     Spacer,
     useColorModeValue,
+    Avatar,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
@@ -26,18 +27,11 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
         <LinkBox>
             <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
-                    <Img
-                        htmlWidth="120px"
-                        htmlHeight="120px"
-                        objectFit="cover"
-                        borderRadius="100%"
-                        src={bedpres.logoUrl}
-                        alt="firmalogo"
-                    />
+                    <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>
-                                <Heading fontWeight="regular" size="lg">
+                                <Heading display={['none', 'block']} fontWeight="regular" size="lg">
                                     {bedpres.title}
                                 </Heading>
                             </LinkOverlay>
