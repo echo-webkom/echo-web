@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Post } from '../lib/types';
 import PostPreview from './post-preview';
 
-const PostList = ({ posts }: { posts: Array<Post> }): JSX.Element => {
+const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -13,7 +13,8 @@ const PostList = ({ posts }: { posts: Array<Post> }): JSX.Element => {
     return (
         <>
             <Center>
-                {posts.length === 0 && <Text>No posts found</Text>}
+                {posts.length === 0 && !error && <Text>No posts found</Text>}
+                {posts.length === 0 && error && <Text>{error}</Text>}
                 {posts.length !== 0 && (
                     <VStack className="post-list" divider={<StackDivider />} spacing={8} align="stretch" width="50%">
                         {posts.slice(index, index + 4).map((post: Post) => {
