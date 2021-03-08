@@ -8,7 +8,6 @@ import {
     Flex,
     Stack,
     StackDivider,
-    Img,
     Heading,
     Spacer,
     useColorModeValue,
