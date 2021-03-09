@@ -113,8 +113,8 @@ const GET_BEDPRES_PATHS = `
 `;
 
 const GET_N_BEDPRESES = `
-    query ($n: Int!) {
-        bedpresCollection(limit: $n, order: date_ASC) {
+    query ($n: Int!, $date: DateTime) {
+        bedpresCollection(limit: $n, order: date_ASC, where: { date_gt: $date}) {
             items {
                 title
                 slug
