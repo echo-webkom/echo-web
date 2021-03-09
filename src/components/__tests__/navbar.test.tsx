@@ -1,12 +1,22 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
 import { render } from './testing-utils';
 import NavBar from '../navbar';
 
 describe('NavBar', () => {
     test('renders without crashing', () => {
         const btnRef = React.createRef<HTMLButtonElement>();
-        render(<NavBar isOpen={false} onClose={() => {}} btnRef={btnRef} />);
-        expect(screen.getByTestId(/navbar-standard/i)).toBeInTheDocument();
+        const { getByTestId } = render(<NavBar isOpen={false} onClose={() => {}} btnRef={btnRef} />);
+        expect(getByTestId(/navbar-standard/i)).toBeInTheDocument();
+    });
+
+    test('renders correctly', () => {
+        const btnRef = React.createRef<HTMLButtonElement>();
+        const { getByTestId } = render(<NavBar isOpen={false} onClose={() => {}} btnRef={btnRef} />);
+        // navbar buttons exist
+        expect(getByTestId(/hjem/i)).toBeInTheDocument();
+        expect(getByTestId(/for-studenter/i)).toBeInTheDocument();
+        expect(getByTestId(/for-bedrifter/i)).toBeInTheDocument();
+        expect(getByTestId(/om-oss/i)).toBeInTheDocument();
+        expect(getByTestId(/button-colormode/i)).toBeInTheDocument();
     });
 });

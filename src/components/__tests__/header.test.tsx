@@ -1,15 +1,28 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from './testing-utils';
 import Header from '../header';
 
 describe('Header', () => {
     test('renders without crashing', () => {
-        render(<Header />);
-        expect(screen.getByTestId(/header-standard/i)).toBeInTheDocument();
+        const { getByTestId } = render(<Header />);
+        expect(getByTestId(/header-standard/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {
-        render(<Header />);
+        const { getByTestId } = render(<Header />);
+        expect(getByTestId(/header-logo/i)).toBeInTheDocument();
+        expect(getByTestId(/navbar-standard/i)).toBeInTheDocument();
+        expect(getByTestId(/drawer-button/i)).toBeInTheDocument();
+    });
+
+    test('drawer button opens a chakra drawer', () => {
+        const { getByTestId, getByText } = render(<Header />);
+        const drawerButton = getByTestId(/drawer-button/i);
+        userEvent.click(drawerButton);
+        // drawer exists in DOM
+        expect(getByTestId(/navbar-drawer/i)).toBeInTheDocument();
+        // Drawer Header exists
+        expect(getByText(/Navigasjon/i)).toBeInTheDocument();
     });
 });
