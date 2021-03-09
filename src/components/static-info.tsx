@@ -13,13 +13,15 @@ const StaticInfo = ({
     markdownFiles: Array<string>;
 }): JSX.Element => {
     return (
-        <Tabs orientation="vertical">
+        <Tabs isLazy orientation="vertical">
             <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                 <GridItem minW="0" maxW="100%" colSpan={1}>
                     <ContentBox>
                         <TabList>
                             {tabNames.map((tabName: string) => (
-                                <Tab>{tabName}</Tab>
+                                <Tab whiteSpace="normal" wordBreak="break-word" fontSize="xl">
+                                    {tabName}
+                                </Tab>
                             ))}
                         </TabList>
                     </ContentBox>
