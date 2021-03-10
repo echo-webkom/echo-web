@@ -1,17 +1,7 @@
 {
-    "extends": ["config:base"],
-    "packageRules": [
-        {
-            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-            "automerge": true
-        }
-    ],
-    "hostRules": [
-        {
-            "hostName": "github.com",
-            "concurrentRequestLimit": 2
-        }
-    ],
-    "prHourlyLimit": 0,
-    "stabilityDays": 3
+  "extends": [
+    "config:base"
+  ],
+  "labels": ["dependencies :handshake:"],
+  "prHourlyLimit": 0
 }
