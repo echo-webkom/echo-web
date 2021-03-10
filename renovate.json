@@ -6,5 +6,12 @@
             "automerge": true
         }
     ],
+    "hostRules": [
+        {
+            "hostName": "github.com",
+            "concurrentRequestLimit": 2
+        }
+    ],
+    "prHourlyLimit": 0,
     "stabilityDays": 3
 }
