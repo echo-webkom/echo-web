@@ -16,7 +16,7 @@
         "dotenv": "8.2.0",
         "framer-motion": "3.10.2",
         "graphql": "15.5.0",
-        "markdown-to-jsx": "7.1.1",
+        "markdown-to-jsx": "7.1.2",
         "moment": "2.29.1",
         "next": "10.0.8",
         "prop-types": "15.7.2",
