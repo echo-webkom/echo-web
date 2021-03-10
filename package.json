@@ -56,7 +56,7 @@
         "msw": "0.26.2",
         "prettier": "2.2.1",
         "typescript": "4.1.3",
-        "whatwg-fetch": "3.5.0"
+        "whatwg-fetch": "3.6.2"
     },
     "scripts": {
         "build": "next build",
