@@ -28,10 +28,10 @@ const IndexPage = ({
     return (
         <Layout>
             <SEO title="Home" />
-            <SimpleGrid columns={[1, null, 2]} spacing="5" mb="5">
-                <Stack spacing="5">
+            <SimpleGrid columns={[null, 1, null, 2]} spacing="5" mb="5">
+                <Stack minW="0" spacing="5">
                     <ContentBox>
-                        <Heading>Hovedsamarbeidspartner</Heading>
+                        <Heading sizes={['xs', 'md']}>Hovedsamarbeidspartner</Heading>
                         <Divider mb="1em" />
                         <Img src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
                     </ContentBox>

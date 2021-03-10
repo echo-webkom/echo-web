@@ -40,8 +40,8 @@ Statutter
 4. Allmøter skal arrangeres når Styret mener at det foreligger saker eller situasjoner som er viktige for instituttets studenter.
 
 5. Det skal også innkalles til allmøte når:
-    - minst 10 personer krever det, eller
-    - ett medlem av Styret krever det.
+  - minst 10 personer krever det, eller
+  - ett medlem av Styret krever det.
 
 6. Allmøtet skal ha en dagsorden. Foreløpig dagsorden skal gjøres kjent for studentene samtidig med innkalling.
 

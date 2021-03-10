@@ -22,6 +22,7 @@ const BedpresAPI = {
                 query: GET_N_BEDPRESES,
                 variables: {
                     n,
+                    date: moment().utcOffset(0).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
                 },
             });
 
