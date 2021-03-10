@@ -55,7 +55,7 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
 
 const BedpresBlock = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
     return (
-        <ContentBox data-testid="bedpres-block">
+        <ContentBox testid="bedpres-block">
             <Heading mb=".5em">Bedriftspresentasjoner</Heading>
             <Box>
                 {bedpreses && !error && (

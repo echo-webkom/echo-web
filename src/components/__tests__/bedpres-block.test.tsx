@@ -37,6 +37,6 @@ const testBedpreses: Array<Bedpres> = [
 describe('BedpresBlock', () => {
     test('renders without crashing', () => {
         render(<BedpresBlock bedpreses={testBedpreses} error="" />);
-        // expect(screen.getByTestId(/bedpres-block/i)).toBeInTheDocument();
+        expect(screen.getByTestId(/bedpres-block/i)).toBeInTheDocument();
     });
 });

@@ -18,7 +18,7 @@ import {
     LinkOverlay,
 } from '@chakra-ui/react';
 
-const NavLink = ({ href, text, testid }: { href: string; text: string; testid: string }) => {
+const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
     return (
         <LinkBox data-testid={testid}>
             <NextLink href={href} passHref>
@@ -26,6 +26,10 @@ const NavLink = ({ href, text, testid }: { href: string; text: string; testid: s
             </NextLink>
         </LinkBox>
     );
+};
+
+NavLink.defaultProps = {
+    testid: null,
 };
 
 interface NavProps {
