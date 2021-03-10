@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Box, GridItem, SimpleGrid, Center, Text, Flex } from '@chakra-ui/react';
+import { Box, GridItem, SimpleGrid, Center, Text, Flex, Img } from '@chakra-ui/react';
 import { Post } from '../lib/types';
 
 const PostCard = ({ post }: { post: Post }): JSX.Element => {
@@ -18,15 +17,16 @@ const PostCard = ({ post }: { post: Post }): JSX.Element => {
                     bg="white"
                     cursor="pointer"
                 >
-                    <Box
+                    <Img
+                        src={post.thumbnail ? post.thumbnail : '/placeholder_image.png'}
+                        alt="Picture of post"
+                        fit="cover"
                         position="absolute"
                         width="100%"
                         height="100%"
                         transition="ease-in-out, 0.3s"
                         _groupHover={{ opacity: '0.8' }}
-                    >
-                        <Image src="/placeholder_image.png" alt="Picture of post" layout="fill" />
-                    </Box>
+                    />
                     <Flex
                         position="absolute"
                         width="100%"

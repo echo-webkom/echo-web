@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { render } from './testing-utils';
 import mockResponses from '../../lib/api/__tests__/mock-responses';
 import BedpresBlock from '../bedpres-block';
-import { BedpresAPI } from '../../lib/api';
+import BedpresAPI from '../../lib/api/bedpres';
 
 interface QueryBody {
     query: string;
@@ -36,5 +36,11 @@ describe('BedpresBlock', () => {
     it('renders every recieved bedpres recieved correctly', async () => {
         const { bedpreses } = await BedpresAPI.getBedpreses(4);
         const { getByTestId } = render(<BedpresBlock bedpreses={bedpreses} error={null} />);
+
+        expect(bedpreses).not.toBe(null);
+        // every bedpres in bedpreses is rendered
+        if (bedpreses) {
+            bedpreses.map((bedpres) => expect(getByTestId(new RegExp(bedpres.slug, 'i'))).toBeInTheDocument());
+        }
     });
 });
