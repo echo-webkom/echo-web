@@ -52,6 +52,7 @@ describe('getPostBySlug', () => {
             body: mockResponses.postBySlug.data.postCollection.items[0].body,
             publishedAt: mockResponses.postBySlug.data.postCollection.items[0].sys.firstPublishedAt,
             author: mockResponses.postBySlug.data.postCollection.items[0].author,
+            thumbnail: mockResponses.postBySlug.data.postCollection.items[0].thumbnail,
         });
     });
 
@@ -81,6 +82,7 @@ describe('getPosts', () => {
                 body: mockResponses.nPosts.data.postCollection.items[0].body,
                 publishedAt: mockResponses.nPosts.data.postCollection.items[0].sys.firstPublishedAt,
                 author: mockResponses.nPosts.data.postCollection.items[0].author,
+                thumbnail: mockResponses.postBySlug.data.postCollection.items[0].thumbnail,
             },
             {
                 title: mockResponses.nPosts.data.postCollection.items[1].title,
@@ -88,6 +90,7 @@ describe('getPosts', () => {
                 body: mockResponses.nPosts.data.postCollection.items[1].body,
                 publishedAt: mockResponses.nPosts.data.postCollection.items[1].sys.firstPublishedAt,
                 author: mockResponses.nPosts.data.postCollection.items[1].author,
+                thumbnail: mockResponses.postBySlug.data.postCollection.items[0].thumbnail,
             },
             {
                 title: mockResponses.nPosts.data.postCollection.items[2].title,
@@ -95,6 +98,7 @@ describe('getPosts', () => {
                 body: mockResponses.nPosts.data.postCollection.items[2].body,
                 publishedAt: mockResponses.nPosts.data.postCollection.items[2].sys.firstPublishedAt,
                 author: mockResponses.nPosts.data.postCollection.items[2].author,
+                thumbnail: mockResponses.postBySlug.data.postCollection.items[0].thumbnail,
             },
             {
                 title: mockResponses.nPosts.data.postCollection.items[3].title,
@@ -102,6 +106,7 @@ describe('getPosts', () => {
                 body: mockResponses.nPosts.data.postCollection.items[3].body,
                 publishedAt: mockResponses.nPosts.data.postCollection.items[3].sys.firstPublishedAt,
                 author: mockResponses.nPosts.data.postCollection.items[3].author,
+                thumbnail: mockResponses.postBySlug.data.postCollection.items[0].thumbnail,
             },
         ]);
     });

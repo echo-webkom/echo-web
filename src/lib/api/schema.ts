@@ -79,6 +79,9 @@ const GET_N_POSTS = `
                 sys {
                     firstPublishedAt
                 }
+                thumbnail {
+                    url
+                }
             }
         }
     }
@@ -96,6 +99,9 @@ const GET_POST_BY_SLUG = `
                 }
                 sys {
                     firstPublishedAt
+                }
+                thumbnail {
+                    url
                 }
             }
         }
