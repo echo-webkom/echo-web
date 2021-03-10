@@ -42,6 +42,7 @@ const HeaderLogo = ({
             shadow="lg"
             align="center"
             wrap="nowrap"
+            data-testid="header-logo"
         >
             <Img src={logoImg} alt="logo" float="left" maxHeight="100%" w="90px" h="90px" display={['block', 'none']} />
             <Img src={textImg} alt="logo-text" float="left" maxHeight="100%" display={['none', 'block']} />
@@ -94,6 +95,7 @@ const Header = (): JSX.Element => {
                                 <IoIosMenu size="2.5em" />
                             </Center>
                         }
+                        data-testid="drawer-button"
                     />
                 </Flex>
             </Center>

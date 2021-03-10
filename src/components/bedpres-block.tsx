@@ -19,11 +19,11 @@ import { format } from 'date-fns';
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
 
-const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
+const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
     const hoverColor = useColorModeValue('gray.100', 'gray.800');
 
     return (
-        <LinkBox>
+        <LinkBox data-testid={testid}>
             <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
@@ -46,15 +46,25 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
     );
 };
 
-const BedpresBlock = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
+BedpresBox.defaultProps = {
+    testid: null,
+};
+
+const BedpresBlock = ({
+    bedpreses,
+    error,
+}: {
+    bedpreses: Array<Bedpres> | null;
+    error: string | null;
+}): JSX.Element => {
     return (
-        <ContentBox data-testid="bedpres-block">
+        <ContentBox testid="bedpres-block">
             <Heading mb=".5em">Bedriftspresentasjoner</Heading>
             <Box>
                 {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {
-                            return <BedpresBox key={bedpres.slug} bedpres={bedpres} />;
+                            return <BedpresBox key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;
                         })}
                     </Stack>
                 )}
