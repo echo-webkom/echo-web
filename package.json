@@ -64,12 +64,8 @@
         "start": "next start",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
         "lint": "tsc --noEmit && eslint src/**/*.{tsx}",
-        "test": "jest"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
+        "test": "jest",
+        "prepare": "husky install"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [

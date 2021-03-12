@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { render } from './testing-utils';
 import PostBlock from '../post-block';
 import mockResponses from '../../lib/api/__tests__/mock-responses';
-import { PostAPI } from '../../lib/api';
+import { PostAPI } from '../../lib/api';
 
 interface QueryBody {
     query: string;

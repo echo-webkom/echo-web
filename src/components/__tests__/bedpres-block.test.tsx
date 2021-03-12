@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import { render } from './testing-utils';
 import mockResponses from '../../lib/api/__tests__/mock-responses';
 import BedpresBlock from '../bedpres-block';
-import { BedpresAPI } from '../../lib/api';
+import { BedpresAPI } from '../../lib/api';
 
 interface QueryBody {
     query: string;
