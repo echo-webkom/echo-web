@@ -1,54 +1,9 @@
 import React from 'react';
-import {
-    LinkBox,
-    LinkOverlay,
-    Box,
-    Center,
-    Text,
-    Flex,
-    Stack,
-    StackDivider,
-    Heading,
-    Spacer,
-    useColorModeValue,
-    Avatar,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { format } from 'date-fns';
+import { Box, Text, Stack, StackDivider, Heading } from '@chakra-ui/react';
 
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
-
-const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
-    const hoverColor = useColorModeValue('gray.100', 'gray.800');
-
-    return (
-        <LinkBox data-testid={testid}>
-            <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
-                <Flex verticalAlign="middle">
-                    <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
-                    <Center ml="2em">
-                        <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
-                            <LinkOverlay>
-                                <Heading display={['none', 'block']} fontWeight="regular" size="lg">
-                                    {bedpres.title}
-                                </Heading>
-                            </LinkOverlay>
-                        </NextLink>
-                    </Center>
-                    <Spacer />
-                    <Center>
-                        <Text>{format(new Date(bedpres.date), 'dd. MMM yyyy')}</Text>
-                    </Center>
-                </Flex>
-            </Box>
-        </LinkBox>
-    );
-};
-
-BedpresBox.defaultProps = {
-    testid: null,
-};
+import BedpresPreview from './bedpres-preview';
 
 const BedpresBlock = ({
     bedpreses,
@@ -64,7 +19,7 @@ const BedpresBlock = ({
                 {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {
-                            return <BedpresBox key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;
+                            return <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;
                         })}
                     </Stack>
                 )}
