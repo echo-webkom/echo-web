@@ -14,7 +14,7 @@
         "contentful": "8.2.0",
         "date-fns": "2.19.0",
         "dotenv": "8.2.0",
-        "framer-motion": "3.10.2",
+        "framer-motion": "3.10.3",
         "graphql": "15.5.0",
         "markdown-to-jsx": "7.1.2",
         "moment": "2.29.1",
