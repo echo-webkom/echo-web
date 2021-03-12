@@ -8,10 +8,10 @@ import {
     Flex,
     Stack,
     StackDivider,
-    Img,
     Heading,
     Spacer,
     useColorModeValue,
+    Avatar,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
@@ -19,25 +19,18 @@ import { format } from 'date-fns';
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
 
-const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
+const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
     const hoverColor = useColorModeValue('gray.100', 'gray.800');
 
     return (
-        <LinkBox>
+        <LinkBox data-testid={testid}>
             <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
-                    <Img
-                        htmlWidth="120px"
-                        htmlHeight="120px"
-                        objectFit="cover"
-                        borderRadius="100%"
-                        src={bedpres.logoUrl}
-                        alt="firmalogo"
-                    />
+                    <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>
-                                <Heading fontWeight="regular" size="lg">
+                                <Heading display={['none', 'block']} fontWeight="regular" size="lg">
                                     {bedpres.title}
                                 </Heading>
                             </LinkOverlay>
@@ -53,16 +46,29 @@ const BedpresBox = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
     );
 };
 
-const BedpresBlock = ({ bedpreses }: { bedpreses: Array<Bedpres> }): JSX.Element => {
+BedpresBox.defaultProps = {
+    testid: null,
+};
+
+const BedpresBlock = ({
+    bedpreses,
+    error,
+}: {
+    bedpreses: Array<Bedpres> | null;
+    error: string | null;
+}): JSX.Element => {
     return (
-        <ContentBox data-testid="bedpres-block">
+        <ContentBox testid="bedpres-block">
             <Heading mb=".5em">Bedriftspresentasjoner</Heading>
             <Box>
-                <Stack spacing={5} divider={<StackDivider />}>
-                    {bedpreses.map((bedpres: Bedpres) => {
-                        return <BedpresBox key={bedpres.slug} bedpres={bedpres} />;
-                    })}
-                </Stack>
+                {bedpreses && !error && (
+                    <Stack spacing={5} divider={<StackDivider />}>
+                        {bedpreses.map((bedpres: Bedpres) => {
+                            return <BedpresBox key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;
+                        })}
+                    </Stack>
+                )}
+                {!bedpreses && error && <Text>{error}</Text>}
             </Box>
         </ContentBox>
     );
