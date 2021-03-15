@@ -3,5 +3,6 @@
     "config:base"
   ],
   "labels": ["dependencies :handshake:"],
-  "prHourlyLimit": 0
+  "prHourlyLimit": 0,
+  "stabilityDays": 3
 }
