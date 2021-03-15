@@ -40,6 +40,7 @@ const PostAPI = {
                         body: string;
                         sys: { firstPublishedAt: string };
                         author: Author;
+                        thumbnail: { url: string } | null;
                     }) => {
                         return {
                             title: post.title,
@@ -47,6 +48,7 @@ const PostAPI = {
                             body: post.body,
                             publishedAt: post.sys.firstPublishedAt,
                             author: post.author,
+                            thumbnail: post.thumbnail ? post.thumbnail.url : null,
                         };
                     },
                 ),
@@ -80,6 +82,9 @@ const PostAPI = {
                     body: data.data.postCollection.items[0].body,
                     publishedAt: data.data.postCollection.items[0].sys.firstPublishedAt,
                     author: data.data.postCollection.items[0].author,
+                    thumbnail: data.data.postCollection.items[0].thumbnail
+                        ? data.data.postCollection.items[0].thumbnail.url
+                        : null,
                 },
                 error: null,
             };
