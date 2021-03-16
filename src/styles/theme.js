@@ -3,8 +3,14 @@ import { extendTheme } from '@chakra-ui/react';
 // color palette
 const palette = {
     transparent: 'transparent',
-    black: '#1E1E1E',
-    white: '#FFFFFF',
+    black: '#000000',
+    white: '#ffffff',
+    bg1Light: '#dfdfdf',
+    bg2Light: '#ffffff',
+    bg1Dark: '#1E1E1E',
+    bg2Dark: '#2D2D2D',
+    vermillion: '#333a56',
+    fresh: '#52658f',
     gray: {
         50: '#F5F5F5',
         100: '#DFDFDF',
@@ -17,34 +23,6 @@ const palette = {
         800: '#434343',
         900: '#2D2D2D',
     },
-    naplesYellow: {
-        300: '#FFF6AA',
-        400: '#F2D865',
-        500: '#BEA74C',
-        600: '#8B7633',
-        700: '#574419',
-        800: '#231300',
-    },
-    metallicSeaweed: {
-        200: '#78D9FF',
-        300: '#3CADCA',
-        400: '#008094',
-        500: '#005E6B',
-        600: '#003C42',
-        700: '#001A19',
-    },
-    mardiGras: {
-        50: '#E6BFE5',
-        100: '#CE8FCE',
-        200: '#B560B8',
-        300: '#9D30A1',
-        400: '#84008B',
-        500: '#76007D',
-        600: '#67006F',
-        700: '#590061',
-        800: '#4B0053',
-        900: '#3C0045',
-    },
 };
 
 // global config
@@ -55,13 +33,17 @@ const config = {
 
 // theme
 const theme = extendTheme({
+    fonts: {
+        heading: 'IBM Plex Serif',
+        body: 'Raleway',
+    },
     styles: {
         global: ({ colorMode }) => ({
             body: {
-                fontFamily: 'body',
-                color: colorMode === 'dark' ? palette.gray[100] : palette.black,
-                bg: colorMode === 'dark' ? palette.black : palette.gray[100],
+                color: colorMode === 'light' ? palette.black : palette.white,
+                bg: colorMode === 'light' ? palette.bg1Light : palette.bg1Dark,
                 lineHeight: 'base',
+                fontSize: '1.25rem',
             },
         }),
     },

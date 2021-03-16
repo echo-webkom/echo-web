@@ -40,13 +40,17 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
             ? 0
             : moment(bedpres.registrationTime).valueOf() - moment().valueOf();
 
-    useEffect(() => {
+    // typescript pls
+    useEffect((): (() => void) => {
         if (time !== 0) {
             const timer = setTimeout(() => {
                 router.replace(router.asPath);
             }, Math.min(time, 86400000)); // absurdly large numbers here will literally destroy page, hence 1 day in ms.
-            return () => clearTimeout(timer);
+            return () => {
+                clearTimeout(timer);
+            };
         }
+        return () => {}; // :(
     }, [time, router]);
 
     return (

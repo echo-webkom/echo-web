@@ -12,6 +12,7 @@ import {
     Spacer,
     useColorModeValue,
     Avatar,
+    useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
@@ -24,7 +25,7 @@ const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }):
 
     return (
         <LinkBox data-testid={testid}>
-            <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
+            <Box display="block" p={[0, null, null, null, 5]} _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
@@ -57,9 +58,13 @@ const BedpresBlock = ({
     bedpreses: Array<Bedpres> | null;
     error: string | null;
 }): JSX.Element => {
+    const bedpresHeading = useBreakpointValue(['Bedpres', 'Bedpresolini', 'Bedriftspresentasjoner']);
+
     return (
         <ContentBox testid="bedpres-block">
-            <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            <Center>
+                <Heading mb=".5em">{bedpresHeading}</Heading>
+            </Center>
             <Box>
                 {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
