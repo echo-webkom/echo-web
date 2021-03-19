@@ -19,12 +19,12 @@ import { format } from 'date-fns';
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
 
-const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
+const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid: string }): JSX.Element => {
     const hoverColor = useColorModeValue('gray.100', 'gray.800');
 
     return (
         <LinkBox data-testid={testid}>
-            <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
+            <Box display="block" p={[0, null, null, null, 5]} _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
@@ -46,10 +46,6 @@ const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }):
     );
 };
 
-BedpresBox.defaultProps = {
-    testid: null,
-};
-
 const BedpresBlock = ({
     bedpreses,
     error,
@@ -59,8 +55,15 @@ const BedpresBlock = ({
 }): JSX.Element => {
     return (
         <ContentBox testid="bedpres-block">
-            <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            <Center>
+                <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            </Center>
             <Box>
+                {bedpreses && !error && bedpreses.length === 0 && (
+                    <Center>
+                        <Text>Ingen kommende bedriftspresentasjoner</Text>
+                    </Center>
+                )}
                 {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {

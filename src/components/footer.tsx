@@ -12,16 +12,15 @@ const Footer = (): JSX.Element => {
     return (
         <SimpleGrid
             columns={[1, 2, 3]}
-            bg="gray.900"
+            bg="bg2Dark"
             justifyItems="center"
             alignItems="center"
             spacingX="3em"
             spacingY="3em"
             w="100%"
-            pt="4em"
+            pt="2em"
             pb="2em"
-            pl="1em"
-            pr="1em"
+            px="1em"
             mt="5em"
             bottom="0"
             pos="absolute"
@@ -66,13 +65,13 @@ const Footer = (): JSX.Element => {
                 </Link>
             </SimpleGrid>
             <Image display={['none', null, 'block']} htmlWidth="300px" fit="contain" src={echoLogoWhite} />
-            <SimpleGrid columns={1} spacing="3" fontSize="lg" maxWidth="170px" textAlign="center">
+            <SimpleGrid columns={1} spacing="3" maxWidth="170px" textAlign="center">
                 <Link href="mailto:echo@uib.no">
                     <Text color={color}>echo(at)uib.no</Text>
                 </Link>
                 <Text color={color}>Thormøhlensgate 55</Text>
-                <Text color={color}>5008 Bergen</Text>
-                <Text color={color}>Org nr: 000 000 000</Text>
+                <Text color={color}>5006 Bergen</Text>
+                <Text color={color}>Org nr: 998 995 035</Text>
             </SimpleGrid>
         </SimpleGrid>
     );
