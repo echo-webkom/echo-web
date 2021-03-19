@@ -65,15 +65,11 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                 <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                     <GridItem minW="0" maxW="100%" colSpan={1}>
                         <ContentBox>
-                            <TabList>
-                                {['Hvem er vi?', 'Instituttrådet', 'Statutter'].map((tabName: string) => (
-                                    <Tab whiteSpace="normal" wordBreak="break-word" fontSize="xl">
-                                        {tabName}
-                                    </Tab>
-                                ))}
-                                <Tab whiteSpace="normal" wordBreak="break-word" fontSize="xl">
-                                    Møtereferater
-                                </Tab>
+                            <TabList whiteSpace="normal" wordBreak="break-word">
+                                <Tab fontSize="xl">Hvem er vi?</Tab>
+                                <Tab fontSize="xl">Instituttrådet</Tab>
+                                <Tab fontSize="xl">Statutter</Tab>
+                                <Tab fontSize="xl">Møtereferater</Tab>
                             </TabList>
                         </ContentBox>
                     </GridItem>
@@ -86,11 +82,15 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                     >
                         <ContentBox>
                             <TabPanels>
-                                {[hvemErVi, instituttraadet, statutter].map((mdFile: string) => (
-                                    <TabPanel>
-                                        <Markdown options={MapMarkdownChakra}>{mdFile}</Markdown>
-                                    </TabPanel>
-                                ))}
+                                <TabPanel>
+                                    <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
+                                </TabPanel>
+                                <TabPanel>
+                                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>
+                                </TabPanel>
+                                <TabPanel>
+                                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>
+                                </TabPanel>
                                 <TabPanel>
                                     <Minutes minutes={minutes} error={error} />
                                 </TabPanel>
