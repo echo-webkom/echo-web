@@ -66,7 +66,13 @@ const BedpresBlock = ({
                 <Heading mb=".5em">{bedpresHeading}</Heading>
             </Center>
             <Box>
-                {bedpreses && !error && (
+                {!bedpreses && error && <Text>{error}</Text>}
+                {bedpreses && !error && bedpreses.length === 0 && bedpreses.length === 0 && (
+                    <Center>
+                        <Text>Ingen kommende bedriftspresentasjoner</Text>
+                    </Center>
+                )}
+                {bedpreses && !error && bedpreses.length !== 0 && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {
                             return <BedpresBox key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;

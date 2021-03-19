@@ -65,12 +65,8 @@ const IndexPage = ({
                             </LinkBox>
                         </Center>
                     </ContentBox>
-                    <ContentBox>
-                        <Center>
-                            <Heading mb=".5em">Arrangementer</Heading>
-                        </Center>
-                        <EventsBlock events={events} error={eventsError} />
-                    </ContentBox>
+
+                    <EventsBlock events={events} error={eventsError} />
                 </Stack>
                 <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
             </SimpleGrid>
