@@ -10,7 +10,7 @@ import StaticInfo from '../components/static-info';
 const ForStudenterPage = (): JSX.Element => {
     return (
         <Layout>
-            <SEO title="Om Oss" />
+            <SEO title="For studenter" />
             <StaticInfo
                 tabNames={['Undergrupper', 'Underorganisasjoner', 'Masterinfo']}
                 markdownFiles={[undergrupper, underorganisasjoner, masterinfo]}
