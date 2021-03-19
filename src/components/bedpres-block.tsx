@@ -12,7 +12,6 @@ import {
     Spacer,
     useColorModeValue,
     Avatar,
-    useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format } from 'date-fns';
@@ -20,7 +19,7 @@ import { format } from 'date-fns';
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
 
-const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
+const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid: string }): JSX.Element => {
     const hoverColor = useColorModeValue('gray.100', 'gray.800');
 
     return (
@@ -47,10 +46,6 @@ const BedpresBox = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }):
     );
 };
 
-BedpresBox.defaultProps = {
-    testid: null,
-};
-
 const BedpresBlock = ({
     bedpreses,
     error,
@@ -58,21 +53,18 @@ const BedpresBlock = ({
     bedpreses: Array<Bedpres> | null;
     error: string | null;
 }): JSX.Element => {
-    const bedpresHeading = useBreakpointValue(['Bedpres', 'Bedpresolini', 'Bedriftspresentasjoner']);
-
     return (
         <ContentBox testid="bedpres-block">
             <Center>
-                <Heading mb=".5em">{bedpresHeading}</Heading>
+                <Heading mb=".5em">Bedriftspresentasjoner</Heading>
             </Center>
             <Box>
-                {!bedpreses && error && <Text>{error}</Text>}
-                {bedpreses && !error && bedpreses.length === 0 && bedpreses.length === 0 && (
+                {bedpreses && !error && bedpreses.length === 0 && (
                     <Center>
                         <Text>Ingen kommende bedriftspresentasjoner</Text>
                     </Center>
                 )}
-                {bedpreses && !error && bedpreses.length !== 0 && (
+                {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {
                             return <BedpresBox key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;

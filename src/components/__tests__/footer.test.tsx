@@ -12,7 +12,7 @@ describe('Footer', () => {
     test('renders correctly', () => {
         render(<Footer />);
         expect(screen.getByText(/Thormøhlensgate 55/i)).toBeInTheDocument();
-        expect(screen.getByText(/5008 Bergen/i)).toBeInTheDocument();
-        expect(screen.getByText(/Org nr: 000 000 000/i)).toBeInTheDocument();
+        expect(screen.getByText(/5006 Bergen/i)).toBeInTheDocument();
+        expect(screen.getByText(/Org nr: 998 995 035/i)).toBeInTheDocument();
     });
 });
