@@ -21,7 +21,7 @@ const BedpresPreview = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string
 
     return (
         <LinkBox data-testid={testid}>
-            <Box display="block" p="5" _hover={{ backgroundColor: hoverColor }}>
+            <Box display="block" p={[0, null, null, null, 5]} _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
