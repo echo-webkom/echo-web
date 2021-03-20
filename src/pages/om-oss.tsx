@@ -1,11 +1,15 @@
 import React from 'react';
 import NextLink from 'next/link';
 import {
+    Center,
     Flex,
     Grid,
     GridItem,
     Heading,
+    Img,
     Link,
+    LinkBox,
+    LinkOverlay,
     List,
     ListItem,
     Tab,
@@ -24,11 +28,14 @@ import Layout from '../components/layout';
 import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
+import bekk from '../../public/static/om-oss/bekk.md';
 import ContentBox from '../components/content-box';
 import MapMarkdownChakra from '../markdown';
 import { MinuteAPI } from '../lib/api';
 import { Minute } from '../lib/types';
 import SEO from '../components/seo';
+
+const bekkLogo = '/bekk.png';
 
 const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
     const color = useColorModeValue('blue', 'blue.400');
@@ -58,6 +65,9 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
 };
 
 const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
+    const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
+    const linkColor = useColorModeValue('blue', 'blue.400');
+
     return (
         <Layout>
             <SEO title="Om oss" />
@@ -70,6 +80,7 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                                 <Tab fontSize="xl">Instituttrådet</Tab>
                                 <Tab fontSize="xl">Statutter</Tab>
                                 <Tab fontSize="xl">Møtereferater</Tab>
+                                <Tab fontSize="xl">Bekk</Tab>
                             </TabList>
                         </ContentBox>
                     </GridItem>
@@ -93,6 +104,33 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                                 </TabPanel>
                                 <TabPanel>
                                     <Minutes minutes={minutes} error={error} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <Center>
+                                        <LinkBox>
+                                            <NextLink href="https://bekk.no" passHref>
+                                                <LinkOverlay isExternal>
+                                                    <Img src={bekkLogo} filter={bekkLogoFilter} />
+                                                </LinkOverlay>
+                                            </NextLink>
+                                        </LinkBox>
+                                    </Center>
+                                    <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                                    <Text mt="2em">
+                                        Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
+                                        <NextLink
+                                            href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                            passHref
+                                        >
+                                            <Link
+                                                color={linkColor}
+                                                href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                                isExternal
+                                            >
+                                                her.
+                                            </Link>
+                                        </NextLink>
+                                    </Text>
                                 </TabPanel>
                             </TabPanels>
                         </ContentBox>
