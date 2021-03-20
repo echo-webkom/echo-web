@@ -6,7 +6,7 @@ import { Box, Text, Grid, GridItem, Image, Heading } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -34,7 +34,7 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                     <ImTicket size="2em" />
                                     <Text>{event.spots} plasser</Text>
                                     <BiCalendar size="2em" />
-                                    <Text>{moment(event.date).format('DD. MMM YYYY')}</Text>
+                                    <Text>{format(parseISO(event.date), 'dd. MMM yyyy')}</Text>
                                     <ImLocation size="2em" />
                                     <Text>{event.location}</Text>
                                 </Grid>

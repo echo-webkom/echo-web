@@ -6,7 +6,7 @@ import { Box, Text, Grid, GridItem, Heading, Divider, Img } from '@chakra-ui/rea
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -34,7 +34,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                     <CgProfile size="2em" />
                                     <Text>{post.author.authorName}</Text>
                                     <BiCalendar size="2em" />
-                                    <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
+                                    <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy')}</Text>
                                 </Grid>
                             </GridItem>
                             <GridItem
