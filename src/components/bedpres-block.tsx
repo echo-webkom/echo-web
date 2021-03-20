@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, Stack, StackDivider, Heading } from '@chakra-ui/react';
+import { Box, Text, Stack, StackDivider, Heading, Center } from '@chakra-ui/react';
 
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
@@ -14,8 +14,15 @@ const BedpresBlock = ({
 }): JSX.Element => {
     return (
         <ContentBox testid="bedpres-block">
-            <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            <Center>
+                <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            </Center>
             <Box>
+                {bedpreses && !error && bedpreses.length === 0 && (
+                    <Center>
+                        <Text>Ingen kommende bedriftspresentasjoner</Text>
+                    </Center>
+                )}
                 {bedpreses && !error && (
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpreses.map((bedpres: Bedpres) => {

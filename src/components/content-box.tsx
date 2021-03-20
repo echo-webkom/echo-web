@@ -10,8 +10,8 @@ const ContentBox = ({
     noPadding?: boolean;
     testid?: string;
 }): JSX.Element => {
-    const bg = useColorModeValue('white', 'gray.900');
     const padding = noPadding ? 0 : 6;
+    const bg = useColorModeValue('bg2Light', 'bg2Dark');
     return (
         <Box bg={bg} overflow="hidden" p={padding} shadow="lg" data-testid={testid}>
             {children}

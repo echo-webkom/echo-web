@@ -75,7 +75,7 @@ const Header = (): JSX.Element => {
     const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
     const logo = useColorModeValue(imgLogo, imgLogoWhite);
     const logoText = useColorModeValue(imgLogoText, imgLogoTextWhite); // logo version based on color mode
-    const bg = useColorModeValue('white', 'gray.900'); // defining color mode colors
+    const bg = useColorModeValue('bg2Light', 'bg2Dark'); // defining color mode colors
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (

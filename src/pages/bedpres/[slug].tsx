@@ -14,6 +14,7 @@ import {
     LinkOverlay,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { format, differenceInMilliseconds, parseISO } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -23,7 +24,6 @@ import { CgProfile, CgOrganisation } from 'react-icons/cg';
 import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
-import moment from 'moment';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { BedpresAPI } from '../../lib/api';
@@ -34,17 +34,24 @@ import ContentBox from '../../components/content-box';
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
 
-    const formattedRegDate = bedpres ? moment(bedpres.registrationTime).format('DD. MMM YYYY, HH:mm') : null;
+    const regDate: Date = parseISO(bedpres.registrationTime);
+    const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
-        !bedpres || moment(bedpres.registrationTime).valueOf() - moment().valueOf() < 0
+        !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
             ? 0
-            : moment(bedpres.registrationTime).valueOf() - moment().valueOf();
+            : differenceInMilliseconds(regDate, new Date());
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            router.replace(router.asPath);
-        }, Math.min(time, 86400000)); // absurdly large numbers here will literally destroy page, hence 1 day in ms.
-        return () => clearTimeout(timer);
+    // typescript pls
+    useEffect((): (() => void) => {
+        if (time !== 0) {
+            const timer = setTimeout(() => {
+                router.replace(router.asPath);
+            }, Math.min(time, 86400000)); // absurdly large numbers here will literally destroy page, hence 1 day in ms.
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+        return () => {}; // :(
     }, [time, router]);
 
     return (
@@ -74,7 +81,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <MdEventSeat size="2em" />
                                 <Text>{bedpres.spots} plasser</Text>
                                 <BiCalendar size="2em" />
-                                <Text>{moment(bedpres.date).format('DD. MMM YYYY')}</Text>
+                                <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
                                 <ImLocation size="2em" />
                                 <Text>{bedpres.location}</Text>
                             </SimpleGrid>

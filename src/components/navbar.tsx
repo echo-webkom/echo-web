@@ -16,6 +16,7 @@ import {
     Link,
     LinkBox,
     LinkOverlay,
+    Heading,
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
@@ -75,7 +76,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
 
     return (
         <>
-            <Box flex="2 1 auto" data-testid="navbar-standard">
+            <Box ml="5" flex="2 1 auto" data-testid="navbar-standard">
                 <Flex display={['none', null, null, 'flex']} align="center" justify="space-between" w="full">
                     <Nav toggleColorMode={toggleColorMode} />
                 </Flex>
@@ -83,8 +84,10 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 <DrawerOverlay>
                     <DrawerContent data-testid="navbar-drawer">
-                        <DrawerCloseButton />
-                        <DrawerHeader>Navigasjon</DrawerHeader>
+                        <DrawerCloseButton size="lg" />
+                        <DrawerHeader fontSize="2xl" as={Heading}>
+                            Navigasjon
+                        </DrawerHeader>
                         <DrawerBody>
                             <Nav toggleColorMode={toggleColorMode} />
                         </DrawerBody>

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { parseISO, formatISO, isBefore } from 'date-fns';
 import { Author, Bedpres } from '../types';
 import API from './api';
 import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
@@ -22,7 +22,7 @@ const BedpresAPI = {
                 query: GET_N_BEDPRESES,
                 variables: {
                     n,
-                    date: moment().utcOffset(0).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                    date: formatISO(new Date()),
                 },
             });
 
@@ -61,8 +61,9 @@ const BedpresAPI = {
                             location: bedpres.location,
                             author: bedpres.author,
                             companyLink: bedpres.companyLink,
-                            registrationLinks: moment(data.data.bedpresCollection.items[0].registrationTime).isBefore(
-                                moment(),
+                            registrationLinks: isBefore(
+                                parseISO(data.data.bedpresCollection.items[0].registrationTime),
+                                new Date(),
                             )
                                 ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
                                 : null,
@@ -101,7 +102,10 @@ const BedpresAPI = {
                     location: data.data.bedpresCollection.items[0].location,
                     author: data.data.bedpresCollection.items[0].author,
                     companyLink: data.data.bedpresCollection.items[0].companyLink,
-                    registrationLinks: moment(data.data.bedpresCollection.items[0].registrationTime).isBefore(moment())
+                    registrationLinks: isBefore(
+                        parseISO(data.data.bedpresCollection.items[0].registrationTime),
+                        new Date(),
+                    )
                         ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
                         : null,
                     publishedAt: data.data.bedpresCollection.items[0].sys.firstPublishedAt,
