@@ -10,7 +10,7 @@ import StaticInfo from '../components/static-info';
 const ForBedrifterPage = (): JSX.Element => {
     return (
         <Layout>
-            <SEO title="Om Oss" />
+            <SEO title="For bedrifter" />
             <StaticInfo
                 tabNames={['For bedrifter', 'Bedriftspresentasjon', 'Stillingsutlysninger']}
                 markdownFiles={[forBedrifter, bedriftspresentasjon, stillingsutlysninger]}
