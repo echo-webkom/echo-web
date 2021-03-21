@@ -23,7 +23,7 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
     const iconBg = useColorModeValue(theme.colors.teal[500], theme.colors.teal[200]);
     return (
         <ContentBox>
-            <Center>
+            <Center wordBreak="break-word">
                 <Heading mb=".5em">Arrangementer</Heading>
             </Center>
             {!events && error && <Text>{error}</Text>}
