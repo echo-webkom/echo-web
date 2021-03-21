@@ -65,7 +65,6 @@ const IndexPage = ({
                             </LinkBox>
                         </Center>
                     </ContentBox>
-
                     <EventsBlock events={events} error={eventsError} />
                 </Stack>
                 <BedpresBlock bedpreses={bedpreses} error={bedpresError} />

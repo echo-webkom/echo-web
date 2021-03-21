@@ -1,5 +1,18 @@
 import React from 'react';
-import { Box, Text, Stack, StackDivider, Heading, Center } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import {
+    Box,
+    Text,
+    Stack,
+    StackDivider,
+    Heading,
+    Center,
+    LinkBox,
+    LinkOverlay,
+    Button,
+    useColorModeValue,
+    useBreakpointValue,
+} from '@chakra-ui/react';
 
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
@@ -14,10 +27,10 @@ const BedpresBlock = ({
 }): JSX.Element => {
     return (
         <ContentBox testid="bedpres-block">
-            <Center>
-                <Heading mb=".5em">Bedriftspresentasjoner</Heading>
+            <Center wordBreak="break-word">
+                <Heading>Bedriftspresentasjoner</Heading>
             </Center>
-            <Box>
+            <Box my=".5em">
                 {bedpreses && !error && bedpreses.length === 0 && (
                     <Center>
                         <Text>Ingen kommende bedriftspresentasjoner</Text>
@@ -32,6 +45,17 @@ const BedpresBlock = ({
                 )}
                 {!bedpreses && error && <Text>{error}</Text>}
             </Box>
+            <Center>
+                <LinkBox>
+                    <NextLink href="/posts" passHref>
+                        <LinkOverlay>
+                            <Button w="100%" colorScheme="teal">
+                                Se mer
+                            </Button>
+                        </LinkOverlay>
+                    </NextLink>
+                </LinkBox>
+            </Center>
         </ContentBox>
     );
 };
