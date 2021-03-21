@@ -1,18 +1,6 @@
 import React from 'react';
 import NextLink from 'next/link';
-import {
-    Box,
-    Text,
-    Stack,
-    StackDivider,
-    Heading,
-    Center,
-    LinkBox,
-    LinkOverlay,
-    Button,
-    useColorModeValue,
-    useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Text, Stack, StackDivider, Heading, Center, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
 
 import { Bedpres } from '../lib/types';
 import ContentBox from './content-box';
