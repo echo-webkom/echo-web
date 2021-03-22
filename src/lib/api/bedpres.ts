@@ -22,7 +22,6 @@ const BedpresAPI = {
                 query: GET_N_BEDPRESES,
                 variables: {
                     n,
-                    date: formatISO(new Date()),
                 },
             });
 

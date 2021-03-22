@@ -81,17 +81,19 @@ const IndexPage = ({
                         {posts.map((post) => {
                             return <PostPreview key={post.slug} post={post} className="post" />;
                         })}
-                        <Center>
-                            <LinkBox>
-                                <NextLink href="/posts" passHref>
-                                    <LinkOverlay>
-                                        <Button w="100%" colorScheme="teal">
-                                            Alle poster
-                                        </Button>
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
-                        </Center>
+                        {posts.length > 0 && (
+                            <Center>
+                                <LinkBox>
+                                    <NextLink href="/posts" passHref>
+                                        <LinkOverlay>
+                                            <Button w="100%" colorScheme="teal">
+                                                Alle poster
+                                            </Button>
+                                        </LinkOverlay>
+                                    </NextLink>
+                                </LinkBox>
+                            </Center>
+                        )}
                     </Stack>
                 </Center>
             )}
