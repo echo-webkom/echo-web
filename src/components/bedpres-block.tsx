@@ -24,7 +24,7 @@ const BedpresBlock = ({
                 <Heading>Bedriftspresentasjoner</Heading>
             </Center>
             <Box my=".5em">
-                {bedpreses && !error && bedpreses.length === 0 && (
+                {bedpreses && !error && bedpresesFiltered && bedpresesFiltered.length === 0 && (
                     <Center>
                         <Text>Ingen kommende bedriftspresentasjoner</Text>
                     </Center>
