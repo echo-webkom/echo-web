@@ -13,6 +13,7 @@ import {
     LinkOverlay,
     Button,
     useBreakpointValue,
+    GridItem,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Layout from '../components/layout';
@@ -47,27 +48,31 @@ const IndexPage = ({
     return (
         <Layout>
             <SEO title="Home" />
-            <SimpleGrid columns={[null, 1, null, 2]} spacing="5" mb="5">
-                <Stack minW="0" spacing="5">
-                    <ContentBox>
-                        <Center minW="0">
-                            <Heading mb=".5em" sizes={['xs', 'md']}>
-                                {hspHeading}
-                            </Heading>
-                        </Center>
-                        <Center>
-                            <LinkBox>
-                                <NextLink href="https://bekk.no" passHref>
-                                    <LinkOverlay isExternal>
-                                        <Img alt="Bekk" src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
-                        </Center>
-                    </ContentBox>
-                    <EventsBlock events={events} error={eventsError} />
-                </Stack>
-                <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
+            <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
+                <GridItem rowStart={[2, null, null, 1]}>
+                    <Stack minW="0" spacing="5">
+                        <ContentBox>
+                            <Center minW="0" wordBreak="break-word">
+                                <Heading mb=".5em" sizes={['xs', 'md']}>
+                                    {hspHeading}
+                                </Heading>
+                            </Center>
+                            <Center>
+                                <LinkBox>
+                                    <NextLink href="https://bekk.no" passHref>
+                                        <LinkOverlay isExternal>
+                                            <Img alt="Bekk" src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
+                                        </LinkOverlay>
+                                    </NextLink>
+                                </LinkBox>
+                            </Center>
+                        </ContentBox>
+                        <EventsBlock events={events} error={eventsError} />
+                    </Stack>
+                </GridItem>
+                <GridItem>
+                    <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
+                </GridItem>
             </SimpleGrid>
             {!posts && postsError && <Text>{postsError}</Text>}
             {posts && !postsError && (
