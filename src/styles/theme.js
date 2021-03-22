@@ -8,7 +8,7 @@ const palette = {
     bg1Light: '#dfdfdf',
     bg2Light: '#ffffff',
     bg1Dark: '#1E1E1E',
-    bg2Dark: '#2D2D2D',
+    bg2Dark: '#393939',
     vermillion: '#333a56',
     fresh: '#52658f',
     gray: {

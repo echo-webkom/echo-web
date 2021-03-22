@@ -5,7 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import NProgress from 'nprogress';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { Fonts } from '../styles/fonts';
+import Fonts from '../styles/fonts';
 import theme from '../styles/theme';
 
 const App = ({ Component, pageProps }: AppProps): JSX.Element => {

@@ -61,7 +61,7 @@ const IndexPage = ({
                                 <LinkBox>
                                     <NextLink href="https://bekk.no" passHref>
                                         <LinkOverlay isExternal>
-                                            <Img src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
+                                            <Img alt="Bekk" src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
                                         </LinkOverlay>
                                     </NextLink>
                                 </LinkBox>
