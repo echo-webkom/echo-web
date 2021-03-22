@@ -19,7 +19,7 @@ const StaticInfo = ({
                     <ContentBox>
                         <TabList>
                             {tabNames.map((tabName: string) => (
-                                <Tab whiteSpace="normal" wordBreak="break-word" fontSize="xl">
+                                <Tab key={tabName} whiteSpace="normal" wordBreak="break-word" fontSize="xl">
                                     {tabName}
                                 </Tab>
                             ))}
