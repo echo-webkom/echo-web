@@ -42,6 +42,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                 rowStart={[1, null, null, null]}
                                 colSpan={[1, null, null, 3]}
                                 rowSpan={2}
+                                minW="0"
                             >
                                 <ContentBox>
                                     <Heading mb="0.2em">{post.title}</Heading>
