@@ -9,8 +9,8 @@ const GET_EVENT_PATHS = `
 `;
 
 const GET_N_EVENTS = `
-    query ($n: Int!) {
-        eventCollection(limit: $n) {
+    query ($n: Int!, $date: DateTime) {
+        eventCollection(limit: $n, order: date_ASC, where: { date_gt: $date }) {
             items {
                 title
                 slug
@@ -79,6 +79,9 @@ const GET_N_POSTS = `
                 sys {
                     firstPublishedAt
                 }
+                thumbnail {
+                    url
+                }
             }
         }
     }
@@ -97,6 +100,9 @@ const GET_POST_BY_SLUG = `
                 sys {
                     firstPublishedAt
                 }
+                thumbnail {
+                    url
+                }
             }
         }
     }
@@ -113,8 +119,8 @@ const GET_BEDPRES_PATHS = `
 `;
 
 const GET_N_BEDPRESES = `
-    query ($n: Int!) {
-        bedpresCollection(limit: $n) {
+    query ($n: Int!, $date: DateTime) {
+        bedpresCollection(limit: $n, order: date_ASC, where: { date_gt: $date}) {
             items {
                 title
                 slug
@@ -176,6 +182,20 @@ const GET_BEDPRES_BY_SLUG = `
     }
 `;
 
+const GET_N_MINUTES = `
+    query ($n: Int!) {
+        meetingMinuteCollection(limit: $n, order: date_DESC) {
+            items {
+                date
+                document {
+                  url
+                }
+                allmote
+            }
+        }
+    }
+`;
+
 export {
     GET_EVENT_PATHS,
     GET_N_EVENTS,
@@ -186,4 +206,5 @@ export {
     GET_BEDPRES_PATHS,
     GET_N_BEDPRESES,
     GET_BEDPRES_BY_SLUG,
+    GET_N_MINUTES,
 };

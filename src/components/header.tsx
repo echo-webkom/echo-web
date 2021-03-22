@@ -12,14 +12,13 @@ import {
     useDisclosure,
     LinkOverlay,
     LinkBox,
-} from '@chakra-ui/react'; // wow very bloat
+} from '@chakra-ui/react';
 
 import NavBar from './navbar';
 
-const imgLogo = '/echo-logo-black.svg';
-const imgLogoWhite = '/echo-logo-white.svg';
-const imgLogoText = '/echo-logo-very-wide.png';
-const imgLogoTextWhite = '/echo-logo-very-wide-white.png';
+const imgLogo = '/android-chrome-512x512.png';
+const imgLogoText = '/echo-logo.png';
+const imgLogoTextWhite = '/echo-logo-white.png';
 
 const HeaderLogo = ({
     logoImg,
@@ -42,6 +41,7 @@ const HeaderLogo = ({
             shadow="lg"
             align="center"
             wrap="nowrap"
+            data-testid="header-logo"
         >
             <Img src={logoImg} alt="logo" float="left" maxHeight="100%" w="90px" h="90px" display={['block', 'none']} />
             <Img src={textImg} alt="logo-text" float="left" maxHeight="100%" display={['none', 'block']} />
@@ -72,16 +72,15 @@ const HeaderLogo = ({
 const Header = (): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer
     const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
-    const logo = useColorModeValue(imgLogo, imgLogoWhite);
     const logoText = useColorModeValue(imgLogoText, imgLogoTextWhite); // logo version based on color mode
-    const bg = useColorModeValue('white', 'gray.900'); // defining color mode colors
+    const bg = useColorModeValue('bg2Light', 'bg2Dark'); // defining color mode colors
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
         <Box mt="1rem" mb="2rem" pb="1rem" borderColor={borderBg} data-testid="header-standard">
             <Center>
                 <Flex w={['90%', '70%']} h="120px" justify="space-between" alignItems="flex-end">
-                    <HeaderLogo bg={bg} messageText="Ny nettside!" logoImg={logo} textImg={logoText} />
+                    <HeaderLogo bg={bg} messageText="Ny nettside!" logoImg={imgLogo} textImg={logoText} />
                     <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
                     <IconButton
                         variant="unstyled"
@@ -94,6 +93,7 @@ const Header = (): JSX.Element => {
                                 <IoIosMenu size="2.5em" />
                             </Center>
                         }
+                        data-testid="drawer-button"
                     />
                 </Flex>
             </Center>

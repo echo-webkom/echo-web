@@ -28,4 +28,4 @@ Mer informasjon kommer snart! <3
 - Pål Magnus Gunnestad, styremedlem
 
 #### Kontakt
-styret@programmerbar.no
+[styret(at)programmerbar.no](bryggelaget@programmerbar.no)

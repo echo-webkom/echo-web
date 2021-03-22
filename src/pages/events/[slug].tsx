@@ -6,7 +6,7 @@ import { Box, Text, Grid, GridItem, Image, Heading } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -28,18 +28,23 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                 <>
                     <SEO title={event.title} />
                     <Box>
-                        <Grid templateRows="repeat(2, 1fr)" templateColumns="repeat(4, minmax(0, 1fr))" gap="4">
+                        <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                             <GridItem as={ContentBox} colSpan={1}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <ImTicket size="2em" />
                                     <Text>{event.spots} plasser</Text>
                                     <BiCalendar size="2em" />
-                                    <Text>{moment(event.date).format('DD. MMM YYYY')}</Text>
+                                    <Text>{format(parseISO(event.date), 'dd. MMM yyyy')}</Text>
                                     <ImLocation size="2em" />
                                     <Text>{event.location}</Text>
                                 </Grid>
                             </GridItem>
-                            <GridItem colStart={2} colSpan={3} rowSpan={2}>
+                            <GridItem
+                                colStart={[1, null, null, 2]}
+                                rowStart={[2, null, null, 1]}
+                                colSpan={[1, null, null, 3]}
+                                rowSpan={2}
+                            >
                                 <ContentBox>
                                     <Heading mb="0.5em" mt="0.5em">
                                         {event.title}

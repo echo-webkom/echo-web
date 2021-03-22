@@ -1,4 +1,3 @@
-node_modeules/
+node_modules/
 public/
-src/styles/
 *.js

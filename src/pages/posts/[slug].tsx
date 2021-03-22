@@ -2,11 +2,11 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Heading, Divider } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Heading, Divider, Img } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -34,7 +34,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                     <CgProfile size="2em" />
                                     <Text>{post.author.authorName}</Text>
                                     <BiCalendar size="2em" />
-                                    <Text>{moment(post.publishedAt).format('DD. MMM YYYY')}</Text>
+                                    <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy')}</Text>
                                 </Grid>
                             </GridItem>
                             <GridItem
@@ -42,11 +42,18 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                 rowStart={[1, null, null, null]}
                                 colSpan={[1, null, null, 3]}
                                 rowSpan={2}
+                                minW="0"
                             >
                                 <ContentBox>
                                     <Heading mb="0.2em">{post.title}</Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
+                                    <Img
+                                        src={post.thumbnail ? post.thumbnail : '/placeholder_image.png'}
+                                        alt="post thumbnail"
+                                        width="300px"
+                                        height="250px"
+                                    />
                                 </ContentBox>
                             </GridItem>
                         </Grid>

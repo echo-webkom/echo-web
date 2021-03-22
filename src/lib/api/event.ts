@@ -1,3 +1,4 @@
+import { formatISO } from 'date-fns';
 import { Event, Author } from '../types';
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
@@ -29,6 +30,7 @@ const EventAPI = {
                 query: GET_N_EVENTS,
                 variables: {
                     n,
+                    date: formatISO(new Date()),
                 },
             });
 

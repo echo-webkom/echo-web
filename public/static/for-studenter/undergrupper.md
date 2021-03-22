@@ -42,7 +42,7 @@ Bedkom sine retningslinjer kan man finne ved å klikke her.
 
 ### Webkom
 
-Webkom er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på å drifte og videreutvikle echo sine webløsninger. Ved hjelp av prosjektarbeid og en arbeidsmåte som gjenspeiler arbeidsliver, gir vi våre studenter en smakebit på hvordan det er å være utvikler. Webkom har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
+Webkom er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på å drifte og videreutvikle echo sine webløsninger. Ved hjelp av prosjektarbeid og en arbeidsmåte som gjenspeiler arbeidslivet, gir vi våre studenter en smakebit på hvordan det er å være utvikler. Webkom har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
 Nye stillinger lyses ut på echo sine sider.
 
 #### Medlemmer:

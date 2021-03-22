@@ -125,6 +125,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-12T11:28:50.368Z',
                         },
+                        thumbnail: null,
                     },
                     {
                         title: 'Post McPost',
@@ -137,6 +138,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-11T22:50:28.992Z',
                         },
+                        thumbnail: null,
                     },
                     {
                         title: 'Test McTest',
@@ -148,6 +150,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-24T15:38:21.021Z',
                         },
+                        thumbnail: null,
                     },
                     {
                         title: 'Pål er søt',
@@ -159,6 +162,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-24T13:41:11.641Z',
                         },
+                        thumbnail: null,
                     },
                 ],
             },
@@ -178,6 +182,7 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-12T11:28:50.368Z',
                         },
+                        thumbnail: null,
                     },
                 ],
             },
