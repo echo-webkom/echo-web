@@ -21,7 +21,7 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect } from 'react';
 import { CgOrganisation } from 'react-icons/cg';
-import { GrClock } from 'react-icons/gr';
+import { RiTimeLine } from 'react-icons/ri';
 import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
@@ -83,7 +83,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <Text>{bedpres.spots} plasser</Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
-                                <Icon as={GrClock} boxSize={10} />
+                                <Icon as={RiTimeLine} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'HH:mm')}</Text>
                                 <Icon as={ImLocation} boxSize={10} />
                                 <Text>{bedpres.location}</Text>
