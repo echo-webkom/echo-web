@@ -21,10 +21,12 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect } from 'react';
-import { CgProfile, CgOrganisation } from 'react-icons/cg';
+import { CgOrganisation } from 'react-icons/cg';
+import { GrClock } from 'react-icons/gr';
 import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
+import { parse } from 'graphql';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { BedpresAPI } from '../../lib/api';
@@ -83,6 +85,8 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <Text>{bedpres.spots} plasser</Text>
                                 <BiCalendar size="2em" />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
+                                <GrClock size="2em" />
+                                <Text>{format(parseISO(bedpres.date), 'HH:mm')}</Text>
                                 <ImLocation size="2em" />
                                 <Text>{bedpres.location}</Text>
                             </Grid>
