@@ -1,6 +1,6 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Image, SimpleGrid, Text, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { SimpleGrid, Text, LinkBox, LinkOverlay, Icon, Img } from '@chakra-ui/react';
 
 import { FiMail } from 'react-icons/fi';
 import { FaFacebook, FaInstagram, FaGithub } from 'react-icons/fa';
@@ -19,8 +19,7 @@ const Footer = (): JSX.Element => {
             spacingX="3em"
             spacingY="3em"
             w="100%"
-            pt="2em"
-            pb="2em"
+            py="2em"
             px="1em"
             mt="5em"
             bottom="0"
@@ -35,7 +34,7 @@ const Footer = (): JSX.Element => {
                 >
                     <NextLink href="https://facebook.com/groups/informatikk" passHref>
                         <LinkOverlay isExternal>
-                            <FaFacebook size="4em" />
+                            <Icon as={FaFacebook} boxSize={20} />
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
@@ -46,7 +45,7 @@ const Footer = (): JSX.Element => {
                 >
                     <NextLink href="https://github.com/echo-webkom/echo.uib.no" passHref>
                         <LinkOverlay isExternal>
-                            <FaGithub size="4em" />
+                            <Icon as={FaGithub} boxSize={20} />
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
@@ -57,7 +56,7 @@ const Footer = (): JSX.Element => {
                 >
                     <NextLink href="mailto:echo@uib.no" passHref>
                         <LinkOverlay isExternal>
-                            <FiMail size="4em" />
+                            <Icon as={FiMail} boxSize={20} />
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
@@ -68,19 +67,19 @@ const Footer = (): JSX.Element => {
                 >
                     <NextLink href="https://instagram.com/echo_uib" passHref>
                         <LinkOverlay isExternal>
-                            <FaInstagram size="4em" />
+                            <Icon as={FaInstagram} boxSize={20} />
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
             </SimpleGrid>
-            <Image
+            <Img
                 alt="echo sin logo"
                 display={['none', null, 'block']}
                 htmlWidth="300px"
                 fit="contain"
                 src={echoLogoWhite}
             />
-            <SimpleGrid columns={1} spacing="3" maxWidth="170px" textAlign="center">
+            <SimpleGrid columns={1} spacing="1" maxWidth="200px" textAlign="center">
                 <LinkBox>
                     <NextLink href="mailto:echo@uib.no" passHref>
                         <LinkOverlay isExternal>
