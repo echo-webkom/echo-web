@@ -12,6 +12,7 @@ import {
     Center,
     LinkBox,
     LinkOverlay,
+    Flex,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format, differenceInMilliseconds, parseISO } from 'date-fns';
@@ -71,11 +72,11 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                     </LinkOverlay>
                                 </NextLink>
                             </LinkBox>
-                            <SimpleGrid columns={2} alignItems="center" spacing="1">
+                            <Grid wordBreak="break-word" templateColumns="min-content auto" gap="3" alignItems="center">
                                 <CgOrganisation size="2em" />
                                 <NextLink href={bedpres.companyLink} passHref>
                                     <Link href={bedpres.companyLink} isExternal>
-                                        {bedpres.companyLink}
+                                        {bedpres.companyLink.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('/')[0]}
                                     </Link>
                                 </NextLink>
                                 <MdEventSeat size="2em" />
@@ -84,14 +85,14 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
                                 <ImLocation size="2em" />
                                 <Text>{bedpres.location}</Text>
-                            </SimpleGrid>
+                            </Grid>
                             <Divider my=".5em" />
                             <Center>
-                                <Text>PÅMELDING</Text>
+                                <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
                             {!bedpres.registrationLinks && (
                                 <Center my="3">
-                                    <Text fontSize="1.5em">Åpner {formattedRegDate}</Text>
+                                    <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
                                 </Center>
                             )}
                             {bedpres.registrationLinks && (
@@ -110,10 +111,9 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 </Stack>
                             )}
                             <Divider my=".5em" />
-                            <SimpleGrid columns={2} alignItems="center">
-                                <CgProfile size="2em" />
-                                <Text>{bedpres.author.authorName}</Text>
-                            </SimpleGrid>
+                            <Center>
+                                <Heading size="lg">@{bedpres.author.authorName}</Heading>
+                            </Center>
                         </GridItem>
                         <GridItem
                             colStart={[1, null, null, 2]}
