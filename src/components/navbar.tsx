@@ -17,6 +17,7 @@ import {
     LinkBox,
     LinkOverlay,
     Heading,
+    Icon,
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
@@ -55,7 +56,7 @@ const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
             variant="unstyled"
             icon={
                 <Center>
-                    <VscColorMode size="2em" />
+                    <Icon as={VscColorMode} boxSize={8} />
                 </Center>
             }
             aria-label="toggle color mode"
