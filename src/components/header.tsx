@@ -12,6 +12,7 @@ import {
     useDisclosure,
     LinkOverlay,
     LinkBox,
+    Icon,
 } from '@chakra-ui/react';
 
 import NavBar from './navbar';
@@ -90,7 +91,7 @@ const Header = (): JSX.Element => {
                         aria-label="show navbar"
                         icon={
                             <Center>
-                                <IoIosMenu size="2.5em" />
+                                <Icon as={IoIosMenu} boxSize={10} />
                             </Center>
                         }
                         data-testid="drawer-button"
