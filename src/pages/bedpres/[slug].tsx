@@ -3,7 +3,6 @@ import {
     Img,
     Link,
     Grid,
-    SimpleGrid,
     Text,
     GridItem,
     Divider,
@@ -12,7 +11,6 @@ import {
     Center,
     LinkBox,
     LinkOverlay,
-    Flex,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format, differenceInMilliseconds, parseISO } from 'date-fns';
@@ -26,7 +24,6 @@ import { GrClock } from 'react-icons/gr';
 import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
-import { parse } from 'graphql';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { BedpresAPI } from '../../lib/api';
