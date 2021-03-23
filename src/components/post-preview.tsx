@@ -1,4 +1,4 @@
-import { Box, Heading, LinkBox, LinkOverlay, Link, Divider, Flex, Text, Spacer } from '@chakra-ui/react';
+import { Box, Heading, LinkBox, LinkOverlay, Link, Divider, Flex, Text, Spacer, Icon } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
@@ -19,10 +19,10 @@ const PostPreview = ({ post, className }: { post: Post; className: string }): JS
             <Markdown options={MapMarkdownChakra}>{body}</Markdown>
             <Divider my=".5em" />
             <Flex align="center">
-                <CgProfile />
+                <Icon as={CgProfile} />
                 <Text ml=".5em">{post.author.authorName}</Text>
                 <Spacer />
-                <BiCalendar />
+                <Icon as={BiCalendar} />
                 <Text ml=".5em">{format(new Date(post.publishedAt), 'dd. MMM yyyy')}</Text>
             </Flex>
             <Divider my=".5em" />

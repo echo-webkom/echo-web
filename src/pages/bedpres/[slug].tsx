@@ -3,7 +3,6 @@ import {
     Img,
     Link,
     Grid,
-    SimpleGrid,
     Text,
     GridItem,
     Divider,
@@ -12,6 +11,7 @@ import {
     Center,
     LinkBox,
     LinkOverlay,
+    Icon,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format, differenceInMilliseconds, parseISO } from 'date-fns';
@@ -20,7 +20,8 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useEffect } from 'react';
-import { CgProfile, CgOrganisation } from 'react-icons/cg';
+import { CgOrganisation } from 'react-icons/cg';
+import { GrClock } from 'react-icons/gr';
 import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
@@ -71,27 +72,29 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                     </LinkOverlay>
                                 </NextLink>
                             </LinkBox>
-                            <SimpleGrid columns={2} alignItems="center" spacing="1">
+                            <Grid wordBreak="break-word" templateColumns="min-content auto" gap="3" alignItems="center">
                                 <CgOrganisation size="2em" />
                                 <NextLink href={bedpres.companyLink} passHref>
                                     <Link href={bedpres.companyLink} isExternal>
-                                        {bedpres.companyLink}
+                                        {bedpres.companyLink.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('/')[0]}
                                     </Link>
                                 </NextLink>
-                                <MdEventSeat size="2em" />
+                                <Icon as={MdEventSeat} boxSize={10} />
                                 <Text>{bedpres.spots} plasser</Text>
-                                <BiCalendar size="2em" />
+                                <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
-                                <ImLocation size="2em" />
+                                <Icon as={GrClock} boxSize={10} />
+                                <Text>{format(parseISO(bedpres.date), 'HH:mm')}</Text>
+                                <Icon as={ImLocation} boxSize={10} />
                                 <Text>{bedpres.location}</Text>
-                            </SimpleGrid>
+                            </Grid>
                             <Divider my=".5em" />
                             <Center>
-                                <Text>PÅMELDING</Text>
+                                <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
                             {!bedpres.registrationLinks && (
                                 <Center my="3">
-                                    <Text fontSize="1.5em">Åpner {formattedRegDate}</Text>
+                                    <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
                                 </Center>
                             )}
                             {bedpres.registrationLinks && (
@@ -110,10 +113,9 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 </Stack>
                             )}
                             <Divider my=".5em" />
-                            <SimpleGrid columns={2} alignItems="center">
-                                <CgProfile size="2em" />
-                                <Text>{bedpres.author.authorName}</Text>
-                            </SimpleGrid>
+                            <Center>
+                                <Heading size="lg">@{bedpres.author.authorName}</Heading>
+                            </Center>
                         </GridItem>
                         <GridItem
                             colStart={[1, null, null, 2]}
