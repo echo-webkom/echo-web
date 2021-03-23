@@ -22,10 +22,16 @@ Mer informasjon kommer snart! <3
 
 #### Medlemmer
 - Brigt Arve Toppe Håvardstun, leder
-- Sandra Lekve, økonomiansvarlig
+- Sandra Lekve, nestleder
+- Vegard Jensløkken, økonomiansvarlig
+- Lars Lismoen, PR-ansvarlig
+- Palma Persson, Sosialansvarlig
+- Sigurd Johnsen Setså, Leverandøransvarlig
+- Sofia Eika, Styremedlem
+- Georg Holm, Styremedlem
 - Eivind Dagsland Halderaker, styremedlem
-- Vegard Jensløkken, styremedlem
-- Pål Magnus Gunnestad, styremedlem
+- Erlend Raa Vågset, PhD-kontakt
+- Pål Magnus Gunnestad, admin-kontakt
 
 #### Kontakt
 [styret(at)programmerbar.no](bryggelaget@programmerbar.no)
