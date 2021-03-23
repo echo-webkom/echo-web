@@ -6,6 +6,7 @@ import {
     Grid,
     GridItem,
     Heading,
+    Icon,
     Img,
     Link,
     LinkBox,
@@ -54,7 +55,7 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
                                         {format(new Date(minute.date), 'dd. MMM yyyy')}
                                     </Link>
                                 </NextLink>
-                                <FaExternalLinkAlt />
+                                <Icon as={FaExternalLinkAlt} />
                             </Flex>
                         </ListItem>
                     ))}

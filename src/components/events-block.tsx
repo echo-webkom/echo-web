@@ -3,6 +3,7 @@ import {
     Divider,
     Flex,
     Heading,
+    Icon,
     LinkBox,
     LinkOverlay,
     Spacer,
@@ -37,7 +38,7 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
                     {events.map((event: Event) => (
                         <LinkBox key={event.slug}>
                             <Flex align="center" _hover={{ cursor: 'pointer' }}>
-                                <VscTriangleRight color={iconBg} />
+                                <Icon as={VscTriangleRight} color={iconBg} />
                                 <NextLink href={`/events/${event.slug}`} passHref>
                                     <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                                         <Text ml="3">{event.title}</Text>

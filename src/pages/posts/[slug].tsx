@@ -2,7 +2,7 @@ import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Heading, Divider, Img } from '@chakra-ui/react';
+import { Box, Text, Grid, GridItem, Heading, Divider, Icon } from '@chakra-ui/react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import Markdown from 'markdown-to-jsx';
@@ -31,9 +31,9 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                             <GridItem colSpan={1} rowStart={[2, null, null, null]} as={ContentBox}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
-                                    <CgProfile size="2em" />
+                                    <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author.authorName}</Text>
-                                    <BiCalendar size="2em" />
+                                    <Icon as={BiCalendar} boxSize={10} />
                                     <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy')}</Text>
                                 </Grid>
                             </GridItem>
@@ -48,12 +48,6 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                     <Heading mb="0.2em">{post.title}</Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
-                                    <Img
-                                        src={post.thumbnail ? post.thumbnail : '/placeholder_image.png'}
-                                        alt="post thumbnail"
-                                        width="300px"
-                                        height="250px"
-                                    />
                                 </ContentBox>
                             </GridItem>
                         </Grid>

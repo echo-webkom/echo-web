@@ -11,6 +11,7 @@ import {
     Center,
     LinkBox,
     LinkOverlay,
+    Icon,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { format, differenceInMilliseconds, parseISO } from 'date-fns';
@@ -78,13 +79,13 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                         {bedpres.companyLink.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('/')[0]}
                                     </Link>
                                 </NextLink>
-                                <MdEventSeat size="2em" />
+                                <Icon as={MdEventSeat} boxSize={10} />
                                 <Text>{bedpres.spots} plasser</Text>
-                                <BiCalendar size="2em" />
+                                <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
-                                <GrClock size="2em" />
+                                <Icon as={GrClock} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'HH:mm')}</Text>
-                                <ImLocation size="2em" />
+                                <Icon as={ImLocation} boxSize={10} />
                                 <Text>{bedpres.location}</Text>
                             </Grid>
                             <Divider my=".5em" />
