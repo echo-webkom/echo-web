@@ -14,9 +14,11 @@ const BedpresBlock = ({
     bedpreses: Array<Bedpres> | null;
     error: string | null;
 }): JSX.Element => {
-    const bedpresesFiltered = bedpreses?.filter((bedpres: Bedpres) => {
-        return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
-    });
+    const bedpresesFiltered = bedpreses
+        ?.filter((bedpres: Bedpres) => {
+            return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
+        })
+        .slice(0, 3);
 
     return (
         <ContentBox testid="bedpres-block">

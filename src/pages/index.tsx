@@ -102,7 +102,7 @@ const IndexPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const bedpresesResponse = await BedpresAPI.getBedpreses(3);
+    const bedpresesResponse = await BedpresAPI.getBedpreses(0);
     const postsResponse = await PostAPI.getPosts(2);
     const eventsResponse = await EventAPI.getEvents(5);
 
