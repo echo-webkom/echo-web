@@ -24,8 +24,6 @@
     },
     "dependencies": {
         "@chakra-ui/react": "1.4.1",
-        "@chakra-ui/system": "1.5.1",
-        "@chakra-ui/theme": "1.7.1",
         "@emotion/react": "11.1.5",
         "@emotion/styled": "11.1.5",
         "axios": "0.21.1",
