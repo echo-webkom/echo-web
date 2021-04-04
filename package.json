@@ -32,7 +32,7 @@
         "contentful": "8.2.0",
         "date-fns": "2.19.0",
         "dotenv": "8.2.0",
-        "framer-motion": "4.0.3",
+        "framer-motion": "4.1.2",
         "graphql": "15.5.0",
         "markdown-to-jsx": "7.1.2",
         "next": "10.0.9",
