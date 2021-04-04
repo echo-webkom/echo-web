@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@chakra-ui/react": "1.4.2",
+        "@emotion/react": "11.1.5",
         "@emotion/styled": "11.1.5",
         "axios": "0.21.1",
         "date-fns": "2.19.0",
