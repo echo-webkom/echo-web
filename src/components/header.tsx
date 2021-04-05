@@ -1,18 +1,19 @@
 import React, { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import {
     Text,
     Box,
     Center,
     Flex,
     IconButton,
-    Img,
     useColorModeValue,
     useDisclosure,
     LinkOverlay,
     LinkBox,
     Icon,
+    useBreakpointValue,
 } from '@chakra-ui/react';
 
 import NavBar from './navbar';
@@ -32,25 +33,20 @@ const HeaderLogo = ({
     messageText: string;
     bg: string;
 }) => {
+    const logoSrc = useBreakpointValue({ base: logoImg, md: textImg }) || textImg;
+    const { logoWidth, logoHeight } = useBreakpointValue({
+        base: { logoWidth: 90, logoHeight: 90 },
+        md: { logoWidth: 260, logoHeight: 77 },
+    }) || { logoWidth: 260, logoHeight: 77 };
+
     return (
-        <LinkBox
-            _hover={{ cursor: 'pointer' }}
-            maxW="300px"
-            position="relative"
-            p="1em"
-            bg={bg}
-            shadow="lg"
-            align="center"
-            wrap="nowrap"
-            data-testid="header-logo"
-        >
-            <Img src={logoImg} alt="logo" float="left" maxHeight="100%" w="90px" h="90px" display={['block', 'none']} />
-            <Img src={textImg} alt="logo-text" float="left" maxHeight="100%" display={['none', 'block']} />
+        <LinkBox p="1rem" bg={bg} shadow="lg" data-testid="header-logo">
+            <Image src={logoSrc} alt="logo" width={logoWidth} height={logoHeight} />
             {messageText && (
                 <NextLink href="/" passHref>
                     <LinkOverlay>
                         <Text
-                            bg="purple.400"
+                            bg="teal"
                             position="absolute"
                             bottom="-1.2rem"
                             left="5%"

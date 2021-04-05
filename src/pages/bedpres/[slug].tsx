@@ -1,6 +1,5 @@
 import {
     Heading,
-    Img,
     Link,
     Grid,
     Text,
@@ -14,6 +13,7 @@ import {
     Icon,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import { format, differenceInMilliseconds, parseISO } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetServerSideProps } from 'next';
@@ -68,7 +68,9 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             <LinkBox mb="1em">
                                 <NextLink href={bedpres.companyLink} passHref>
                                     <LinkOverlay href={bedpres.companyLink} isExternal>
-                                        <Img src={bedpres.logoUrl} />
+                                        <Center>
+                                            <Image src={bedpres.logoUrl} alt="Bedriftslogo" width={300} height={300} />
+                                        </Center>
                                     </LinkOverlay>
                                 </NextLink>
                             </LinkBox>
