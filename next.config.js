@@ -7,6 +7,12 @@ module.exports = {
         });
         return config;
     },
+    images: {
+        domains: ['images.ctfassets.net'],
+    },
+    future: {
+        webpack5: true,
+    },
 
     reactStrictMode: true,
 };

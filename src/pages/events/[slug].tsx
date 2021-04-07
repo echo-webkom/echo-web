@@ -1,8 +1,9 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Image from 'next/image';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Image, Heading, Icon } from '@chakra-ui/react';
+import { Center, Box, Text, Grid, GridItem, Heading, Icon } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
@@ -53,8 +54,10 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                 </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>
-                                <ContentBox noPadding>
-                                    <Image src={event.imageUrl} alt="logo" />
+                                <ContentBox>
+                                    <Center>
+                                        <Image src={event.imageUrl} alt="Eventlogo" width={250} height={250} />
+                                    </Center>
                                 </ContentBox>
                             </GridItem>
                         </Grid>
