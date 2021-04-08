@@ -1,31 +1,15 @@
-# echo - Fagutvalget for informatikk
+# echo web frontend
 
-The website of echo – Fagutvalget for informatikk.
+Nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
 
-## Development setup
+Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
-**1. Install yarn**
+## Tilbakemeldinger
 
-You can either install yarn via npm, or get it from [here](https://classic.yarnpkg.com/en/docs/install/#debian-stable).
+Har du noen tilbakemeldinger til nettsiden?
+Vi jobber hele tiden med å forbedre siden,
+og setter stor pris på om du sier ifra om noe er feil,
+eller du har idéer til nye endringer!
 
-**2. Clone the repository**
-
-using https:
-
-    git clone https://github.com/echo-webkom/echo.uib.no.git
-
-using ssh:
-
-    git clone git@github.com:echo-webkom/echo.uib.no.git
-
-**3. Install all the dependencies with yarn**
-
-    cd echo.uib.no && yarn
-
-**3. Run the development build with**
-
-    yarn dev
-
-**4. ...or build the project with**
-
-    yarn build
+Fyll gjerne ut skjemaet [her](https://forms.gle/r9LNMFjanUNP7Gph9),
+eller send oss en mail på [webkom@echo.uib.no](mailto:webkom@echo.uib.no).

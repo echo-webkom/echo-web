@@ -3,9 +3,14 @@ Undergrupper
 
 ### Gnist
 
-Gnist er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på rekruttering og fullføring. De jobber tett sammen med instituttet og fakultetet om saker som angår frafallsproblematikk og rekruttering av nye studenter. Med støtte fra instituttet kan Gnist gjennomføre tiltak de mener vil være positivt for studentene på instituttet, både faglig og sosialt! Gnist arrangerer blant annet kræsjkurs, filmkvelder og kodekvelder, samt gjør rekrutteringsarbeid som å dra på skolebesøk til videregående skoler. 
+Gnist er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på rekruttering og fullføring.
+De jobber tett sammen med instituttet og fakultetet om saker som angår frafallsproblematikk og rekruttering av nye studenter.
+Med støtte fra instituttet kan Gnist gjennomføre tiltak de mener vil være positivt for studentene på instituttet,
+både faglig og sosialt! Gnist arrangerer blant annet kræsjkurs, filmkvelder og kodekvelder,
+samt gjør rekrutteringsarbeid som å dra på skolebesøk til videregående skoler.
 
-Gnist har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov. Da Gnist er en arbeidsgruppe og ikke et studentutvalg holdes det ikke valg på samme måte som for echo.
+Gnist har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
+Da Gnist er en arbeidsgruppe og ikke et studentutvalg holdes det ikke valg på samme måte som for echo.
 
 #### Medlemmer:
 - Maria van der Reek Lidsheim (leder)
@@ -22,11 +27,16 @@ Gnist har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
 
 ### Bedriftskomitéen – Bedkom
 
-Bedriftskomitéen ved echo tilbyr hjelp med planlegging, markedsføring og organisering av ulike arrangement for bedrifter. Dette kan for eksempel være bedriftspresentasjoner eller workshops. Vi tilbyr rådgivning til bedrifter om hvordan de kan kommunisere effektivt og målrettet med våre studenter, og være en positiv faglig bidragsyter ved Institutt for Informatikk.
+Bedriftskomitéen ved echo tilbyr hjelp med planlegging, markedsføring og organisering av ulike arrangement for bedrifter.
+Dette kan for eksempel være bedriftspresentasjoner eller workshops.
+Vi tilbyr rådgivning til bedrifter om hvordan de kan kommunisere effektivt og målrettet med våre studenter,
+og være en positiv faglig bidragsyter ved Institutt for Informatikk.
 
-Medlemstallet i Bedkom er ikke fastsatt, og nye medlemmer rekrutteres ved behov. Bedriftskomiteens medlemmer velges ikke ved ordinært valg, men ved stemmegivning blant eksisterende medlemmer. Ledige posisjoner utlyses på echo sine sider.
+Medlemstallet i Bedkom er ikke fastsatt, og nye medlemmer rekrutteres ved behov.
+Bedriftskomiteens medlemmer velges ikke ved ordinært valg, men ved stemmegivning blant eksisterende medlemmer.
+Ledige posisjoner utlyses på echo sine sider.
 
-Bedkom sine retningslinjer kan man finne ved å klikke her.
+Bedkom sine retningslinjer kan man finne ved å klikke [her]().
 
 #### Medlemmer:
 - Tuva Kvalsøren (leder)
@@ -42,7 +52,14 @@ Bedkom sine retningslinjer kan man finne ved å klikke her.
 
 ### Webkom
 
-Webkom er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på å drifte og videreutvikle echo sine webløsninger. Ved hjelp av prosjektarbeid og en arbeidsmåte som gjenspeiler arbeidslivet, gir vi våre studenter en smakebit på hvordan det er å være utvikler. Webkom har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
+Webkom er en arbeidsgruppe bestående av studenter underlagt echo
+med fokus på å drifte og videreutvikle echo sine webløsninger,
+blant annet denne nettsiden.
+Ved hjelp av prosjektarbeid og en arbeidsmåte som gjenspeiler arbeidslivet,
+gir vi våre studenter en smakebit på hvordan det er å være utvikler.
+
+Webkom har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
+
 Nye stillinger lyses ut på echo sine sider.
 
 #### Medlemmer:
@@ -55,7 +72,13 @@ Nye stillinger lyses ut på echo sine sider.
 
 ### Tilde
 
-Tilde er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på å arrangere og gjennomføre sosiale arrangementer. Dette kan være turneringer, quiz, fester, lan og mye mer. Målet med Tilde er å styrke det sosiale miljøet på institutt for informatikk, og å lage arrangementer for alle våre studenter. Tilde har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov. Da Tilde er en arbeidsgruppe og ikke et studentutvalg holdes det ikke valg på samme måte som for echo.
+Tilde er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på å arrangere og gjennomføre sosiale arrangementer.
+Dette kan være turneringer, quiz, fester, lan og mye mer.
+Målet med Tilde er å styrke det sosiale miljøet på institutt for informatikk, og å lage arrangementer for alle våre studenter.
+
+Tilde har ikke et fastsatt medlemstall, men rekrutterer nye medlemmer ved behov.
+
+Da Tilde er en arbeidsgruppe og ikke et studentutvalg holdes det ikke valg på samme måte som for echo.
 
 #### Medlemmer:
 - Torjus Schaathun (leder)
@@ -73,7 +96,12 @@ Tilde er en arbeidsgruppe bestående av studenter underlagt echo, med fokus på 
 
 ### Makerspace
 
-Makerspacet er for deg som har et hobbyprosjekt som trenger tilgang til 3D-printer, lodding, Arduinoer, sensorer eller lignende. Eller kanskje du bare har lyst til å lære deg mer om hardware, eller har et sideprosjekt hvor du vil høre med likesinnede. Da er makerspacet for deg. Makerspacet styres av en liten gruppe studenter som sørger for at vi har alt vi trenger av utstyr og kunnskap, og er åpent for alle studenter under echos paraply. Nye styremedlemmer rekruteres ved behov, men vanlige medlemmer kan søke om tilgang her.
+Makerspacet er for deg som har et hobbyprosjekt som trenger tilgang til 3D-printer, lodding, Arduinoer, sensorer eller lignende.
+Eller kanskje du bare har lyst til å lære deg mer om hardware, eller har et sideprosjekt hvor du vil høre med likesinnede.
+Da er makerspacet for deg. Makerspacet styres av en liten gruppe studenter som sørger for at vi har alt vi trenger av utstyr og kunnskap,
+og er åpent for alle studenter under echos paraply.
+
+Nye styremedlemmer rekruteres ved behov, men vanlige medlemmer kan søke om tilgang [her](http://bit.ly/echomakerspace).
 
 #### Medlemmer:
 - Sondre Nilsen (leder)
@@ -85,7 +113,14 @@ Makerspacet er for deg som har et hobbyprosjekt som trenger tilgang til 3D-print
 
 ### Bryggelaget
 
-Informatikk sitt bryggelag er et samarbeidsprosjekt mellom echo og Institutt for informatikk. Vi er her for å hjelpe deg som ikke helt vet hvordan man brygge selv men kunne tenke seg å prøvd men også for deg som er en mer erfaren brygger. Vi har det meste av utstyr som skal til for å få et vellykket og smakfullt brygg. Vår kronjuvel er vår Speidel Braumeister 50L som gjør ølbryggingen til en lek. Vi brygger også øl til studentarrangementer og arrangerer arrangementer som ølsmakekveld og bryggekurs. Nye medlemmer til styret blir rekruttert ved behov.
+Informatikk sitt bryggelag er et samarbeidsprosjekt mellom echo og Institutt for informatikk.
+Vi er her for å hjelpe deg som ikke helt vet hvordan man brygge selv men kunne tenke seg å prøvd men også
+for deg som er en mer erfaren brygger.
+Vi har det meste av utstyr som skal til for å få et vellykket og smakfullt brygg.
+Vår kronjuvel er vår Speidel Braumeister 50L som gjør ølbryggingen til en lek.
+Vi brygger også øl til studentarrangementer og arrangerer arrangementer som ølsmakekveld og bryggekurs.
+
+Nye medlemmer til styret blir rekruttert ved behov.
 
 #### Medlemmer:
 - Sedric Kvarnes (leder)
@@ -97,9 +132,9 @@ Informatikk sitt bryggelag er et samarbeidsprosjekt mellom echo og Institutt for
 
 ### Kontaktinformasjon
 
-- Gnist: [gnist(at)echo.uib.no](gnist@echo.uib.no)
-- Bedkom: [bedkom(at)echo.uib.no](bedkom@echo.uib.no)
-- Webkom: [webkom(at)echo.uib.no](webkom@echo.uib.no)
-- Tilde:  [tilde(at)echo.uib.no](tilde@echo.uib.no)
-- Makerspace: [makerspace(at)echo.uib.no](makerspace@echo.uib.no)
-- Bryggelaget: [bryggelaget(at)echo.uib.no](bryggelaget@echo.uib.no)
+- Gnist: [gnist(at)echo.uib.no](mailto:gnist@echo.uib.no)
+- Bedkom: [bedkom(at)echo.uib.no](mailto:bedkom@echo.uib.no)
+- Webkom: [webkom(at)echo.uib.no](mailto:webkom@echo.uib.no)
+- Tilde:  [tilde(at)echo.uib.no](mailto:tilde@echo.uib.no)
+- Makerspace: [makerspace(at)echo.uib.no](mailto:makerspace@echo.uib.no)
+- Bryggelaget: [bryggelaget(at)echo.uib.no](mailto:bryggelaget@echo.uib.no)

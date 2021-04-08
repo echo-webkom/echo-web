@@ -1,8 +1,9 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Image from 'next/image';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Image, Heading } from '@chakra-ui/react';
+import { Center, Box, Text, Grid, GridItem, Heading, Icon } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
@@ -31,11 +32,11 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                             <GridItem as={ContentBox} colSpan={1}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
-                                    <ImTicket size="2em" />
+                                    <Icon as={ImTicket} boxSize={10} />
                                     <Text>{event.spots} plasser</Text>
-                                    <BiCalendar size="2em" />
+                                    <Icon as={BiCalendar} boxSize={10} />
                                     <Text>{format(parseISO(event.date), 'dd. MMM yyyy')}</Text>
-                                    <ImLocation size="2em" />
+                                    <Icon as={ImLocation} boxSize={10} />
                                     <Text>{event.location}</Text>
                                 </Grid>
                             </GridItem>
@@ -53,8 +54,10 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                 </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>
-                                <ContentBox noPadding>
-                                    <Image src={event.imageUrl} alt="logo" />
+                                <ContentBox>
+                                    <Center>
+                                        <Image src={event.imageUrl} alt="Eventlogo" width={250} height={250} />
+                                    </Center>
                                 </ContentBox>
                             </GridItem>
                         </Grid>

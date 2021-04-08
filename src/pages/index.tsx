@@ -4,7 +4,6 @@ import { GetStaticProps } from 'next';
 import {
     SimpleGrid,
     Stack,
-    Img,
     Heading,
     Text,
     useColorModeValue,
@@ -16,7 +15,9 @@ import {
     GridItem,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import Layout from '../components/layout';
+
 import SEO from '../components/seo';
 import BedpresBlock from '../components/bedpres-block';
 import { Bedpres, Post, Event } from '../lib/types';
@@ -47,7 +48,7 @@ const IndexPage = ({
 
     return (
         <Layout>
-            <SEO title="Home" />
+            <SEO title="Hjem" />
             <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
                 <GridItem rowStart={[2, null, null, 1]}>
                     <Stack minW="0" spacing="5">
@@ -60,8 +61,8 @@ const IndexPage = ({
                             <Center>
                                 <LinkBox>
                                     <NextLink href="https://bekk.no" passHref>
-                                        <LinkOverlay isExternal>
-                                            <Img alt="Bekk" src={bekkLogo} filter={bekkLogoFilter} htmlWidth="300px" />
+                                        <LinkOverlay isExternal filter={bekkLogoFilter}>
+                                            <Image alt="Bekk" src={bekkLogo} width={300} height={72} />
                                         </LinkOverlay>
                                     </NextLink>
                                 </LinkBox>

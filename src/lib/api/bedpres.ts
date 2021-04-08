@@ -1,4 +1,4 @@
-import { parseISO, formatISO, isBefore } from 'date-fns';
+import { parseISO, isBefore } from 'date-fns';
 import { Author, Bedpres } from '../types';
 import API from './api';
 import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
