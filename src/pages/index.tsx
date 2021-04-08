@@ -48,7 +48,7 @@ const IndexPage = ({
 
     return (
         <Layout>
-            <SEO title="Home" />
+            <SEO title="Hjem" />
             <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
                 <GridItem rowStart={[2, null, null, 1]}>
                     <Stack minW="0" spacing="5">

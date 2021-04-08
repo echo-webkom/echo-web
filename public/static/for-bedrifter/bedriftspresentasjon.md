@@ -10,4 +10,4 @@ Ved å holde bedriftspresentasjon får dere som bedrift en fantastisk mulighet t
 
 Vi hjelper til med det praktiske rundt forberedelsene og setter av dagen slik at det ikke arrangeres andre arrangement samtidig. Vi tror det er bra for bedriften dersom studentene får komme til bedriftens lokaler, men vi tilbyr også lokaler på Høyteknologisenteret for selve presentasjonen. Bedriftskomitéen planlegger bedriftspresentasjonene et halvår i forveien, så husk å være tidlig ute med å booke.
 
-Ta gjerne kontakt dersom dere ønsker å holde bedriftspresentasjon, ønsker informasjon om pris, eller har øvrige spørsmål.
+Ta gjerne [kontakt](mailto:bedkom@echo.uib.no) dersom dere ønsker å holde bedriftspresentasjon, ønsker informasjon om pris, eller har øvrige spørsmål.
