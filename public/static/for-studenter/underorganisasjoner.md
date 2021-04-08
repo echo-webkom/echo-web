@@ -2,7 +2,8 @@ Underorganisasjoner
 ---
 
 ### echo karriere
-echo karriere er en karrieredag for IT-studenter i bergensområdet og ble arrangert for første gang i 2019 som ble en stor suksess med stort oppmøte fra IT-studenter fra hele Bergen.
+echo karriere er en karrieredag for IT-studenter i bergensområdet og ble arrangert for første gang i 2019
+som ble en stor suksess med stort oppmøte fra IT-studenter fra hele Bergen.
 
 #### Medlemmer:
 - Sondre Eide Omland, leder
@@ -13,10 +14,12 @@ echo karriere er en karrieredag for IT-studenter i bergensområdet og ble arrang
 - Nikoline Liseth, bedriftsansvarlig
 
 #### Kontakt
-Dersom dere har noen spørsmål kan styret kontaktes ved å klikke her.
+Dersom dere har noen spørsmål kan styret kontaktes ved å klikke [her](https://www.echokarriere.no/kontakt-oss).
 
 ### Programmerbar
-Vi er styret i Programmerbar, det nyeste tilskuddet til echo! Vi jobber med å få startet en egen studentdrevet bar på Høyteknologisenteret hvor dere skal kunne sitte og jobbe på dagtid, slappe av etter en lang studiedag, eller slå dere løs på kvelden!
+Vi er styret i Programmerbar, det nyeste tilskuddet til echo!
+Vi jobber med å få startet en egen studentdrevet bar på Høyteknologisenteret hvor dere skal kunne sitte og jobbe på dagtid,
+slappe av etter en lang studiedag, eller slå dere løs på kvelden!
 
 Mer informasjon kommer snart! <3
 
@@ -34,4 +37,4 @@ Mer informasjon kommer snart! <3
 - Pål Magnus Gunnestad, admin-kontakt
 
 #### Kontakt
-[styret(at)programmerbar.no](bryggelaget@programmerbar.no)
+[bryggelaget(at)programmerbar.no](bryggelaget@programmerbar.no)
