@@ -23,7 +23,7 @@
         ]
     },
     "dependencies": {
-        "@chakra-ui/react": "1.4.2",
+        "@chakra-ui/react": "1.5.0",
         "@emotion/react": "11.1.5",
         "@emotion/styled": "11.1.5",
         "axios": "0.21.1",
