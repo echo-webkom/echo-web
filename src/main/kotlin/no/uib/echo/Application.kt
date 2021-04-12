@@ -1,11 +1,13 @@
 package no.uib.echo
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import no.uib.echo.plugins.*
+import io.ktor.application.*
+import io.ktor.server.netty.EngineMain;
+import no.uib.echo.plugins.configureRouting
 
-fun main() {
-    embeddedServer(Netty, port = 80, host = "0.0.0.0") {
-        configureRouting()
-    }.start(wait = true)
+fun main(args: Array<String>): Unit {
+    EngineMain.main(args)
+}
+
+fun Application.module() {
+    configureRouting()
 }
