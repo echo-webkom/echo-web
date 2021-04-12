@@ -7,5 +7,5 @@ RUN gradle clean build
 FROM gradle:latest
 WORKDIR /opt/app
 COPY --from=build /opt/build .
-EXPOSE 8080
+EXPOSE 80
 CMD ["gradle", "run"]
