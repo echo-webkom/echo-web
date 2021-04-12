@@ -1,0 +1,22 @@
+name: Build & run tests on pull request
+on:
+  pull_request:
+    branches: [develop, master]
+  push:
+    branches: develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Build & test with Gradle
+      run: ./gradlew build
