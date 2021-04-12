@@ -31,6 +31,7 @@ import { BedpresAPI } from '../../lib/api';
 import { Bedpres } from '../../lib/types';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
+import BedpresForm from '../../components/bedpres-form';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
@@ -102,15 +103,12 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             {bedpres.registrationLinks && (
                                 <Stack>
                                     {bedpres.registrationLinks.map((regLink) => (
-                                        <LinkBox key={regLink.link}>
-                                            <NextLink href={regLink.link} passHref>
-                                                <LinkOverlay isExternal>
-                                                    <Button w="100%" colorScheme="teal">
+                                        <>
+                                            <BedpresForm buttonDescription={regLink.description} />
+                                            {/* <Button w="100%" colorScheme="teal">
                                                         {regLink.description}
-                                                    </Button>
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
+                                                    </Button> */}
+                                        </>
                                     ))}
                                 </Stack>
                             )}
