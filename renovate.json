@@ -1,5 +1,7 @@
 {
-  "extends": [
-    "config:base"
-  ]
+    "extends": ["config:base"],
+    "labels": ["dependencies :handshake:"],
+    "prHourlyLimit": 0,
+    "stabilityDays": 3,
+    "prCreation": "not-pending"
 }
