@@ -1,0 +1,17 @@
+Bedpres
+    slug            PK
+    spots
+
+
+Student
+    email           PK
+    firstName
+    lastName
+    degree
+
+
+Registration
+    studentEmail    FK, PK
+    bedpresSlug     FK, PK
+    timestamp
+    terms
