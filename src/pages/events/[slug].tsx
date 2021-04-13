@@ -9,6 +9,7 @@ import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
 import { format, parseISO } from 'date-fns';
 
+import { RiTimeLine } from 'react-icons/ri';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
@@ -32,10 +33,16 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                             <GridItem as={ContentBox} colSpan={1}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
-                                    <Icon as={ImTicket} boxSize={10} />
-                                    <Text>{event.spots} plasser</Text>
+                                    {event.spots && (
+                                        <>
+                                            <Icon as={ImTicket} boxSize={10} />
+                                            <Text>{event.spots} plasser</Text>
+                                        </>
+                                    )}
                                     <Icon as={BiCalendar} boxSize={10} />
                                     <Text>{format(parseISO(event.date), 'dd. MMM yyyy')}</Text>
+                                    <Icon as={RiTimeLine} boxSize={10} />
+                                    <Text>{format(parseISO(event.date), 'HH:mm')}</Text>
                                     <Icon as={ImLocation} boxSize={10} />
                                     <Text>{event.location}</Text>
                                 </Grid>
