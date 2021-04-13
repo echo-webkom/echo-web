@@ -13,7 +13,6 @@ import {
     LinkOverlay,
     LinkBox,
     Icon,
-    useBreakpointValue,
 } from '@chakra-ui/react';
 
 import NavBar from './navbar';
@@ -26,23 +25,16 @@ const HeaderLogo = () => {
     // The small logo is the same for both modes.
     const bigLogo = useColorModeValue('/echo-logo.png', '/echo-logo-white.png');
 
-    // What the width and height of the small and big logos should be,
-    // depending on the screen size.
-    const { logoWidth, logoHeight } = useBreakpointValue({
-        base: { logoWidth: 90, logoHeight: 90 },
-        md: { logoWidth: 260, logoHeight: 77 },
-    }) || { logoWidth: 260, logoHeight: 77 };
-
     // Background of logo image, depending on light/dark mode.
     const bg = useColorModeValue('bg2Light', 'bg2Dark');
 
     return (
         <LinkBox p="1rem" bg={bg} shadow="lg" data-testid="header-logo">
             <Flex display={{ base: 'none', md: 'block' }}>
-                <Image src={bigLogo} alt="logo" width={logoWidth} height={logoHeight} />
+                <Image src={bigLogo} alt="logo" width={260} height={77} />
             </Flex>
             <Flex display={{ base: 'block', md: 'none' }}>
-                <Image src={smallLogo} alt="logo" width={logoWidth} height={logoHeight} />
+                <Image src={smallLogo} alt="logo" width={90} height={90} />
             </Flex>
             <NextLink href="/" passHref>
                 <LinkOverlay>
