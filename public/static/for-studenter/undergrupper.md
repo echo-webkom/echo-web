@@ -36,7 +36,7 @@ Medlemstallet i Bedkom er ikke fastsatt, og nye medlemmer rekrutteres ved behov.
 Bedriftskomiteens medlemmer velges ikke ved ordinært valg, men ved stemmegivning blant eksisterende medlemmer.
 Ledige posisjoner utlyses på echo sine sider.
 
-Bedkom sine retningslinjer kan man finne ved å klikke [her]().
+Bedkom sine retningslinjer kan man finne ved å klikke [her](https://bit.ly/bedkom-faq).
 
 #### Medlemmer:
 - Tuva Kvalsøren (leder)
