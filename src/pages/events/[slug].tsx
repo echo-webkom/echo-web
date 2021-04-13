@@ -61,11 +61,13 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                 </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>
-                                <ContentBox>
-                                    <Center>
-                                        <Image src={event.imageUrl} alt="Eventlogo" width={250} height={250} />
-                                    </Center>
-                                </ContentBox>
+                                {event.imageUrl && (
+                                    <ContentBox>
+                                        <Center>
+                                            <Image src={event.imageUrl} alt="Eventlogo" width={250} height={250} />
+                                        </Center>
+                                    </ContentBox>
+                                )}
                             </GridItem>
                         </Grid>
                     </Box>
