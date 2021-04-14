@@ -25,6 +25,7 @@ import { PostAPI, BedpresAPI, EventAPI } from '../lib/api';
 import ContentBox from '../components/content-box';
 import PostPreview from '../components/post-preview';
 import EventsBlock from '../components/events-block';
+import PostBlock from '../components/post-block';
 
 const bekkLogo = '/bekk.png';
 
@@ -77,26 +78,11 @@ const IndexPage = ({
             </SimpleGrid>
             {!posts && postsError && <Text>{postsError}</Text>}
             {posts && !postsError && (
-                <Center>
-                    <Stack w={['100%', null, null, null, '70%']} spacing="5">
-                        {posts.map((post) => {
-                            return <PostPreview key={post.slug} post={post} className="post" />;
-                        })}
-                        {posts.length > 0 && (
-                            <Center>
-                                <LinkBox>
-                                    <NextLink href="/posts" passHref>
-                                        <LinkOverlay>
-                                            <Button w="100%" colorScheme="teal">
-                                                Alle poster
-                                            </Button>
-                                        </LinkOverlay>
-                                    </NextLink>
-                                </LinkBox>
-                            </Center>
-                        )}
-                    </Stack>
-                </Center>
+                <SimpleGrid>
+                    <GridItem>
+                        <PostBlock posts={posts} error={postsError} />
+                    </GridItem>
+                </SimpleGrid>
             )}
         </Layout>
     );
@@ -104,7 +90,7 @@ const IndexPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
-    const postsResponse = await PostAPI.getPosts(2);
+    const postsResponse = await PostAPI.getPosts(4);
     const eventsResponse = await EventAPI.getEvents(5);
 
     return {
