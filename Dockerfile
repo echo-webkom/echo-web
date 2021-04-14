@@ -4,7 +4,7 @@ COPY . /opt/build/
 # Build with Shadow
 RUN ./gradlew shadowJar
 
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre-buster
 WORKDIR /opt/app
 # Default value if no environment variable is set
 ENV PORT 8080
