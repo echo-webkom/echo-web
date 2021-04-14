@@ -22,7 +22,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     return (
-        <ContentBox testid="post-block">
+        <ContentBox data-testid="post-block">
             <Box my=".5em">
                 {posts && !error && posts.length <= 0 && (
                     <Center>
