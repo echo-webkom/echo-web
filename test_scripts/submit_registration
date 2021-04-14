@@ -1,0 +1,11 @@
+#!/bin/bash
+
+curl --verbose -X POST \
+-H "Content-Type: application/json" \
+-d '{ "email": "foo@student.uib.no",
+      "firstName": "Test",
+      "lastName": "McTest",
+      "degree": "DTEK",
+      "slug": "generisk-bedriftspresentasjon",
+      "terms: true }' \
+http://localhost:5000/registration

@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  database:
+    image: postgres:13
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+  backend:
+    build: .
+    image: echo-web-backend:latest
+    depends_on:
+      - database
+    ports:
+      - '5000:5000'
+    environment:
+      PORT: 5000
