@@ -5,3 +5,6 @@ Dockerfile
 gradlew.bat
 .github
 .idea
+build/
+scripts/
+endpoints.yaml
