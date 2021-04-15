@@ -1,21 +1,61 @@
 import { parseISO, isBefore } from 'date-fns';
-import { Author, Bedpres } from '../types';
+import { Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
-import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
+import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
+
+type Bedpres = decodeType<typeof bedpresDecoder>;
+const bedpresDecoder = (value: Pojo) => {
+    const baseDecoder = record({
+        title: string,
+        slug: string,
+        date: string,
+        spots: number,
+        body: string,
+        location: string,
+        companyLink: string,
+        registrationTime: string,
+    });
+
+    const registrationLinksDecoder = record({
+        registrationLinksCollection: record({
+            items: array({
+                link: string,
+                description: string,
+            }),
+        }),
+    });
+    const logoUrlDecoder = record({
+        logo: record({
+            url: string,
+        }),
+    });
+
+    const publishedAtDecoder = record({
+        sys: record({
+            firstPublishedAt: string,
+        }),
+    });
+
+    const authorDecoder = record({
+        author: record({
+            authorName: string,
+        }),
+    });
+
+    return {
+        ...baseDecoder(value),
+        logoUrl: logoUrlDecoder(value).logo.url,
+        registrationLinks: isBefore(parseISO(baseDecoder(value).registrationTime), new Date())
+            ? registrationLinksDecoder(value).registrationLinksCollection.items
+            : null,
+        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+        author: authorDecoder(value).author.authorName,
+    };
+};
+
+const bedpresListDecoder = array(bedpresDecoder);
 
 const BedpresAPI = {
-    getPaths: async (): Promise<Array<string>> => {
-        try {
-            const { data } = await API.post('', {
-                query: GET_BEDPRES_PATHS,
-            });
-
-            return data.data.bedpresCollection.items.map((bedpres: { slug: string }) => bedpres.slug);
-        } catch (error) {
-            return [];
-        }
-    },
-
     getBedpreses: async (n: number): Promise<{ bedpreses: Array<Bedpres> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -26,51 +66,7 @@ const BedpresAPI = {
             });
 
             return {
-                bedpreses: data.data.bedpresCollection.items.map(
-                    (bedpres: {
-                        title: string;
-                        slug: string;
-                        date: string;
-                        spots: number;
-                        body: string;
-                        logo: {
-                            url: string;
-                        };
-                        location: string;
-                        author: Author;
-                        companyLink: string;
-                        registrationLinksCollection: {
-                            items: Array<{
-                                link: string;
-                                description: string;
-                            }>;
-                        };
-                        sys: {
-                            firstPublishedAt: string;
-                        };
-                        registrationTime: string;
-                    }) => {
-                        return {
-                            title: bedpres.title,
-                            slug: bedpres.slug,
-                            date: bedpres.date,
-                            spots: bedpres.spots,
-                            body: bedpres.body,
-                            logoUrl: bedpres.logo.url,
-                            location: bedpres.location,
-                            author: bedpres.author,
-                            companyLink: bedpres.companyLink,
-                            registrationLinks: isBefore(
-                                parseISO(data.data.bedpresCollection.items[0].registrationTime),
-                                new Date(),
-                            )
-                                ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
-                                : null,
-                            publishedAt: bedpres.sys.firstPublishedAt,
-                            registrationTime: bedpres.registrationTime,
-                        };
-                    },
-                ),
+                bedpreses: bedpresListDecoder(data.data.bedpresCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -91,25 +87,7 @@ const BedpresAPI = {
             });
 
             return {
-                bedpres: {
-                    title: data.data.bedpresCollection.items[0].title,
-                    slug: data.data.bedpresCollection.items[0].slug,
-                    date: data.data.bedpresCollection.items[0].date,
-                    spots: data.data.bedpresCollection.items[0].spots,
-                    body: data.data.bedpresCollection.items[0].body,
-                    logoUrl: data.data.bedpresCollection.items[0].logo.url,
-                    location: data.data.bedpresCollection.items[0].location,
-                    author: data.data.bedpresCollection.items[0].author,
-                    companyLink: data.data.bedpresCollection.items[0].companyLink,
-                    registrationLinks: isBefore(
-                        parseISO(data.data.bedpresCollection.items[0].registrationTime),
-                        new Date(),
-                    )
-                        ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
-                        : null,
-                    publishedAt: data.data.bedpresCollection.items[0].sys.firstPublishedAt,
-                    registrationTime: data.data.bedpresCollection.items[0].registrationTime,
-                },
+                bedpres: bedpresListDecoder(data.data.bedpresCollection.items)[0],
                 error: null,
             };
         } catch (error) {

@@ -35,7 +35,7 @@ import ContentBox from '../../components/content-box';
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
 
-    const regDate: Date = parseISO(bedpres.registrationTime);
+    const regDate = parseISO(bedpres?.registrationTime);
     const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
         !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
@@ -116,7 +116,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             )}
                             <Divider my=".5em" />
                             <Center>
-                                <Heading size="lg">@{bedpres.author.authorName}</Heading>
+                                <Heading size="lg">@{bedpres.author}</Heading>
                             </Center>
                         </GridItem>
                         <GridItem

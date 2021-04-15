@@ -52,7 +52,7 @@ describe('getBedpresBySlug', () => {
             body: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].body,
             logoUrl: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].logo.url,
             location: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].location,
-            author: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].author,
+            author: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].author.authorName,
             companyLink: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].companyLink,
             registrationLinks:
                 mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationLinksCollection.items,
@@ -89,7 +89,7 @@ describe('getBedpreses', () => {
                 body: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].body,
                 logoUrl: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].logo.url,
                 location: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].location,
-                author: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].author,
+                author: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].author.authorName,
                 companyLink: mockResponses.bedpresBySlug.data.bedpresCollection.items[0].companyLink,
                 registrationLinks:
                     mockResponses.bedpresBySlug.data.bedpresCollection.items[0].registrationLinksCollection.items,
@@ -111,26 +111,5 @@ describe('getBedpreses', () => {
 
         expect(bedpreses).not.toBeNull();
         expect(error).toBeNull();
-    });
-});
-
-describe('getPaths', () => {
-    it('should return formatted data', async () => {
-        const paths = await BedpresAPI.getPaths();
-
-        expect(paths).toEqual([mockResponses.bedpresPaths.data.bedpresCollection.items[0].slug]);
-    });
-
-    it('should return 10 or less slugs', async () => {
-        const paths = await BedpresAPI.getPaths();
-
-        expect(paths.length).toBeLessThanOrEqual(10);
-    });
-
-    // if an error occurs the api should return an empty array instead of null
-    it('should not return null', async () => {
-        const paths = await BedpresAPI.getPaths();
-
-        expect(paths).not.toBeNull();
     });
 });
