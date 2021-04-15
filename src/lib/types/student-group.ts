@@ -8,7 +8,7 @@ export interface Role {
     members: Array<Profile>;
 }
 
-export interface Subgroup {
+export interface StudentGroup {
     name: string;
     info: string;
     roles: Array<Role>;
@@ -28,7 +28,7 @@ export interface RoleRaw {
     };
 }
 
-export interface SubgroupRaw {
+export interface StudentGroupRaw {
     name: string;
     info: string;
     rolesCollection: {

@@ -196,9 +196,9 @@ const GET_N_MINUTES = `
     }
 `;
 
-const GET_SUBGROUPS = `
-    query {
-        subgroupCollection(limit: 10) {
+const GET_STUDENTGROUPS_BY_TYPE = `
+    query ($type: String!) {
+        studentGroupCollection(limit: 10, where: { groupType: $type }) {
             items {
                 name
                 info
@@ -231,5 +231,5 @@ export {
     GET_N_BEDPRESES,
     GET_BEDPRES_BY_SLUG,
     GET_N_MINUTES,
-    GET_SUBGROUPS,
+    GET_STUDENTGROUPS_BY_TYPE,
 };

@@ -3,14 +3,14 @@ import { GetStaticProps } from 'next';
 import { Heading, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
-import { Profile, Role, Subgroup } from '../lib/types';
+import { Profile, Role, StudentGroup } from '../lib/types';
 import Layout from '../components/layout';
 import ContentBox from '../components/content-box';
-import { SubgroupAPI } from '../lib/api';
+import { StudentGroupAPI } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 import MemberProfile from '../components/member-profile';
 
-const SubgroupPage = ({ subgroups }: { subgroups: Array<Subgroup> }): JSX.Element => {
+const SubgroupPage = ({ subgroups }: { subgroups: Array<StudentGroup> }): JSX.Element => {
     const router = useRouter();
 
     return (
@@ -18,7 +18,7 @@ const SubgroupPage = ({ subgroups }: { subgroups: Array<Subgroup> }): JSX.Elemen
             <ContentBox>
                 {router.isFallback && <Text>Loading...</Text>}
                 {!router.isFallback &&
-                    subgroups.map((subgroup: Subgroup) => (
+                    subgroups.map((subgroup: StudentGroup) => (
                         <>
                             <Heading mb="5">{subgroup.name}</Heading>
                             <Markdown options={MapMarkdownChakra}>{subgroup.info}</Markdown>
@@ -43,7 +43,7 @@ const SubgroupPage = ({ subgroups }: { subgroups: Array<Subgroup> }): JSX.Elemen
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const subgroups = await SubgroupAPI.getSubgroups();
+    const subgroups = await StudentGroupAPI.getStudentGroups('subgroup');
 
     return {
         props: {

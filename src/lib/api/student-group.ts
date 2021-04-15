@@ -1,20 +1,23 @@
 import API from './api';
-import { Subgroup, SubgroupRaw, RoleRaw, ProfileRaw } from '../types';
-import { GET_SUBGROUPS } from './schema';
+import { StudentGroup, StudentGroupRaw, RoleRaw, ProfileRaw } from '../types';
+import { GET_STUDENTGROUPS_BY_TYPE } from './schema';
 
-const SubgroupAPI = {
-    getSubgroups: async (): Promise<Array<Subgroup>> => {
+const StudentGroupAPI = {
+    getStudentGroups: async (type: string): Promise<Array<StudentGroup>> => {
         try {
             const { data } = await API.post('', {
-                query: GET_SUBGROUPS,
+                query: GET_STUDENTGROUPS_BY_TYPE,
+                variables: {
+                    type,
+                },
             });
 
-            return data.data.subgroupCollection.items.map((subgroup: SubgroupRaw) => {
+            return data.data.studentGroupCollection.items.map((studentGroup: StudentGroupRaw) => {
                 return {
-                    name: subgroup.name,
-                    info: subgroup.info,
-                    roles: subgroup.rolesCollection
-                        ? subgroup.rolesCollection.items.map((role: RoleRaw) => {
+                    name: studentGroup.name,
+                    info: studentGroup.info,
+                    roles: studentGroup.rolesCollection
+                        ? studentGroup.rolesCollection.items.map((role: RoleRaw) => {
                               return {
                                   name: role.name,
                                   members: role.membersCollection
@@ -36,4 +39,4 @@ const SubgroupAPI = {
     },
 };
 
-export default SubgroupAPI;
+export default StudentGroupAPI;

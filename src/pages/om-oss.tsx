@@ -3,8 +3,6 @@ import NextLink from 'next/link';
 import {
     Center,
     Flex,
-    Grid,
-    GridItem,
     Heading,
     Icon,
     Img,
@@ -13,10 +11,6 @@ import {
     LinkOverlay,
     List,
     ListItem,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
     Tabs,
     Text,
     useColorModeValue,
@@ -30,7 +24,6 @@ import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
 import bekk from '../../public/static/om-oss/bekk.md';
-import ContentBox from '../components/content-box';
 import MapMarkdownChakra from '../markdown';
 import { MinuteAPI } from '../lib/api';
 import { Minute } from '../lib/types';

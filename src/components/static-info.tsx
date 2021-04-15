@@ -1,8 +1,5 @@
 import React from 'react';
-
 import { Tabs, Grid, GridItem, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
-import Markdown from 'markdown-to-jsx';
-import MapMarkdownChakra from '../markdown';
 import ContentBox from './content-box';
 
 const StaticInfo = ({
