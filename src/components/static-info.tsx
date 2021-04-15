@@ -7,10 +7,10 @@ import ContentBox from './content-box';
 
 const StaticInfo = ({
     tabNames,
-    markdownFiles,
+    tabPanels,
 }: {
     tabNames: Array<string>;
-    markdownFiles: Array<string>;
+    tabPanels: Array<React.ReactNode>;
 }): JSX.Element => {
     return (
         <Tabs isLazy orientation="vertical">
@@ -29,12 +29,8 @@ const StaticInfo = ({
                 <GridItem minW="0" maxW="100%" colStart={[1, null, null, 2]} colSpan={[1, null, null, 3]} rowSpan={2}>
                     <ContentBox>
                         <TabPanels>
-                            {markdownFiles.map((mdFile: string) => (
-                                <TabPanel>
-                                    <Markdown key={mdFile} options={MapMarkdownChakra}>
-                                        {mdFile}
-                                    </Markdown>
-                                </TabPanel>
+                            {tabPanels.map((node: React.ReactNode) => (
+                                <TabPanel>{node}</TabPanel>
                             ))}
                         </TabPanels>
                     </ContentBox>

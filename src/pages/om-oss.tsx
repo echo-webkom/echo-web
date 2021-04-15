@@ -35,6 +35,7 @@ import MapMarkdownChakra from '../markdown';
 import { MinuteAPI } from '../lib/api';
 import { Minute } from '../lib/types';
 import SEO from '../components/seo';
+import StaticInfo from '../components/static-info';
 
 const bekkLogo = '/bekk.png';
 
@@ -73,70 +74,42 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
         <Layout>
             <SEO title="Om oss" />
             <Tabs isLazy orientation="vertical">
-                <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                    <GridItem minW="0" maxW="100%" colSpan={1}>
-                        <ContentBox>
-                            <TabList whiteSpace="normal" wordBreak="break-word">
-                                <Tab fontSize="xl">Hvem er vi?</Tab>
-                                <Tab fontSize="xl">Instituttrådet</Tab>
-                                <Tab fontSize="xl">Statutter</Tab>
-                                <Tab fontSize="xl">Møtereferater</Tab>
-                                <Tab fontSize="xl">Bekk</Tab>
-                            </TabList>
-                        </ContentBox>
-                    </GridItem>
-                    <GridItem
-                        minW="0"
-                        maxW="100%"
-                        colStart={[1, null, null, 2]}
-                        colSpan={[1, null, null, 3]}
-                        rowSpan={2}
-                    >
-                        <ContentBox>
-                            <TabPanels>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Minutes minutes={minutes} error={error} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <Center>
-                                        <LinkBox>
-                                            <NextLink href="https://bekk.no" passHref>
-                                                <LinkOverlay isExternal>
-                                                    <Img src={bekkLogo} filter={bekkLogoFilter} />
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    </Center>
-                                    <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
-                                    <Text mt="2em">
-                                        Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
-                                        <NextLink
-                                            href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                            passHref
-                                        >
-                                            <Link
-                                                color={linkColor}
-                                                href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                                isExternal
-                                            >
-                                                her.
-                                            </Link>
-                                        </NextLink>
-                                    </Text>
-                                </TabPanel>
-                            </TabPanels>
-                        </ContentBox>
-                    </GridItem>
-                </Grid>
+                <StaticInfo
+                    tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
+                    tabPanels={[
+                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>,
+                        <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
+                        <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
+                        <Minutes minutes={minutes} error={error} />,
+                        <>
+                            <Center>
+                                <LinkBox>
+                                    <NextLink href="https://bekk.no" passHref>
+                                        <LinkOverlay isExternal>
+                                            <Img src={bekkLogo} filter={bekkLogoFilter} />
+                                        </LinkOverlay>
+                                    </NextLink>
+                                </LinkBox>
+                            </Center>
+                            <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                            <Text mt="2em">
+                                Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
+                                <NextLink
+                                    href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                    passHref
+                                >
+                                    <Link
+                                        color={linkColor}
+                                        href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                        isExternal
+                                    >
+                                        her.
+                                    </Link>
+                                </NextLink>
+                            </Text>
+                        </>,
+                    ]}
+                />
             </Tabs>
         </Layout>
     );
