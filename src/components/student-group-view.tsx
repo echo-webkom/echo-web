@@ -15,7 +15,7 @@ const StudentGroupView = ({ group }: { group: StudentGroup }): JSX.Element => {
             <Wrap spacing={['1em', null, '2.5em']} justify="center">
                 {group.roles.map((role: Role) =>
                     role.members.map((profile: Profile) => (
-                        <WrapItem>
+                        <WrapItem key={profile.name}>
                             <MemberProfile profile={profile} role={role.name} />
                         </WrapItem>
                     )),
