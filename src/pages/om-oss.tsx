@@ -11,7 +11,6 @@ import {
     LinkOverlay,
     List,
     ListItem,
-    Tabs,
     Text,
     useColorModeValue,
 } from '@chakra-ui/react';
@@ -25,10 +24,11 @@ import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
 import bekk from '../../public/static/om-oss/bekk.md';
 import MapMarkdownChakra from '../markdown';
-import { MinuteAPI } from '../lib/api';
-import { Minute } from '../lib/types';
+import { MinuteAPI, StudentGroupAPI } from '../lib/api';
+import { Minute, StudentGroup } from '../lib/types';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
+import StudentGroupSection from '../components/student-group-section';
 
 const bekkLogo = '/bekk.png';
 
@@ -59,60 +59,70 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
     );
 };
 
-const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
+const OmOssPage = ({
+    boards,
+    minutes,
+    error,
+}: {
+    boards: Array<StudentGroup>;
+    minutes: Array<Minute> | null;
+    error: string | null;
+}): JSX.Element => {
     const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
     const linkColor = useColorModeValue('blue', 'blue.400');
 
     return (
         <Layout>
             <SEO title="Om oss" />
-            <Tabs isLazy orientation="vertical">
-                <StaticInfo
-                    tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
-                    tabPanels={[
-                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>,
-                        <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
-                        <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
-                        <Minutes minutes={minutes} error={error} />,
-                        <>
-                            <Center>
-                                <LinkBox>
-                                    <NextLink href="https://bekk.no" passHref>
-                                        <LinkOverlay isExternal>
-                                            <Img src={bekkLogo} filter={bekkLogoFilter} />
-                                        </LinkOverlay>
-                                    </NextLink>
-                                </LinkBox>
-                            </Center>
-                            <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
-                            <Text mt="2em">
-                                Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
-                                <NextLink
-                                    href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                    passHref
-                                >
-                                    <Link
-                                        color={linkColor}
-                                        href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                        isExternal
-                                    >
-                                        her.
-                                    </Link>
+            <StaticInfo
+                tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
+                tabPanels={[
+                    <>
+                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
+                        <StudentGroupSection studentGroups={boards} groupType="styrer" />
+                    </>,
+                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
+                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
+                    <Minutes minutes={minutes} error={error} />,
+                    <>
+                        <Center>
+                            <LinkBox>
+                                <NextLink href="https://bekk.no" passHref>
+                                    <LinkOverlay isExternal>
+                                        <Img src={bekkLogo} filter={bekkLogoFilter} />
+                                    </LinkOverlay>
                                 </NextLink>
-                            </Text>
-                        </>,
-                    ]}
-                />
-            </Tabs>
+                            </LinkBox>
+                        </Center>
+                        <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                        <Text mt="2em">
+                            Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
+                            <NextLink
+                                href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                passHref
+                            >
+                                <Link
+                                    color={linkColor}
+                                    href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                    isExternal
+                                >
+                                    her.
+                                </Link>
+                            </NextLink>
+                        </Text>
+                    </>,
+                ]}
+            />
         </Layout>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
     const { minutes, error } = await MinuteAPI.getMinutes(0);
+    const boards = await StudentGroupAPI.getStudentGroups('board');
 
     return {
-        props: { minutes, error },
+        props: { boards, minutes, error },
     };
 };
 
