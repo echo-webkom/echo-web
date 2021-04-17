@@ -1,8 +1,29 @@
-import { Minute } from '../types';
+import { array, record, Pojo, decodeType, string, boolean } from 'typescript-json-decoder';
 import API from './api';
 import { GET_N_MINUTES } from './schema';
 
-const MinuteAPI = {
+export type Minute = decodeType<typeof minuteDecoder>;
+const minuteDecoder = (value: Pojo) => {
+    const baseDecoder = record({
+        date: string,
+        allmote: boolean,
+    });
+
+    const documentUrlDecoder = record({
+        document: record({
+            url: string,
+        }),
+    });
+
+    return {
+        ...baseDecoder(value),
+        documentUrl: documentUrlDecoder(value).document.url,
+    };
+};
+
+const minuteListDecoder = array(minuteDecoder);
+
+export const MinuteAPI = {
     getMinutes: async (n: number): Promise<{ minutes: Array<Minute> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -13,21 +34,7 @@ const MinuteAPI = {
             });
 
             return {
-                minutes: data.data.meetingMinuteCollection.items.map(
-                    (minute: {
-                        date: string;
-                        document: {
-                            url: string;
-                        };
-                        allmote: boolean;
-                    }) => {
-                        return {
-                            date: minute.date,
-                            document: minute.document.url,
-                            allmote: minute.allmote,
-                        };
-                    },
-                ),
+                minutes: minuteListDecoder(data.data.meetingMinuteCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -38,5 +45,3 @@ const MinuteAPI = {
         }
     },
 };
-
-export default MinuteAPI;

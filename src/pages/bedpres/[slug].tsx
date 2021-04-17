@@ -27,8 +27,7 @@ import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import { BedpresAPI } from '../../lib/api';
-import { Bedpres } from '../../lib/types';
+import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 

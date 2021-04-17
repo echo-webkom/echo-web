@@ -1,8 +1,8 @@
 import 'whatwg-fetch';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import mockResponses from './mock-responses';
-import { EventAPI } from '..';
+import mockResponses, { RawEvent } from './mock-responses';
+import { EventAPI, Event } from '../event';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from '../schema';
 
 interface QueryBody {
@@ -12,6 +12,23 @@ interface QueryBody {
         slug?: string;
     };
 }
+
+const nEventsToGet = 2;
+const validSlug = 'sick-event-bruh';
+
+const compare = (post: Event, json: RawEvent) => {
+    expect(post).toEqual({
+        title: json.title,
+        slug: json.slug,
+        date: json.date,
+        spots: json.spots,
+        body: json.body,
+        imageUrl: json.image?.url || null,
+        location: json.location,
+        publishedAt: json.sys.firstPublishedAt,
+        author: json.author.authorName,
+    });
+};
 
 const server = setupServer(
     rest.post<QueryBody, string>(
@@ -44,23 +61,15 @@ afterAll(() => server.close());
 
 describe('getEventBySlug', () => {
     it('should return correct (formatted) data', async () => {
-        const { event } = await EventAPI.getEventBySlug('bedpres-med-bekk');
+        const { event } = await EventAPI.getEventBySlug(validSlug);
 
-        expect(event).toEqual({
-            title: mockResponses.eventBySlug.data.eventCollection.items[0].title,
-            slug: mockResponses.eventBySlug.data.eventCollection.items[0].slug,
-            date: mockResponses.eventBySlug.data.eventCollection.items[0].date,
-            spots: mockResponses.eventBySlug.data.eventCollection.items[0].spots,
-            body: mockResponses.eventBySlug.data.eventCollection.items[0].body,
-            imageUrl: mockResponses.eventBySlug.data.eventCollection.items[0].image.url,
-            location: mockResponses.eventBySlug.data.eventCollection.items[0].location,
-            publishedAt: mockResponses.eventBySlug.data.eventCollection.items[0].sys.firstPublishedAt,
-            author: mockResponses.eventBySlug.data.eventCollection.items[0].author,
-        });
+        if (!event) fail(new Error(`getEventBySlug(${validSlug}) returned null.`));
+
+        compare(event, mockResponses.eventBySlug.data.eventCollection.items[0]);
     });
 
     it('should not return event as null, and error should be null when using a valid slug', async () => {
-        const { event, error } = await EventAPI.getEventBySlug('bedpres-med-bekk');
+        const { event, error } = await EventAPI.getEventBySlug(validSlug);
 
         expect(event).not.toBeNull();
         expect(error).toBeNull();
@@ -76,43 +85,22 @@ describe('getEventBySlug', () => {
 
 describe('getEvents', () => {
     it('should return correct (formatted) data', async () => {
-        const { events } = await EventAPI.getEvents(2);
+        const { events } = await EventAPI.getEvents(nEventsToGet);
 
-        expect(events).toEqual([
-            {
-                title: mockResponses.nEvents.data.eventCollection.items[0].title,
-                slug: mockResponses.nEvents.data.eventCollection.items[0].slug,
-                date: mockResponses.nEvents.data.eventCollection.items[0].date,
-                spots: mockResponses.nEvents.data.eventCollection.items[0].spots,
-                body: mockResponses.nEvents.data.eventCollection.items[0].body,
-                imageUrl: mockResponses.nEvents.data.eventCollection.items[0].image.url,
-                location: mockResponses.nEvents.data.eventCollection.items[0].location,
-                publishedAt: mockResponses.nEvents.data.eventCollection.items[0].sys.firstPublishedAt,
-                author: mockResponses.nEvents.data.eventCollection.items[0].author,
-            },
-            {
-                title: mockResponses.nEvents.data.eventCollection.items[1].title,
-                slug: mockResponses.nEvents.data.eventCollection.items[1].slug,
-                date: mockResponses.nEvents.data.eventCollection.items[1].date,
-                spots: mockResponses.nEvents.data.eventCollection.items[1].spots,
-                body: mockResponses.nEvents.data.eventCollection.items[1].body,
-                imageUrl: mockResponses.nEvents.data.eventCollection.items[1].image.url,
-                location: mockResponses.nEvents.data.eventCollection.items[1].location,
-                publishedAt: mockResponses.nEvents.data.eventCollection.items[1].sys.firstPublishedAt,
-                author: mockResponses.nEvents.data.eventCollection.items[1].author,
-            },
-        ]);
+        if (!events) fail(new Error(`getEvents(${nEventsToGet}) returned null.`));
+
+        events.map((event, i) => compare(event, mockResponses.nEvents.data.eventCollection.items[i]));
     });
 
     it('should return correct amount of events', async () => {
-        const actualLength = mockResponses.nEvents.data.eventCollection.items.length;
-        const { events } = await EventAPI.getEvents(2); // 2 is just a placeholder here. The mock data always returns 2 items
+        const actualAmount = mockResponses.nEvents.data.eventCollection.items.length;
+        const { events } = await EventAPI.getEvents(actualAmount);
 
-        expect(events?.length).toEqual(actualLength);
+        expect(events?.length).toEqual(actualAmount);
     });
 
     it('should not return as null, and error should be null', async () => {
-        const { events, error } = await EventAPI.getEvents(2);
+        const { events, error } = await EventAPI.getEvents(nEventsToGet);
 
         expect(events).not.toBeNull();
         expect(error).toBeNull();

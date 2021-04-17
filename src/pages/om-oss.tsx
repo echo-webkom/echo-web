@@ -32,8 +32,7 @@ import statutter from '../../public/static/om-oss/statutter.md';
 import bekk from '../../public/static/om-oss/bekk.md';
 import ContentBox from '../components/content-box';
 import MapMarkdownChakra from '../markdown';
-import { MinuteAPI } from '../lib/api';
-import { Minute } from '../lib/types';
+import { MinuteAPI, Minute } from '../lib/api/minute';
 import SEO from '../components/seo';
 
 const bekkLogo = '/bekk.png';
@@ -50,8 +49,8 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
                     {minutes.map((minute: Minute) => (
                         <ListItem key={minute.date}>
                             <Flex align="center">
-                                <NextLink href={minute.document} passHref>
-                                    <Link href={minute.document} color={color} isExternal mr=".5em">
+                                <NextLink href={minute.documentUrl} passHref>
+                                    <Link href={minute.documentUrl} color={color} isExternal mr=".5em">
                                         {format(new Date(minute.date), 'dd. MMM yyyy')}
                                     </Link>
                                 </NextLink>

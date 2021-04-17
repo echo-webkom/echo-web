@@ -5,7 +5,7 @@ import React from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { BiCalendar } from 'react-icons/bi';
 import { format } from 'date-fns';
-import { Post } from '../lib/types';
+import { Post } from '../lib/api/post';
 import MapMarkdownChakra from '../markdown';
 import ContentBox from './content-box';
 
@@ -20,7 +20,7 @@ const PostPreview = ({ post, className }: { post: Post; className: string }): JS
             <Divider my=".5em" />
             <Flex align="center">
                 <Icon as={CgProfile} />
-                <Text ml=".5em">{post.author.authorName}</Text>
+                <Text ml=".5em">{post.author}</Text>
                 <Spacer />
                 <Icon as={BiCalendar} />
                 <Text ml=".5em">{format(new Date(post.publishedAt), 'dd. MMM yyyy')}</Text>

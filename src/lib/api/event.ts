@@ -1,9 +1,46 @@
 import { formatISO } from 'date-fns';
-import { Event, Author } from '../types';
+import { nil, union, Pojo, record, array, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
+import { authorDecoder, publishedAtDecoder } from './decoders';
 
-const EventAPI = {
+export type Event = decodeType<typeof eventDecoder>;
+const eventDecoder = (value: Pojo) => {
+    const baseDecoder = record({
+        title: string,
+        slug: string,
+        spots: union(number, nil),
+        date: string,
+        body: string,
+        location: string,
+    });
+
+    const imageUrlDecoder = record({
+        image: union(
+            record({
+                url: string,
+            }),
+            nil,
+        ),
+    });
+
+    return {
+        ...baseDecoder(value),
+        author: authorDecoder(value).author.authorName,
+        imageUrl: imageUrlDecoder(value).image?.url || null,
+        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+    };
+};
+
+const eventListDecoder = array(eventDecoder);
+
+const eventSlugDecoder = record({
+    slug: string,
+});
+
+const eventSlugListDecoder = array(eventSlugDecoder);
+
+export const EventAPI = {
     /**
      * Get the slugs of the 10 lasts events.
      * This data is used to statically generate the pages of the 10 last published events.
@@ -14,7 +51,7 @@ const EventAPI = {
                 query: GET_EVENT_PATHS,
             });
 
-            return data.data.eventCollection.items.map((event: { slug: string }) => event.slug);
+            return eventSlugListDecoder(data.data.eventCollection.items).map((eventSlug) => eventSlug.slug);
         } catch (error) {
             return [];
         }
@@ -35,35 +72,7 @@ const EventAPI = {
             });
 
             return {
-                events: data.data.eventCollection.items.map(
-                    (event: {
-                        title: string;
-                        slug: string;
-                        date: string;
-                        spots: number;
-                        body: string;
-                        image: {
-                            url: string;
-                        };
-                        location: string;
-                        sys: {
-                            firstPublishedAt: string;
-                        };
-                        author: Author;
-                    }) => {
-                        return {
-                            title: event.title,
-                            slug: event.slug,
-                            date: event.date,
-                            spots: event.spots ? event.spots : null,
-                            body: event.body,
-                            imageUrl: event.image ? event.image.url : null,
-                            location: event.location,
-                            publishedAt: event.sys.firstPublishedAt,
-                            author: event.author,
-                        };
-                    },
-                ),
+                events: eventListDecoder(data.data.eventCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -88,19 +97,7 @@ const EventAPI = {
             });
 
             return {
-                event: {
-                    title: data.data.eventCollection.items[0].title,
-                    slug: data.data.eventCollection.items[0].slug,
-                    date: data.data.eventCollection.items[0].date,
-                    spots: data.data.eventCollection.items[0].spots ? data.data.eventCollection.items[0].spots : null,
-                    body: data.data.eventCollection.items[0].body,
-                    imageUrl: data.data.eventCollection.items[0].image
-                        ? data.data.eventCollection.items[0].image.url
-                        : null,
-                    location: data.data.eventCollection.items[0].location,
-                    publishedAt: data.data.eventCollection.items[0].sys.firstPublishedAt,
-                    author: data.data.eventCollection.items[0].author,
-                },
+                event: eventListDecoder(data.data.eventCollection.items)[0],
                 error: null,
             };
         } catch (error) {
@@ -111,5 +108,3 @@ const EventAPI = {
         }
     },
 };
-
-export default EventAPI;
