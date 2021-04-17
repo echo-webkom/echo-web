@@ -4,7 +4,10 @@ import API from './api';
 import { publishedAtDecoder, authorDecoder } from './decoders';
 import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 
+// Automatically creates the Bedpres type with the
+// fields we specify in our bedpresDecoder.
 export type Bedpres = decodeType<typeof bedpresDecoder>;
+
 const bedpresDecoder = (value: Pojo) => {
     // Defines the structure of the JSON object we
     // are trying to decode, WITHOUT any fields
@@ -44,6 +47,7 @@ const bedpresDecoder = (value: Pojo) => {
 
     // We combine the base decoder with the decoders
     // for the nested fields, and return the final JSON object.
+    // This object is of type Bedpres.
     return {
         ...baseDecoder(value),
         logoUrl: logoUrlDecoder(value).logo.url,
@@ -59,6 +63,10 @@ const bedpresDecoder = (value: Pojo) => {
 const bedpresListDecoder = array(bedpresDecoder);
 
 export const BedpresAPI = {
+    /**
+     * Get the n last bedpreses.
+     * @param n how many bedpreses to retrieve
+     */
     getBedpreses: async (n: number): Promise<{ bedpreses: Array<Bedpres> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -80,6 +88,10 @@ export const BedpresAPI = {
         }
     },
 
+    /**
+     * Get a bedpres by its slug.
+     * @param slug the slug of the desired bedpres.
+     */
     getBedpresBySlug: async (slug: string): Promise<{ bedpres: Bedpres | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
