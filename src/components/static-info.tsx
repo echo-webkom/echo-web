@@ -27,7 +27,7 @@ const StaticInfo = ({
                     <ContentBox>
                         <TabPanels>
                             {tabPanels.map((node: React.ReactNode) => (
-                                <TabPanel>{node}</TabPanel>
+                                <TabPanel p="0">{node}</TabPanel>
                             ))}
                         </TabPanels>
                     </ContentBox>
