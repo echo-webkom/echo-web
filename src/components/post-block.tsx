@@ -34,7 +34,6 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                         w={['18em', null, '25em']}
                         bg={bg}
                         minH="16rem"
-                        textAlign="center"
                         p="1em"
                         px="2em"
                         pb="3em"
@@ -43,7 +42,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                         data-testid={testid}
                     >
                         <Heading size="lg" mb="1em">
-                            {post.title}
+                            {post.title.slice(0, 30)}...
                         </Heading>
                         {/* <Text textOverflow="ellipsis" overflow="hidden" noOfLines={4}>{post.body}</Text> */}
                         <Box h="8em" overflow="hidden">
@@ -61,7 +60,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                                     },
                                 }}
                             >
-                                {post.body}
+                                {post.body.slice(0, 200).concat('...')}
                             </Markdown>
                         </Box>
                         <Center pt="5">
