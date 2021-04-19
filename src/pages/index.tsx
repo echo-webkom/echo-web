@@ -78,11 +78,9 @@ const IndexPage = ({
             </SimpleGrid>
             {!posts && postsError && <Text>{postsError}</Text>}
             {posts && !postsError && (
-                <SimpleGrid>
-                    <GridItem>
-                        <PostBlock posts={posts} error={postsError} />
-                    </GridItem>
-                </SimpleGrid>
+                <Center>
+                    <PostBlock posts={posts} error={postsError} />
+                </Center>
             )}
         </Layout>
     );
@@ -90,7 +88,7 @@ const IndexPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
-    const postsResponse = await PostAPI.getPosts(4);
+    const postsResponse = await PostAPI.getPosts(3);
     const eventsResponse = await EventAPI.getEvents(5);
 
     return {

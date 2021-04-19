@@ -18,6 +18,10 @@ import { Post } from '../lib/types';
 import ContentBox from './content-box';
 import MapMarkdownChakra from '../markdown';
 
+const Span = ({ children }: { children: React.ReactNode }): JSX.Element => {
+    return <span>{children}</span>;
+};
+
 const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
     const bg = useColorModeValue('gray.50', 'gray.800');
     const authorBg = useColorModeValue('yellow.500', 'yellow.300');
@@ -48,7 +52,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                                     overrides: {
                                         ...MapMarkdownChakra,
                                         a: {
-                                            component: Text,
+                                            component: Span,
                                             props: {
                                                 isExternal: true,
                                                 color: 'blue',
@@ -76,7 +80,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     const buttonTheme = useColorModeValue('black', 'white');
     return (
-        <ContentBox my=".5em" data-testid="post-block" overflowX="auto">
+        <ContentBox my=".5em" data-testid="post-block" overflowX="auto" css={{ scrollbarColor: 'dark' }}>
             {posts && !error && posts.length <= 0 && (
                 <Center>
                     <Text>Ingen Innlegg</Text>
@@ -93,7 +97,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                         <NextLink href="/posts" passHref>
                             <LinkOverlay>
                                 <Button w="100%" colorScheme={buttonTheme} variant="link">
-                                    Se Alle [...]
+                                    Se Alle
                                 </Button>
                             </LinkOverlay>
                         </NextLink>
