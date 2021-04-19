@@ -15,11 +15,11 @@ const StudentGroupSection = ({
         <>
             {studentGroups.length === 0 && <Text>Finner ingen {groupType} :(</Text>}
             {studentGroups.length !== 0 && (
-                <Tabs variant="soft-rounded" p="0">
+                <Tabs variant="soft-rounded" p="0" data-testid="student-group-section">
                     <TabList>
                         <Wrap justify="center">
                             {studentGroups.map((group: StudentGroup) => (
-                                <Tab key={group.name} fontWeight="bold" fontSize="xl">
+                                <Tab key={group.name} data-testid={`${group.name}-tab`} fontWeight="bold" fontSize="xl">
                                     {group.name}
                                 </Tab>
                             ))}
@@ -28,7 +28,7 @@ const StudentGroupSection = ({
                     <Divider my=".5em" />
                     <TabPanels>
                         {studentGroups.map((group: StudentGroup) => (
-                            <TabPanel p="0" key={group.name}>
+                            <TabPanel p="0" key={group.name} data-testid={`${group.name}-tabPanel`}>
                                 <StudentGroupView group={group} />
                             </TabPanel>
                         ))}
