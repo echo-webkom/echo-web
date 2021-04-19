@@ -15,7 +15,7 @@ import React from 'react';
 import format from 'date-fns/format';
 import { VscTriangleRight } from 'react-icons/vsc';
 import NextLink from 'next/link';
-import { Event } from '../lib/types';
+import { Event } from '../lib/api/event';
 
 import theme from '../styles/theme';
 import ContentBox from './content-box';

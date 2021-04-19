@@ -13,9 +13,8 @@ import { RiTimeLine } from 'react-icons/ri';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Event } from '../../lib/types';
+import { EventAPI, Event } from '../../lib/api/event';
 
-import { EventAPI } from '../../lib/api';
 import ContentBox from '../../components/content-box';
 
 const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Element => {

@@ -24,8 +24,8 @@ import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
 import bekk from '../../public/static/om-oss/bekk.md';
 import MapMarkdownChakra from '../markdown';
-import { MinuteAPI, StudentGroupAPI } from '../lib/api';
-import { Minute, StudentGroup } from '../lib/types';
+import { MinuteAPI, Minute } from '../lib/api/minute';
+import { StudentGroupAPI, StudentGroup } from '../lib/api/student-group';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
@@ -44,8 +44,8 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
                     {minutes.map((minute: Minute) => (
                         <ListItem key={minute.date}>
                             <Flex align="center">
-                                <NextLink href={minute.document} passHref>
-                                    <Link href={minute.document} color={color} isExternal mr=".5em">
+                                <NextLink href={minute.documentUrl} passHref>
+                                    <Link href={minute.documentUrl} color={color} isExternal mr=".5em">
                                         {format(new Date(minute.date), 'dd. MMM yyyy')}
                                     </Link>
                                 </NextLink>
@@ -119,10 +119,10 @@ const OmOssPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const { minutes, error } = await MinuteAPI.getMinutes(0);
-    const boards = await StudentGroupAPI.getStudentGroups('board');
+    const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
-        props: { boards, minutes, error },
+        props: { boards: boards.studentGroups, minutes, error },
     };
 };
 

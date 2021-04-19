@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text, Wrap } from '@chakra-ui/react';
-import { StudentGroup } from '../lib/types';
+import { StudentGroup } from '../lib/api/student-group';
 import StudentGroupView from './student-group-view';
 
 const StudentGroupSection = ({

@@ -14,7 +14,7 @@ import {
 import NextLink from 'next/link';
 import { format } from 'date-fns';
 
-import { Bedpres } from '../lib/types';
+import { Bedpres } from '../lib/api/bedpres';
 
 const BedpresPreview = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
     const hoverColor = useColorModeValue('gray.100', 'gray.800');
