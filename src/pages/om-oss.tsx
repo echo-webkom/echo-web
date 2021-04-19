@@ -3,8 +3,6 @@ import NextLink from 'next/link';
 import {
     Center,
     Flex,
-    Grid,
-    GridItem,
     Heading,
     Icon,
     Img,
@@ -13,11 +11,6 @@ import {
     LinkOverlay,
     List,
     ListItem,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
     Text,
     useColorModeValue,
 } from '@chakra-ui/react';
@@ -30,10 +23,12 @@ import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
 import bekk from '../../public/static/om-oss/bekk.md';
-import ContentBox from '../components/content-box';
 import MapMarkdownChakra from '../markdown';
 import { MinuteAPI, Minute } from '../lib/api/minute';
+import { StudentGroupAPI, StudentGroup } from '../lib/api/student-group';
 import SEO from '../components/seo';
+import StaticInfo from '../components/static-info';
+import StudentGroupSection from '../components/student-group-section';
 
 const bekkLogo = '/bekk.png';
 
@@ -64,88 +59,70 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
     );
 };
 
-const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
+const OmOssPage = ({
+    boards,
+    minutes,
+    error,
+}: {
+    boards: Array<StudentGroup>;
+    minutes: Array<Minute> | null;
+    error: string | null;
+}): JSX.Element => {
     const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
     const linkColor = useColorModeValue('blue', 'blue.400');
 
     return (
         <Layout>
             <SEO title="Om oss" />
-            <Tabs isLazy orientation="vertical">
-                <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                    <GridItem minW="0" maxW="100%" colSpan={1}>
-                        <ContentBox>
-                            <TabList whiteSpace="normal" wordBreak="break-word">
-                                <Tab fontSize="xl">Hvem er vi?</Tab>
-                                <Tab fontSize="xl">Instituttrådet</Tab>
-                                <Tab fontSize="xl">Statutter</Tab>
-                                <Tab fontSize="xl">Møtereferater</Tab>
-                                <Tab fontSize="xl">Bekk</Tab>
-                            </TabList>
-                        </ContentBox>
-                    </GridItem>
-                    <GridItem
-                        minW="0"
-                        maxW="100%"
-                        colStart={[1, null, null, 2]}
-                        colSpan={[1, null, null, 3]}
-                        rowSpan={2}
-                    >
-                        <ContentBox>
-                            <TabPanels>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>
-                                </TabPanel>
-                                <TabPanel>
-                                    <Minutes minutes={minutes} error={error} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <Center>
-                                        <LinkBox>
-                                            <NextLink href="https://bekk.no" passHref>
-                                                <LinkOverlay isExternal>
-                                                    <Img src={bekkLogo} filter={bekkLogoFilter} />
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    </Center>
-                                    <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
-                                    <Text mt="2em">
-                                        Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
-                                        <NextLink
-                                            href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                            passHref
-                                        >
-                                            <Link
-                                                color={linkColor}
-                                                href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
-                                                isExternal
-                                            >
-                                                her.
-                                            </Link>
-                                        </NextLink>
-                                    </Text>
-                                </TabPanel>
-                            </TabPanels>
-                        </ContentBox>
-                    </GridItem>
-                </Grid>
-            </Tabs>
+            <StaticInfo
+                tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
+                tabPanels={[
+                    <>
+                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
+                        <StudentGroupSection studentGroups={boards} groupType="styrer" />
+                    </>,
+                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
+                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
+                    <Minutes minutes={minutes} error={error} />,
+                    <>
+                        <Center>
+                            <LinkBox>
+                                <NextLink href="https://bekk.no" passHref>
+                                    <LinkOverlay isExternal>
+                                        <Img src={bekkLogo} filter={bekkLogoFilter} />
+                                    </LinkOverlay>
+                                </NextLink>
+                            </LinkBox>
+                        </Center>
+                        <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                        <Text mt="2em">
+                            Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
+                            <NextLink
+                                href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                passHref
+                            >
+                                <Link
+                                    color={linkColor}
+                                    href="https://assets.ctfassets.net/7ygn1zpoiz5r/2thjF1h2psjpGvPYUBtIfo/b02e65f0520bee931a935e3617ad31c9/Offentlig-avtale-2020_2022.pdf"
+                                    isExternal
+                                >
+                                    her.
+                                </Link>
+                            </NextLink>
+                        </Text>
+                    </>,
+                ]}
+            />
         </Layout>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
     const { minutes, error } = await MinuteAPI.getMinutes(0);
+    const boards = await StudentGroupAPI.getStudentGroups('board');
 
     return {
-        props: { minutes, error },
+        props: { boards, minutes, error },
     };
 };
 

@@ -186,6 +186,30 @@ const GET_N_MINUTES = `
     }
 `;
 
+const GET_STUDENTGROUPS_BY_TYPE = `
+    query ($type: String!) {
+        studentGroupCollection(limit: 10, where: { groupType: $type }) {
+            items {
+                name
+                info
+                rolesCollection(limit: 20) {
+                    items {
+                        name
+                        membersCollection(limit: 15) {
+                            items {
+                                name
+                                picture {
+                                    url
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export {
     GET_EVENT_PATHS,
     GET_N_EVENTS,
@@ -196,4 +220,5 @@ export {
     GET_N_BEDPRESES,
     GET_BEDPRES_BY_SLUG,
     GET_N_MINUTES,
+    GET_STUDENTGROUPS_BY_TYPE,
 };
