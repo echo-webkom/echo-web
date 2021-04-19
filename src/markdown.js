@@ -1,5 +1,4 @@
-import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img } from '@chakra-ui/react';
 
 const MapMarkdownChakra = {
     p: {
@@ -99,11 +98,11 @@ const MapMarkdownChakra = {
             isExternal: true,
             color: 'blue',
         },
-    },
-    img: {
-        component: Image,
-        props: {
-            layout: 'fill',
+        img: {
+            component: Img,
+            props: {
+                htmlWidth: '100%',
+            },
         },
     },
 };
