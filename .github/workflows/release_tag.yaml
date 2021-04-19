@@ -1,0 +1,37 @@
+name: Create & tag new release
+on:
+  push:
+    branches: master
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh
+          
+      - name: Create & tag release
+        run: |
+          git fetch --tags
+          gh config set prompt disabled
+          gh release create "v$(date +%V.%G)" \
+            -t "weekly-$(date +%V.%G)" \
+            --target master \
+          || { \
+              VERSION=$(git tag --sort=-committerdate | head -n1);
+              gh release create "v$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
+                -t "weekly-$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
+                --target master; \
+             }
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
