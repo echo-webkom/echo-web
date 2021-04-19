@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text, Wrap } from '@chakra-ui/react';
 import { StudentGroup } from '../lib/types';
 import StudentGroupView from './student-group-view';
 
@@ -15,14 +15,17 @@ const StudentGroupSection = ({
         <>
             {studentGroups.length === 0 && <Text>Finner ingen {groupType} :(</Text>}
             {studentGroups.length !== 0 && (
-                <Tabs p="0">
+                <Tabs variant="soft-rounded" p="0">
                     <TabList>
-                        {studentGroups.map((group: StudentGroup) => (
-                            <Tab key={group.name} fontWeight="bold" fontSize="xl">
-                                {group.name}
-                            </Tab>
-                        ))}
+                        <Wrap justify="center">
+                            {studentGroups.map((group: StudentGroup) => (
+                                <Tab key={group.name} fontWeight="bold" fontSize="xl">
+                                    {group.name}
+                                </Tab>
+                            ))}
+                        </Wrap>
                     </TabList>
+                    <Divider my=".5em" />
                     <TabPanels>
                         {studentGroups.map((group: StudentGroup) => (
                             <TabPanel key={group.name}>
