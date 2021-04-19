@@ -24,34 +24,51 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
     const authorColor = useColorModeValue('white', 'black');
     return (
         <LinkBox>
-            <LinkOverlay as={NextLink} href={`posts/${post.slug}`} passHref>
-                <Box
-                    w={['18em', null, '25em']}
-                    bg={bg}
-                    minH="16rem"
-                    textAlign="center"
-                    p="1em"
-                    px="2em"
-                    pb="3em"
-                    pos="relative"
-                    boxShadow="md"
-                    data-testid={testid}
-                >
-                    <Heading size="lg" mb="1em">
-                        {post.title}
-                    </Heading>
-                    {/* <Text textOverflow="ellipsis" overflow="hidden" noOfLines={4}>{post.body}</Text> */}
-                    <Box h="8em" overflow="hidden">
-                        <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
+            <NextLink href={`/posts/${post.slug}`} passHref>
+                <LinkOverlay>
+                    <Box
+                        w={['18em', null, '25em']}
+                        bg={bg}
+                        minH="16rem"
+                        textAlign="center"
+                        p="1em"
+                        px="2em"
+                        pb="3em"
+                        pos="relative"
+                        boxShadow="md"
+                        data-testid={testid}
+                    >
+                        <Heading size="lg" mb="1em">
+                            {post.title}
+                        </Heading>
+                        {/* <Text textOverflow="ellipsis" overflow="hidden" noOfLines={4}>{post.body}</Text> */}
+                        <Box h="8em" overflow="hidden">
+                            <Markdown
+                                options={{
+                                    overrides: {
+                                        ...MapMarkdownChakra,
+                                        a: {
+                                            component: Text,
+                                            props: {
+                                                isExternal: true,
+                                                color: 'blue',
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                {post.body}
+                            </Markdown>
+                        </Box>
+                        <Center pt="5">
+                            <Text size="md">[...]</Text>
+                        </Center>
+                        <Text pos="absolute" bottom="0" right="8" color={authorColor} bg={authorBg} py="1" px="3">
+                            {post.author.authorName}
+                        </Text>
                     </Box>
-                    <Center pt="5">
-                        <Text size="md">[...]</Text>
-                    </Center>
-                    <Text pos="absolute" bottom="0" right="8" color={authorColor} bg={authorBg} py="1" px="3">
-                        {post.author.authorName}
-                    </Text>
-                </Box>
-            </LinkOverlay>
+                </LinkOverlay>
+            </NextLink>
         </LinkBox>
     );
 };

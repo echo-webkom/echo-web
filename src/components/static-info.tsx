@@ -31,7 +31,7 @@ const StaticInfo = ({
                         <TabPanels>
                             {markdownFiles.map((mdFile: string) => (
                                 <TabPanel>
-                                    <Markdown key={mdFile} options={MapMarkdownChakra}>
+                                    <Markdown key={mdFile} options={{ overrides: MapMarkdownChakra }}>
                                         {mdFile}
                                     </Markdown>
                                 </TabPanel>

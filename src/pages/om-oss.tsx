@@ -95,13 +95,13 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                         <ContentBox>
                             <TabPanels>
                                 <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
                                 </TabPanel>
                                 <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{instituttraadet}</Markdown>
                                 </TabPanel>
                                 <TabPanel>
-                                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{statutter}</Markdown>
                                 </TabPanel>
                                 <TabPanel>
                                     <Minutes minutes={minutes} error={error} />
@@ -116,7 +116,7 @@ const OmOssPage = ({ minutes, error }: { minutes: Array<Minute> | null; error: s
                                             </NextLink>
                                         </LinkBox>
                                     </Center>
-                                    <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{bekk}</Markdown>
                                     <Text mt="2em">
                                         Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
                                         <NextLink

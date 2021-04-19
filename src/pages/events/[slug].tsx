@@ -50,7 +50,7 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                     <Heading mb="0.5em" mt="0.5em">
                                         {event.title}
                                     </Heading>
-                                    <Markdown options={MapMarkdownChakra}>{event.body}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{event.body}</Markdown>
                                 </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>

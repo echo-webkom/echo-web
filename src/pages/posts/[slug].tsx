@@ -47,7 +47,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                                 <ContentBox>
                                     <Heading mb="0.2em">{post.title}</Heading>
                                     <Divider mb="1em" />
-                                    <Markdown options={MapMarkdownChakra}>{post.body}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
                                 </ContentBox>
                             </GridItem>
                         </Grid>

@@ -16,7 +16,7 @@ const PostPreview = ({ post, className }: { post: Post; className: string }): JS
     return (
         <Box as={ContentBox} className={className}>
             <Heading>{post.title}</Heading>
-            <Markdown options={MapMarkdownChakra}>{body}</Markdown>
+            <Markdown options={{ overrides: MapMarkdownChakra }}>{body}</Markdown>
             <Divider my=".5em" />
             <Flex align="center">
                 <Icon as={CgProfile} />
