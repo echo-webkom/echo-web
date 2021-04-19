@@ -26,8 +26,10 @@ const StaticInfo = ({
                 <GridItem minW="0" maxW="100%" colStart={[1, null, null, 2]} colSpan={[1, null, null, 3]} rowSpan={2}>
                     <ContentBox>
                         <TabPanels>
-                            {tabPanels.map((node: React.ReactNode) => (
-                                <TabPanel p="0">{node}</TabPanel>
+                            {tabPanels.map((node: React.ReactNode, index: number) => (
+                                <TabPanel key={index.toString()} p="0">
+                                    {node}
+                                </TabPanel>
                             ))}
                         </TabPanels>
                     </ContentBox>

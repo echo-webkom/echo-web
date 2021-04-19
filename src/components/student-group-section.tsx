@@ -28,7 +28,7 @@ const StudentGroupSection = ({
                     <Divider my=".5em" />
                     <TabPanels>
                         {studentGroups.map((group: StudentGroup) => (
-                            <TabPanel key={group.name}>
+                            <TabPanel p="0" key={group.name}>
                                 <StudentGroupView group={group} />
                             </TabPanel>
                         ))}
