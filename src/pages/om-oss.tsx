@@ -122,7 +122,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
-        props: { boards, minutes, error },
+        props: { boards: boards.studentGroups, minutes, error },
     };
 };
 

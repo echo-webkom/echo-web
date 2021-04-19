@@ -38,8 +38,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
     return {
         props: {
-            subGroups,
-            subOrgs,
+            subGroups: subGroups.studentGroups,
+            subOrgs: subOrgs.studentGroups,
         },
     };
 };
