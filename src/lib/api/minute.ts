@@ -1,8 +1,51 @@
-import { Minute } from '../types';
+import { array, record, Pojo, decodeType, string, boolean } from 'typescript-json-decoder';
 import API from './api';
 import { GET_N_MINUTES } from './schema';
 
-const MinuteAPI = {
+// Automatically creates the Minute type with the
+// fields we specify in our minuteDecoder.
+export type Minute = decodeType<typeof minuteDecoder>;
+
+const minuteDecoder = (value: Pojo) => {
+    // Defines the structure of the JSON object we
+    // are trying to decode, WITHOUT any fields
+    // that are nested.
+    //
+    // For example, the field "author" is nested;
+    //      author: { authorName: string }
+    //
+    // We need to define additional decoders
+    // for these nested fields.
+    const baseDecoder = record({
+        date: string,
+        allmote: boolean,
+    });
+
+    // Decoders for nested fields.
+
+    const documentUrlDecoder = record({
+        document: record({
+            url: string,
+        }),
+    });
+
+    // We combine the base decoder with the decoders
+    // for the nested fields, and return the final JSON object.
+    // This object is of type Minute.
+    return {
+        ...baseDecoder(value),
+        documentUrl: documentUrlDecoder(value).document.url,
+    };
+};
+
+// Decode a list of Minute's.
+const minuteListDecoder = array(minuteDecoder);
+
+export const MinuteAPI = {
+    /**
+     * Get the n last meeting minutes.
+     * @param n how many meeting minutes to retrieve
+     */
     getMinutes: async (n: number): Promise<{ minutes: Array<Minute> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -13,21 +56,7 @@ const MinuteAPI = {
             });
 
             return {
-                minutes: data.data.meetingMinuteCollection.items.map(
-                    (minute: {
-                        date: string;
-                        document: {
-                            url: string;
-                        };
-                        allmote: boolean;
-                    }) => {
-                        return {
-                            date: minute.date,
-                            document: minute.document.url,
-                            allmote: minute.allmote,
-                        };
-                    },
-                ),
+                minutes: minuteListDecoder(data.data.meetingMinuteCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -38,5 +67,3 @@ const MinuteAPI = {
         }
     },
 };
-
-export default MinuteAPI;

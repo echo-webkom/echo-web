@@ -1,8 +1,65 @@
-import { Author, Post } from '../types';
+import { nil, record, string, union, decodeType, array, Pojo } from 'typescript-json-decoder';
 import API from './api';
 import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from './schema';
+import { publishedAtDecoder, authorDecoder } from './decoders';
 
-const PostAPI = {
+// Automatically creates the Post type with the
+// fields we specify in our postDecoder.
+export type Post = decodeType<typeof postDecoder>;
+
+const postDecoder = (value: Pojo) => {
+    // Defines the structure of the JSON object we
+    // are trying to decode, WITHOUT any fields
+    // that are nested.
+    //
+    // For example, the field "author" is nested;
+    //      author: { authorName: string }
+    //
+    // We need to define additional decoders
+    // for these nested fields.
+    const baseDecoder = record({
+        title: string,
+        slug: string,
+        body: string,
+    });
+
+    // Decoders for nested fields.
+
+    const thumbnailDecoder = record({
+        // We use union with nil, since the type
+        // of thumbail is `{ url: string } | null`.
+        thumbnail: union(
+            record({
+                url: string,
+            }),
+            nil,
+        ),
+    });
+
+    // We combine the base decoder with the decoders
+    // for the nested fields, and return the final JSON object.
+    // This object is of type Post.
+    return {
+        ...baseDecoder(value),
+        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+        author: authorDecoder(value).author.authorName,
+        thumbnail: thumbnailDecoder(value).thumbnail?.url || null,
+    };
+};
+
+// Decode a list of Post's.
+const postListDecoder = array(postDecoder);
+
+// Decoder for PostSlug.
+// We don't infer type since it's not needed anywhere.
+const postSlugDecoder = record({
+    slug: string,
+});
+
+// Decode a list of PostSlug's.
+const postSlugListDecoder = array(postSlugDecoder);
+
+export const PostAPI = {
     /**
      * Get the slugs of the 10 lasts posts.
      * This data is used to statically generate the pages of the 10 last published posts.
@@ -13,7 +70,7 @@ const PostAPI = {
                 query: GET_POST_PATHS,
             });
 
-            return data.data.postCollection.items.map((post: { slug: string }) => post.slug);
+            return postSlugListDecoder(data.data.postCollection.items).map((postSlug) => postSlug.slug);
         } catch (error) {
             return [];
         }
@@ -33,25 +90,7 @@ const PostAPI = {
             });
 
             return {
-                posts: data.data.postCollection.items.map(
-                    (post: {
-                        title: string;
-                        slug: string;
-                        body: string;
-                        sys: { firstPublishedAt: string };
-                        author: Author;
-                        thumbnail: { url: string } | null;
-                    }) => {
-                        return {
-                            title: post.title,
-                            slug: post.slug,
-                            body: post.body,
-                            publishedAt: post.sys.firstPublishedAt,
-                            author: post.author,
-                            thumbnail: post.thumbnail ? post.thumbnail.url : null,
-                        };
-                    },
-                ),
+                posts: postListDecoder(data.data.postCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -76,16 +115,7 @@ const PostAPI = {
             });
 
             return {
-                post: {
-                    title: data.data.postCollection.items[0].title,
-                    slug: data.data.postCollection.items[0].slug,
-                    body: data.data.postCollection.items[0].body,
-                    publishedAt: data.data.postCollection.items[0].sys.firstPublishedAt,
-                    author: data.data.postCollection.items[0].author,
-                    thumbnail: data.data.postCollection.items[0].thumbnail
-                        ? data.data.postCollection.items[0].thumbnail.url
-                        : null,
-                },
+                post: postListDecoder(data.data.postCollection.items)[0],
                 error: null,
             };
         } catch (error) {
@@ -96,5 +126,3 @@ const PostAPI = {
         }
     },
 };
-
-export default PostAPI;

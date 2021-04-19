@@ -1,9 +1,65 @@
 import { formatISO } from 'date-fns';
-import { Event, Author } from '../types';
+import { nil, union, Pojo, record, array, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
+import { authorDecoder, publishedAtDecoder } from './decoders';
 
-const EventAPI = {
+// Automatically creates the Event type with the
+// fields we specify in our eventDecoder.
+export type Event = decodeType<typeof eventDecoder>;
+
+const eventDecoder = (value: Pojo) => {
+    // Defines the structure of the JSON object we
+    // are trying to decode, WITHOUT any fields
+    // that are nested.
+    //
+    // For example, the field "author" is nested;
+    //      author: { authorName: string }
+    //
+    // We need to define additional decoders
+    // for these nested fields.
+    const baseDecoder = record({
+        title: string,
+        slug: string,
+        spots: union(number, nil),
+        date: string,
+        body: string,
+        location: string,
+    });
+
+    // Decoders for nested fields.
+    const imageUrlDecoder = record({
+        image: union(
+            record({
+                url: string,
+            }),
+            nil,
+        ),
+    });
+
+    // We combine the base decoder with the decoders
+    // for the nested fields, and return the final JSON object.
+    // This object is of type Event.
+    return {
+        ...baseDecoder(value),
+        author: authorDecoder(value).author.authorName,
+        imageUrl: imageUrlDecoder(value).image?.url || null,
+        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+    };
+};
+
+// Decode a list of Event's.
+const eventListDecoder = array(eventDecoder);
+
+// Decoder for eventSlug.
+// We don't infer type since it's not needed anywhere.
+const eventSlugDecoder = record({
+    slug: string,
+});
+
+const eventSlugListDecoder = array(eventSlugDecoder);
+
+export const EventAPI = {
     /**
      * Get the slugs of the 10 lasts events.
      * This data is used to statically generate the pages of the 10 last published events.
@@ -14,14 +70,14 @@ const EventAPI = {
                 query: GET_EVENT_PATHS,
             });
 
-            return data.data.eventCollection.items.map((event: { slug: string }) => event.slug);
+            return eventSlugListDecoder(data.data.eventCollection.items).map((eventSlug) => eventSlug.slug);
         } catch (error) {
             return [];
         }
     },
 
     /**
-     * Get the n last published events
+     * Get the n last published events.
      * @param n how many events to retrieve
      */
     getEvents: async (n: number): Promise<{ events: Array<Event> | null; error: string | null }> => {
@@ -35,35 +91,7 @@ const EventAPI = {
             });
 
             return {
-                events: data.data.eventCollection.items.map(
-                    (event: {
-                        title: string;
-                        slug: string;
-                        date: string;
-                        spots: number;
-                        body: string;
-                        image: {
-                            url: string;
-                        };
-                        location: string;
-                        sys: {
-                            firstPublishedAt: string;
-                        };
-                        author: Author;
-                    }) => {
-                        return {
-                            title: event.title,
-                            slug: event.slug,
-                            date: event.date,
-                            spots: event.spots ? event.spots : null,
-                            body: event.body,
-                            imageUrl: event.image ? event.image.url : null,
-                            location: event.location,
-                            publishedAt: event.sys.firstPublishedAt,
-                            author: event.author,
-                        };
-                    },
-                ),
+                events: eventListDecoder(data.data.eventCollection.items),
                 error: null,
             };
         } catch (error) {
@@ -75,7 +103,7 @@ const EventAPI = {
     },
 
     /**
-     * Get an event by its slug
+     * Get an event by its slug.
      * @param slug the slug of the desired event
      */
     getEventBySlug: async (slug: string): Promise<{ event: Event | null; error: string | null }> => {
@@ -88,19 +116,7 @@ const EventAPI = {
             });
 
             return {
-                event: {
-                    title: data.data.eventCollection.items[0].title,
-                    slug: data.data.eventCollection.items[0].slug,
-                    date: data.data.eventCollection.items[0].date,
-                    spots: data.data.eventCollection.items[0].spots ? data.data.eventCollection.items[0].spots : null,
-                    body: data.data.eventCollection.items[0].body,
-                    imageUrl: data.data.eventCollection.items[0].image
-                        ? data.data.eventCollection.items[0].image.url
-                        : null,
-                    location: data.data.eventCollection.items[0].location,
-                    publishedAt: data.data.eventCollection.items[0].sys.firstPublishedAt,
-                    author: data.data.eventCollection.items[0].author,
-                },
+                event: eventListDecoder(data.data.eventCollection.items)[0],
                 error: null,
             };
         } catch (error) {
@@ -111,5 +127,3 @@ const EventAPI = {
         }
     },
 };
-
-export default EventAPI;

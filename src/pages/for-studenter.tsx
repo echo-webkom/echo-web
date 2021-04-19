@@ -7,8 +7,7 @@ import SEO from '../components/seo';
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
 import StaticInfo from '../components/static-info';
 import MapMarkdownChakra from '../markdown';
-import { StudentGroup } from '../lib/types';
-import { StudentGroupAPI } from '../lib/api';
+import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
 import StudentGroupSection from '../components/student-group-section';
 
 const ForStudenterPage = ({
@@ -34,13 +33,13 @@ const ForStudenterPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const subGroups = await StudentGroupAPI.getStudentGroups('subgroup');
-    const subOrgs = await StudentGroupAPI.getStudentGroups('suborg');
+    const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
+    const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
 
     return {
         props: {
-            subGroups,
-            subOrgs,
+            subGroups: subGroups.studentGroups,
+            subOrgs: subOrgs.studentGroups,
         },
     };
 };

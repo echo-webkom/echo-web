@@ -108,16 +108,6 @@ const GET_POST_BY_SLUG = `
     }
 `;
 
-const GET_BEDPRES_PATHS = `
-    query {
-        bedpresCollection(limit: 10) {
-            items {
-                slug
-            }
-        }
-    }
-`;
-
 const GET_N_BEDPRESES = `
     query ($n: Int!) {
         bedpresCollection(limit: $n, order: date_ASC) {
@@ -227,7 +217,6 @@ export {
     GET_POST_PATHS,
     GET_N_POSTS,
     GET_POST_BY_SLUG,
-    GET_BEDPRES_PATHS,
     GET_N_BEDPRESES,
     GET_BEDPRES_BY_SLUG,
     GET_N_MINUTES,
