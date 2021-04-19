@@ -42,7 +42,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                         data-testid={testid}
                     >
                         <Heading size="lg" mb="1em">
-                            {post.title.slice(0, 30)}...
+                            {post.title.length > 30 ? post.title.slice(0, 30).concat('...') : post.title}
                         </Heading>
                         {/* <Text textOverflow="ellipsis" overflow="hidden" noOfLines={4}>{post.body}</Text> */}
                         <Box h="8em" overflow="hidden">
