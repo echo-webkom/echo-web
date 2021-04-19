@@ -1,16 +1,13 @@
 import React from 'react';
-
 import { Tabs, Grid, GridItem, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
-import Markdown from 'markdown-to-jsx';
-import MapMarkdownChakra from '../markdown';
 import ContentBox from './content-box';
 
 const StaticInfo = ({
     tabNames,
-    markdownFiles,
+    tabPanels,
 }: {
     tabNames: Array<string>;
-    markdownFiles: Array<string>;
+    tabPanels: Array<React.ReactNode>;
 }): JSX.Element => {
     return (
         <Tabs isLazy orientation="vertical">
@@ -29,11 +26,9 @@ const StaticInfo = ({
                 <GridItem minW="0" maxW="100%" colStart={[1, null, null, 2]} colSpan={[1, null, null, 3]} rowSpan={2}>
                     <ContentBox>
                         <TabPanels>
-                            {markdownFiles.map((mdFile: string) => (
-                                <TabPanel>
-                                    <Markdown key={mdFile} options={MapMarkdownChakra}>
-                                        {mdFile}
-                                    </Markdown>
+                            {tabPanels.map((node: React.ReactNode, index: number) => (
+                                <TabPanel key={index.toString()} p="0">
+                                    {node}
                                 </TabPanel>
                             ))}
                         </TabPanels>
