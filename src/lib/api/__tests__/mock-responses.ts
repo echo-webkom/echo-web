@@ -40,6 +40,22 @@ export interface RawMinute {
     document: { url: string };
 }
 
+export interface RawProfile {
+    name: string;
+    picture: { url: string } | null;
+}
+
+export interface RawRole {
+    name: string;
+    membersCollection: { items: Array<RawProfile> };
+}
+
+export interface RawStudentGroup {
+    name: string;
+    info: string;
+    rolesCollection: { items: Array<RawRole> };
+}
+
 const mockResponses: {
     nEvents: { data: { eventCollection: { items: Array<RawEvent> } } };
     eventBySlug: { data: { eventCollection: { items: Array<RawEvent> } } };
@@ -50,6 +66,7 @@ const mockResponses: {
     nBedpreses: { data: { bedpresCollection: { items: Array<RawBedpres> } } };
     bedpresBySlug: { data: { bedpresCollection: { items: Array<RawBedpres> } } };
     nMinutes: { data: { meetingMinuteCollection: { items: Array<RawMinute> } } };
+    studentGroupByType: { data: { studentGroupCollection: { items: Array<RawStudentGroup> } } };
 } = {
     nEvents: {
         data: {
@@ -281,9 +298,7 @@ const mockResponses: {
                         date: '2029-04-22T16:15:00.000Z',
                         spots: 69,
                         body: 'Vælkømmin til bedpres med Delllllloitte',
-                        logo: {
-                            url: 'https://kult.bilde.com',
-                        },
+                        logo: { url: 'https://kult.bilde.com' },
                         location: 'Ricks',
                         author: {
                             authorName: 'Author McAuthor',
@@ -392,6 +407,56 @@ const mockResponses: {
                         date: '2022-09-11T18:22:10.000Z',
                         allmote: false,
                         document: { url: 'https://document.com/minute3' },
+                    },
+                ],
+            },
+        },
+    },
+    studentGroupByType: {
+        data: {
+            studentGroupCollection: {
+                items: [
+                    {
+                        name: 'Bedkom',
+                        info: 'Bedkom er whack shay ass lol',
+                        rolesCollection: {
+                            items: [
+                                {
+                                    name: 'Leder',
+                                    membersCollection: {
+                                        items: [
+                                            {
+                                                name: 'Leder McLeder',
+                                                picture: {
+                                                    url: 'https://bilde.com/leder.png',
+                                                },
+                                            },
+                                            {
+                                                name: 'Mr. CEO',
+                                                picture: null,
+                                            },
+                                        ],
+                                    },
+                                },
+                                {
+                                    name: 'Nestleder',
+                                    membersCollection: {
+                                        items: [
+                                            {
+                                                name: 'Nestleder Nestledersen',
+                                                picture: {
+                                                    url: 'https://bilde.com/leder.png',
+                                                },
+                                            },
+                                            {
+                                                name: 'Nr. 2',
+                                                picture: null,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
                     },
                 ],
             },

@@ -62,7 +62,9 @@ const studentGroupDecoder = (value: Pojo) => {
 const studentGroupListDecoder = array(studentGroupDecoder);
 
 export const StudentGroupAPI = {
-    getStudentGroups: async (type: string): Promise<Array<StudentGroup>> => {
+    getStudentGroupsByType: async (
+        type: string,
+    ): Promise<{ studentGroups: Array<StudentGroup> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
                 query: GET_STUDENTGROUPS_BY_TYPE,
@@ -71,9 +73,15 @@ export const StudentGroupAPI = {
                 },
             });
 
-            return studentGroupListDecoder(data.data.studentGroupCollection.items);
+            return {
+                studentGroups: studentGroupListDecoder(data.data.studentGroupCollection.items),
+                error: null,
+            };
         } catch (error) {
-            return [];
+            return {
+                studentGroups: [],
+                error: `Error fetching studentGroups with type ${type}`,
+            };
         }
     },
 };
