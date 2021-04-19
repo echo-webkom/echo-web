@@ -33,8 +33,8 @@ const ForStudenterPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const subGroups = await StudentGroupAPI.getStudentGroups('subgroup');
-    const subOrgs = await StudentGroupAPI.getStudentGroups('suborg');
+    const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
+    const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
 
     return {
         props: {

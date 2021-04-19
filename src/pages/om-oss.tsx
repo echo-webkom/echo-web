@@ -119,7 +119,7 @@ const OmOssPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const { minutes, error } = await MinuteAPI.getMinutes(0);
-    const boards = await StudentGroupAPI.getStudentGroups('board');
+    const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
         props: { boards, minutes, error },
