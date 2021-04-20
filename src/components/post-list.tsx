@@ -1,6 +1,6 @@
 import { Button, Center, Divider, Text, VStack } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
-import { Post } from '../lib/types';
+import { Post } from '../lib/api/post';
 import PostPreview from './post-preview';
 
 const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {

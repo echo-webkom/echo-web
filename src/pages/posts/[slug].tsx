@@ -11,9 +11,8 @@ import { format, parseISO } from 'date-fns';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Post } from '../../lib/types';
+import { PostAPI, Post } from '../../lib/api/post';
 
-import { PostAPI } from '../../lib/api';
 import ContentBox from '../../components/content-box';
 
 const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element => {
@@ -32,7 +31,7 @@ const PostPage = ({ post, error }: { post?: Post; error?: string }): JSX.Element
                             <GridItem colSpan={1} rowStart={[2, null, null, null]} as={ContentBox}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <Icon as={CgProfile} boxSize={10} />
-                                    <Text>{post.author.authorName}</Text>
+                                    <Text>{post.author}</Text>
                                     <Icon as={BiCalendar} boxSize={10} />
                                     <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy')}</Text>
                                 </Grid>

@@ -1,4 +1,4 @@
-import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code } from '@chakra-ui/react';
+import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img } from '@chakra-ui/react';
 import Image from 'next/image';
 
 const MapMarkdownChakra = {
@@ -102,9 +102,9 @@ const MapMarkdownChakra = {
             },
         },
         img: {
-            component: Image,
+            component: Img,
             props: {
-                layout: 'fill',
+                htmlWidth: '100%',
             },
         },
     },

@@ -20,8 +20,9 @@ import Layout from '../components/layout';
 
 import SEO from '../components/seo';
 import BedpresBlock from '../components/bedpres-block';
-import { Bedpres, Post, Event } from '../lib/types';
-import { PostAPI, BedpresAPI, EventAPI } from '../lib/api';
+import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
+import { Post, PostAPI } from '../lib/api/post';
+import { Event, EventAPI } from '../lib/api/event';
 import ContentBox from '../components/content-box';
 import PostPreview from '../components/post-preview';
 import EventsBlock from '../components/events-block';
