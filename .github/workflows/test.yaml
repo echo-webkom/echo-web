@@ -1,7 +1,9 @@
-name: Run tests on pull request
+name: Run tests
 on: 
   pull_request:
     branches: [develop, master]
+  push:
+    branches: develop
 
 jobs:
   build:
