@@ -1,3 +1,3 @@
-import useTimeout from './use-timout';
+import useTimeout from './use-timeout';
 
 export default useTimeout;

@@ -10,9 +10,9 @@ const useTimeout = (callback: TimeoutFunction, delay: number | null): void => {
     }, [callback]);
 
     useEffect(() => {
-        function tick() {
+        const tick = () => {
             if (savedCallback.current !== null) savedCallback.current();
-        }
+        };
 
         if (delay !== null) {
             const id = setTimeout(tick, delay);
