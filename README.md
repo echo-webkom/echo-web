@@ -9,16 +9,16 @@ Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
 ## Oppsett for utviklere
 
-1. Klon Git-repoet.
+**1. Klon Git-repoet.**
 
-        git clone git@github.com:echo-webkom/echo-web-backend
+    git clone git@github.com:echo-webkom/echo-web-backend
 
-2. Naviger til riktig mappe.
+**2. Naviger til riktig mappe.**
 
-        cd echo-web-backend
+    cd echo-web-backend
 
-3. Start en container med serveren og Postgres (du trenger [Docker](https://docs.docker.com/compose/install) for dette).
+**3. Start en container med serveren og Postgres (du trenger [Docker](https://docs.docker.com/compose/install) for dette).**
 
-        docker-compose up
+    docker-compose up
 
 Serveren starter på `localhost:5000`, eller `localhost:$PORT` dersom $PORT er definert.
