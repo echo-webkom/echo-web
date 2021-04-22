@@ -45,7 +45,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
             : differenceInMilliseconds(regDate, new Date());
 
     useTimeout(() => {
-        if (time) router.replace(router.asPath);
+        router.replace(router.asPath);
     }, time);
 
     return (
