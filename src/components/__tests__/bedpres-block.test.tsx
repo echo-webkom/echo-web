@@ -1,6 +1,7 @@
 import React from 'react';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+import { isBefore } from 'date-fns';
 import { render } from './testing-utils';
 import mockResponses from '../../lib/api/__tests__/mock-responses';
 import BedpresBlock from '../bedpres-block';
@@ -38,9 +39,12 @@ describe('BedpresBlock', () => {
         const { getByTestId } = render(<BedpresBlock bedpreses={bedpreses} error={null} />);
 
         expect(bedpreses).not.toBe(null);
-        // every bedpres in bedpreses is rendered
+        // 3 most upcoming bedpreses (except the ones who have happened) in bedpreses is rendered
         if (bedpreses) {
-            bedpreses.map((bedpres) => expect(getByTestId(new RegExp(bedpres.slug, 'i'))).toBeInTheDocument());
+            bedpreses.slice(0, 3).forEach((bedpres) => {
+                if (isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date)))
+                    expect(getByTestId(new RegExp(bedpres.slug, 'i'))).toBeInTheDocument();
+            });
         }
     });
 });
