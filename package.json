@@ -41,7 +41,7 @@
         "typescript-json-decoder": "1.0.3"
     },
     "devDependencies": {
-        "@babel/core": "7.13.15",
+        "@babel/core": "7.13.16",
         "@testing-library/dom": "7.30.3",
         "@testing-library/jest-dom": "5.11.10",
         "@testing-library/react": "11.2.6",
