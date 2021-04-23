@@ -1,20 +1,16 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: "[FEATURE]"
+name: Foreslag til funksjonalitet
+about: Har du en idé til nettsiden?
+title: '[Funksjonalitet]'
 labels: 'feature :sparkles:'
-assignees: bakseter
-
+assignees: bakseter, boaanes
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Hva ønsker du av ny funksjonalitet?**
+En konsis beskrivelse av hva du vil ha/hva problemet er. F.eks. "Det plager meg at [...]"
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Beskriv løsningen(e) du ser for deg**
+En konsis beskrivelse av hva løsningen(e) kan være.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Eventuelle ting**
+Legg til eventuelle greier her.
