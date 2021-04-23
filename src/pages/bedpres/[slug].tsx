@@ -33,6 +33,7 @@ import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
+import ErrorBox from '../../components/error-box';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
@@ -50,10 +51,8 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
 
     return (
         <Layout>
-            {router.isFallback && <Text>Loading...</Text>}
-            {!router.isFallback && !bedpres && <Text>Bedpres not found</Text>}
-            {error && !router.isFallback && <Text>{error}</Text>}
-            {bedpres && !router.isFallback && !error && (
+            {error && !bedpres && <ErrorBox error={error} />}
+            {bedpres && !error && (
                 <>
                     <SEO title={bedpres.title} />
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
@@ -138,6 +137,12 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
+
+    if (error === '404') {
+        return {
+            notFound: true,
+        };
+    }
 
     return {
         props: {

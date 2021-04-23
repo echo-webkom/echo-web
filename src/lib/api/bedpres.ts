@@ -2,6 +2,7 @@ import { parseISO, isBefore } from 'date-fns';
 import { Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
 import { publishedAtDecoder, authorDecoder } from './decoders';
+import handleError from './errors';
 import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 
 // Automatically creates the Bedpres type with the
@@ -83,7 +84,7 @@ export const BedpresAPI = {
         } catch (error) {
             return {
                 bedpreses: null,
-                error: `Error retrieveing ${n} bedpreses`,
+                error: handleError(error.response.status),
             };
         }
     },
@@ -101,6 +102,8 @@ export const BedpresAPI = {
                 },
             });
 
+            if (data.data.bedpresCollection.items.length === 0) throw new Error();
+
             return {
                 // Contentful returns a list with a single element,
                 // therefore we need [0] to get the element out of the list.
@@ -108,9 +111,16 @@ export const BedpresAPI = {
                 error: null,
             };
         } catch (error) {
+            if (!error.response) {
+                return {
+                    bedpres: null,
+                    error: '404',
+                };
+            }
+
             return {
                 bedpres: null,
-                error: `Bedpres '${slug}' not found`,
+                error: handleError(error.response.status),
             };
         }
     },

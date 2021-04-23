@@ -61,10 +61,12 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
 
 const OmOssPage = ({
     boards,
+    boardsError,
     minutes,
     error,
 }: {
     boards: Array<StudentGroup>;
+    boardsError: string;
     minutes: Array<Minute> | null;
     error: string | null;
 }): JSX.Element => {
@@ -79,7 +81,7 @@ const OmOssPage = ({
                 tabPanels={[
                     <>
                         <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
-                        <StudentGroupSection studentGroups={boards} groupType="styrer" />
+                        <StudentGroupSection studentGroups={boards} error={boardsError} groupType="styrer" />
                     </>,
                     <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
                     <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
@@ -122,7 +124,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
-        props: { boards: boards.studentGroups, minutes, error },
+        props: { boards: boards.studentGroups, boardsError: boards.error, minutes, error },
     };
 };
 
