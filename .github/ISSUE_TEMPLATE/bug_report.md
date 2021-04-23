@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug-rapport
+about: Har du opplevd en bug? Opprett en issue her.
 title: '[Bug]'
 labels: 'bug :bug:'
 assignees: bakseter, boaanes
