@@ -29,6 +29,7 @@ import { StudentGroupAPI, StudentGroup } from '../lib/api/student-group';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
+import ErrorBox from '../components/error-box';
 
 const bekkLogo = '/bekk.png';
 
@@ -37,7 +38,7 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
     return (
         <>
             <Heading mb="5">Møtereferater</Heading>
-            {!minutes && error && <Text>{error}</Text>}
+            {!minutes && error && <ErrorBox error={error} />}
             {minutes && !error && minutes.length === 0 && <Text>Ingen møtereferater</Text>}
             {minutes && !error && (
                 <List>

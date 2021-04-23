@@ -188,14 +188,14 @@ const GET_N_MINUTES = `
 
 const GET_STUDENTGROUPS_BY_TYPE = `
     query ($type: String!) {
-        studentGroupCollection( where: { groupType: $type }) {
+        studentGroupCollection(limit: 10, where: { groupType: $type }) {
             items {
                 name
                 info
-                rolesCollection {
+                rolesCollection(limit: 20) {
                     items {
                         name
-                        membersCollection {
+                        membersCollection(limit: 15) {
                             items {
                                 name
                                 picture {

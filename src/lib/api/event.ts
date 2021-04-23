@@ -3,6 +3,7 @@ import { nil, union, Pojo, record, array, string, number, decodeType } from 'typ
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
 import { authorDecoder, publishedAtDecoder } from './decoders';
+import handleError from './errors';
 
 // Automatically creates the Event type with the
 // fields we specify in our eventDecoder.
@@ -97,7 +98,7 @@ export const EventAPI = {
         } catch (error) {
             return {
                 events: null,
-                error: `Error retrieveing ${n} events`,
+                error: handleError(error.response.status),
             };
         }
     },
@@ -115,14 +116,23 @@ export const EventAPI = {
                 },
             });
 
+            if (data.data.postCollection.items.length === 0) throw new Error();
+
             return {
                 event: eventListDecoder(data.data.eventCollection.items)[0],
                 error: null,
             };
         } catch (error) {
+            if (!error.response) {
+                return {
+                    event: null,
+                    error: '404',
+                };
+            }
+
             return {
                 event: null,
-                error: `Event '${slug}' not found`,
+                error: handleError(error.response.status),
             };
         }
     },
