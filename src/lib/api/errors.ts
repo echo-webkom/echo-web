@@ -12,7 +12,7 @@ const handleError = (code: number): string => {
             return 'Webkom skriver kode med O(n!) kompleksitet. (Eller så er APIen nede)';
         case 413:
         default:
-            return 'Det har oppstått en uventet feil.';
+            return 'Det var rart, vennligst kontakt Webkom så vi kan rette opp i dette.';
     }
 };
 
