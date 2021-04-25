@@ -116,7 +116,7 @@ export const EventAPI = {
                 },
             });
 
-            if (data.data.postCollection.items.length === 0) throw new Error();
+            if (data.data.eventCollection.items.length === 0) throw new Error();
 
             return {
                 event: eventListDecoder(data.data.eventCollection.items)[0],
