@@ -19,6 +19,7 @@ import { Event } from '../lib/api/event';
 
 import theme from '../styles/theme';
 import ContentBox from './content-box';
+import ErrorBox from './error-box';
 
 const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: string | null }): JSX.Element => {
     const iconBg = useColorModeValue(theme.colors.teal[500], theme.colors.teal[200]);
@@ -27,7 +28,7 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
             <Center wordBreak="break-word">
                 <Heading mb=".5em">Arrangementer</Heading>
             </Center>
-            {!events && error && <Text>{error}</Text>}
+            {!events && error && <ErrorBox error={error} />}
             {events && !error && events.length === 0 && (
                 <Center>
                     <Text>Ingen kommende arrangementer.</Text>

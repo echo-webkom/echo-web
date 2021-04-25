@@ -7,6 +7,7 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import BedpresPreview from '../../components/bedpres-preview';
 import ContentBox from '../../components/content-box';
+import ErrorBox from '../../components/error-box';
 
 const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
     const upcoming = bedpreses.filter((bedpres: Bedpres) => {
@@ -20,7 +21,7 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
     return (
         <Layout>
             <SEO title="Bedriftspresentasjoner" />
-            {error && <Text>{error}</Text>}
+            {error && <ErrorBox error={error} />}
             {!error && (
                 <SimpleGrid columns={[1, null, null, 2]} spacing="5">
                     <ContentBox>
