@@ -1,4 +1,4 @@
-name: Build & run tests on pull request
+name: Build & test
 on:
   pull_request:
     branches: [develop, master]
