@@ -2,7 +2,6 @@ import React from 'react';
 import NextLink from 'next/link';
 import { Text, Box, Heading, useColorModeValue, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
-import ContentBox from './content-box';
 
 const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element => {
     const authorBg = useColorModeValue('yellow.400', 'yellow.200');

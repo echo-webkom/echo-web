@@ -1,6 +1,6 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Text, Box, Stack, StackDivider, Center, Heading, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
+import { Text, Stack, StackDivider, Center, Heading, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
 import PostCard from './post-card';
 import ContentBox from './content-box';
