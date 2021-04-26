@@ -13,7 +13,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Mr. Leder McLeder',
-                        pictureUrl: 'https://bilde.com/lederman69',
+                        pictureUrl: 'https://images.ctfassets.net/lederman69',
                     },
                 ],
             },
@@ -22,11 +22,11 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Ola Nordmann',
-                        pictureUrl: 'https://bilde.com/ola',
+                        pictureUrl: 'https://images.ctfassets.net/ola',
                     },
                     {
                         name: 'Test McTest',
-                        pictureUrl: 'https://bilde.com/mctest',
+                        pictureUrl: 'https://images.ctfassets.netmctest',
                     },
                 ],
             },
@@ -41,7 +41,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Mr. CEO',
-                        pictureUrl: 'https://bilde.com/lederman420',
+                        pictureUrl: 'https://images.ctfassets.net/lederman420',
                     },
                 ],
             },
@@ -50,7 +50,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Ola Nordmann',
-                        pictureUrl: 'https://bilde.com/ola',
+                        pictureUrl: 'https://images.ctfassets.net/ola',
                     },
                 ],
             },
@@ -60,15 +60,19 @@ const studentGroups: Array<StudentGroup> = [
 
 const groupType = 'subgroup';
 
-describe('StaticInfo', () => {
+describe('StudentGroupSection', () => {
     test('renders without crashing', () => {
-        const { getByTestId } = render(<StudentGroupSection studentGroups={studentGroups} groupType={groupType} />);
+        const { getByTestId } = render(
+            <StudentGroupSection studentGroups={studentGroups} error="" groupType={groupType} />,
+        );
 
         expect(getByTestId(/student-group-section/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {
-        const { getByTestId } = render(<StudentGroupSection studentGroups={studentGroups} groupType={groupType} />);
+        const { getByTestId } = render(
+            <StudentGroupSection studentGroups={studentGroups} error="" groupType={groupType} />,
+        );
 
         studentGroups.map((studentGroup) => {
             return expect(getByTestId(new RegExp(`^${studentGroup.name}-tab$`, 'i'))).toBeInTheDocument();
