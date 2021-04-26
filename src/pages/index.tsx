@@ -5,7 +5,6 @@ import {
     SimpleGrid,
     Stack,
     Heading,
-    Text,
     useColorModeValue,
     Center,
     LinkBox,
@@ -20,11 +19,13 @@ import Layout from '../components/layout';
 
 import SEO from '../components/seo';
 import BedpresBlock from '../components/bedpres-block';
-import { Bedpres, Post, Event } from '../lib/types';
-import { PostAPI, BedpresAPI, EventAPI } from '../lib/api';
+import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
+import { Post, PostAPI } from '../lib/api/post';
+import { Event, EventAPI } from '../lib/api/event';
 import ContentBox from '../components/content-box';
 import PostPreview from '../components/post-preview';
 import EventsBlock from '../components/events-block';
+import ErrorBox from '../components/error-box';
 
 const bekkLogo = '/bekk.png';
 
@@ -75,7 +76,7 @@ const IndexPage = ({
                     <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
                 </GridItem>
             </SimpleGrid>
-            {!posts && postsError && <Text>{postsError}</Text>}
+            {!posts && postsError && <ErrorBox error={postsError} />}
             {posts && !postsError && (
                 <Center>
                     <Stack w={['100%', null, null, null, '70%']} spacing="5">

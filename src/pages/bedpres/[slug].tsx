@@ -1,3 +1,18 @@
+import React from 'react';
+import NextLink from 'next/link';
+import Image from 'next/image';
+import { format, differenceInMilliseconds, parseISO } from 'date-fns';
+import Markdown from 'markdown-to-jsx';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
+
+import { CgOrganisation } from 'react-icons/cg';
+import { RiTimeLine } from 'react-icons/ri';
+import { MdEventSeat } from 'react-icons/md';
+import { BiCalendar } from 'react-icons/bi';
+import { ImLocation } from 'react-icons/im';
+
 import {
     Heading,
     Link,
@@ -12,55 +27,32 @@ import {
     LinkOverlay,
     Icon,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
-import Image from 'next/image';
-import { format, differenceInMilliseconds, parseISO } from 'date-fns';
-import Markdown from 'markdown-to-jsx';
-import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import { ParsedUrlQuery } from 'querystring';
-import React, { useEffect } from 'react';
-import { CgOrganisation } from 'react-icons/cg';
-import { RiTimeLine } from 'react-icons/ri';
-import { MdEventSeat } from 'react-icons/md';
-import { BiCalendar } from 'react-icons/bi';
-import { ImLocation } from 'react-icons/im';
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-import { BedpresAPI } from '../../lib/api';
-import { Bedpres } from '../../lib/types';
+import useTimeout from '../../lib/hooks';
+import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import ErrorBox from '../../components/error-box';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
 
-    const regDate: Date = parseISO(bedpres.registrationTime);
+    const regDate = parseISO(bedpres?.registrationTime);
     const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
         !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
-            ? 0
+            ? null
             : differenceInMilliseconds(regDate, new Date());
 
-    // typescript pls
-    useEffect((): (() => void) => {
-        if (time !== 0) {
-            const timer = setTimeout(() => {
-                router.replace(router.asPath);
-            }, Math.min(time, 86400000)); // absurdly large numbers here will literally destroy page, hence 1 day in ms.
-            return () => {
-                clearTimeout(timer);
-            };
-        }
-        return () => {}; // :(
-    }, [time, router]);
+    useTimeout(() => {
+        router.replace(router.asPath);
+    }, time);
 
     return (
         <Layout>
-            {router.isFallback && <Text>Loading...</Text>}
-            {!router.isFallback && !bedpres && <Text>Bedpres not found</Text>}
-            {error && !router.isFallback && <Text>{error}</Text>}
-            {bedpres && !router.isFallback && !error && (
+            {error && !bedpres && <ErrorBox error={error} />}
+            {bedpres && !error && (
                 <>
                     <SEO title={bedpres.title} />
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
@@ -116,7 +108,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             )}
                             <Divider my=".5em" />
                             <Center>
-                                <Heading size="lg">@{bedpres.author.authorName}</Heading>
+                                <Heading size="lg">@{bedpres.author}</Heading>
                             </Center>
                         </GridItem>
                         <GridItem
@@ -145,6 +137,12 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
+
+    if (error === '404') {
+        return {
+            notFound: true,
+        };
+    }
 
     return {
         props: {

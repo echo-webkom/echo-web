@@ -1,21 +1,73 @@
 import { parseISO, isBefore } from 'date-fns';
-import { Author, Bedpres } from '../types';
+import { Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
-import { GET_BEDPRES_PATHS, GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
+import { publishedAtDecoder, authorDecoder } from './decoders';
+import handleError from './errors';
+import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 
-const BedpresAPI = {
-    getPaths: async (): Promise<Array<string>> => {
-        try {
-            const { data } = await API.post('', {
-                query: GET_BEDPRES_PATHS,
-            });
+// Automatically creates the Bedpres type with the
+// fields we specify in our bedpresDecoder.
+export type Bedpres = decodeType<typeof bedpresDecoder>;
 
-            return data.data.bedpresCollection.items.map((bedpres: { slug: string }) => bedpres.slug);
-        } catch (error) {
-            return [];
-        }
-    },
+const bedpresDecoder = (value: Pojo) => {
+    // Defines the structure of the JSON object we
+    // are trying to decode, WITHOUT any fields
+    // that are nested.
+    //
+    // For example, the field "author" is nested;
+    //      author: { authorName: string }
+    //
+    // We need to define additional decoders
+    // for these nested fields.
+    const baseDecoder = record({
+        title: string,
+        slug: string,
+        date: string,
+        spots: number,
+        body: string,
+        location: string,
+        companyLink: string,
+        registrationTime: string,
+    });
 
+    // Decoders for the nested fields.
+    const registrationLinksDecoder = record({
+        registrationLinksCollection: record({
+            items: array({
+                link: string,
+                description: string,
+            }),
+        }),
+    });
+
+    const logoUrlDecoder = record({
+        logo: record({
+            url: string,
+        }),
+    });
+
+    // We combine the base decoder with the decoders
+    // for the nested fields, and return the final JSON object.
+    // This object is of type Bedpres.
+    return {
+        ...baseDecoder(value),
+        logoUrl: logoUrlDecoder(value).logo.url,
+        registrationLinks: isBefore(parseISO(baseDecoder(value).registrationTime), new Date())
+            ? registrationLinksDecoder(value).registrationLinksCollection.items
+            : null,
+        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+        author: authorDecoder(value).author.authorName,
+    };
+};
+
+// Same as bedpresDecoder, but for a list of bedpreses.
+const bedpresListDecoder = array(bedpresDecoder);
+
+export const BedpresAPI = {
+    /**
+     * Get the n last bedpreses.
+     * @param n how many bedpreses to retrieve
+     */
     getBedpreses: async (n: number): Promise<{ bedpreses: Array<Bedpres> | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -26,61 +78,21 @@ const BedpresAPI = {
             });
 
             return {
-                bedpreses: data.data.bedpresCollection.items.map(
-                    (bedpres: {
-                        title: string;
-                        slug: string;
-                        date: string;
-                        spots: number;
-                        body: string;
-                        logo: {
-                            url: string;
-                        };
-                        location: string;
-                        author: Author;
-                        companyLink: string;
-                        registrationLinksCollection: {
-                            items: Array<{
-                                link: string;
-                                description: string;
-                            }>;
-                        };
-                        sys: {
-                            firstPublishedAt: string;
-                        };
-                        registrationTime: string;
-                    }) => {
-                        return {
-                            title: bedpres.title,
-                            slug: bedpres.slug,
-                            date: bedpres.date,
-                            spots: bedpres.spots,
-                            body: bedpres.body,
-                            logoUrl: bedpres.logo.url,
-                            location: bedpres.location,
-                            author: bedpres.author,
-                            companyLink: bedpres.companyLink,
-                            registrationLinks: isBefore(
-                                parseISO(data.data.bedpresCollection.items[0].registrationTime),
-                                new Date(),
-                            )
-                                ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
-                                : null,
-                            publishedAt: bedpres.sys.firstPublishedAt,
-                            registrationTime: bedpres.registrationTime,
-                        };
-                    },
-                ),
+                bedpreses: bedpresListDecoder(data.data.bedpresCollection.items),
                 error: null,
             };
         } catch (error) {
             return {
                 bedpreses: null,
-                error: `Error retrieveing ${n} bedpreses`,
+                error: handleError(error.response.status),
             };
         }
     },
 
+    /**
+     * Get a bedpres by its slug.
+     * @param slug the slug of the desired bedpres.
+     */
     getBedpresBySlug: async (slug: string): Promise<{ bedpres: Bedpres | null; error: string | null }> => {
         try {
             const { data } = await API.post('', {
@@ -90,35 +102,26 @@ const BedpresAPI = {
                 },
             });
 
+            if (data.data.bedpresCollection.items.length === 0) throw new Error();
+
             return {
-                bedpres: {
-                    title: data.data.bedpresCollection.items[0].title,
-                    slug: data.data.bedpresCollection.items[0].slug,
-                    date: data.data.bedpresCollection.items[0].date,
-                    spots: data.data.bedpresCollection.items[0].spots,
-                    body: data.data.bedpresCollection.items[0].body,
-                    logoUrl: data.data.bedpresCollection.items[0].logo.url,
-                    location: data.data.bedpresCollection.items[0].location,
-                    author: data.data.bedpresCollection.items[0].author,
-                    companyLink: data.data.bedpresCollection.items[0].companyLink,
-                    registrationLinks: isBefore(
-                        parseISO(data.data.bedpresCollection.items[0].registrationTime),
-                        new Date(),
-                    )
-                        ? data.data.bedpresCollection.items[0].registrationLinksCollection.items
-                        : null,
-                    publishedAt: data.data.bedpresCollection.items[0].sys.firstPublishedAt,
-                    registrationTime: data.data.bedpresCollection.items[0].registrationTime,
-                },
+                // Contentful returns a list with a single element,
+                // therefore we need [0] to get the element out of the list.
+                bedpres: bedpresListDecoder(data.data.bedpresCollection.items)[0],
                 error: null,
             };
         } catch (error) {
+            if (!error.response) {
+                return {
+                    bedpres: null,
+                    error: '404',
+                };
+            }
+
             return {
                 bedpres: null,
-                error: `Bedpres '${slug}' not found`,
+                error: handleError(error.response.status),
             };
         }
     },
 };
-
-export default BedpresAPI;

@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { GetStaticProps } from 'next';
-import { PostAPI } from '../../lib/api';
-import { Post } from '../../lib/types';
+import { PostAPI, Post } from '../../lib/api/post';
 import Layout from '../../components/layout';
 import PostList from '../../components/post-list';
 

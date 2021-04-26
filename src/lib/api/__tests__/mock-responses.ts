@@ -1,19 +1,85 @@
-const mockResponses = {
+export interface RawEvent {
+    title: string;
+    slug: string;
+    date: string;
+    spots: number | null;
+    body: string;
+    image: { url: string } | null;
+    location: string;
+    sys: { firstPublishedAt: string };
+    author: { authorName: string };
+}
+
+export interface RawBedpres {
+    title: string;
+    slug: string;
+    date: string;
+    spots: number;
+    body: string;
+    logo: { url: string } | null;
+    location: string;
+    author: { authorName: string };
+    companyLink: string;
+    registrationLinksCollection: { items: Array<{ link: string; description: string }> };
+    sys: { firstPublishedAt: string };
+    registrationTime: string;
+}
+
+export interface RawPost {
+    title: string;
+    slug: string;
+    body: string;
+    sys: { firstPublishedAt: string };
+    author: { authorName: string };
+    thumbnail: { url: string } | null;
+}
+
+export interface RawMinute {
+    date: string;
+    allmote: boolean;
+    document: { url: string };
+}
+
+export interface RawProfile {
+    name: string;
+    picture: { url: string } | null;
+}
+
+export interface RawRole {
+    name: string;
+    membersCollection: { items: Array<RawProfile> };
+}
+
+export interface RawStudentGroup {
+    name: string;
+    info: string;
+    rolesCollection: { items: Array<RawRole> };
+}
+
+const mockResponses: {
+    nEvents: { data: { eventCollection: { items: Array<RawEvent> } } };
+    eventBySlug: { data: { eventCollection: { items: Array<RawEvent> } } };
+    eventPaths: { data: { eventCollection: { items: Array<{ slug: string }> } } };
+    postPaths: { data: { postCollection: { items: Array<{ slug: string }> } } };
+    nPosts: { data: { postCollection: { items: Array<RawPost> } } };
+    postBySlug: { data: { postCollection: { items: Array<RawPost> } } };
+    nBedpreses: { data: { bedpresCollection: { items: Array<RawBedpres> } } };
+    bedpresBySlug: { data: { bedpresCollection: { items: Array<RawBedpres> } } };
+    nMinutes: { data: { meetingMinuteCollection: { items: Array<RawMinute> } } };
+    studentGroupByType: { data: { studentGroupCollection: { items: Array<RawStudentGroup> } } };
+} = {
     nEvents: {
         data: {
             eventCollection: {
                 items: [
                     {
-                        title: 'Bedpres med Bekk',
-                        slug: 'bedpres-med-bekk',
+                        title: 'Kul event',
+                        slug: 'sick-event-bruh',
                         date: '2021-01-31T00:00:00.000Z',
                         spots: 30,
                         body:
                             '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                        image: {
-                            url:
-                                'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
-                        },
+                        image: null,
                         location: 'Store Auditorium -> Keeg Resturant',
                         sys: {
                             firstPublishedAt: '2021-01-21T18:49:29.985Z',
@@ -49,16 +115,13 @@ const mockResponses = {
             eventCollection: {
                 items: [
                     {
-                        title: 'Bedpres med Bekk',
-                        slug: 'bedpres-med-bekk',
+                        title: 'Kul event',
+                        slug: 'sick-event-bruh',
                         date: '2021-01-31T00:00:00.000Z',
                         spots: 30,
                         body:
                             '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                        image: {
-                            url:
-                                'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
-                        },
+                        image: null,
                         location: 'Store Auditorium -> Keeg Resturant',
                         sys: {
                             firstPublishedAt: '2021-01-21T18:49:29.985Z',
@@ -76,7 +139,7 @@ const mockResponses = {
             eventCollection: {
                 items: [
                     {
-                        slug: 'bedpres-med-bekk',
+                        slug: 'sick-event-bruh',
                     },
                     {
                         slug: 'halloweenfest-pa-lesesalen',
@@ -138,7 +201,9 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-11T22:50:28.992Z',
                         },
-                        thumbnail: null,
+                        thumbnail: {
+                            url: 'https://bilde.com',
+                        },
                     },
                     {
                         title: 'Test McTest',
@@ -162,7 +227,9 @@ const mockResponses = {
                         sys: {
                             firstPublishedAt: '2020-11-24T13:41:11.641Z',
                         },
-                        thumbnail: null,
+                        thumbnail: {
+                            url: 'https://bilde.com',
+                        },
                     },
                 ],
             },
@@ -183,17 +250,6 @@ const mockResponses = {
                             firstPublishedAt: '2020-11-12T11:28:50.368Z',
                         },
                         thumbnail: null,
-                    },
-                ],
-            },
-        },
-    },
-    bedpresPaths: {
-        data: {
-            bedpresCollection: {
-                items: [
-                    {
-                        slug: 'bedriftspresentasjon-med-bekk',
                     },
                 ],
             },
@@ -236,6 +292,31 @@ const mockResponses = {
                         },
                         registrationTime: '2021-02-27T21:04:00.000Z',
                     },
+                    {
+                        title: 'Bedriftspresentasjon med Delllllloitte',
+                        slug: 'bedriftspresentasjon-med-delllllloitte',
+                        date: '2029-04-22T16:15:00.000Z',
+                        spots: 69,
+                        body: 'Vælkømmin til bedpres med Delllllloitte',
+                        logo: { url: 'https://kult.bilde.com' },
+                        location: 'Ricks',
+                        author: {
+                            authorName: 'Author McAuthor',
+                        },
+                        companyLink: 'https://deloitte.no/',
+                        registrationLinksCollection: {
+                            items: [
+                                {
+                                    link: 'https://forms.new/',
+                                    description: 'Åpen for alle trinn',
+                                },
+                            ],
+                        },
+                        sys: {
+                            firstPublishedAt: '2019-03-24T13:41:19.592Z',
+                        },
+                        registrationTime: '2021-03-27T12:32:11.000Z',
+                    },
                 ],
             },
         },
@@ -277,10 +358,109 @@ const mockResponses = {
                         },
                         registrationTime: '2021-02-27T21:04:00.000Z',
                     },
+                    {
+                        title: 'Bedriftspresentasjon med Delllllloitte',
+                        slug: 'bedriftspresentasjon-med-delllllloitte',
+                        date: '2029-04-22T16:15:00.000Z',
+                        spots: 69,
+                        body: 'Vælkømmin til bedpres med Delllllloitte',
+                        logo: {
+                            url: 'https://kult.bilde.com',
+                        },
+                        location: 'Ricks',
+                        author: {
+                            authorName: 'Author McAuthor',
+                        },
+                        companyLink: 'https://deloitte.no/',
+                        registrationLinksCollection: {
+                            items: [
+                                {
+                                    link: 'https://forms.new/',
+                                    description: 'Åpen for alle trinn',
+                                },
+                            ],
+                        },
+                        sys: {
+                            firstPublishedAt: '2019-03-24T13:41:19.592Z',
+                        },
+                        registrationTime: '2021-03-27T12:32:11.000Z',
+                    },
+                ],
+            },
+        },
+    },
+    nMinutes: {
+        data: {
+            meetingMinuteCollection: {
+                items: [
+                    {
+                        date: '2021-03-27T12:32:11.000Z',
+                        allmote: false,
+                        document: { url: 'https://document.com/minute1' },
+                    },
+                    {
+                        date: '2026-01-15T11:02:21.000Z',
+                        allmote: true,
+                        document: { url: 'https://document.com/minute2' },
+                    },
+                    {
+                        date: '2022-09-11T18:22:10.000Z',
+                        allmote: false,
+                        document: { url: 'https://document.com/minute3' },
+                    },
+                ],
+            },
+        },
+    },
+    studentGroupByType: {
+        data: {
+            studentGroupCollection: {
+                items: [
+                    {
+                        name: 'Bedkom',
+                        info: 'Bedkom er whack shay ass lol',
+                        rolesCollection: {
+                            items: [
+                                {
+                                    name: 'Leder',
+                                    membersCollection: {
+                                        items: [
+                                            {
+                                                name: 'Leder McLeder',
+                                                picture: {
+                                                    url: 'https://bilde.com/leder.png',
+                                                },
+                                            },
+                                            {
+                                                name: 'Mr. CEO',
+                                                picture: null,
+                                            },
+                                        ],
+                                    },
+                                },
+                                {
+                                    name: 'Nestleder',
+                                    membersCollection: {
+                                        items: [
+                                            {
+                                                name: 'Nestleder Nestledersen',
+                                                picture: {
+                                                    url: 'https://bilde.com/leder.png',
+                                                },
+                                            },
+                                            {
+                                                name: 'Nr. 2',
+                                                picture: null,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
                 ],
             },
         },
     },
 };
-
 export default mockResponses;

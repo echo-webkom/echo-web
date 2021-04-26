@@ -7,16 +7,19 @@ import SEO from '../components/seo';
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
 import StaticInfo from '../components/static-info';
 import MapMarkdownChakra from '../markdown';
-import { StudentGroup } from '../lib/types';
-import { StudentGroupAPI } from '../lib/api';
+import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
 import StudentGroupSection from '../components/student-group-section';
 
 const ForStudenterPage = ({
     subGroups,
+    subGroupsError,
     subOrgs,
+    subOrgsError,
 }: {
     subGroups: Array<StudentGroup>;
+    subGroupsError: string;
     subOrgs: Array<StudentGroup>;
+    subOrgsError: string;
 }): JSX.Element => {
     return (
         <Layout>
@@ -24,8 +27,12 @@ const ForStudenterPage = ({
             <StaticInfo
                 tabNames={['Undergrupper', 'Underorganisasjoner', 'Masterinfo']}
                 tabPanels={[
-                    <StudentGroupSection studentGroups={subGroups} groupType="undergrupper" />,
-                    <StudentGroupSection studentGroups={subOrgs} groupType="underorganisasjoner" />,
+                    <StudentGroupSection studentGroups={subGroups} error={subGroupsError} groupType="undergrupper" />,
+                    <StudentGroupSection
+                        studentGroups={subOrgs}
+                        error={subOrgsError}
+                        groupType="underorganisasjoner"
+                    />,
                     <Markdown options={MapMarkdownChakra}>{masterinfo}</Markdown>,
                 ]}
             />
@@ -34,13 +41,15 @@ const ForStudenterPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const subGroups = await StudentGroupAPI.getStudentGroups('subgroup');
-    const subOrgs = await StudentGroupAPI.getStudentGroups('suborg');
+    const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
+    const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
 
     return {
         props: {
-            subGroups,
-            subOrgs,
+            subGroups: subGroups.studentGroups,
+            subGroupsError: subGroups.error,
+            subOrgs: subOrgs.studentGroups,
+            subOrgsError: subOrgs.error,
         },
     };
 };
