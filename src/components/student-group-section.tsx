@@ -3,18 +3,22 @@ import React from 'react';
 import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text, Wrap } from '@chakra-ui/react';
 import { StudentGroup } from '../lib/api/student-group';
 import StudentGroupView from './student-group-view';
+import ErrorBox from './error-box';
 
 const StudentGroupSection = ({
     studentGroups,
+    error,
     groupType,
 }: {
     studentGroups: Array<StudentGroup>;
+    error: string;
     groupType: string;
 }): JSX.Element => {
     return (
         <>
-            {studentGroups.length === 0 && <Text>Finner ingen {groupType} :(</Text>}
-            {studentGroups.length !== 0 && (
+            {error && <ErrorBox error={error} />}
+            {studentGroups.length === 0 && !error && <Text>Finner ingen {groupType} :(</Text>}
+            {studentGroups.length !== 0 && !error && (
                 <Tabs variant="soft-rounded" p="0" data-testid="student-group-section">
                     <TabList>
                         <Wrap justify="center">

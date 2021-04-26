@@ -1,5 +1,6 @@
 import { array, record, Pojo, decodeType, string, boolean } from 'typescript-json-decoder';
 import API from './api';
+import handleError from './errors';
 import { GET_N_MINUTES } from './schema';
 
 // Automatically creates the Minute type with the
@@ -62,7 +63,7 @@ export const MinuteAPI = {
         } catch (error) {
             return {
                 minutes: null,
-                error: `Error retrieving last ${n} meeting minutes`,
+                error: handleError(error.response.status),
             };
         }
     },

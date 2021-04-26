@@ -1,5 +1,6 @@
 import { Pojo, decodeType, record, array, string, union, nil } from 'typescript-json-decoder';
 import API from './api';
+import handleError from './errors';
 import { GET_STUDENTGROUPS_BY_TYPE } from './schema';
 
 export type Profile = decodeType<typeof profileDecoder>;
@@ -80,7 +81,7 @@ export const StudentGroupAPI = {
         } catch (error) {
             return {
                 studentGroups: [],
-                error: `Error fetching studentGroups with type ${type}`,
+                error: handleError(error.response.status),
             };
         }
     },

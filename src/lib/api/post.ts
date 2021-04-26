@@ -2,6 +2,7 @@ import { nil, record, string, union, decodeType, array, Pojo } from 'typescript-
 import API from './api';
 import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from './schema';
 import { publishedAtDecoder, authorDecoder } from './decoders';
+import handleError from './errors';
 
 // Automatically creates the Post type with the
 // fields we specify in our postDecoder.
@@ -96,7 +97,7 @@ export const PostAPI = {
         } catch (error) {
             return {
                 posts: null,
-                error: `Error retrieving last ${n} posts`,
+                error: handleError(error.response.status),
             };
         }
     },
@@ -114,14 +115,23 @@ export const PostAPI = {
                 },
             });
 
+            if (data.data.postCollection.items.length === 0) throw new Error();
+
             return {
                 post: postListDecoder(data.data.postCollection.items)[0],
                 error: null,
             };
         } catch (error) {
+            if (!error.response) {
+                return {
+                    post: null,
+                    error: '404',
+                };
+            }
+
             return {
                 post: null,
-                error: `Post '${slug}' not found`,
+                error: handleError(error.response.status),
             };
         }
     },
