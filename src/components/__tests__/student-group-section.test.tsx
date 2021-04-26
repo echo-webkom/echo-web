@@ -26,7 +26,7 @@ const studentGroups: Array<StudentGroup> = [
                     },
                     {
                         name: 'Test McTest',
-                        pictureUrl: 'https://images.ctfassets.netmctest',
+                        pictureUrl: null,
                     },
                 ],
             },
