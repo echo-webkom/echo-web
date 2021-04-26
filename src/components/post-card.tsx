@@ -1,10 +1,8 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Box, Text, Heading, Center, useColorModeValue, LinkBox, LinkOverlay } from '@chakra-ui/react';
-import Markdown from 'markdown-to-jsx';
-import { Post } from '../lib/types';
+import { Text, Heading, useColorModeValue, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { Post } from '../lib/api/post';
 import ContentBox from './content-box';
-import MapMarkdownChakra from '../markdown';
 
 const Span = ({ children }: { children: React.ReactNode }): JSX.Element => {
     return <span>{children}</span>;
@@ -14,51 +12,32 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
     const bg = useColorModeValue('gray.50', 'gray.800');
     const authorBg = useColorModeValue('yellow.500', 'yellow.300');
     const authorColor = useColorModeValue('white', 'black');
+    const hoverColor = useColorModeValue('gray.200', 'gray.800');
     return (
-        <LinkBox>
+        <LinkBox w={['100%', null, null, '24em']}>
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
-                    <Box
-                        w="100%"
+                    <ContentBox
+                        h={['7em', null, null, '9em']}
                         bg={bg}
-                        minH="16rem"
-                        textAlign="center"
+                        textAlign="left"
                         p="1em"
                         px="2em"
-                        pb="3em"
+                        pb="1em"
                         pos="relative"
                         boxShadow="md"
                         data-testid={testid}
+                        _hover={{ backgroundColor: hoverColor }}
                     >
-                        <Heading size="lg" mb="1em">
+                        <Heading size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
                             {post.title}
                         </Heading>
-                        {/* <Text textOverflow="ellipsis" overflow="hidden" noOfLines={4}>{post.body}</Text> */}
-                        <Box h="8em" overflow="hidden">
-                            <Markdown
-                                options={{
-                                    overrides: {
-                                        ...MapMarkdownChakra,
-                                        a: {
-                                            component: Span,
-                                            props: {
-                                                isExternal: true,
-                                                color: 'blue',
-                                            },
-                                        },
-                                    },
-                                }}
-                            >
-                                {post.body}
-                            </Markdown>
-                        </Box>
-                        <Center pt="5">
-                            <Text size="md">[...]</Text>
-                        </Center>
-                        <Text pos="absolute" bottom="0" right="8" color={authorColor} bg={authorBg} py="1" px="3">
-                            {post.author.authorName}
-                        </Text>
-                    </Box>
+                        {post.author && (
+                            <Text pos="absolute" bottom="0" right="8" color={authorColor} bg={authorBg} py="1" px="3">
+                                {post.author}
+                            </Text>
+                        )}
+                    </ContentBox>
                 </LinkOverlay>
             </NextLink>
         </LinkBox>
