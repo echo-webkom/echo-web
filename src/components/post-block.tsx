@@ -16,7 +16,7 @@ import {
     GridItem,
 } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
-import { Post } from '../lib/types';
+import { Post } from '../lib/api/post';
 import ContentBox from './content-box';
 import MapMarkdownChakra from '../markdown';
 import PostCard from './post-card';
@@ -31,7 +31,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 </Center>
             )}
             {posts && !error && (
-                <Stack direction={['Column', null, null, 'row']} spacing={5} divider={<StackDivider />}>
+                <Stack direction={['column', null, null, 'row']} spacing={5} divider={<StackDivider />}>
                     {posts.map((post: Post) => {
                         return <PostCard key={post.slug} post={post} testid={post.slug} />;
                     })}
