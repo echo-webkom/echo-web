@@ -81,11 +81,11 @@ const OmOssPage = ({
                 tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
                 tabPanels={[
                     <>
-                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
                         <StudentGroupSection studentGroups={boards} error={boardsError} groupType="styrer" />
                     </>,
-                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
-                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{instituttraadet}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{statutter}</Markdown>,
                     <Minutes minutes={minutes} error={error} />,
                     <>
                         <Center>
@@ -97,7 +97,7 @@ const OmOssPage = ({
                                 </NextLink>
                             </LinkBox>
                         </Center>
-                        <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>{bekk}</Markdown>
                         <Text mt="2em">
                             Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
                             <NextLink
