@@ -25,23 +25,6 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
             {!error && (
                 <SimpleGrid columns={[1, null, null, 2]} spacing="5">
                     <ContentBox>
-                        <Heading>Kommende</Heading>
-                        {upcoming.length === 0 && (
-                            <Center mt="3em">
-                                <Text fontSize="xl">Ingen kommende bedriftspresentasjoner :(</Text>
-                            </Center>
-                        )}
-                        {upcoming.length !== 0 && (
-                            <Stack spacing={5} divider={<StackDivider />}>
-                                {upcoming.map((bedpres: Bedpres) => {
-                                    return (
-                                        <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />
-                                    );
-                                })}
-                            </Stack>
-                        )}
-                    </ContentBox>
-                    <ContentBox>
                         <Heading>Tidligere</Heading>
                         {previous.length === 0 && (
                             <Center mt="3em">
@@ -51,6 +34,23 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
                         {previous && (
                             <Stack spacing={5} divider={<StackDivider />}>
                                 {previous.map((bedpres: Bedpres) => {
+                                    return (
+                                        <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />
+                                    );
+                                })}
+                            </Stack>
+                        )}
+                    </ContentBox>
+                    <ContentBox>
+                        <Heading>Kommende</Heading>
+                        {upcoming.length === 0 && (
+                            <Center mt="3em">
+                                <Text fontSize="xl">Ingen kommende bedriftspresentasjoner :(</Text>
+                            </Center>
+                        )}
+                        {upcoming.length !== 0 && (
+                            <Stack spacing={5} divider={<StackDivider />}>
+                                {upcoming.map((bedpres: Bedpres) => {
                                     return (
                                         <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />
                                     );
