@@ -32,7 +32,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     <SEO title={post.title} />
                     <Box>
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                            <GridItem colSpan={1} rowStart={[2, null, null, null]} as={ContentBox}>
+                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={ContentBox}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author}</Text>
@@ -44,7 +44,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                 colStart={[1, null, null, 2]}
                                 rowStart={[1, null, null, null]}
                                 colSpan={[1, null, null, 3]}
-                                rowSpan={2}
+                                rowSpan={[1, null, null, 2]}
                                 minW="0"
                             >
                                 <ContentBox>
