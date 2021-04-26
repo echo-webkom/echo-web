@@ -22,13 +22,11 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 </Stack>
             )}
             {!posts && error && <Text>{error}</Text>}
-            <Center>
-                <LinkBox pt="1em">
+            <Center pt="1em">
+                <LinkBox pt="1em" pb="0.5em">
                     <NextLink href="/posts" passHref>
                         <LinkOverlay>
-                            <Button variant="link" colorScheme={buttonTheme}>
-                                Se Mer
-                            </Button>
+                            <Button>Se mer</Button>
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>

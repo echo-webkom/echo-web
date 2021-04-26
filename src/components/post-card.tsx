@@ -10,8 +10,7 @@ const Span = ({ children }: { children: React.ReactNode }): JSX.Element => {
 
 const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
     const bg = useColorModeValue('gray.50', 'gray.800');
-    const authorBg = useColorModeValue('yellow.500', 'yellow.300');
-    const authorColor = useColorModeValue('white', 'black');
+    const authorBg = useColorModeValue('yellow.400', 'yellow.200');
     const hoverColor = useColorModeValue('gray.200', 'gray.800');
     return (
         <LinkBox w={['100%', null, null, '24em']}>
@@ -33,7 +32,7 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }) => {
                             {post.title}
                         </Heading>
                         {post.author && (
-                            <Text pos="absolute" bottom="0" right="8" color={authorColor} bg={authorBg} py="1" px="3">
+                            <Text pos="absolute" bottom="0" right="8" color="black" bg={authorBg} py="1" px="3">
                                 {post.author}
                             </Text>
                         )}
