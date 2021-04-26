@@ -22,7 +22,7 @@ const BedpresBlock = ({
         .slice(0, 3);
 
     return (
-        <ContentBox testid="bedpres-block">
+        <ContentBox data-testid="bedpres-block">
             <Center wordBreak="break-word">
                 <Heading>Bedriftspresentasjoner</Heading>
             </Center>
@@ -46,7 +46,7 @@ const BedpresBlock = ({
                 <LinkBox>
                     <NextLink href="/bedpres" passHref>
                         <LinkOverlay>
-                            <Button w="100%" colorScheme="teal">
+                            <Button colorScheme="teal" mt="1rem" p="1.5rem" fontSize="2xl">
                                 Se mer
                             </Button>
                         </LinkOverlay>

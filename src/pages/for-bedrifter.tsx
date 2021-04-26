@@ -16,9 +16,9 @@ const ForBedrifterPage = (): JSX.Element => {
             <StaticInfo
                 tabNames={['For bedrifter', 'Bedriftspresentasjon', 'Stillingsutlysninger']}
                 tabPanels={[
-                    <Markdown options={MapMarkdownChakra}>{forBedrifter}</Markdown>,
-                    <Markdown options={MapMarkdownChakra}>{bedriftspresentasjon}</Markdown>,
-                    <Markdown options={MapMarkdownChakra}>{stillingsutlysninger}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{forBedrifter}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{bedriftspresentasjon}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{stillingsutlysninger}</Markdown>,
                 ]}
             />
         </Layout>

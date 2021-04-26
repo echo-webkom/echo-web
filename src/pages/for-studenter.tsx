@@ -33,7 +33,7 @@ const ForStudenterPage = ({
                         error={subOrgsError}
                         groupType="underorganisasjoner"
                     />,
-                    <Markdown options={MapMarkdownChakra}>{masterinfo}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{masterinfo}</Markdown>,
                 ]}
             />
         </Layout>

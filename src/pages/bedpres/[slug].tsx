@@ -120,7 +120,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             <ContentBox>
                                 <Heading>{bedpres.title}</Heading>
                                 <Divider my=".5em" />
-                                <Markdown options={MapMarkdownChakra}>{bedpres.body}</Markdown>
+                                <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>
                         </GridItem>
                     </Grid>
