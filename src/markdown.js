@@ -1,5 +1,8 @@
-import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img, useColorModeValue } from '@chakra-ui/react';
+
+const getLinkColor = () =>{
+    return(useColorModeValue('blue', 'blue.400'))
+}
 
 const MapMarkdownChakra = {
     overrides: {
@@ -98,7 +101,7 @@ const MapMarkdownChakra = {
             component: Link,
             props: {
                 isExternal: true,
-                color: 'blue',
+                color: getLinkColor,
             },
         },
         img: {
