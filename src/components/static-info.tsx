@@ -10,13 +10,19 @@ const StaticInfo = ({
     tabPanels: Array<React.ReactNode>;
 }): JSX.Element => {
     return (
-        <Tabs isLazy orientation="vertical">
+        <Tabs isLazy orientation="vertical" data-testid="static-info">
             <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                 <GridItem minW="0" maxW="100%" colSpan={1}>
                     <ContentBox>
                         <TabList>
                             {tabNames.map((tabName: string) => (
-                                <Tab key={tabName} whiteSpace="normal" wordBreak="break-word" fontSize="xl">
+                                <Tab
+                                    key={tabName}
+                                    data-testid={`${tabName}-tab`}
+                                    whiteSpace="normal"
+                                    wordBreak="break-word"
+                                    fontSize="xl"
+                                >
                                     {tabName}
                                 </Tab>
                             ))}
@@ -27,7 +33,7 @@ const StaticInfo = ({
                     <ContentBox>
                         <TabPanels>
                             {tabPanels.map((node: React.ReactNode, index: number) => (
-                                <TabPanel key={index.toString()} p="0">
+                                <TabPanel key={index.toString()} data-testid={`${index.toString()}-tabPanel`} p="0">
                                     {node}
                                 </TabPanel>
                             ))}

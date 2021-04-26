@@ -1,7 +1,7 @@
 import { Divider, Wrap, WrapItem } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
-import { Profile, Role, StudentGroup } from '../lib/types';
+import { Profile, Role, StudentGroup } from '../lib/api/student-group';
 import MapMarkdownChakra from '../markdown';
 import MemberProfile from './member-profile';
 
