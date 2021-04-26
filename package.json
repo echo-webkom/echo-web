@@ -1,8 +1,10 @@
 {
     "name": "echo-web-frontend",
-    "description": "Frontend for echo.uib.no",
+    "description": "Frontend til nettsiden til echo – Fagutvalget for informatikk.",
+    "private": true,
     "version": "1.0.0",
     "author": "echo Webkom",
+    "homepage": "https://github.com/echo-webkom/echo-web-frontend",
     "scripts": {
         "build": "next build",
         "dev": "next dev",
