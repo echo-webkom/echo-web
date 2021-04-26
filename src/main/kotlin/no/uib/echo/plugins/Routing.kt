@@ -7,9 +7,14 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import no.uib.echo.types.*
+import no.uib.echo.Bedpres
+import no.uib.echo.BedpresJson
+import no.uib.echo.DatabaseConn
+import no.uib.echo.FullRegistrationJson
+import no.uib.echo.Registration
+import no.uib.echo.Student
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureRouting() {
     routing {
@@ -28,7 +33,7 @@ fun Route.getRegistration() {
     get("/$registrationRoute/{email}/{slug}") {
         val email: String = call.parameters["email"] ?: ""
         val slug: String = call.parameters["slug"] ?: ""
-        
+
         if (email == "" && slug == "")
             call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
         if (email == "")
@@ -36,7 +41,7 @@ fun Route.getRegistration() {
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given.")
         else
-            transaction {
+            transaction(Database.connect(DatabaseConn.pool())) {
                 addLogger(StdOutSqlLogger)
 
                 Registration.select { Registration.studentEmail eq email and (Registration.bedpresSlug eq slug) }
@@ -49,7 +54,7 @@ fun Route.submitRegistraiton() {
         try {
             val registration = call.receive<FullRegistrationJson>()
 
-            transaction {
+            transaction(Database.connect(DatabaseConn.pool())) {
                 addLogger(StdOutSqlLogger)
 
                 Student.insert {
@@ -67,8 +72,7 @@ fun Route.submitRegistraiton() {
             }
 
             call.respond(HttpStatusCode.OK, "Submitted registration.")
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error submitting registration.")
             System.err.println(e.printStackTrace())
         }
@@ -82,14 +86,13 @@ fun Route.deleteRegistraiton() {
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given")
         else
-            transaction {
+            transaction(Database.connect(DatabaseConn.pool())) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.deleteWhere { Bedpres.slug eq slug }
             }
     }
 }
-
 
 fun Route.submitBedpres() {
     install(ContentNegotiation) {
@@ -100,7 +103,7 @@ fun Route.submitBedpres() {
         try {
             val bedpres = call.receive<BedpresJson>()
 
-            transaction {
+            transaction(Database.connect(DatabaseConn.pool())) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.insert {
@@ -110,7 +113,7 @@ fun Route.submitBedpres() {
             }
 
             call.respond(HttpStatusCode.OK, "Bedpres submitted.")
-        } catch (e: Exception)  {
+        } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
             System.err.println(e.printStackTrace())
         }

@@ -8,4 +8,4 @@ curl --verbose -X POST \
       "degree": "DTEK",
       "slug": "generisk-bedriftspresentasjon",
       "terms: true }' \
-http://localhost:5000/registration
+http://localhost:$1/registration
