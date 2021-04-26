@@ -1,14 +1,18 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Text, Stack, StackDivider, Center, useColorModeValue, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
+import { Text, Box, Stack, StackDivider, Center, Heading, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
-import ContentBox from './content-box';
 import PostCard from './post-card';
+import ContentBox from './content-box';
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
-    const buttonTheme = useColorModeValue('black', 'white');
     return (
-        <ContentBox pb="0.5em">
+        <ContentBox>
+            <Center>
+                <Heading p="1rem" mb=".5em" sizes={['xs', 'md']}>
+                    Innlegg
+                </Heading>
+            </Center>
             {posts && !error && posts.length <= 0 && (
                 <Center>
                     <Text>Ingen Innlegg</Text>
@@ -22,11 +26,13 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 </Stack>
             )}
             {!posts && error && <Text>{error}</Text>}
-            <Center pt="1em">
+            <Center>
                 <LinkBox pt="1em" pb="0.5em">
                     <NextLink href="/posts" passHref>
                         <LinkOverlay>
-                            <Button>Se mer</Button>
+                            <Button colorScheme="teal" mt="1rem" p="1.5rem" fontSize="2xl">
+                                Se flere innlegg
+                            </Button>
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
