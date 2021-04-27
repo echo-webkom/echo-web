@@ -12,12 +12,20 @@ import no.uib.echo.BedpresJson
 import no.uib.echo.Db
 import no.uib.echo.FullRegistrationJson
 import no.uib.echo.Registration
+import no.uib.echo.Registration.bedpresSlug
+import no.uib.echo.Registration.studentEmail
+import no.uib.echo.Registration.terms
+import no.uib.echo.RegistrationJson
 import no.uib.echo.Student
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureRouting() {
-    val dbHost = environment.config.propertyOrNull("ktor.environment")?.getString()
+    install(ContentNegotiation) {
+        gson()
+    }
+
+    val dbHost = environment.config.propertyOrNull("ktor.db_host")?.getString()
         ?: throw Exception("No DB_HOST specified.")
 
     routing {
@@ -33,22 +41,33 @@ private const val registrationRoute: String = "registration"
 private const val bedpresRoute: String = "bedpres"
 
 fun Route.getRegistration(dbHost: String) {
-    get("/$registrationRoute/{email}/{slug}") {
-        val email: String = call.parameters["email"] ?: ""
-        val slug: String = call.parameters["slug"] ?: ""
+    get("/$registrationRoute") {
+        val email: String? = call.request.queryParameters["email"]
+        val slug: String? = call.request.queryParameters["slug"]
 
-        if (email == "" && slug == "")
-            call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
-        if (email == "")
-            call.respond(HttpStatusCode.BadRequest, "No email given.")
-        if (slug == "")
-            call.respond(HttpStatusCode.BadRequest, "No slug given.")
-        else
-            transaction(Db.connection(dbHost)) {
+        fun getQuery(email: String?, slug: String?): Query? {
+            if (email != null && slug != null) {
+                return Registration.select { Registration.studentEmail eq email and (Registration.bedpresSlug eq slug) }
+            } else if (email != null && slug == null) {
+                return Registration.select { Registration.studentEmail eq email }
+            } else if (email == null && slug != null) {
+                return Registration.select { Registration.bedpresSlug eq slug }
+            }
+            return null
+        }
+
+        val q = getQuery(email, slug)
+
+        if (q != null) {
+            val result = transaction {
                 addLogger(StdOutSqlLogger)
 
-                Registration.select { Registration.studentEmail eq email and (Registration.bedpresSlug eq slug) }
+                q.toList()
             }
+
+            call.respond(result.map { reg -> RegistrationJson(reg[studentEmail], reg[bedpresSlug], reg[terms]) })
+        } else
+            call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
     }
 }
 
@@ -83,25 +102,26 @@ fun Route.submitRegistraiton(dbHost: String) {
 }
 
 fun Route.deleteRegistraiton(dbHost: String) {
-    delete("/$registrationRoute/{slug}") {
-        val slug: String = call.parameters["slug"] ?: ""
+    delete("/$registrationRoute") {
+        val slug: String? = call.request.queryParameters["slug"]
+        val email: String? = call.request.queryParameters["email"]
 
-        if (slug == "")
-            call.respond(HttpStatusCode.BadRequest, "No slug given")
-        else
+        if (slug != null && email != null) {
             transaction(Db.connection(dbHost)) {
                 addLogger(StdOutSqlLogger)
 
-                Bedpres.deleteWhere { Bedpres.slug eq slug }
+                Registration.deleteWhere { Registration.bedpresSlug eq slug and (Registration.studentEmail eq email) }
             }
+
+            call.respond(HttpStatusCode.OK, "Registration with email = $email and slug = $slug deleted.")
+        } else {
+            call.respond(HttpStatusCode.BadRequest, "No slug given and/or email given.")
+        }
+
     }
 }
 
 fun Route.submitBedpres(dbHost: String) {
-    install(ContentNegotiation) {
-        gson()
-    }
-
     post("/$bedpresRoute") {
         try {
             val bedpres = call.receive<BedpresJson>()

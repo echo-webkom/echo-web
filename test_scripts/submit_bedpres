@@ -1,6 +1,29 @@
 #!/bin/bash
 
-curl --verbose -X POST \
--H "Content-Type: application/json" \
--d '{ "slug": "generisk-bedriftspresentasjon", "spots": 30 }' \
-http://0.0.0.0:$1/bedpres
+while getopts p:s:o: flag
+do
+    case "${flag}" in
+        p) port=${OPTARG};;
+        s) slug=${OPTARG};;
+        o) spots=${OPTARG};;
+    esac
+done
+
+if [ -z ${port+x} ]; then
+    echo "Port not defined (use -p)";
+elif [ -z ${slug+x} -a -z ${spots+x} ]; then
+    echo "Slugs and spots not defined (use -s and -o)";
+    exit 1;
+elif [ -z ${slug+x} ]; then
+    echo "Slug not defined (use -s)";
+    exit 1;
+elif [ -z ${spots+x} ]; then
+    echo "Spots not defined (use -o)";
+    exit 1;
+else
+    echo '{ "slug": "'${slug}'", "spots": '${spots}' }';
+    curl --verbose \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "$slug", "spots": $spots }' \
+    http://0.0.0.0:$port/bedpres;
+fi

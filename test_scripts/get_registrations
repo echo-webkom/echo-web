@@ -1,0 +1,20 @@
+#!/bin/bash
+
+while getopts p:e:s: flag
+do
+    case "${flag}" in
+        p) port=${OPTARG};;
+        e) email=${OPTARG};;
+        s) slug=${OPTARG};;
+    esac
+done
+
+if [ -z ${email+x} -a -z ${slug+x} ]; then
+    curl --verbose http://0.0.0.0:$port/registration
+elif [ -z ${slug+x} ]; then
+    curl --verbose http://0.0.0.0:$port/registration?email=$email
+elif [ -z ${email+x} ]; then
+    curl --verbose http://0.0.0.0:$port/registration?slug=$slug
+else
+    curl --verbose http://0.0.0.0:$port/registration?email=$email&slug=$slug
+fi

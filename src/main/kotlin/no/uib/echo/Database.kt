@@ -34,7 +34,9 @@ class FullRegistrationJson(
     val terms: Boolean
 )
 
+data class RegistrationJson(val email: String, val slug: String, val terms: Boolean)
 data class BedpresJson(val slug: String, val spots: Int)
+data class StudentJson(val email: String, val firstName: String, val lastName: String, val degree: Degree)
 
 object Registration : Table() {
     val studentEmail = varchar("studentEmail", 40) references Student.email
@@ -48,7 +50,7 @@ object Student : Table() {
     val email = varchar("email", 40).uniqueIndex()
     val firstName = varchar("firstName", 40)
     val lastName = varchar("lastName", 40)
-    val degree = varchar("degree", 66)
+    val degree = varchar("degree", 50)
 
     override val primaryKey = PrimaryKey(email)
 }

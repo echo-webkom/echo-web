@@ -1,6 +1,6 @@
-.git
+.git/
 .gitignore
-.github
-.idea
+.github/
+.idea/
 build/
 scripts/

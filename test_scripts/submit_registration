@@ -1,11 +1,28 @@
 #!/bin/bash
 
-curl --verbose -X POST \
--H "Content-Type: application/json" \
--d '{ "email": "foo@student.uib.no",
-      "firstName": "Test",
-      "lastName": "McTest",
-      "degree": "DTEK",
-      "slug": "generisk-bedriftspresentasjon",
-      "terms: true }' \
-http://localhost:$1/registration
+while getopts p:e:f:l:d:s:t: flag
+do
+    case "${flag}" in
+        p) port=${OPTARG};;
+        e) email=${OPTARG};;
+        f) firstName=${OPTARG};;
+        l) lastName=${OPTARG};;
+        d) degree=${OPTARG};;
+        s) slug=${OPTARG};;
+        t) terms=${OPTARG};;
+    esac
+done
+
+if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ] ; then
+    echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -s for slug, -t for terms";
+else
+    curl --verbose \
+    -H "Content-Type: application/json" \
+    -d '{ "email": "'${email}'",
+          "firstName": "'${firstName}'",
+          "lastName": "'${lastName}'",
+          "degree": "'${degree}'",
+          "slug": "'${slug}'",
+          "terms: '${terms}' }' \
+    http://localhost:$port/registration;
+fi
