@@ -9,8 +9,8 @@ const GET_EVENT_PATHS = `
 `;
 
 const GET_N_EVENTS = `
-    query ($n: Int!, $date: DateTime) {
-        eventCollection(limit: $n, order: date_ASC, where: { date_gt: $date }) {
+    query ($n: Int!) {
+        eventCollection(limit: $n, order: date_ASC) {
             items {
                 title
                 slug

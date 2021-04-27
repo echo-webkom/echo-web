@@ -12,10 +12,14 @@ import StudentGroupSection from '../components/student-group-section';
 
 const ForStudenterPage = ({
     subGroups,
+    subGroupsError,
     subOrgs,
+    subOrgsError,
 }: {
     subGroups: Array<StudentGroup>;
+    subGroupsError: string;
     subOrgs: Array<StudentGroup>;
+    subOrgsError: string;
 }): JSX.Element => {
     return (
         <Layout>
@@ -23,9 +27,13 @@ const ForStudenterPage = ({
             <StaticInfo
                 tabNames={['Undergrupper', 'Underorganisasjoner', 'Masterinfo']}
                 tabPanels={[
-                    <StudentGroupSection studentGroups={subGroups} groupType="undergrupper" />,
-                    <StudentGroupSection studentGroups={subOrgs} groupType="underorganisasjoner" />,
-                    <Markdown options={MapMarkdownChakra}>{masterinfo}</Markdown>,
+                    <StudentGroupSection studentGroups={subGroups} error={subGroupsError} groupType="undergrupper" />,
+                    <StudentGroupSection
+                        studentGroups={subOrgs}
+                        error={subOrgsError}
+                        groupType="underorganisasjoner"
+                    />,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{masterinfo}</Markdown>,
                 ]}
             />
         </Layout>
@@ -39,7 +47,9 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
         props: {
             subGroups: subGroups.studentGroups,
+            subGroupsError: subGroups.error,
             subOrgs: subOrgs.studentGroups,
+            subOrgsError: subOrgs.error,
         },
     };
 };

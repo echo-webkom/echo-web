@@ -29,6 +29,7 @@ import { StudentGroupAPI, StudentGroup } from '../lib/api/student-group';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
+import ErrorBox from '../components/error-box';
 
 const bekkLogo = '/bekk.png';
 
@@ -37,7 +38,7 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
     return (
         <>
             <Heading mb="5">Møtereferater</Heading>
-            {!minutes && error && <Text>{error}</Text>}
+            {!minutes && error && <ErrorBox error={error} />}
             {minutes && !error && minutes.length === 0 && <Text>Ingen møtereferater</Text>}
             {minutes && !error && (
                 <List>
@@ -61,10 +62,12 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
 
 const OmOssPage = ({
     boards,
+    boardsError,
     minutes,
     error,
 }: {
     boards: Array<StudentGroup>;
+    boardsError: string;
     minutes: Array<Minute> | null;
     error: string | null;
 }): JSX.Element => {
@@ -78,11 +81,11 @@ const OmOssPage = ({
                 tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
                 tabPanels={[
                     <>
-                        <Markdown options={MapMarkdownChakra}>{hvemErVi}</Markdown>
-                        <StudentGroupSection studentGroups={boards} groupType="styrer" />
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
+                        <StudentGroupSection studentGroups={boards} error={boardsError} groupType="styrer" />
                     </>,
-                    <Markdown options={MapMarkdownChakra}>{instituttraadet}</Markdown>,
-                    <Markdown options={MapMarkdownChakra}>{statutter}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{instituttraadet}</Markdown>,
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{statutter}</Markdown>,
                     <Minutes minutes={minutes} error={error} />,
                     <>
                         <Center>
@@ -94,7 +97,7 @@ const OmOssPage = ({
                                 </NextLink>
                             </LinkBox>
                         </Center>
-                        <Markdown options={MapMarkdownChakra}>{bekk}</Markdown>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>{bekk}</Markdown>
                         <Text mt="2em">
                             Offentlig hovedsamarbeidspartnerkontrakt finner du{' '}
                             <NextLink
@@ -122,7 +125,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
-        props: { boards: boards.studentGroups, minutes, error },
+        props: { boards: boards.studentGroups, boardsError: boards.error, minutes, error },
     };
 };
 

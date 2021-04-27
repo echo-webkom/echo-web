@@ -1,38 +1,32 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: "[BUG]"
+name: Bug-rapport
+about: Har du opplevd en bug? Opprett en issue her.
+title: '[Bug]'
 labels: 'bug :bug:'
-assignees: bakseter
-
+assignees: bakseter, boaanes
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Beskriv buggen**
+En konsis beskrivelse av hva som skjer.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Hvordan skjer buggen?**
+Steg for å reprodusere:
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+1. Gå til '...'
+2. Klikk på '....'
+3. Scroll ned til '....'
+4. Se buggen
+
+**Forventet oppførsel**
+En konsis beskrivelse av hva du fortventer skal skje.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+Legg gjerne med skjermbilder/gifer.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Detaljer:**
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+-   OS: [e.g. iOS]
+-   Nettleser [e.g. chrome, safari]
 
-**Additional context**
-Add any other context about the problem here.
+**Eventuelle greier**
+Legg til eventuelle småting her.

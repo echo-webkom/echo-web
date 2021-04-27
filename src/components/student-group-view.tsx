@@ -8,7 +8,7 @@ import MemberProfile from './member-profile';
 const StudentGroupView = ({ group }: { group: StudentGroup }): JSX.Element => {
     return (
         <>
-            <Markdown options={MapMarkdownChakra}>{group.info}</Markdown>
+            <Markdown options={{ overrides: MapMarkdownChakra }}>{group.info}</Markdown>
             <Divider my="5" />
             <Wrap spacing={['1em', null, '2.5em']} justify="center">
                 {group.roles.map((role: Role) =>
