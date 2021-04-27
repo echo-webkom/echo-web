@@ -18,14 +18,18 @@ import {
     Select,
     Checkbox,
 } from '@chakra-ui/react';
+// import { useForm } from 'react-hook-form';
 
 const BedpresForm = ({ buttonDescription }: { buttonDescription: string }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    // const { register, handleSubmit } = useForm();
+
+    // const onSubmit = (data) => {};
 
     const initialRef = useRef<HTMLInputElement>(null);
 
     return (
-        <>
+        <form>
             <Button w="100%" colorScheme="teal" onClick={onOpen}>
                 {buttonDescription}
             </Button>
@@ -37,16 +41,16 @@ const BedpresForm = ({ buttonDescription }: { buttonDescription: string }): JSX.
                     <ModalBody pb={6}>
                         <VStack spacing="4">
                             <FormControl mt={4} isRequired>
-                                <FormLabel>Epost</FormLabel>
-                                <Input ref={initialRef} placeholder="Epost" />
+                                <FormLabel>E-post</FormLabel>
+                                <Input ref={initialRef} placeholder="E-post" />
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>Navn</FormLabel>
                                 <Input placeholder="Navn" />
                             </FormControl>
-                            <FormControl id="study" isRequired>
+                            <FormControl id="degree" isRequired>
                                 <FormLabel>Studieretning</FormLabel>
-                                <Select placeholder="Velg studieretning">
+                                <Select placeholder="Velg studieretning" {...register('degree')}>
                                     <option>Datateknologi</option>
                                     <option>Data Science</option>
                                     <option>Datasikkerhet</option>
@@ -56,7 +60,7 @@ const BedpresForm = ({ buttonDescription }: { buttonDescription: string }): JSX.
                             </FormControl>
                             <FormControl as="fieldset" isRequired>
                                 <FormLabel as="legend">Hvilket trinn går du på?</FormLabel>
-                                <RadioGroup defaultValue="1">
+                                <RadioGroup defaultValue="1" {...register('degreeYear')}>
                                     <VStack align="left">
                                         <Radio value="1">1. trinn</Radio>
                                         <Radio value="2">2. trinn</Radio>
@@ -68,20 +72,20 @@ const BedpresForm = ({ buttonDescription }: { buttonDescription: string }): JSX.
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>Bedkom terms of service</FormLabel>
-                                <Checkbox value="approve">Jeg godkjenner retningslinjene til bedkom.</Checkbox>
+                                <Checkbox {...register('terms')}>Jeg godkjenner retningslinjene til Bedkom.</Checkbox>
                             </FormControl>
                         </VStack>
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="teal" mr={3}>
+                        <Button type="submit" colorScheme="teal" mr={3}>
                             Send inn
                         </Button>
                         <Button onClick={onClose}>Lukk</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </>
+        </form>
     );
 };
 
