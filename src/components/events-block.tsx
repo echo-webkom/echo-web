@@ -23,7 +23,7 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
             {events && !error && events.length !== 0 && (
                 <Stack pt=".5em" spacing="5" divider={<Divider />} fontSize={['lg', 'xl', '2xl']}>
                     {events.map((event: Event) => (
-                        <EventPreview event={event} />
+                        <EventPreview key={event.slug} event={event} />
                     ))}
                 </Stack>
             )}
