@@ -87,7 +87,6 @@ export const EventAPI = {
                 query: GET_N_EVENTS,
                 variables: {
                     n,
-                    date: formatISO(new Date()),
                 },
             });
 

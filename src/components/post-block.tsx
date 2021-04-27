@@ -30,7 +30,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 <LinkBox pt="1em" pb="0.5em">
                     <NextLink href="/posts" passHref>
                         <LinkOverlay>
-                            <Button colorScheme="teal" mt="1rem" p="1.5rem" fontSize="2xl">
+                            <Button colorScheme="teal" mt="1rem" fontSize="xl">
                                 Se flere innlegg
                             </Button>
                         </LinkOverlay>
