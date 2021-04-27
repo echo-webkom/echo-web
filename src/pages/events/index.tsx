@@ -36,7 +36,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                             {past && (
                                 <Stack spacing={5} divider={<StackDivider />}>
                                     {past.map((event: Event) => (
-                                        <EventPreview event={event} />
+                                        <EventPreview key={event.slug} event={event} />
                                     ))}
                                 </Stack>
                             )}
@@ -53,7 +53,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                             {upcoming && (
                                 <Stack spacing={5} divider={<StackDivider />}>
                                     {upcoming.map((event: Event) => (
-                                        <EventPreview event={event} />
+                                        <EventPreview key={event.slug} event={event} />
                                     ))}
                                 </Stack>
                             )}
