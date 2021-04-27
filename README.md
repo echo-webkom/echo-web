@@ -21,4 +21,4 @@ Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
     docker-compose up
 
-Serveren starter på `localhost:5000`, eller `localhost:$PORT` dersom $PORT er definert.
+Serveren starter på `localhost:8080`, eller `localhost:$PORT` dersom $PORT er definert.
