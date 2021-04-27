@@ -10,11 +10,11 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element
     const hoverColor = useColorModeValue('gray.200', 'gray.800');
     const bgColor = useColorModeValue('gray.50', 'gray.600');
     return (
-        <LinkBox w={['100%', null, null, '24em']}>
+        <LinkBox w={['100%', null, null, null, '24em']}>
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Box
-                        h={['7em', null, null, '12em']}
+                        h="15em"
                         textAlign="left"
                         px="2em"
                         pb="10em"
