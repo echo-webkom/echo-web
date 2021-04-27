@@ -1,24 +1,9 @@
-import {
-    Button,
-    Center,
-    Divider,
-    Flex,
-    Heading,
-    Icon,
-    LinkBox,
-    LinkOverlay,
-    Spacer,
-    Stack,
-    Text,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import { Button, Center, Divider, Heading, LinkBox, LinkOverlay, Stack, Text } from '@chakra-ui/react';
+
 import React from 'react';
-import format from 'date-fns/format';
-import { VscTriangleRight } from 'react-icons/vsc';
 import NextLink from 'next/link';
 import { Event } from '../lib/api/event';
 
-import theme from '../styles/theme';
 import ContentBox from './content-box';
 import ErrorBox from './error-box';
 import EventPreview from './event-preview';

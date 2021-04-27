@@ -1,7 +1,6 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
 import { Center, Text, SimpleGrid, Stack, StackDivider, Heading } from '@chakra-ui/react';
-import isBefore from 'date-fns/isBefore';
 import { isFuture, isPast } from 'date-fns';
 import { BedpresAPI, Bedpres } from '../../lib/api/bedpres';
 import Layout from '../../components/layout';
