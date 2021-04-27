@@ -17,19 +17,22 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureRouting() {
-    routing {
-        getRegistration()
-        submitRegistraiton()
-        deleteRegistraiton()
+    val dbHost = environment.config.propertyOrNull("ktor.environment")?.getString()
+        ?: throw Exception("No DB_HOST specified.")
 
-        submitBedpres()
+    routing {
+        getRegistration(dbHost)
+        submitRegistraiton(dbHost)
+        deleteRegistraiton(dbHost)
+
+        submitBedpres(dbHost)
     }
 }
 
 private const val registrationRoute: String = "registration"
 private const val bedpresRoute: String = "bedpres"
 
-fun Route.getRegistration() {
+fun Route.getRegistration(dbHost: String) {
     get("/$registrationRoute/{email}/{slug}") {
         val email: String = call.parameters["email"] ?: ""
         val slug: String = call.parameters["slug"] ?: ""
@@ -41,7 +44,7 @@ fun Route.getRegistration() {
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given.")
         else
-            transaction(Db.connection) {
+            transaction(Db.connection(dbHost)) {
                 addLogger(StdOutSqlLogger)
 
                 Registration.select { Registration.studentEmail eq email and (Registration.bedpresSlug eq slug) }
@@ -49,12 +52,12 @@ fun Route.getRegistration() {
     }
 }
 
-fun Route.submitRegistraiton() {
+fun Route.submitRegistraiton(dbHost: String) {
     post("/$registrationRoute") {
         try {
             val registration = call.receive<FullRegistrationJson>()
 
-            transaction(Db.connection) {
+            transaction(Db.connection(dbHost)) {
                 addLogger(StdOutSqlLogger)
 
                 Student.insert {
@@ -79,14 +82,14 @@ fun Route.submitRegistraiton() {
     }
 }
 
-fun Route.deleteRegistraiton() {
+fun Route.deleteRegistraiton(dbHost: String) {
     delete("/$registrationRoute/{slug}") {
         val slug: String = call.parameters["slug"] ?: ""
 
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given")
         else
-            transaction(Db.connection) {
+            transaction(Db.connection(dbHost)) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.deleteWhere { Bedpres.slug eq slug }
@@ -94,7 +97,7 @@ fun Route.deleteRegistraiton() {
     }
 }
 
-fun Route.submitBedpres() {
+fun Route.submitBedpres(dbHost: String) {
     install(ContentNegotiation) {
         gson()
     }
@@ -103,7 +106,7 @@ fun Route.submitBedpres() {
         try {
             val bedpres = call.receive<BedpresJson>()
 
-            transaction(Db.connection) {
+            transaction(Db.connection(dbHost)) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.insert {

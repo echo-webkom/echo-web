@@ -5,10 +5,13 @@ import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
 
 fun main(args: Array<String>) {
-    Db.init()
     EngineMain.main(args)
 }
 
 fun Application.module() {
+    val dbHost = environment.config.propertyOrNull("ktor.environment")?.getString()
+        ?: throw Exception("No DB_HOST specified.")
+
+    Db.init(dbHost)
     configureRouting()
 }

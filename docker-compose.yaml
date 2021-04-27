@@ -5,10 +5,12 @@ services:
     image: echo-web-backend:latest
     depends_on:
       - database
+    links:
+      - database
     ports:
-      - '5000:5000'
+      - '8080:8080'
     environment:
-      PORT: 5000
+      DB_HOST: database
 
   database:
     image: postgres:13

@@ -2,24 +2,24 @@ package no.uib.echo
 
 import org.jetbrains.exposed.sql.*
 import com.zaxxer.hikari.*
-import com.zaxxer.hikari.hibernate.HikariConfigurationUtil
 import org.jetbrains.exposed.sql.transactions.transaction
-import javax.sql.DataSource
 
 object Db {
-    val dataSource = HikariDataSource(HikariConfig().apply {
-        jdbcUrl = "jdbc:pgsql://0.0.0.0:5432,127.0.0.1:5432/postgres"
-        username = "postgres"
-        password = "password"
-        driverClassName = "com.impossibl.postgres.jdbc.PGDriver"
-    })
-
-    val connection by lazy {
-        Database.connect(dataSource)
+    fun dataSource(dbHost: String): HikariDataSource {
+        return HikariDataSource(HikariConfig().apply {
+            jdbcUrl = "jdbc:postgresql://$dbHost:5432/postgres"
+            username = "postgres"
+            password = "password"
+            driverClassName = "org.postgresql.Driver"
+        })
     }
 
-    fun init() {
-        transaction(connection) {
+    fun connection(dbHost: String): Database {
+        return Database.connect(dataSource(dbHost))
+    }
+
+    fun init(dbHost: String) {
+        transaction(connection(dbHost)) {
             SchemaUtils.create(Bedpres, Registration, Student)
         }
     }

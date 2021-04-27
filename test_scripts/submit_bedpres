@@ -3,4 +3,4 @@
 curl --verbose -X POST \
 -H "Content-Type: application/json" \
 -d '{ "slug": "generisk-bedriftspresentasjon", "spots": 30 }' \
-http://localhost:$1/bedpres
+http://0.0.0.0:$1/bedpres
