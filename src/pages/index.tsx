@@ -14,6 +14,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
+import { isFuture } from 'date-fns';
+import { date } from 'typescript-json-decoder';
 import Layout from '../components/layout';
 
 import SEO from '../components/seo';
@@ -68,7 +70,10 @@ const IndexPage = ({
                                 </LinkBox>
                             </Center>
                         </ContentBox>
-                        <EventsBlock events={events} error={eventsError} />
+                        <EventsBlock
+                            events={events.filter((event: Event) => isFuture(new Date(event.date)))}
+                            error={eventsError}
+                        />
                     </Stack>
                 </GridItem>
                 <GridItem>
@@ -86,7 +91,7 @@ const IndexPage = ({
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
     const postsResponse = await PostAPI.getPosts(3);
-    const eventsResponse = await EventAPI.getEvents(5);
+    const eventsResponse = await EventAPI.getEvents(0);
 
     return {
         props: {
@@ -94,7 +99,7 @@ export const getStaticProps: GetStaticProps = async () => {
             bedpresError: bedpresesResponse.error,
             posts: postsResponse.posts,
             postsError: postsResponse.error,
-            events: eventsResponse.events,
+            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4),
             eventsError: eventsResponse.error,
         },
     };

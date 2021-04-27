@@ -46,7 +46,7 @@ const BedpresBlock = ({
                 <LinkBox>
                     <NextLink href="/bedpres" passHref>
                         <LinkOverlay>
-                            <Button colorScheme="teal" mt="1rem" p="1.5rem" fontSize="2xl">
+                            <Button colorScheme="teal" mt="1rem" fontSize="xl">
                                 Se mer
                             </Button>
                         </LinkOverlay>
