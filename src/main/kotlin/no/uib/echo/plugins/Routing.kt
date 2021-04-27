@@ -9,7 +9,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import no.uib.echo.Bedpres
 import no.uib.echo.BedpresJson
-import no.uib.echo.DatabaseConn
+import no.uib.echo.Db
 import no.uib.echo.FullRegistrationJson
 import no.uib.echo.Registration
 import no.uib.echo.Student
@@ -41,7 +41,7 @@ fun Route.getRegistration() {
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given.")
         else
-            transaction(Database.connect(DatabaseConn.pool())) {
+            transaction(Db.connection) {
                 addLogger(StdOutSqlLogger)
 
                 Registration.select { Registration.studentEmail eq email and (Registration.bedpresSlug eq slug) }
@@ -54,7 +54,7 @@ fun Route.submitRegistraiton() {
         try {
             val registration = call.receive<FullRegistrationJson>()
 
-            transaction(Database.connect(DatabaseConn.pool())) {
+            transaction(Db.connection) {
                 addLogger(StdOutSqlLogger)
 
                 Student.insert {
@@ -86,7 +86,7 @@ fun Route.deleteRegistraiton() {
         if (slug == "")
             call.respond(HttpStatusCode.BadRequest, "No slug given")
         else
-            transaction(Database.connect(DatabaseConn.pool())) {
+            transaction(Db.connection) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.deleteWhere { Bedpres.slug eq slug }
@@ -103,7 +103,7 @@ fun Route.submitBedpres() {
         try {
             val bedpres = call.receive<BedpresJson>()
 
-            transaction(Database.connect(DatabaseConn.pool())) {
+            transaction(Db.connection) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.insert {

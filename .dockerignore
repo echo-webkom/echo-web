@@ -1,10 +1,6 @@
-Dockerfile
 .git
 .gitignore
-*.txt
-gradlew.bat
 .github
 .idea
 build/
 scripts/
-endpoints.yaml

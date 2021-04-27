@@ -1,8 +1,8 @@
 val ktor_version: String by project
-val kotlin_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
-val postgres_version: String by project
+// val postgres_version: String by project
+val pgjdbc_ng_version: String by project
 val hikari_version: String by project
 
 // Needed for Shadow
@@ -37,7 +37,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jodatime:$exposed_version")
 
-    implementation("org.postgresql:postgresql:$postgres_version")
+    // implementation("org.postgresql:postgresql:$postgres_version")
+    implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:$pgjdbc_ng_version")
 
     implementation("com.zaxxer:HikariCP:$hikari_version")
 
