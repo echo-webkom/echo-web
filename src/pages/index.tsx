@@ -5,12 +5,10 @@ import {
     SimpleGrid,
     Stack,
     Heading,
-    Text,
     useColorModeValue,
     Center,
     LinkBox,
     LinkOverlay,
-    Button,
     useBreakpointValue,
     GridItem,
 } from '@chakra-ui/react';
@@ -20,11 +18,13 @@ import Layout from '../components/layout';
 
 import SEO from '../components/seo';
 import BedpresBlock from '../components/bedpres-block';
-import { Bedpres, Post, Event } from '../lib/types';
-import { PostAPI, BedpresAPI, EventAPI } from '../lib/api';
+import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
+import { Post, PostAPI } from '../lib/api/post';
+import { Event, EventAPI } from '../lib/api/event';
 import ContentBox from '../components/content-box';
-import PostPreview from '../components/post-preview';
 import EventsBlock from '../components/events-block';
+import PostBlock from '../components/post-block';
+import ErrorBox from '../components/error-box';
 
 const bekkLogo = '/bekk.png';
 
@@ -74,37 +74,18 @@ const IndexPage = ({
                 <GridItem>
                     <BedpresBlock bedpreses={bedpreses} error={bedpresError} />
                 </GridItem>
+                <GridItem colSpan={[1, null, null, 2]}>
+                    {!posts && postsError && <ErrorBox error={postsError} />}
+                    {posts && !postsError && <PostBlock posts={posts} error={postsError} />}
+                </GridItem>
             </SimpleGrid>
-            {!posts && postsError && <Text>{postsError}</Text>}
-            {posts && !postsError && (
-                <Center>
-                    <Stack w={['100%', null, null, null, '70%']} spacing="5">
-                        {posts.map((post) => {
-                            return <PostPreview key={post.slug} post={post} className="post" />;
-                        })}
-                        {posts.length > 0 && (
-                            <Center>
-                                <LinkBox>
-                                    <NextLink href="/posts" passHref>
-                                        <LinkOverlay>
-                                            <Button w="100%" colorScheme="teal">
-                                                Alle poster
-                                            </Button>
-                                        </LinkOverlay>
-                                    </NextLink>
-                                </LinkBox>
-                            </Center>
-                        )}
-                    </Stack>
-                </Center>
-            )}
         </Layout>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
-    const postsResponse = await PostAPI.getPosts(2);
+    const postsResponse = await PostAPI.getPosts(3);
     const eventsResponse = await EventAPI.getEvents(5);
 
     return {

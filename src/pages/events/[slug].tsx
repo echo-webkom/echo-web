@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Center, Box, Text, Grid, GridItem, Heading, Icon } from '@chakra-ui/react';
+import { Center, Box, Text, Grid, GridItem, Heading, Icon, Spinner } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
@@ -13,19 +13,22 @@ import { RiTimeLine } from 'react-icons/ri';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
-import { Event } from '../../lib/types';
+import { EventAPI, Event } from '../../lib/api/event';
 
-import { EventAPI } from '../../lib/api';
 import ContentBox from '../../components/content-box';
+import ErrorBox from '../../components/error-box';
 
-const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Element => {
+const EventPage = ({ event, error }: { event: Event; error: string }): JSX.Element => {
     const router = useRouter();
 
     return (
         <Layout>
-            {router.isFallback && <Text>Loading...</Text>}
-            {!router.isFallback && !event && <Text>Event not found</Text>}
-            {error && !router.isFallback && <Text>{error}</Text>}
+            {router.isFallback && (
+                <Center>
+                    <Spinner />
+                </Center>
+            )}
+            {error && !router.isFallback && !event && <ErrorBox error={error} />}
             {event && !router.isFallback && !error && (
                 <>
                     <SEO title={event.title} />
@@ -57,7 +60,7 @@ const EventPage = ({ event, error }: { event?: Event; error?: string }): JSX.Ele
                                     <Heading mb="0.5em" mt="0.5em">
                                         {event.title}
                                     </Heading>
-                                    <Markdown options={MapMarkdownChakra}>{event.body}</Markdown>
+                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{event.body}</Markdown>
                                 </ContentBox>
                             </GridItem>
                             <GridItem colSpan={1}>
@@ -97,28 +100,18 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
     const { event, error } = await EventAPI.getEventBySlug(slug);
 
+    if (error === '404') {
+        return {
+            notFound: true,
+        };
+    }
+
     return {
         props: {
             event,
             error,
         },
     };
-};
-
-EventPage.defaultProps = {
-    event: {
-        title: 'title',
-        slug: 'slug',
-        date: '2020-01-01T00:00:00.000Z',
-        spots: 0,
-        body: '',
-        imageUrl: '',
-        publishedAt: '2020-01-01T00:00:00.000Z',
-        author: {
-            authorName: 'Author McAuthor',
-        },
-    },
-    error: '',
 };
 
 export default EventPage;

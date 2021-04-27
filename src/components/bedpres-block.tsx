@@ -3,9 +3,10 @@ import NextLink from 'next/link';
 import { Box, Text, Stack, StackDivider, Heading, Center, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
 
 import { isBefore } from 'date-fns';
-import { Bedpres } from '../lib/types';
+import { Bedpres } from '../lib/api/bedpres';
 import ContentBox from './content-box';
 import BedpresPreview from './bedpres-preview';
+import ErrorBox from './error-box';
 
 const BedpresBlock = ({
     bedpreses,
@@ -21,7 +22,7 @@ const BedpresBlock = ({
         .slice(0, 3);
 
     return (
-        <ContentBox testid="bedpres-block">
+        <ContentBox data-testid="bedpres-block">
             <Center wordBreak="break-word">
                 <Heading>Bedriftspresentasjoner</Heading>
             </Center>
@@ -39,13 +40,13 @@ const BedpresBlock = ({
                             })}
                     </Stack>
                 )}
-                {!bedpreses && error && <Text>{error}</Text>}
+                {!bedpreses && error && <ErrorBox error={error} />}
             </Box>
             <Center>
                 <LinkBox>
                     <NextLink href="/bedpres" passHref>
                         <LinkOverlay>
-                            <Button w="100%" colorScheme="teal">
+                            <Button colorScheme="teal" mt="1rem" p="1.5rem" fontSize="2xl">
                                 Se mer
                             </Button>
                         </LinkOverlay>

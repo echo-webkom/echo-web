@@ -1,7 +1,8 @@
-import { Button, Center, Divider, Text, VStack } from '@chakra-ui/react';
+import { Button, Center, Divider, Text, SimpleGrid } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
-import { Post } from '../lib/types';
-import PostPreview from './post-preview';
+import { Post } from '../lib/api/post';
+import ErrorBox from './error-box';
+import PostCard from './post-card';
 
 const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     const [index, setIndex] = useState(0);
@@ -14,13 +15,20 @@ const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.
         <>
             <Center>
                 {posts.length === 0 && !error && <Text>No posts found</Text>}
-                {posts.length === 0 && error && <Text>{error}</Text>}
+                {posts.length === 0 && error && <ErrorBox error={error} />}
                 {posts.length !== 0 && (
-                    <VStack className="post-list" spacing={5} align="stretch" w={['100%', null, null, null, '70%']}>
-                        {posts.slice(index, index + 4).map((post: Post) => {
-                            return <PostPreview className="post" key={post.slug} post={post} />;
+                    <SimpleGrid
+                        pt="1rem"
+                        columns={[1, null, null, 2]}
+                        className="post-list"
+                        spacing={10}
+                        align="stretch"
+                        w={['100%', null, null, null, '70%']}
+                    >
+                        {posts.slice(index, index + 6).map((post: Post) => {
+                            return <PostCard key={post.slug} post={post} testid={post.slug} />;
                         })}
-                    </VStack>
+                    </SimpleGrid>
                 )}
             </Center>
             <Divider my="5" />
