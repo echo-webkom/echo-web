@@ -13,19 +13,7 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import {
-    Heading,
-    Link,
-    Grid,
-    Text,
-    GridItem,
-    Divider,
-    Stack,
-    Center,
-    LinkBox,
-    LinkOverlay,
-    Icon,
-} from '@chakra-ui/react';
+import { Heading, Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon } from '@chakra-ui/react';
 import useTimeout from '../../lib/hooks';
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import MapMarkdownChakra from '../../markdown';
@@ -83,26 +71,12 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <Text>{bedpres.location}</Text>
                             </Grid>
                             <Divider my=".5em" />
-                            <Center>
-                                <Text fontWeight="bold">PÅMELDING</Text>
-                            </Center>
                             {!bedpres.registrationLinks && (
                                 <Center my="3">
                                     <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && (
-                                <Stack>
-                                    {bedpres.registrationLinks.map((regLink) => (
-                                        <>
-                                            <BedpresForm buttonDescription={regLink.description} />
-                                            {/* <Button w="100%" colorScheme="teal">
-                                                        {regLink.description}
-                                                    </Button> */}
-                                        </>
-                                    ))}
-                                </Stack>
-                            )}
+                            {bedpres.registrationLinks && <BedpresForm slug={bedpres.slug} />}
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>
