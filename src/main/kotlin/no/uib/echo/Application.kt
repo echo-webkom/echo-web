@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    if (environment.config.propertyOrNull("ktor.dev") != null) {
+    if (System.getenv("DEV") != null) {
         install(CORS) {
             run {
                 method(HttpMethod.Get)
@@ -51,15 +51,14 @@ fun Application.module() {
                 allowNonSimpleContentTypes = true
             }
         }
-        val dbHost = environment.config.propertyOrNull("ktor.db_host")?.getString()
-            ?: throw Exception("No DATABASE_HOST specified.")
+        val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("No DATABASE_HOST specified.")
+
         Db.init(dbHost, dev = true)
+        configureRouting(dbHost)
     } else {
-        val dbUrl = environment.config.propertyOrNull("ktor.db_url")?.getString()
-            ?: throw Exception("No DATABASE_URL specified.")
+        val dbUrl = System.getenv("DATABASE_URL") ?: throw Exception("No DATABASE_URL specified.")
 
         Db.init(dbUrl)
+        configureRouting(dbUrl)
     }
-
-    configureRouting()
 }
