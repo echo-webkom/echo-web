@@ -26,8 +26,10 @@ import {
     LinkBox,
     LinkOverlay,
     Icon,
+    VStack,
 } from '@chakra-ui/react';
-import useTimeout from '../../lib/hooks';
+import { useTimeout, useCountdown } from '../../lib/hooks';
+
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
@@ -48,6 +50,8 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
     useTimeout(() => {
         router.replace(router.asPath);
     }, time);
+
+    const { hours, minutes, seconds } = useCountdown(regDate);
 
     return (
         <Layout>
@@ -86,9 +90,17 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && (
+                            {!bedpres.registrationLinks && hours > 23 && (
                                 <Center my="3">
                                     <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
+                                </Center>
+                            )}
+                            {!bedpres.registrationLinks && hours <= 23 && (
+                                <Center>
+                                    <Text fontWeight="bold" fontSize="5xl" suppressHydrationWarning>
+                                        {hours < 10 ? `0${hours}` : hours} : {minutes < 10 ? `0${minutes}` : minutes} :{' '}
+                                        {seconds < 10 ? `0${seconds}` : seconds}
+                                    </Text>
                                 </Center>
                             )}
                             {bedpres.registrationLinks && (
