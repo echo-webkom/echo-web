@@ -43,8 +43,6 @@ fun Application.configureRouting(dbString: String) {
 private const val registrationRoute: String = "registration"
 private const val bedpresRoute: String = "bedpres"
 
-private const val KEY = "secret"
-
 fun getQuery(emailParam: String?, slugParam: String?): Query? {
     if (emailParam != null && slugParam != null) {
         return Registration.select { Registration.email eq emailParam and (Registration.bedpresSlug eq slugParam) }

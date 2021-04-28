@@ -13,6 +13,8 @@ object Db {
                 username = "postgres"
                 password = "password"
                 driverClassName = "org.postgresql.Driver"
+                connectionTimeout = 5000
+                maximumPoolSize = 20
             }))
         }
 
@@ -28,6 +30,8 @@ object Db {
             username = dbUsername
             password = dbPassword
             driverClassName = "org.postgresql.Driver"
+            connectionTimeout = 5000
+            maximumPoolSize = 20
         }))
     }
 

@@ -1,12 +1,10 @@
-name: Build & test
+name: Gradle build
 on:
   pull_request:
     branches: [develop, master]
-  push:
-    branches: develop
 
 jobs:
-  test:
+  gradle_build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
