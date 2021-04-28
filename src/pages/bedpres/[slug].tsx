@@ -97,14 +97,10 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             )}
                             {!bedpres.registrationLinks && hours <= 23 && (
                                 <Center>
-                                    <VStack spacing="0.1em" pt="0.1em">
-                                        <Text>Åpner om:</Text>
-                                        <Text suppressHydrationWarning>
-                                            {hours < 10 ? `0${hours}` : hours} :{' '}
-                                            {minutes < 10 ? `0${minutes}` : minutes} :{' '}
-                                            {seconds < 10 ? `0${seconds}` : seconds}
-                                        </Text>
-                                    </VStack>
+                                    <Text fontWeight="bold" fontSize="5xl" suppressHydrationWarning>
+                                        {hours < 10 ? `0${hours}` : hours} : {minutes < 10 ? `0${minutes}` : minutes} :{' '}
+                                        {seconds < 10 ? `0${seconds}` : seconds}
+                                    </Text>
                                 </Center>
                             )}
                             {bedpres.registrationLinks && (
