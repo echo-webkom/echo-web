@@ -1,9 +1,7 @@
-name: Build & test
+name: Gradle build
 on:
   pull_request:
     branches: [develop, master]
-  push:
-    branches: develop
 
 jobs:
   test:
