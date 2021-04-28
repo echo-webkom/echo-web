@@ -1,5 +1,6 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
+import fs from 'fs';
 
 import {
     SimpleGrid,
@@ -15,6 +16,7 @@ import {
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { isFuture } from 'date-fns';
+import getRssXML from '../lib/generateRssFeed';
 import Layout from '../components/layout';
 
 import SEO from '../components/seo';
@@ -89,14 +91,18 @@ const IndexPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
-    const postsResponse = await PostAPI.getPosts(3);
+    const postsResponse = await PostAPI.getPosts(0);
     const eventsResponse = await EventAPI.getEvents(0);
+
+    const rss = getRssXML(postsResponse.posts, eventsResponse.events, bedpresesResponse.bedpreses);
+
+    fs.writeFileSync('./public/rss.xml', rss);
 
     return {
         props: {
             bedpreses: bedpresesResponse.bedpreses,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts,
+            posts: postsResponse.posts?.slice(0, 3),
             postsError: postsResponse.error,
             events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4),
             eventsError: eventsResponse.error,
