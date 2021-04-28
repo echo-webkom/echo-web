@@ -12,6 +12,7 @@ services:
     environment:
       DB_HOST: database
       DEV: ja
+      AUTH_KEY: hemmelig
 
   database:
     image: postgres:13

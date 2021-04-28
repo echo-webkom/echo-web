@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts p:e:f:l:d:s:t: flag
+while getopts p:e:f:l:d:y:s:t: flag
 do
     case "${flag}" in
         p) port=${OPTARG};;
@@ -8,13 +8,14 @@ do
         f) firstName=${OPTARG};;
         l) lastName=${OPTARG};;
         d) degree=${OPTARG};;
+        y) degree_year=${OPTARG};;
         s) slug=${OPTARG};;
         t) terms=${OPTARG};;
     esac
 done
 
-if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ] ; then
-    echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -s for slug, -t for terms";
+if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${degree_year+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ] ; then
+    echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -y for degree year, -s for slug, -t for terms";
 else
     curl --verbose \
     -H "Content-Type: application/json" \
@@ -22,7 +23,8 @@ else
           "firstName": "'${firstName}'",
           "lastName": "'${lastName}'",
           "degree": "'${degree}'",
+          "degreeYear": '${degree_year}',
           "slug": "'${slug}'",
-          "terms: '${terms}' }' \
+          "terms": '${terms}' }' \
     http://localhost:$port/registration;
 fi
