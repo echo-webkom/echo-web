@@ -1,0 +1,38 @@
+#!/bin/bash
+
+while getopts p:s:o:x: flag
+do
+    case "${flag}" in
+        p) port=${OPTARG};;
+        s) slug=${OPTARG};;
+        o) spots=${OPTARG};;
+        x) secret=${OPTARG};;
+    esac
+done
+
+if [ -z ${secret+x} ]; then
+    echo "No authorization header specified (use -x)"
+    exit 1;
+fi
+
+if [ -z ${port+x} ]; then
+    echo "Port not defined (use -p)";
+    exit 1;
+fi
+
+if [ -z ${slug+x} -a -z ${spots+x} ]; then
+    echo "Slugs and spots not defined (use -s and -o)";
+    exit 1;
+elif [ -z ${slug+x} ]; then
+    echo "Slug not defined (use -s)";
+    exit 1;
+elif [ -z ${spots+x} ]; then
+    echo "Spots not defined (use -o)";
+    exit 1;
+else
+    curl --verbose \
+    -H "Content-Type: application/json" \
+    -H "Authorization: $secret" \
+    -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
+    http://localhost:$port/bedpres;
+fi

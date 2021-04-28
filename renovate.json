@@ -1,7 +1,25 @@
 {
-    "extends": ["config:base"],
-    "labels": ["dependencies :handshake:"],
-    "prHourlyLimit": 0,
-    "stabilityDays": 3,
-    "prCreation": "not-pending"
+  "extends": [
+    "config:base"
+  ],
+  "labels": [
+    "dependencies :handshake:"
+  ],
+  "prHourlyLimit": 0,
+  "stabilityDays": 3,
+  "prCreation": "not-pending",
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "^org.jetbrains.exposed"
+      ],
+      "groupName": "Exposed packages"
+    },
+    {
+      "matchPackagePatterns": [
+        "^io.ktor"
+      ],
+      "groupName": "Ktor packages"
+    }
+  ]
 }

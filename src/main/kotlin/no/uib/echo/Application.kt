@@ -1,13 +1,65 @@
 package no.uib.echo
 
 import io.ktor.application.*
-import io.ktor.server.netty.EngineMain;
+import io.ktor.features.CORS
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
 
-fun main(args: Array<String>): Unit {
+fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
 fun Application.module() {
+    if (environment.config.propertyOrNull("ktor.dev") != null) {
+        install(CORS) {
+            run {
+                method(HttpMethod.Get)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+            run {
+                method(HttpMethod.Post)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+            run {
+                method(HttpMethod.Put)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+            run {
+                method(HttpMethod.Options)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+            run {
+                method(HttpMethod.Patch)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+            run {
+                method(HttpMethod.Delete)
+                header(HttpHeaders.AccessControlAllowOrigin)
+                anyHost()
+                allowNonSimpleContentTypes = true
+            }
+        }
+        val dbHost = environment.config.propertyOrNull("ktor.db_host")?.getString()
+            ?: throw Exception("No DATABASE_HOST specified.")
+        Db.init(dbHost, dev = true)
+    } else {
+        val dbUrl = environment.config.propertyOrNull("ktor.db_url")?.getString()
+            ?: throw Exception("No DATABASE_URL specified.")
+
+        Db.init(dbUrl)
+    }
+
     configureRouting()
 }

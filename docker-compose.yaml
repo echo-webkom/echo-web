@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  backend:
+    build: .
+    image: echo-web-backend:latest
+    depends_on:
+      - database
+    links:
+      - database
+    ports:
+      - '8080:8080'
+    environment:
+      PORT: 1234
+      DATABASE_HOST: database
+      DEV: ja
+      AUTH_KEY: hemmelig
+
+  database:
+    image: postgres:13
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres

@@ -1,7 +1,6 @@
-Dockerfile
-.git
+.git/
 .gitignore
-*.txt
-gradlew.bat
-.github
-.idea
+.github/
+.idea/
+build/
+scripts/
