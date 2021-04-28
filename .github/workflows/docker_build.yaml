@@ -4,7 +4,7 @@ on:
     branches: [develop, master]
 
 jobs:
-  test:
+  docker_build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
