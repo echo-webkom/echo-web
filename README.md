@@ -1,7 +1,9 @@
 # echo web backend
 
 [![Deploy to Heroku](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build_deploy.yaml/badge.svg?branch=master)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build_deploy.yaml)
-[![Build & test](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build_test.yaml)
+[![Docker build](https://github.com/echo-webkom/echo-web-backend/actions/workflows/docker_build.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/docker_build.yaml)
+[![Gradle build](https://github.com/echo-webkom/echo-web-backend/actions/workflows/gradle_build.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/gradle_build.yaml)
+
 
 Backend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
 
