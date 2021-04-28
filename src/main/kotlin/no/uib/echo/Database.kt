@@ -1,8 +1,9 @@
 package no.uib.echo
 
-import org.jetbrains.exposed.sql.*
 import com.zaxxer.hikari.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.URI
 
 object Db {
     fun connection(dbString: String, dev: Boolean = false): Database {
@@ -14,8 +15,19 @@ object Db {
                 driverClassName = "org.postgresql.Driver"
             }))
         }
+
+        val dbUri = URI(System.getenv("DATABASE_URL"))
+
+        val dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath()
+            .toString() + "?sslmode=require"
+        val dbUsername: String = dbUri.getUserInfo().split(":").get(0)
+        val dbPassword: String = dbUri.getUserInfo().split(":").get(1)
+
         return Database.connect(HikariDataSource(HikariConfig().apply {
-            jdbcUrl = dbString
+            jdbcUrl = dbUrl
+            username = dbUsername
+            password = dbPassword
+            driverClassName = "org.postgresql.Driver"
         }))
     }
 
