@@ -7,8 +7,8 @@ import MapMarkdownChakra from '../markdown';
 
 const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element => {
     const authorBg = useColorModeValue('yellow.400', 'yellow.200');
-    const hoverColor = useColorModeValue('gray.200', 'gray.800');
-    const bgColor = useColorModeValue('gray.50', 'gray.600');
+    const hoverColor = useColorModeValue('gray.100', 'gray.700');
+    const bgColor = useColorModeValue('gray.50', 'gray.800');
     return (
         <LinkBox w={['100%', null, null, null, '24em']}>
             <NextLink href={`/posts/${post.slug}`} passHref>
@@ -24,12 +24,13 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element
                         _hover={{ backgroundColor: hoverColor }}
                     >
                         <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                            {`${post.title.slice(0, 35)}...`}
+                            {post.title}
                         </Heading>
                         <Markdown options={{ overrides: MapMarkdownChakra }}>
                             {`«${post.body.slice(0, 70)} ...»`}
                         </Markdown>
                         <Text
+                            fontSize="md"
                             fontWeight="bold"
                             pos="absolute"
                             bottom="0"

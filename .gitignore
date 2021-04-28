@@ -1,4 +1,5 @@
 .cache
+public/rss.xml
 
 # Logs
 logs
