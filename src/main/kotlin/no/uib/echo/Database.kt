@@ -5,21 +5,23 @@ import com.zaxxer.hikari.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Db {
-    fun dataSource(dbHost: String): HikariDataSource {
-        return HikariDataSource(HikariConfig().apply {
-            jdbcUrl = "jdbc:postgresql://$dbHost:5432/postgres"
-            username = "postgres"
-            password = "password"
+    fun connection(dbString: String, dev: Boolean = false): Database {
+        if (dev) {
+            return Database.connect(HikariDataSource(HikariConfig().apply {
+                jdbcUrl = "jdbc:postgresql://$dbString:5432/postgres"
+                username = "postgres"
+                password = "password"
+                driverClassName = "org.postgresql.Driver"
+            }))
+        }
+        return Database.connect(HikariDataSource(HikariConfig().apply {
+            jdbcUrl = dbString
             driverClassName = "org.postgresql.Driver"
-        })
+        }))
     }
 
-    fun connection(dbHost: String): Database {
-        return Database.connect(dataSource(dbHost))
-    }
-
-    fun init(dbHost: String) {
-        transaction(connection(dbHost)) {
+    fun init(dbHost: String, dev: Boolean = false) {
+        transaction(connection(dbHost, dev)) {
             SchemaUtils.create(Bedpres, Registration)
         }
     }

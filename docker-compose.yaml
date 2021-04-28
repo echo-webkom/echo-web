@@ -10,7 +10,8 @@ services:
     ports:
       - '8080:8080'
     environment:
-      DB_HOST: database
+      PORT: 1234
+      DATABASE_HOST: database
       DEV: ja
       AUTH_KEY: hemmelig
 

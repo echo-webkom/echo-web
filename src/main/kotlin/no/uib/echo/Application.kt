@@ -51,13 +51,15 @@ fun Application.module() {
                 allowNonSimpleContentTypes = true
             }
         }
-        println("er i dev ass 100-emoji")
-    } else
-        println("Not in dev 100-emoji")
+        val dbHost = environment.config.propertyOrNull("ktor.db_host")?.getString()
+            ?: throw Exception("No DATABASE_HOST specified.")
+        Db.init(dbHost, dev = true)
+    } else {
+        val dbUrl = environment.config.propertyOrNull("ktor.db_url")?.getString()
+            ?: throw Exception("No DATABASE_URL specified.")
 
-    val dbHost = environment.config.propertyOrNull("ktor.db_host")?.getString()
-        ?: throw Exception("No DB_HOST specified.")
+        Db.init(dbUrl)
+    }
 
-    Db.init(dbHost)
     configureRouting()
 }
