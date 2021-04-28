@@ -16,7 +16,6 @@ object Db {
         }
         return Database.connect(HikariDataSource(HikariConfig().apply {
             jdbcUrl = dbString
-            driverClassName = "org.postgresql.Driver"
         }))
     }
 
