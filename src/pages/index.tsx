@@ -94,7 +94,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const postsResponse = await PostAPI.getPosts(0);
     const eventsResponse = await EventAPI.getEvents(0);
 
-    const rss = await getRssXML(postsResponse.posts, eventsResponse.events, bedpresesResponse.bedpreses);
+    const rss = getRssXML(postsResponse.posts, eventsResponse.events, bedpresesResponse.bedpreses);
 
     fs.writeFileSync('./public/rss.xml', rss);
 

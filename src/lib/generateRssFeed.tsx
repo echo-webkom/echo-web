@@ -1,4 +1,16 @@
-const generatePosts = (posts) => {
+import { Bedpres } from './api/bedpres';
+import { Event } from './api/event';
+import { Post } from './api/post';
+
+type GenericEntry = {
+    slug: string;
+    title: string;
+    publishedAt: string;
+    author: string;
+    body: string;
+};
+
+const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPostDate: Date } => {
     let latestPostDate = new Date(0);
     let postsXML = '';
 
@@ -30,7 +42,11 @@ const generatePosts = (posts) => {
     };
 };
 
-const getRssXML = async (posts, events, bedpreses) => {
+const getRssXML = (
+    posts: Array<Post> | null,
+    events: Array<Event> | null,
+    bedpreses: Array<Bedpres> | null,
+): string => {
     const genericPosts = posts
         ? posts.map((post) => {
               return {
@@ -68,13 +84,11 @@ const getRssXML = async (posts, events, bedpreses) => {
         : [];
 
     const all = genericPosts.concat(genericEvents).concat(genericBedpreses);
-    all.sort((a, b) =>
-        new Date(a.publishedAt) < new Date(b.publishedAt)
-            ? 1
-            : new Date(b.publishedAt) < new Date(a.publishedAt)
-            ? -1
-            : 0,
-    );
+    all.sort((a, b) => {
+        if (new Date(a.publishedAt) < new Date(b.publishedAt)) return 1;
+        if (new Date(b.publishedAt) < new Date(a.publishedAt)) return -1;
+        return 0;
+    });
 
     const { postsXML, latestPostDate } = generatePosts(all);
 
