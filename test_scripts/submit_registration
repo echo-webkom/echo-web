@@ -1,8 +1,11 @@
 #!/bin/bash
 
-while getopts p:e:f:l:d:y:s:t: flag
+host=http://echo-web-backend.herokuapp.com
+
+while getopts zp:e:f:l:d:y:s:t: flag
 do
     case "${flag}" in
+        z) host=http://localhost;;
         p) port=${OPTARG};;
         e) email=${OPTARG};;
         f) firstName=${OPTARG};;
@@ -19,6 +22,7 @@ if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${last
 else
     curl --verbose \
     -H "Content-Type: application/json" \
+    -H "Connection: close" \
     -d '{ "email": "'${email}'",
           "firstName": "'${firstName}'",
           "lastName": "'${lastName}'",
@@ -26,5 +30,5 @@ else
           "degreeYear": '${degree_year}',
           "slug": "'${slug}'",
           "terms": '${terms}' }' \
-    http://localhost:$port/registration;
+    $host:$port/registration;
 fi

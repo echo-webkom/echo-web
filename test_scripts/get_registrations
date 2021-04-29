@@ -1,8 +1,11 @@
 #!/bin/bash
 
-while getopts p:e:s:x: flag
+host=http://echo-web-backend.herokuapp.com
+
+while getopts zp:e:s:x: flag
 do
     case "${flag}" in
+        z) host=http://localhost;;
         p) port=${OPTARG};;
         e) email=${OPTARG};;
         s) slug=${OPTARG};;
@@ -15,20 +18,29 @@ if [ -z ${secret+x} ]; then
     exit 1;
 fi
 
-if [ -z ${email+x} -a -z ${slug+x} ]; then
+if [ -z ${port+x} ]; then
+    echo "Port not defined (use -p)";
+    exit 1;
+fi
+
+if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
     curl --verbose \
     -H "Authorization: $secret" \
-    http://localhost:$port/registration
+    -H "Connection: close" \
+    $host:$port/registration
 elif [ -z ${slug+x} ]; then
     curl --verbose \
     -H "Authorization: $secret" \
-    http://localhost:$port/registration?email=$email
+    -H "Connection: close" \
+    $host:$port/registration?email=$email
 elif [ -z ${email+x} ]; then
     curl --verbose \
     -H "Authorization: $secret" \
-    http://localhost:$port/registration?slug=$slug
+    -H "Connection: close" \
+    $host:$port/registration?slug=$slug
 else
     curl --verbose \
     -H "Authorization: $secret" \
-    "http://localhost:$port/registration?email=$email&slug=$slug"
+    -H "Connection: close" \
+    "$host:$port/registration?email=$email&slug=$slug"
 fi
