@@ -52,7 +52,7 @@ const BedpresForm = ({ slug }: { slug: string }): JSX.Element => {
     const submitForm = (data: Registration) =>
         axios
             .post(
-                `http://echo-web-backend.herokuapp.com/registration`,
+                `https://echo-web-backend.herokuapp.com/registration`,
                 {
                     email: data.email,
                     firstName: data.firstName,
