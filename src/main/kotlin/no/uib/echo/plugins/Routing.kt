@@ -22,20 +22,20 @@ import no.uib.echo.Registration.firstName
 import no.uib.echo.Registration.lastName
 import no.uib.echo.Registration.terms
 import no.uib.echo.RegistrationJson
+import no.uib.echo.ShortRegistrationJson
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 
-fun Application.configureRouting() {
+fun Application.configureRouting(authKey: String) {
     install(ContentNegotiation) {
         gson()
     }
 
-    val authKey = System.getenv("AUTH_KEY") ?: throw Exception("No AUTH_KEY specified.")
-
     routing {
         getRegistration(authKey)
-        submitRegistraiton()
-        deleteRegistraiton(authKey)
+        submitRegistration()
+        deleteRegistration(authKey)
 
         submitBedpres(authKey)
         deleteBedpres(authKey)
@@ -47,11 +47,11 @@ private const val bedpresRoute: String = "bedpres"
 
 fun getQuery(emailParam: String?, slugParam: String?): Query? {
     if (emailParam != null && slugParam != null) {
-        return Registration.select { Registration.email eq emailParam and (Registration.bedpresSlug eq slugParam) }
+        return Registration.select { email eq emailParam and (bedpresSlug eq slugParam) }
     } else if (emailParam != null && slugParam == null) {
-        return Registration.select { Registration.email eq emailParam }
+        return Registration.select { email eq emailParam }
     } else if (emailParam == null && slugParam != null) {
-        return Registration.select { Registration.bedpresSlug eq slugParam }
+        return Registration.select { bedpresSlug eq slugParam }
     }
     return null
 }
@@ -93,7 +93,7 @@ fun Route.getRegistration(authKey: String) {
     }
 }
 
-fun Route.submitRegistraiton() {
+fun Route.submitRegistration() {
     post("/$registrationRoute") {
         try {
             val registration = call.receive<RegistrationJson>()
@@ -103,7 +103,7 @@ fun Route.submitRegistraiton() {
                 return@post
             }
 
-            if (registration.degreeYear < 1 || registration.degreeYear > 6) {
+            if (registration.degreeYear < 1 || registration.degreeYear > 5) {
                 call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
                 return@post
             }
@@ -136,38 +136,30 @@ fun Route.submitRegistraiton() {
     }
 }
 
-fun Route.deleteRegistraiton(authKey: String) {
+fun Route.deleteRegistration(authKey: String) {
     delete("/$registrationRoute") {
-        val slugParam: String? = call.request.queryParameters["slug"]
-        val emailParam: String? = call.request.queryParameters["email"]
-        val auth: String? = call.request.header(HttpHeaders.Authorization)
+        try {
+            val shortReg = call.receive<ShortRegistrationJson>()
+            val auth: String? = call.request.header(HttpHeaders.Authorization)
 
-        if (auth != authKey) {
-            call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-            return@delete
-        }
-        if (slugParam == null && emailParam == null) {
-            call.respond(HttpStatusCode.BadRequest, "No slug or email given.")
-            return@delete
-        }
-        if (slugParam == null) {
-            call.respond(HttpStatusCode.BadRequest, "No slug given.")
-            return@delete
-        }
-        if (emailParam == null) {
-            call.respond(HttpStatusCode.BadRequest, "No email given.")
-            System.err.println(emailParam.toString())
-            System.err.println(slugParam)
-            return@delete
-        }
+            if (auth != authKey) {
+                call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
+                return@delete
+            }
+            transaction {
+                addLogger(StdOutSqlLogger)
 
-        transaction {
-            addLogger(StdOutSqlLogger)
+                Registration.deleteWhere { bedpresSlug eq shortReg.slug and (email eq shortReg.email) }
+            }
 
-            Registration.deleteWhere { Registration.bedpresSlug eq slugParam and (Registration.email eq emailParam) }
+            call.respond(
+                HttpStatusCode.OK,
+                "Registration with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
+            )
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.BadRequest, "Error deleting bedpres.")
+            System.err.println(e.printStackTrace())
         }
-
-        call.respond(HttpStatusCode.OK, "Registration with email = $emailParam and slug = $slugParam deleted.")
     }
 }
 
@@ -196,6 +188,7 @@ fun Route.submitBedpres(authKey: String) {
                     Bedpres.insert {
                         it[slug] = newBedpres.slug
                         it[spots] = newBedpres.spots
+                        it[registrationDate] = DateTime(newBedpres.registrationDate)
                     }
                 }
 
@@ -231,7 +224,7 @@ fun Route.submitBedpres(authKey: String) {
 fun Route.deleteBedpres(authKey: String) {
     delete("/$bedpresRoute") {
         val auth: String? = call.request.header(HttpHeaders.Authorization)
-        val slug = call.receive<BedpresSlugJson>();
+        val slug = call.receive<BedpresSlugJson>()
 
         if (auth != authKey) {
             call.respond(HttpStatusCode.Unauthorized, "Not authorized.")

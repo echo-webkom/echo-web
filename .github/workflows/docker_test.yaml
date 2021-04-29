@@ -1,0 +1,15 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  docker_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run tests with docker-compose
+      run: docker-compose -f docker-compose.test.yaml up --build --exit-code-from=backend-test

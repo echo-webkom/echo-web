@@ -2,13 +2,15 @@ package no.uib.echo
 
 import com.zaxxer.hikari.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
+import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
 object Db {
     private fun dataSource(): HikariDataSource {
         if (System.getenv("DEV") != null) {
-            val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("No DATABASE_HOST specified.")
+            val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("DATABASE_HOST not defined.")
 
             return HikariDataSource(HikariConfig().apply {
                 jdbcUrl = "jdbc:postgresql://$dbHost:5432/postgres"
@@ -20,7 +22,7 @@ object Db {
             })
         }
 
-        val dbUri = URI(System.getenv("DATABASE_URL"))
+        val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
 
         val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
             .toString() + "?sslmode=require"
@@ -48,7 +50,7 @@ object Db {
     }
 }
 
-class RegistrationJson(
+data class RegistrationJson(
     val email: String,
     val firstName: String,
     val lastName: String,
@@ -58,7 +60,9 @@ class RegistrationJson(
     val terms: Boolean
 )
 
-data class BedpresJson(val slug: String, val spots: Int)
+data class ShortRegistrationJson(val slug: String, val email: String)
+
+data class BedpresJson(val slug: String, val spots: Int, val registrationDate: String)
 data class BedpresSlugJson(val slug: String)
 
 object Registration : Table() {
@@ -69,6 +73,7 @@ object Registration : Table() {
     val degreeYear = integer("degreeYear")
     val bedpresSlug = varchar("bedpresSlug", 40) references Bedpres.slug
     val terms = bool("terms")
+    val submitDate = datetime("submitDate").defaultExpression(CurrentDateTime())
 
     override val primaryKey = PrimaryKey(email, bedpresSlug)
 }
@@ -76,6 +81,7 @@ object Registration : Table() {
 object Bedpres : Table() {
     val slug = varchar("slug", 40).uniqueIndex()
     var spots = integer("spots")
+    val registrationDate = datetime("registrationDate")
 
     override val primaryKey = PrimaryKey(slug)
 }

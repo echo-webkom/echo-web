@@ -6,6 +6,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
+import java.lang.Exception
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -51,6 +52,8 @@ fun Application.module() {
         }
     }
 
+    val authKey = System.getenv("AUTH_KEY") ?: throw Exception("AUTH_KEY not defined.")
+
     Db.init()
-    configureRouting()
+    configureRouting(authKey)
 }
