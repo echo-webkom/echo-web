@@ -8,8 +8,10 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import no.uib.echo.Bedpres
+import no.uib.echo.Bedpres.slug
+import no.uib.echo.Bedpres.spots
 import no.uib.echo.BedpresJson
-import no.uib.echo.Db
+import no.uib.echo.BedpresSlugJson
 import no.uib.echo.Degree
 import no.uib.echo.Registration
 import no.uib.echo.Registration.email
@@ -96,11 +98,21 @@ fun Route.submitRegistraiton() {
         try {
             val registration = call.receive<RegistrationJson>()
 
-            if (!registration.email.contains('@'))
+            if (!registration.email.contains('@')) {
                 call.respond(HttpStatusCode.BadRequest, "Email is not valid.")
+                return@post
+            }
 
-            if (registration.degreeYear < 1 || registration.degreeYear > 6)
+            if (registration.degreeYear < 1 || registration.degreeYear > 6) {
                 call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
+                return@post
+            }
+
+            if (!registration.terms) {
+                call.respond(HttpStatusCode.BadRequest, "Terms not accepted.")
+                return@post
+            }
+
 
             transaction {
                 addLogger(StdOutSqlLogger)
@@ -160,27 +172,55 @@ fun Route.deleteRegistraiton(authKey: String) {
 }
 
 fun Route.submitBedpres(authKey: String) {
-    post("/$bedpresRoute") {
+    put("/$bedpresRoute") {
         val auth: String? = call.request.header(HttpHeaders.Authorization)
 
         if (auth != authKey) {
             call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-            return@post
+            return@put
         }
 
         try {
-            val bedpres = call.receive<BedpresJson>()
+            val newBedpres = call.receive<BedpresJson>()
 
-            transaction {
+            val bedpresList = transaction {
                 addLogger(StdOutSqlLogger)
 
-                Bedpres.insert {
-                    it[slug] = bedpres.slug
-                    it[spots] = bedpres.spots
-                }
+                Bedpres.select { slug eq newBedpres.slug }.toList()
             }
 
-            call.respond(HttpStatusCode.OK, "Bedpres submitted.")
+            if (bedpresList.isEmpty()) {
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Bedpres.insert {
+                        it[slug] = newBedpres.slug
+                        it[spots] = newBedpres.spots
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, "Bedpres submitted.")
+                return@put
+            }
+
+            val bedpres = bedpresList[0]
+
+            if (bedpres[slug] == newBedpres.slug && bedpres[spots] == newBedpres.spots) {
+                call.respond(HttpStatusCode.Accepted, "Bedpres has already been submitted.")
+            } else if (bedpres[slug] == newBedpres.slug) {
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Bedpres.update({ slug eq newBedpres.slug }) {
+                        it[spots] = newBedpres.spots
+                    }
+                }
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots}."
+                )
+            }
         } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
             System.err.println(e.printStackTrace())
@@ -191,24 +231,19 @@ fun Route.submitBedpres(authKey: String) {
 fun Route.deleteBedpres(authKey: String) {
     delete("/$bedpresRoute") {
         val auth: String? = call.request.header(HttpHeaders.Authorization)
-        val slugParam: String? = call.request.queryParameters["slug"]
+        val slug = call.receive<BedpresSlugJson>();
 
         if (auth != authKey) {
             call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
             return@delete
         }
-        if (slugParam == null) {
-            call.respond(HttpStatusCode.BadRequest, "No slug specified.")
-            return@delete
-        }
-
-        println(auth)
 
         transaction {
             addLogger(StdOutSqlLogger)
 
-            Bedpres.deleteWhere { Bedpres.slug eq slugParam }
+            Bedpres.deleteWhere { Bedpres.slug eq slug.slug }
         }
-        call.respond(HttpStatusCode.OK, "Bedpres with slug = $slugParam deleted.")
+
+        call.respond(HttpStatusCode.OK, "Bedpres with slug = ${slug.slug} deleted.")
     }
 }

@@ -1,8 +1,11 @@
 #!/bin/bash
 
-while getopts p:s:o:x: flag
+host=http://echo-web-backend.herokuapp.com
+
+while getopts zp:s:o:x: flag
 do
     case "${flag}" in
+        z) host=http://localhost;;
         p) port=${OPTARG};;
         s) slug=${OPTARG};;
         o) spots=${OPTARG};;
@@ -31,9 +34,10 @@ elif [ -z ${spots+x} ]; then
     exit 1;
 else
     curl --verbose \
-    -H "Content-Type: application/json" \
-    -H "Connection: close" \
+    -X PUT \
     -H "Authorization: $secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
     -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
-    http://echo-web-backend.herokuapp.com:$port/bedpres;
+    $host:$port/bedpres;
 fi

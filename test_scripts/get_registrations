@@ -24,19 +24,19 @@ if [ -z ${port+x} ]; then
 fi
 
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
-    curl --verbose -k \
+    curl --verbose \
     -H "Authorization: $secret" \
     $host:$port/registration
 elif [ -z ${slug+x} ]; then
-    curl --verbose -k \
+    curl --verbose \
     -H "Authorization: $secret" \
     $host:$port/registration?email=$email
 elif [ -z ${email+x} ]; then
-    curl --verbose -k \
+    curl --verbose \
     -H "Authorization: $secret" \
     $host:$port/registration?slug=$slug
 else
-    curl --verbose -k \
+    curl --verbose \
     -H "Authorization: $secret" \
     "$host:$port/registration?email=$email&slug=$slug"
 fi

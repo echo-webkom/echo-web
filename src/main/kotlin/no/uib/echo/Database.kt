@@ -59,6 +59,7 @@ class RegistrationJson(
 )
 
 data class BedpresJson(val slug: String, val spots: Int)
+data class BedpresSlugJson(val slug: String)
 
 object Registration : Table() {
     val email = varchar("email", 40)
