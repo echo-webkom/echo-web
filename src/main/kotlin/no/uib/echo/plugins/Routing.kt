@@ -23,7 +23,7 @@ import no.uib.echo.RegistrationJson
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.configureRouting(dbString: String) {
+fun Application.configureRouting() {
     install(ContentNegotiation) {
         gson()
     }
@@ -31,12 +31,12 @@ fun Application.configureRouting(dbString: String) {
     val authKey = System.getenv("AUTH_KEY") ?: throw Exception("No AUTH_KEY specified.")
 
     routing {
-        getRegistration(dbString, authKey)
-        submitRegistraiton(dbString)
-        deleteRegistraiton(dbString, authKey)
+        getRegistration(authKey)
+        submitRegistraiton()
+        deleteRegistraiton(authKey)
 
-        submitBedpres(dbString, authKey)
-        deleteBedpres(dbString, authKey)
+        submitBedpres(authKey)
+        deleteBedpres(authKey)
     }
 }
 
@@ -54,7 +54,7 @@ fun getQuery(emailParam: String?, slugParam: String?): Query? {
     return null
 }
 
-fun Route.getRegistration(dbString: String, authKey: String) {
+fun Route.getRegistration(authKey: String) {
     get("/$registrationRoute") {
         val emailParam: String? = call.request.queryParameters["email"]
         val slugParam: String? = call.request.queryParameters["slug"]
@@ -68,7 +68,7 @@ fun Route.getRegistration(dbString: String, authKey: String) {
         val q = getQuery(emailParam, slugParam)
 
         if (q != null) {
-            val result = transaction(Db.connection(dbString)) {
+            val result = transaction(Db.conn) {
                 addLogger(StdOutSqlLogger)
 
                 q.toList()
@@ -91,7 +91,7 @@ fun Route.getRegistration(dbString: String, authKey: String) {
     }
 }
 
-fun Route.submitRegistraiton(dbString: String) {
+fun Route.submitRegistraiton() {
     post("/$registrationRoute") {
         try {
             val registration = call.receive<RegistrationJson>()
@@ -102,7 +102,7 @@ fun Route.submitRegistraiton(dbString: String) {
             if (registration.degreeYear < 1 || registration.degreeYear > 6)
                 call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
 
-            transaction(Db.connection(dbString)) {
+            transaction(Db.conn) {
                 addLogger(StdOutSqlLogger)
 
                 Registration.insert {
@@ -124,7 +124,7 @@ fun Route.submitRegistraiton(dbString: String) {
     }
 }
 
-fun Route.deleteRegistraiton(dbString: String, authKey: String) {
+fun Route.deleteRegistraiton(authKey: String) {
     delete("/$registrationRoute") {
         val slugParam: String? = call.request.queryParameters["slug"]
         val emailParam: String? = call.request.queryParameters["email"]
@@ -149,7 +149,7 @@ fun Route.deleteRegistraiton(dbString: String, authKey: String) {
             return@delete
         }
 
-        transaction(Db.connection(dbString)) {
+        transaction(Db.conn) {
             addLogger(StdOutSqlLogger)
 
             Registration.deleteWhere { Registration.bedpresSlug eq slugParam and (Registration.email eq emailParam) }
@@ -159,7 +159,7 @@ fun Route.deleteRegistraiton(dbString: String, authKey: String) {
     }
 }
 
-fun Route.submitBedpres(dbString: String, authKey: String) {
+fun Route.submitBedpres(authKey: String) {
     post("/$bedpresRoute") {
         val auth: String? = call.request.header(HttpHeaders.Authorization)
 
@@ -171,7 +171,7 @@ fun Route.submitBedpres(dbString: String, authKey: String) {
         try {
             val bedpres = call.receive<BedpresJson>()
 
-            transaction(Db.connection(dbString)) {
+            transaction(Db.conn) {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.insert {
@@ -188,7 +188,7 @@ fun Route.submitBedpres(dbString: String, authKey: String) {
     }
 }
 
-fun Route.deleteBedpres(dbString: String, authKey: String) {
+fun Route.deleteBedpres(authKey: String) {
     delete("/$bedpresRoute") {
         val auth: String? = call.request.header(HttpHeaders.Authorization)
         val slugParam: String? = call.request.queryParameters["slug"]
@@ -204,7 +204,7 @@ fun Route.deleteBedpres(dbString: String, authKey: String) {
 
         println(auth)
 
-        transaction(Db.connection(dbString)) {
+        transaction(Db.conn) {
             addLogger(StdOutSqlLogger)
 
             Bedpres.deleteWhere { Bedpres.slug eq slugParam }
