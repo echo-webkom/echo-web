@@ -8,6 +8,7 @@ type GenericEntry = {
     publishedAt: string;
     author: string;
     body: string;
+    route: string;
 };
 
 const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPostDate: Date } => {
@@ -22,7 +23,7 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
         postsXML += `
             <item>
                 <title><![CDATA[${post.title}]]></title>
-                <link>https://echo.uib.no/posts/${post.slug}</link>
+                <link>https://echo.uib.no/${post.route}/${post.slug}</link>
                 <dc:creator><![CDATA[${post.author}]]></dc:creator>
                 <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
                 <guid isPermalink="false">https://echo.uib.no/posts/${post.slug}</guid>
@@ -55,6 +56,7 @@ const getRssXML = (
                   publishedAt: post.publishedAt,
                   author: post.author,
                   body: post.body,
+                  route: 'posts',
               };
           })
         : [];
@@ -67,6 +69,7 @@ const getRssXML = (
                   publishedAt: event.publishedAt,
                   author: event.author,
                   body: event.body,
+                  route: 'events',
               };
           })
         : [];
@@ -79,6 +82,7 @@ const getRssXML = (
                   publishedAt: bedpres.publishedAt,
                   author: bedpres.author,
                   body: bedpres.body,
+                  route: 'bedpres',
               };
           })
         : [];
