@@ -13,9 +13,27 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import { Heading, Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon } from '@chakra-ui/react';
+import {
+    Heading,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Link,
+    Grid,
+    Text,
+    GridItem,
+    Divider,
+    Center,
+    LinkBox,
+    LinkOverlay,
+    Icon,
+} from '@chakra-ui/react';
 import useTimeout from '../../lib/hooks';
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
+import { Registration, RegistrationAPI } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 import BedpresForm from '../../components/bedpres-form';
@@ -23,9 +41,16 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 
-const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
+const BedpresPage = ({
+    bedpres,
+    registrations,
+    error,
+}: {
+    bedpres: Bedpres;
+    registrations: Array<Registration>;
+    error: string;
+}): JSX.Element => {
     const router = useRouter();
-
     const regDate = parseISO(bedpres?.registrationTime);
     const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
@@ -94,6 +119,44 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                 <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>
                         </GridItem>
+                        {registrations && registrations.length > 0 && (
+                            <GridItem
+                                colStart={[1, null, null, 2]}
+                                rowStart={[4, null, null, 2]}
+                                colSpan={[1, null, null, 3]}
+                                rowSpan={1}
+                            >
+                                <ContentBox>
+                                    <Heading mb=".75rem">Påmeldte</Heading>
+                                    <Table variant="simple">
+                                        <Thead>
+                                            <Tr>
+                                                <Th>Email</Th>
+                                                <Th>Fornavn</Th>
+                                                <Th>Etternavn</Th>
+                                                <Th>Studieretning</Th>
+                                                <Th>Studieår</Th>
+                                                <Th>Godkjent retningslinjer</Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {registrations.map((reg: Registration) => {
+                                                return (
+                                                    <Tr key={reg.email}>
+                                                        <Td>{reg.email}</Td>
+                                                        <Td>{reg.firstName}</Td>
+                                                        <Td>{reg.lastName}</Td>
+                                                        <Td>{reg.degree}</Td>
+                                                        <Td>{reg.degreeYear}</Td>
+                                                        <Td>{reg.terms ? 'Ja' : 'Nei'}</Td>
+                                                    </Tr>
+                                                );
+                                            })}
+                                        </Tbody>
+                                    </Table>
+                                </ContentBox>
+                            </GridItem>
+                        )}
                     </Grid>
                 </>
             )}
@@ -108,6 +171,13 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
+    const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
+    const authKey = process.env.BACKEND_AUTH_KEY;
+
+    if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
+
+    const { registrations } = await RegistrationAPI.getRegistrations(authKey || '', slug);
+    const realReg = showAdmin ? registrations || [] : [];
 
     if (error === '404') {
         return {
@@ -118,6 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             bedpres,
+            registrations: realReg,
             error,
         },
     };

@@ -22,31 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-
-interface Registration {
-    email: string;
-    firstName: string;
-    lastName: string;
-    degree: Degree;
-    degreeYear: number;
-    slug: string;
-    terms: boolean;
-}
-
-enum Degree {
-    DTEK = 'DTEK',
-    DSIK = 'DSIK',
-    DVIT = 'DVIT',
-    BINF = 'BINF',
-    IMØ = 'IMØ',
-    IKT = 'IKT',
-    KOGNI = 'KOGNI',
-    INF = 'INF',
-    PROG = 'PROG',
-    ÅRMNINF = 'ÅRMNINF',
-    POST = 'POST',
-    MISC = 'MISC',
-}
+import { Degree, Registration } from '../lib/api/registration';
 
 enum FormStatus {
     INITIAL,
@@ -76,7 +52,7 @@ const BedpresForm = ({ slug }: { slug: string }): JSX.Element => {
     const submitForm = (data: Registration) =>
         axios
             .post(
-                `http://0.0.0.0:8080/registration`,
+                `http://echo-web-backend.herokuapp.com/registration`,
                 {
                     email: data.email,
                     firstName: data.firstName,
@@ -93,7 +69,7 @@ const BedpresForm = ({ slug }: { slug: string }): JSX.Element => {
             .then(() => {
                 setFormStatus(() => FormStatus.SUCCESS);
             })
-            .catch((error) => {
+            .catch(() => {
                 setFormStatus(() => FormStatus.ERROR);
             });
 
