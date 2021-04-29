@@ -34,9 +34,10 @@ elif [ -z ${spots+x} ]; then
     exit 1;
 else
     curl --verbose \
-    -H "Content-Type: application/json" \
-    -H "Connection: close" \
+    -X PUT \
     -H "Authorization: $secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
     -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
     $host:$port/bedpres;
 fi
