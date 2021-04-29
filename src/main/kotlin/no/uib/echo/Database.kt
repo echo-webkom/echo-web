@@ -21,7 +21,7 @@ object Db {
         }
 
         val dbUri = URI(System.getenv("DATABASE_URL"))
-       
+
         val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
             .toString() + "?sslmode=require"
         val dbUsername: String = dbUri.userInfo.split(":")[0]

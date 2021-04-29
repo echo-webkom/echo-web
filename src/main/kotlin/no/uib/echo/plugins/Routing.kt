@@ -68,7 +68,7 @@ fun Route.getRegistration(authKey: String) {
         val q = getQuery(emailParam, slugParam)
 
         if (q != null) {
-            val result = transaction(Db.conn) {
+            val result = transaction {
                 addLogger(StdOutSqlLogger)
 
                 q.toList()
@@ -102,7 +102,7 @@ fun Route.submitRegistraiton() {
             if (registration.degreeYear < 1 || registration.degreeYear > 6)
                 call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
 
-            transaction(Db.conn) {
+            transaction {
                 addLogger(StdOutSqlLogger)
 
                 Registration.insert {
@@ -149,7 +149,7 @@ fun Route.deleteRegistraiton(authKey: String) {
             return@delete
         }
 
-        transaction(Db.conn) {
+        transaction {
             addLogger(StdOutSqlLogger)
 
             Registration.deleteWhere { Registration.bedpresSlug eq slugParam and (Registration.email eq emailParam) }
@@ -171,7 +171,7 @@ fun Route.submitBedpres(authKey: String) {
         try {
             val bedpres = call.receive<BedpresJson>()
 
-            transaction(Db.conn) {
+            transaction {
                 addLogger(StdOutSqlLogger)
 
                 Bedpres.insert {
@@ -204,7 +204,7 @@ fun Route.deleteBedpres(authKey: String) {
 
         println(auth)
 
-        transaction(Db.conn) {
+        transaction {
             addLogger(StdOutSqlLogger)
 
             Bedpres.deleteWhere { Bedpres.slug eq slugParam }
