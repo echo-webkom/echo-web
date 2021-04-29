@@ -32,6 +32,7 @@ elif [ -z ${spots+x} ]; then
 else
     curl --verbose \
     -H "Content-Type: application/json" \
+    -H "Connection: close" \
     -H "Authorization: $secret" \
     -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
     http://echo-web-backend.herokuapp.com:$port/bedpres;
