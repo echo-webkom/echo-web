@@ -21,8 +21,8 @@ if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${last
     echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -y for degree year, -s for slug, -t for terms";
 else
     curl --verbose \
-    -H "Content-Type: application/json" \
     -H "Connection: close" \
+    -H "Content-Type: application/json" \
     -d '{ "email": "'${email}'",
           "firstName": "'${firstName}'",
           "lastName": "'${lastName}'",

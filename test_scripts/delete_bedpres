@@ -30,5 +30,7 @@ else
     -X DELETE \
     -H "Authorization: $secret" \
     -H "Connection: close" \
-    $host:$port/bedpres?slug=$slug;
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "'$slug'" }' \
+    $host:$port/bedpres;
 fi
