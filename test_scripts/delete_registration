@@ -1,8 +1,11 @@
 #!/bin/bash
 
-while getopts p:s:e:x: flag
+host=http://echo-web-backend.herokuapp.com
+
+while getopts zp:s:e:x: flag
 do
     case "${flag}" in
+        z) host=http://localhost;;
         p) port=${OPTARG};;
         s) slug=${OPTARG};;
         e) email=${OPTARG};;
@@ -27,5 +30,6 @@ else
     curl --verbose \
     -X DELETE \
     -H "Authorization: $secret" \
-    "http://localhost:$port/registration?slug=$slug&email=$email";
+    -H "Connection: close" \
+    "$host:$port/registration?slug=$slug&email=$email";
 fi

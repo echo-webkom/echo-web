@@ -34,5 +34,5 @@ else
     -H "Content-Type: application/json" \
     -H "Authorization: $secret" \
     -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
-    http://localhost:$port/bedpres;
+    http://echo-web-backend.herokuapp.com:$port/bedpres;
 fi
