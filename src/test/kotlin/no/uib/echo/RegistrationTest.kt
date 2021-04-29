@@ -1,15 +1,18 @@
 package no.uib.echo
 
-import io.ktor.server.testing.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-
+import io.ktor.server.testing.TestApplicationCall
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.setBody
+import io.ktor.server.testing.withTestApplication
 import no.uib.echo.plugins.configureRouting
 
-class ApplicationTest : StringSpec({
+class RegistrationTest : StringSpec({
+
     "GET request on /registration with wrong Authorization header should return UNAUTHORIZED" {
         withTestApplication({
             configureRouting("secret")
@@ -126,32 +129,6 @@ class ApplicationTest : StringSpec({
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "feil auth header")
                 setBody("""{ "slug": "bedpres-med-noen", "email": "test@test.com" }""")
-            }
-
-            testCall.response.status() shouldBe HttpStatusCode.Unauthorized
-        }
-    }
-
-    "PUT request on /bedpres with wrong Authorization header should return UNAUTHORIZED" {
-        withTestApplication({
-            configureRouting("secret")
-        }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-            }
-
-            testCall.response.status() shouldBe HttpStatusCode.Unauthorized
-        }
-    }
-
-    "DELETE request on /bedpres with wrong Authorization header should return UNAUTHORIZED" {
-        withTestApplication({
-            configureRouting("secret")
-        }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/bedpres") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-                setBody("""{ "slug": "bedpres-med-noen" }""")
             }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
