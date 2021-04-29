@@ -51,14 +51,8 @@ fun Application.module() {
                 allowNonSimpleContentTypes = true
             }
         }
-        val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("No DATABASE_HOST specified.")
-
-        Db.init(dbHost, dev = true)
-        configureRouting(dbHost)
-    } else {
-        val dbUrl = System.getenv("DATABASE_URL") ?: throw Exception("No DATABASE_URL specified.")
-
-        Db.init(dbUrl)
-        configureRouting(dbUrl)
     }
+   
+    Db.init()
+    configureRouting()
 }

@@ -6,37 +6,43 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
 object Db {
-    fun connection(dbString: String, dev: Boolean = false): Database {
-        if (dev) {
-            return Database.connect(HikariDataSource(HikariConfig().apply {
-                jdbcUrl = "jdbc:postgresql://$dbString:5432/postgres"
+    private fun dataSource(): HikariDataSource {
+        if (System.getenv("DEV") != null) {
+            val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("No DATABASE_HOST specified.")
+
+            return HikariDataSource(HikariConfig().apply {
+                jdbcUrl = "jdbc:postgresql://$dbHost:5432/postgres"
                 username = "postgres"
                 password = "password"
                 driverClassName = "org.postgresql.Driver"
-                connectionTimeout = 5000
-                maximumPoolSize = 20
-            }))
+                connectionTimeout = 1000
+                maximumPoolSize = 10
+            })
         }
 
         val dbUri = URI(System.getenv("DATABASE_URL"))
 
-        val dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath()
+        val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
             .toString() + "?sslmode=require"
-        val dbUsername: String = dbUri.getUserInfo().split(":").get(0)
-        val dbPassword: String = dbUri.getUserInfo().split(":").get(1)
+        val dbUsername: String = dbUri.userInfo.split(":")[0]
+        val dbPassword: String = dbUri.userInfo.split(":")[1]
 
-        return Database.connect(HikariDataSource(HikariConfig().apply {
+        return HikariDataSource(HikariConfig().apply {
             jdbcUrl = dbUrl
             username = dbUsername
             password = dbPassword
             driverClassName = "org.postgresql.Driver"
-            connectionTimeout = 5000
-            maximumPoolSize = 20
-        }))
+            connectionTimeout = 1000
+            maximumPoolSize = 10
+        })
     }
 
-    fun init(dbHost: String, dev: Boolean = false) {
-        transaction(connection(dbHost, dev)) {
+    val conn by lazy {
+        Database.connect(dataSource())
+    }
+
+    fun init() {
+        transaction(conn) {
             SchemaUtils.create(Bedpres, Registration)
         }
     }
