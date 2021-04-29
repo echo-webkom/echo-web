@@ -1,8 +1,11 @@
 #!/bin/bash
 
-while getopts p:s:o:x: flag
+host=http://echo-web-backend.herokuapp.com
+
+while getopts zp:s:o:x: flag
 do
     case "${flag}" in
+        z) host=http://localhost;;
         p) port=${OPTARG};;
         s) slug=${OPTARG};;
         o) spots=${OPTARG};;
@@ -35,5 +38,5 @@ else
     -H "Connection: close" \
     -H "Authorization: $secret" \
     -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
-    http://echo-web-backend.herokuapp.com:$port/bedpres;
+    $host:$port/bedpres;
 fi

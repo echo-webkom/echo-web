@@ -96,11 +96,21 @@ fun Route.submitRegistraiton() {
         try {
             val registration = call.receive<RegistrationJson>()
 
-            if (!registration.email.contains('@'))
+            if (!registration.email.contains('@')) {
                 call.respond(HttpStatusCode.BadRequest, "Email is not valid.")
+                return@post
+            }
 
-            if (registration.degreeYear < 1 || registration.degreeYear > 6)
+            if (registration.degreeYear < 1 || registration.degreeYear > 6) {
                 call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
+                return@post
+            }
+
+            if (!registration.terms) {
+                call.respond(HttpStatusCode.BadRequest, "Terms not accepted.")
+                return@post
+            }
+
 
             transaction {
                 addLogger(StdOutSqlLogger)
@@ -201,8 +211,6 @@ fun Route.deleteBedpres(authKey: String) {
             call.respond(HttpStatusCode.BadRequest, "No slug specified.")
             return@delete
         }
-
-        println(auth)
 
         transaction {
             addLogger(StdOutSqlLogger)
