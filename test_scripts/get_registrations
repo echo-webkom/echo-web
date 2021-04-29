@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host=http://echo-web-backend.herokuapp.com
+host=https://echo-web-backend.herokuapp.com
 
 while getopts zp:e:s:x: flag
 do
@@ -24,23 +24,19 @@ if [ -z ${port+x} ]; then
 fi
 
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
-    curl --verbose \
+    curl --verbose -k \
     -H "Authorization: $secret" \
-    -H "Connection: close" \
     $host:$port/registration
 elif [ -z ${slug+x} ]; then
-    curl --verbose \
+    curl --verbose -k \
     -H "Authorization: $secret" \
-    -H "Connection: close" \
     $host:$port/registration?email=$email
 elif [ -z ${email+x} ]; then
-    curl --verbose \
+    curl --verbose -k \
     -H "Authorization: $secret" \
-    -H "Connection: close" \
     $host:$port/registration?slug=$slug
 else
-    curl --verbose \
+    curl --verbose -k \
     -H "Authorization: $secret" \
-    -H "Connection: close" \
     "$host:$port/registration?email=$email&slug=$slug"
 fi

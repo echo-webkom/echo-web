@@ -12,83 +12,42 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    if (System.getenv("DEV") != null) {
-        install(CORS) {
-            run {
-                method(HttpMethod.Get)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Post)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Put)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Options)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Patch)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Delete)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                anyHost()
-                allowNonSimpleContentTypes = true
-            }
+    install(CORS) {
+        run {
+            method(HttpMethod.Get)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
         }
-    } else {
-        install(CORS) {
-            run {
-                method(HttpMethod.Get)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Post)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Put)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Options)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Patch)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
-            run {
-                method(HttpMethod.Delete)
-                header(HttpHeaders.AccessControlAllowOrigin)
-                host("vercel")
-                allowNonSimpleContentTypes = true
-            }
+        run {
+            method(HttpMethod.Post)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
+        }
+        run {
+            method(HttpMethod.Put)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
+        }
+        run {
+            method(HttpMethod.Options)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
+        }
+        run {
+            method(HttpMethod.Patch)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
+        }
+        run {
+            method(HttpMethod.Delete)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            anyHost()
+            allowNonSimpleContentTypes = true
         }
     }
 
