@@ -24,7 +24,7 @@ import {
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
     const router = useRouter();
-    const isActive = router?.pathname === href || '/';
+    const isActive = router?.pathname === href || '';
     const activeColor = useColorModeValue('gray.700', 'gray.400');
 
     return (
