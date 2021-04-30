@@ -1,5 +1,6 @@
 import React, { RefObject } from 'react';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { VscColorMode } from 'react-icons/vsc';
 import {
     Center,
@@ -18,13 +19,20 @@ import {
     LinkOverlay,
     Heading,
     Icon,
+    useColorModeValue,
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
+    const router = useRouter();
+    const isActive = router?.pathname === href || '';
+    const activeColor = useColorModeValue('gray.700', 'gray.400');
+
     return (
         <LinkBox data-testid={testid}>
             <NextLink href={href} passHref>
-                <LinkOverlay as={Link}>{text}</LinkOverlay>
+                <LinkOverlay as={Link} color={isActive ? activeColor : ''} textDecoration={isActive ? 'underline' : ''}>
+                    {text}
+                </LinkOverlay>
             </NextLink>
         </LinkBox>
     );

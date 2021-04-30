@@ -1,7 +1,7 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
 import { Center, Text, SimpleGrid, Stack, StackDivider, Heading } from '@chakra-ui/react';
-import isBefore from 'date-fns/isBefore';
+import { isFuture, isPast } from 'date-fns';
 import { BedpresAPI, Bedpres } from '../../lib/api/bedpres';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -11,12 +11,14 @@ import ErrorBox from '../../components/error-box';
 
 const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
     const upcoming = bedpreses.filter((bedpres: Bedpres) => {
-        return isBefore(new Date(), new Date(bedpres.date));
+        return isFuture(new Date(bedpres.date));
     });
 
-    const previous = bedpreses.filter((bedpres: Bedpres) => {
-        return isBefore(new Date(bedpres.date), new Date());
-    });
+    const previous = bedpreses
+        .filter((bedpres: Bedpres) => {
+            return isPast(new Date(bedpres.date));
+        })
+        .reverse();
 
     return (
         <Layout>

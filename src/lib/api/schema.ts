@@ -9,8 +9,8 @@ const GET_EVENT_PATHS = `
 `;
 
 const GET_N_EVENTS = `
-    query ($n: Int!, $date: DateTime) {
-        eventCollection(limit: $n, order: date_ASC, where: { date_gt: $date }) {
+    query ($n: Int!) {
+        eventCollection(limit: $n, order: date_ASC) {
             items {
                 title
                 slug
@@ -188,7 +188,7 @@ const GET_N_MINUTES = `
 
 const GET_STUDENTGROUPS_BY_TYPE = `
     query ($type: String!) {
-        studentGroupCollection(limit: 10, where: { groupType: $type }) {
+        studentGroupCollection(order: name_ASC, limit: 10, where: { groupType: $type }) {
             items {
                 name
                 info

@@ -1,18 +1,20 @@
 import React from 'react';
 import NextLink from 'next/link';
 import { Text, Box, Heading, useColorModeValue, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import Markdown from 'markdown-to-jsx';
 import { Post } from '../lib/api/post';
+import MapMarkdownChakra from '../markdown';
 
 const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element => {
     const authorBg = useColorModeValue('yellow.400', 'yellow.200');
-    const hoverColor = useColorModeValue('gray.200', 'gray.800');
-    const bgColor = useColorModeValue('gray.50', 'gray.600');
+    const hoverColor = useColorModeValue('gray.100', 'gray.700');
+    const bgColor = useColorModeValue('gray.50', 'gray.800');
     return (
-        <LinkBox w={['100%', null, null, '24em']}>
+        <LinkBox w={['100%', null, null, null, '24em']}>
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Box
-                        h={['7em', null, null, '9em']}
+                        h="15em"
                         textAlign="left"
                         px="2em"
                         pb="10em"
@@ -24,7 +26,11 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element
                         <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
                             {post.title}
                         </Heading>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>
+                            {`«${post.body.slice(0, 70)} ...»`}
+                        </Markdown>
                         <Text
+                            fontSize="md"
                             fontWeight="bold"
                             pos="absolute"
                             bottom="0"

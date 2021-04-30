@@ -1,5 +1,6 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
+import fs from 'fs';
 
 import {
     SimpleGrid,
@@ -14,6 +15,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
+import { isFuture } from 'date-fns';
+import getRssXML from '../lib/generateRssFeed';
 import Layout from '../components/layout';
 
 import SEO from '../components/seo';
@@ -68,7 +71,10 @@ const IndexPage = ({
                                 </LinkBox>
                             </Center>
                         </ContentBox>
-                        <EventsBlock events={events} error={eventsError} />
+                        <EventsBlock
+                            events={events?.filter((event: Event) => isFuture(new Date(event.date))) || null}
+                            error={eventsError}
+                        />
                     </Stack>
                 </GridItem>
                 <GridItem>
@@ -85,16 +91,20 @@ const IndexPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const bedpresesResponse = await BedpresAPI.getBedpreses(0);
-    const postsResponse = await PostAPI.getPosts(3);
-    const eventsResponse = await EventAPI.getEvents(5);
+    const postsResponse = await PostAPI.getPosts(0);
+    const eventsResponse = await EventAPI.getEvents(0);
+
+    const rss = getRssXML(postsResponse.posts, eventsResponse.events, bedpresesResponse.bedpreses);
+
+    fs.writeFileSync('./public/rss.xml', rss);
 
     return {
         props: {
             bedpreses: bedpresesResponse.bedpreses,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts,
+            posts: postsResponse.posts?.slice(0, 3) || null,
             postsError: postsResponse.error,
-            events: eventsResponse.events,
+            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4) || null,
             eventsError: eventsResponse.error,
         },
     };

@@ -91,7 +91,7 @@ export const PostAPI = {
             });
 
             return {
-                posts: postListDecoder(data.data.postCollection.items),
+                posts: postListDecoder(data.data.postCollection.items) || null,
                 error: null,
             };
         } catch (error) {
