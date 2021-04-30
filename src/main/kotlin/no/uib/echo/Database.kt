@@ -1,10 +1,12 @@
 package no.uib.echo
 
 import com.zaxxer.hikari.*
+import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
 import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.net.URI
 
 object Db {
@@ -80,10 +82,123 @@ object Registration : Table() {
 
 object Bedpres : Table() {
     val slug = varchar("slug", 40).uniqueIndex()
-    var spots = integer("spots")
+    val spots = integer("spots")
     val registrationDate = datetime("registrationDate")
 
     override val primaryKey = PrimaryKey(slug)
+}
+
+fun selectRegistrations(
+    emailParam: String?,
+    slugParam: String?
+): List<RegistrationJson>? {
+    val q = selectRegistrationsQuery(emailParam, slugParam)
+
+    if (q != null) {
+        val result = transaction {
+            addLogger(StdOutSqlLogger)
+
+            q.toList()
+        }
+
+        return (result.map { reg ->
+            RegistrationJson(
+                reg[Registration.email],
+                reg[Registration.firstName],
+                reg[Registration.lastName],
+                Degree.valueOf(reg[Registration.degree]),
+                reg[Registration.degreeYear],
+                reg[Registration.bedpresSlug],
+                reg[Registration.terms]
+            )
+        })
+    } else {
+        return null
+    }
+}
+
+fun selectRegistrationsQuery(emailParam: String?, slugParam: String?): Query? {
+    if (emailParam != null && slugParam != null) {
+        return Registration.select { Registration.email eq emailParam and (Registration.bedpresSlug eq slugParam) }
+    } else if (emailParam != null && slugParam == null) {
+        return Registration.select { Registration.email eq emailParam }
+    } else if (emailParam == null && slugParam != null) {
+        return Registration.select { Registration.bedpresSlug eq slugParam }
+    }
+    return null
+}
+
+fun insertRegistration(reg: RegistrationJson) {
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        Registration.insert {
+            it[email] = reg.email
+            it[firstName] = reg.firstName
+            it[lastName] = reg.lastName
+            it[degree] = reg.degree.toString()
+            it[degreeYear] = reg.degreeYear
+            it[bedpresSlug] = reg.slug
+            it[terms] = reg.terms
+        }
+    }
+}
+
+fun deleteRegistration(shortReg: ShortRegistrationJson) {
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        Registration.deleteWhere { Registration.bedpresSlug eq shortReg.slug and (Registration.email eq shortReg.email) }
+    }
+}
+
+fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String> {
+    val bedpresList = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Bedpres.select { Bedpres.slug eq newBedpres.slug }.toList()
+    }
+
+    if (bedpresList.isEmpty()) {
+        transaction {
+            addLogger(StdOutSqlLogger)
+
+            Bedpres.insert {
+                it[Bedpres.slug] = newBedpres.slug
+                it[Bedpres.spots] = newBedpres.spots
+                it[Bedpres.registrationDate] = DateTime(newBedpres.registrationDate)
+            }
+        }
+
+        return Pair(HttpStatusCode.OK, "Bedpres submitted.")
+    }
+
+    val bedpres = bedpresList[0]
+
+    if (bedpres[Bedpres.slug] == newBedpres.slug && bedpres[Bedpres.spots] == newBedpres.spots) {
+        return Pair(HttpStatusCode.Accepted, "Bedpres with slug = ${newBedpres.slug} has already been submitted.")
+    }
+
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        Bedpres.update({ Bedpres.slug eq newBedpres.slug }) {
+            it[spots] = newBedpres.spots
+        }
+    }
+
+    return Pair(
+        HttpStatusCode.OK,
+        "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots}."
+    )
+}
+
+fun deleteBedpresBySlug(slug: BedpresSlugJson) {
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        Bedpres.deleteWhere { Bedpres.slug eq slug.slug }
+    }
 }
 
 enum class Degree {

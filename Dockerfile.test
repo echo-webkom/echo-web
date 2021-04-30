@@ -6,7 +6,7 @@ COPY *.kts gradle.properties gradlew* /opt/build/
 COPY gradle /opt/build/gradle
 
 # Add or remove '--info' as needed.
-RUN ./gradlew installDist --no-daemon
+RUN ./gradlew installDist --build-cache
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.

@@ -17,6 +17,7 @@ plugins {
 
 group = "no.uib.echo"
 version = "0.0.1"
+
 application {
     mainClass.set("no.uib.echo.ApplicationKt")
 }
@@ -42,10 +43,10 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikari_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+
     testImplementation("io.kotest:kotest-framework-engine:$kotest_version")
     testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
 }
-
 
 tasks.withType<Jar> {
     manifest {
@@ -59,4 +60,11 @@ tasks.withType<Jar> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    testLogging {
+        events("failed", "skipped")
+        showExceptions
+        showCauses
+        showStackTraces
+    }
 }
