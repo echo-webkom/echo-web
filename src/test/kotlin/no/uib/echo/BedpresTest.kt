@@ -14,7 +14,6 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class BedpresTest : StringSpec({
-
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleBedpresSlug = BedpresSlugJson(exampleBedpres.slug)
 
