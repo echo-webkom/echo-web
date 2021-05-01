@@ -56,6 +56,7 @@ const registrationDecoder = record({
     degreeYear: number,
     slug: string,
     terms: boolean,
+    submitDate: string,
 });
 
 const registrationListDecoder = array(registrationDecoder);

@@ -151,6 +151,7 @@ const BedpresPage = ({
                                                 <Th>Studieretning</Th>
                                                 <Th>Studieår</Th>
                                                 <Th>Godkjent retningslinjer</Th>
+                                                <Th>Påmeldingstidspunkt</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -163,6 +164,7 @@ const BedpresPage = ({
                                                         <Td>{reg.degree}</Td>
                                                         <Td>{reg.degreeYear}</Td>
                                                         <Td>{reg.terms ? 'Ja' : 'Nei'}</Td>
+                                                        <Td>{format(parseISO(reg.submitDate), 'dd.MM kk:mm:ss')}</Td>
                                                     </Tr>
                                                 );
                                             })}
