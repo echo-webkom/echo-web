@@ -25,11 +25,13 @@ jobs:
           gh config set prompt disabled
           gh release create "v$(date +%V.%G)" \
             -t "weekly-$(date +%V.%G)" \
+            -n "Weekly release for week $(date +%V), $(date +%G)." \
             --target master \
           || { \
               VERSION=$(git tag --sort=-committerdate | head -n1);
               gh release create "v$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
                 -t "weekly-$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
+                -n "Weekly release for week $(date +%V), $(date +%G)." \
                 --target master; \
              }
         shell: bash

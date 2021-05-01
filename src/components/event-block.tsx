@@ -8,9 +8,9 @@ import ContentBox from './content-box';
 import ErrorBox from './error-box';
 import EventPreview from './event-preview';
 
-const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: string | null }): JSX.Element => {
+const EventBlock = ({ events, error }: { events: Array<Event> | null; error: string | null }): JSX.Element => {
     return (
-        <ContentBox>
+        <ContentBox data-testid="event-block">
             <Center wordBreak="break-word">
                 <Heading mb=".5em">Arrangementer</Heading>
             </Center>
@@ -23,7 +23,7 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
             {events && !error && events.length !== 0 && (
                 <Stack pt=".5em" spacing="5" divider={<Divider />} fontSize={['lg', 'xl', '2xl']}>
                     {events.map((event: Event) => (
-                        <EventPreview key={event.slug} event={event} />
+                        <EventPreview key={event.slug} data-testid={event.slug} event={event} />
                     ))}
                 </Stack>
             )}
@@ -42,4 +42,4 @@ const EventsBlock = ({ events, error }: { events: Array<Event> | null; error: st
     );
 };
 
-export default EventsBlock;
+export default EventBlock;

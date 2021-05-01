@@ -37,7 +37,11 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
                             <Stack spacing={5} divider={<StackDivider />}>
                                 {previous.map((bedpres: Bedpres) => {
                                     return (
-                                        <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />
+                                        <BedpresPreview
+                                            key={bedpres.slug}
+                                            bedpres={bedpres}
+                                            data-testid={bedpres.slug}
+                                        />
                                     );
                                 })}
                             </Stack>
@@ -54,7 +58,11 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
                             <Stack spacing={5} divider={<StackDivider />}>
                                 {upcoming.map((bedpres: Bedpres) => {
                                     return (
-                                        <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />
+                                        <BedpresPreview
+                                            key={bedpres.slug}
+                                            bedpres={bedpres}
+                                            data-testid={bedpres.slug}
+                                        />
                                     );
                                 })}
                             </Stack>

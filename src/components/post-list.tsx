@@ -2,7 +2,7 @@ import { Button, Center, Divider, Text, SimpleGrid } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { Post } from '../lib/api/post';
 import ErrorBox from './error-box';
-import PostCard from './post-card';
+import PostPreview from './post-preview';
 
 const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     const [index, setIndex] = useState(0);
@@ -26,7 +26,7 @@ const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.
                         w={['100%', null, null, null, '70%']}
                     >
                         {posts.slice(index, index + 6).map((post: Post) => {
-                            return <PostCard key={post.slug} post={post} testid={post.slug} />;
+                            return <PostPreview key={post.slug} post={post} data-testid={post.slug} />;
                         })}
                     </SimpleGrid>
                 )}
