@@ -4,10 +4,12 @@ import { GetStaticProps } from 'next';
 import { PostAPI, Post } from '../../lib/api/post';
 import Layout from '../../components/layout';
 import PostList from '../../components/post-list';
+import SEO from '../../components/seo';
 
 const PostCollectionPage = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     return (
         <Layout>
+            <SEO title="Innlegg" />
             <PostList posts={posts} error={error} />
         </Layout>
     );

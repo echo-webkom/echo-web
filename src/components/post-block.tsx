@@ -2,12 +2,12 @@ import React from 'react';
 import NextLink from 'next/link';
 import { Text, Stack, StackDivider, Center, Heading, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
-import PostCard from './post-card';
+import PostPreview from './post-preview';
 import ContentBox from './content-box';
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     return (
-        <ContentBox>
+        <ContentBox data-testid="post-block">
             <Center>
                 <Heading p="1rem" mb=".5em" sizes={['xs', 'md']}>
                     Innlegg
@@ -21,7 +21,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
             {posts && !error && (
                 <Stack direction={['column', null, null, null, 'row']} spacing={5} divider={<StackDivider />} w="100%">
                     {posts.map((post: Post) => {
-                        return <PostCard key={post.slug} post={post} testid={post.slug} />;
+                        return <PostPreview key={post.slug} post={post} />;
                     })}
                 </Stack>
             )}

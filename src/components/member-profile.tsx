@@ -9,7 +9,6 @@ const MemberImage = chakra(Image, {
 });
 
 const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): JSX.Element => {
-    const avatarSize = useBreakpointValue(['xl', 'xl', '2xl']);
     const memberImageSize = useBreakpointValue([96, 96, 128]);
 
     const getInitials = (name: string) => {
