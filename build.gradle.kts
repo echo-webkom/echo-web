@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val ktor_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
@@ -67,4 +69,14 @@ tasks.withType<Test> {
         showCauses
         showStackTraces
     }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        useIR = true
+    }
+}
+
+tasks.withType<Stage> {
+
 }
