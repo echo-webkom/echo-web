@@ -59,7 +59,8 @@ data class RegistrationJson(
     val degree: Degree,
     val degreeYear: Int,
     val slug: String,
-    val terms: Boolean
+    val terms: Boolean,
+    val submitDate: String?
 )
 
 data class ShortRegistrationJson(val slug: String, val email: String)
@@ -109,7 +110,8 @@ fun selectRegistrations(
                 Degree.valueOf(reg[Registration.degree]),
                 reg[Registration.degreeYear],
                 reg[Registration.bedpresSlug],
-                reg[Registration.terms]
+                reg[Registration.terms],
+                reg[Registration.submitDate].toString()
             )
         })
     } else {
