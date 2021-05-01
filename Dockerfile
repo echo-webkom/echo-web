@@ -6,7 +6,7 @@ COPY *.kts gradle.properties gradlew* /opt/build/
 COPY gradle /opt/build/gradle
 
 # Add or remove '--info' as needed.
-RUN ./gradlew installDist --build-cache
+RUN ./gradlew installDist --build-cache --no-daemon
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.
@@ -18,7 +18,7 @@ COPY . /opt/build/
 
 # Build with Shadow.
 # Add or remove '--info' as needed.
-RUN ./gradlew shadowJar --build-cache --no-rebuild
+RUN ./gradlew shadowJar --build-cache --no-rebuild --no-daemon
 
 
 # Run the server
