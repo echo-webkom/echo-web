@@ -4,7 +4,15 @@ import { Post } from '../lib/api/post';
 import ErrorBox from './error-box';
 import PostPreview from './post-preview';
 
-const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
+const PostList = ({
+    posts,
+    postsPerPage,
+    error,
+}: {
+    posts: Array<Post>;
+    postsPerPage: number;
+    error: string;
+}): JSX.Element => {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -25,7 +33,7 @@ const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.
                         align="stretch"
                         w={['100%', null, null, null, '70%']}
                     >
-                        {posts.slice(index, index + 6).map((post: Post) => {
+                        {posts.slice(index, index + postsPerPage).map((post: Post) => {
                             return <PostPreview key={post.slug} post={post} data-testid={post.slug} />;
                         })}
                     </SimpleGrid>
@@ -37,15 +45,15 @@ const PostList = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.
                     mx=".5em"
                     colorScheme="teal"
                     display={index !== 0 ? '' : 'none'}
-                    onClick={() => setIndex((prevIndex) => prevIndex - 4)}
+                    onClick={() => setIndex((prevIndex) => prevIndex - postsPerPage)}
                 >
                     Forrige
                 </Button>
                 <Button
                     mx=".5em"
                     colorScheme="teal"
-                    display={index + 4 < posts.length ? '' : 'none'}
-                    onClick={() => setIndex((prevIndex) => prevIndex + 4)}
+                    display={index + postsPerPage < posts.length ? '' : 'none'}
+                    onClick={() => setIndex((prevIndex) => prevIndex + postsPerPage)}
                 >
                     Neste
                 </Button>

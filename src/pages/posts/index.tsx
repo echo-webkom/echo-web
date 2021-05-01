@@ -10,7 +10,7 @@ const PostCollectionPage = ({ posts, error }: { posts: Array<Post>; error: strin
     return (
         <Layout>
             <SEO title="Innlegg" />
-            <PostList posts={posts} error={error} />
+            <PostList posts={posts} postsPerPage={6} error={error} />
         </Layout>
     );
 };
