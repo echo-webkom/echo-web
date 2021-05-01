@@ -3,6 +3,7 @@ val logback_version: String by project
 val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
+val kotest_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
@@ -16,6 +17,7 @@ plugins {
 
 group = "no.uib.echo"
 version = "0.0.1"
+
 application {
     mainClass.set("no.uib.echo.ApplicationKt")
 }
@@ -41,6 +43,9 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikari_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+
+    testImplementation("io.kotest:kotest-framework-engine:$kotest_version")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
 }
 
 tasks.withType<Jar> {
@@ -50,5 +55,16 @@ tasks.withType<Jar> {
                 "Main-Class" to application.mainClass
             )
         )
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+        events("failed", "skipped")
+        showExceptions
+        showCauses
+        showStackTraces
     }
 }

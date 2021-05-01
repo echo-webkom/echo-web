@@ -1,15 +1,15 @@
-name: Docker build
+name: Tests
 
 on:
   pull_request:
     branches: [develop, master]
 
 jobs:
-  docker_build:
+  docker_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Build with Docker
-      run: docker build .
+    - name: Run tests with docker-compose
+      run: ./test

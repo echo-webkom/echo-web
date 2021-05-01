@@ -3,4 +3,7 @@
 .github/
 .idea/
 build/
-scripts/
+docker-compose*
+test_scripts/
+test*
+renovate.json

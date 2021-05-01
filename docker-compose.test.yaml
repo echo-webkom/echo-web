@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  backend-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    image: echo-web-backend-test:latest
+    depends_on:
+      - database-test
+    links:
+      - database-test
+    ports:
+      - '8080:8080'
+    command: ./gradlew test --build-cache --no-rebuild --no-daemon --info
+    environment:
+      DEV: ja
+      DATABASE_HOST: database-test
+      AUTH_KEY: hemmelig
+
+  database-test:
+    image: postgres:13
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
