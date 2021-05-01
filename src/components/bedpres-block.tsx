@@ -36,7 +36,7 @@ const BedpresBlock = ({
                     <Stack spacing={5} divider={<StackDivider />}>
                         {bedpresesFiltered &&
                             bedpresesFiltered.map((bedpres: Bedpres) => {
-                                return <BedpresPreview key={bedpres.slug} bedpres={bedpres} testid={bedpres.slug} />;
+                                return <BedpresPreview key={bedpres.slug} bedpres={bedpres} />;
                             })}
                     </Stack>
                 )}

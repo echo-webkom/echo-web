@@ -9,7 +9,7 @@ import theme from '../styles/theme';
 const EventPreview = ({ event }: { event: Event }): JSX.Element => {
     const iconBg = useColorModeValue(theme.colors.teal[500], theme.colors.teal[200]);
     return (
-        <LinkBox key={event.slug}>
+        <LinkBox data-testid={event.slug}>
             <Flex align="center" _hover={{ cursor: 'pointer' }}>
                 <Icon as={VscTriangleRight} color={iconBg} />
                 <NextLink href={`/events/${event.slug}`} passHref>

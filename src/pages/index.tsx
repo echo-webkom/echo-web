@@ -25,7 +25,7 @@ import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
 import { Post, PostAPI } from '../lib/api/post';
 import { Event, EventAPI } from '../lib/api/event';
 import ContentBox from '../components/content-box';
-import EventsBlock from '../components/events-block';
+import EventBlock from '../components/event-block';
 import PostBlock from '../components/post-block';
 import ErrorBox from '../components/error-box';
 
@@ -71,7 +71,7 @@ const IndexPage = ({
                                 </LinkBox>
                             </Center>
                         </ContentBox>
-                        <EventsBlock
+                        <EventBlock
                             events={events.filter((event: Event) => isFuture(new Date(event.date)))}
                             error={eventsError}
                         />

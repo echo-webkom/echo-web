@@ -5,12 +5,12 @@ import Markdown from 'markdown-to-jsx';
 import { Post } from '../lib/api/post';
 import MapMarkdownChakra from '../markdown';
 
-const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element => {
+const PostPreview = ({ post }: { post: Post }): JSX.Element => {
     const authorBg = useColorModeValue('yellow.400', 'yellow.200');
-    const hoverColor = useColorModeValue('gray.100', 'gray.700');
+    const hoverColor = useColorModeValue('gray.200', 'gray.600');
     const bgColor = useColorModeValue('gray.50', 'gray.800');
     return (
-        <LinkBox w={['100%', null, null, null, '24em']}>
+        <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Box
@@ -18,7 +18,6 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element
                         textAlign="left"
                         px="2em"
                         pb="10em"
-                        data-testid={testid}
                         bg={bgColor}
                         position="relative"
                         _hover={{ backgroundColor: hoverColor }}
@@ -49,4 +48,4 @@ const PostCard = ({ post, testid }: { post: Post; testid: string }): JSX.Element
     );
 };
 
-export default PostCard;
+export default PostPreview;

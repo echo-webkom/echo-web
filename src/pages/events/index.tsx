@@ -1,4 +1,5 @@
 import React from 'react';
+import { GetStaticProps } from 'next';
 import { Center, GridItem, Heading, SimpleGrid, Stack, StackDivider, Text } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { Event, EventAPI } from '../../lib/api/event';
@@ -65,7 +66,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
     );
 };
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     const { events, error } = await EventAPI.getEvents(0);
 
     return {
