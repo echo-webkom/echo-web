@@ -41,7 +41,7 @@ object Db {
         })
     }
 
-    val conn by lazy {
+    private val conn by lazy {
         Database.connect(dataSource())
     }
 
@@ -69,65 +69,58 @@ data class BedpresJson(val slug: String, val spots: Int, val registrationDate: S
 data class BedpresSlugJson(val slug: String)
 
 object Registration : Table() {
-    val email = varchar("email", 40)
-    val firstName = varchar("firstName", 40)
-    val lastName = varchar("lastName", 40)
-    val degree = varchar("degree", 50)
-    val degreeYear = integer("degreeYear")
-    val bedpresSlug = varchar("bedpresSlug", 40) references Bedpres.slug
-    val terms = bool("terms")
-    val submitDate = datetime("submitDate").defaultExpression(CurrentDateTime())
+    val email: Column<String> = varchar("email", 40)
+    val firstName: Column<String> = varchar("firstName", 40)
+    val lastName: Column<String> = varchar("lastName", 40)
+    val degree: Column<String> = varchar("degree", 50)
+    val degreeYear: Column<Int> = integer("degreeYear")
+    val bedpresSlug: Column<String> = varchar("bedpresSlug", 40) references Bedpres.slug
+    val terms: Column<Boolean> = bool("terms")
+    val submitDate: Column<DateTime> = datetime("submitDate").defaultExpression(CurrentDateTime())
 
-    override val primaryKey = PrimaryKey(email, bedpresSlug)
+    override val primaryKey: PrimaryKey = PrimaryKey(email, bedpresSlug)
 }
 
 object Bedpres : Table() {
-    val slug = varchar("slug", 40).uniqueIndex()
-    val spots = integer("spots")
-    val registrationDate = datetime("registrationDate")
+    val slug: Column<String> = varchar("slug", 40).uniqueIndex()
+    val spots: Column<Int> = integer("spots")
+    val registrationDate: Column<DateTime> = datetime("registrationDate")
 
-    override val primaryKey = PrimaryKey(slug)
+    override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
 
 fun selectRegistrations(
     emailParam: String?,
     slugParam: String?
 ): List<RegistrationJson>? {
-    val q = selectRegistrationsQuery(emailParam, slugParam)
+    val result = transaction {
+        addLogger(StdOutSqlLogger)
 
-    if (q != null) {
-        val result = transaction {
-            addLogger(StdOutSqlLogger)
-
-            q.toList()
+        val query = when {
+            emailParam != null && slugParam != null ->
+                Registration.select { Registration.email eq emailParam and (Registration.bedpresSlug eq slugParam) }
+            slugParam != null ->
+                Registration.select { Registration.bedpresSlug eq slugParam }
+            emailParam != null ->
+                Registration.select { Registration.email eq emailParam }
+            else -> null
         }
 
-        return (result.map { reg ->
-            RegistrationJson(
-                reg[Registration.email],
-                reg[Registration.firstName],
-                reg[Registration.lastName],
-                Degree.valueOf(reg[Registration.degree]),
-                reg[Registration.degreeYear],
-                reg[Registration.bedpresSlug],
-                reg[Registration.terms],
-                reg[Registration.submitDate].toString()
-            )
-        })
-    } else {
-        return null
+        query?.toList()
     }
-}
 
-fun selectRegistrationsQuery(emailParam: String?, slugParam: String?): Query? {
-    if (emailParam != null && slugParam != null) {
-        return Registration.select { Registration.email eq emailParam and (Registration.bedpresSlug eq slugParam) }
-    } else if (emailParam != null && slugParam == null) {
-        return Registration.select { Registration.email eq emailParam }
-    } else if (emailParam == null && slugParam != null) {
-        return Registration.select { Registration.bedpresSlug eq slugParam }
-    }
-    return null
+    return (result?.map { reg ->
+        RegistrationJson(
+            reg[Registration.email],
+            reg[Registration.firstName],
+            reg[Registration.lastName],
+            Degree.valueOf(reg[Registration.degree]),
+            reg[Registration.degreeYear],
+            reg[Registration.bedpresSlug],
+            reg[Registration.terms],
+            reg[Registration.submitDate].toString()
+        )
+    })
 }
 
 fun insertRegistration(reg: RegistrationJson) {
@@ -166,9 +159,9 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
             addLogger(StdOutSqlLogger)
 
             Bedpres.insert {
-                it[Bedpres.slug] = newBedpres.slug
-                it[Bedpres.spots] = newBedpres.spots
-                it[Bedpres.registrationDate] = DateTime(newBedpres.registrationDate)
+                it[slug] = newBedpres.slug
+                it[spots] = newBedpres.spots
+                it[registrationDate] = DateTime(newBedpres.registrationDate)
             }
         }
 

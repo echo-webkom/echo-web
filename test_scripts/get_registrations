@@ -34,7 +34,7 @@ elif [ -z ${slug+x} ]; then
 elif [ -z ${email+x} ]; then
     curl --verbose \
     -H "Authorization: $secret" \
-    $host:$port/registration?slug=$slug
+    "$host:$port/registration?slug=$slug"
 else
     curl --verbose \
     -H "Authorization: $secret" \

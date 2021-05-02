@@ -50,6 +50,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
 }
 
+// Used for Shadow. Sets main class in JAR-file.
 tasks.withType<Jar> {
     manifest {
         attributes(
@@ -60,6 +61,7 @@ tasks.withType<Jar> {
     }
 }
 
+// Make tests accessible to Gradle.
 tasks.withType<Test> {
     useJUnitPlatform()
 
@@ -71,6 +73,8 @@ tasks.withType<Test> {
     }
 }
 
+// Use new JVM IR backend (yolo).
+// https://blog.jetbrains.com/kotlin/2021/02/the-jvm-backend-is-in-beta-let-s-make-it-stable-together
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         useIR = true

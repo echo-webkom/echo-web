@@ -20,6 +20,6 @@ Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
 **3. Start en container med serveren og Postgres (du trenger [Docker](https://docs.docker.com/compose/install) for dette).**
 
-    docker-compose up
+    docker-compose up --build
 
 Serveren starter på `localhost:8080`, eller `localhost:$PORT` dersom $PORT er definert.
