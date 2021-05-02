@@ -1,0 +1,7 @@
+{
+    "name": "echo-web-backend".
+    "description": "Backend til nettsiden til echo – Fagutvalget for informatikk",
+    "repository": "https://github.com/echo-webkom/echo-web-backend",
+    "image": "heroku/java",
+    "addons": ["heroku-postgresql"]
+}

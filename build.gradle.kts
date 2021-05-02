@@ -76,7 +76,3 @@ tasks.withType<KotlinCompile>().configureEach {
         useIR = true
     }
 }
-
-tasks.withType<Stage> {
-
-}
