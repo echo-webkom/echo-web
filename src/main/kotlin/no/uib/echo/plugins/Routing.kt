@@ -86,11 +86,7 @@ object Routing {
                     insertRegistration(registration)
                 }
                 catch (e: Exception) {
-                    for (i in 1..100)
-                        System.err.println("BRUH MOMENT 100")
-                    call.respond(HttpStatusCode.BadRequest, "already exists")
-                    // System.err.println(e.printStackTrace())
-                    System.err.println("HMMMMMM ASD ASD AS DAS DA SD ASD ASD ")
+                call.respond(HttpStatusCode.UnprocessableEntity, "Registration already exists.")
                     return@post
                 }
 

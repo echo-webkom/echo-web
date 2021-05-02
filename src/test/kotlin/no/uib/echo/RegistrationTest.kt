@@ -89,7 +89,7 @@ internal class RegistrationTest : StringSpec({
                     setBody(regToJson(exampleReg1))
                 }
 
-            submitRegAgainCall.response.status() shouldBe HttpStatusCode.BadRequest
+            submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
         }
     }
     "POST request on /${Routing.registrationRoute} with invalid email should return BAD_REQUEST" {
