@@ -10,15 +10,25 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import no.uib.echo.plugins.configureRouting
+import no.uib.echo.plugins.Routing
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class RegistrationTest : StringSpec({
+internal class RegistrationTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
-    val exampleReg = RegistrationJson(
-        "test@test.com", "Navn", "Navnesen", Degree.DTEK, 2, exampleBedpres.slug, true, "2021-04-30T20:31:11Z"
+    val exampleReg1 = RegistrationJson(
+        "test1@test.com", "Én", "Navnesen", Degree.ÅRMNINF, 1, exampleBedpres.slug, true, "2021-01-29T20:11:11Z"
+    )
+    val exampleReg2 = RegistrationJson(
+        "test2@test.com", "To", "Navnesen", Degree.BINF, 2, exampleBedpres.slug, true, "2021-09-30T20:18:11Z"
+    )
+    val exampleReg3 = RegistrationJson(
+        "test3@test.com", "Tre", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, "2021-01-30T20:41:01Z"
+    )
+    val exampleReg4 = RegistrationJson(
+        "test4@test.com", "Fire", "Navnesen", Degree.INF, 4, exampleBedpres.slug, true, "2022-02-30T20:08:21Z"
     )
 
     fun regToJson(reg: RegistrationJson): String {
@@ -47,11 +57,11 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "GET request on /registration with wrong Authorization header should return UNAUTHORIZED" {
+    "GET request on /${Routing.registrationRoute} with wrong Authorization header should return UNAUTHORIZED" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Get, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.Authorization, "feil auth header")
             }
 
@@ -60,41 +70,35 @@ class RegistrationTest : StringSpec({
     }
 
     """
-        POST request on /registration with valid payload should insert the registration in the database,
-        and a subsequent GET request on /registration?email= with the same email as in the initial payload should return the same JSON object"
+        POST request on /${Routing.registrationRoute} with valid payload should insert the registration in the database,
+        and a subsequent POST request on /${Routing.registrationRoute} with the same email as in the initial payload should return BAD_REQUEST."
     """ {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitRegCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
+            val submitRegCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
-                setBody(regToJson(exampleReg))
+                setBody(regToJson(exampleReg1))
             }
 
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
 
-            val getRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Get, uri = "/registration?email=${exampleReg.email}") {
+            val submitRegAgainCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(regToJson(exampleReg1))
                 }
 
-            getRegCall.response.status() shouldBe HttpStatusCode.OK
-
-            // Can't compare JSON objects as strings since submitDate
-            // depends on when the request happens.
-            //
-            // getRegCall.response.content shouldBe "[${regToJson(exampleReg)}]"
+            submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
         }
     }
-
-    "POST request on /registration with invalid email should return BAD_REQUEST" {
+    "POST request on /${Routing.registrationRoute} with invalid email should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
         }) {
             val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
                 addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidEmail = exampleReg.copy(email = "test_test.com")
+                val invalidEmail = exampleReg1.copy(email = "test_test.com")
                 setBody(regToJson(invalidEmail))
             }
 
@@ -102,13 +106,13 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /registration with degree year smaller than 1 should return BAD_REQUEST" {
+    "POST request on /${Routing.registrationRoute} with degree year smaller than 1 should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg.copy(degreeYear = 0)
+                val invalidDegreeYear = exampleReg1.copy(degreeYear = 0)
                 setBody(regToJson(invalidDegreeYear))
             }
 
@@ -116,13 +120,13 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /registration with degree year larger than 5 should return BAD_REQUEST" {
+    "POST request on /${Routing.registrationRoute} with degree year larger than 5 should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg.copy(degreeYear = 6)
+                val invalidDegreeYear = exampleReg1.copy(degreeYear = 6)
                 setBody(regToJson(invalidDegreeYear))
             }
 
@@ -130,13 +134,13 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /registration with terms = false should return BAD_REQUEST" {
+    "POST request on /${Routing.registrationRoute} with terms = false should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg.copy(terms = false)
+                val invalidDegreeYear = exampleReg1.copy(terms = false)
                 setBody(regToJson(invalidDegreeYear))
             }
 
@@ -144,11 +148,11 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "DELETE request on /registration with wrong Authorization header should return UNAUTHORIZED" {
+    "DELETE request on /${Routing.registrationRoute} with wrong Authorization header should return UNAUTHORIZED" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "feil auth header")
                 setBody("""{ "slug": "bedpres-med-noen", "email": "test@test.com" }""")

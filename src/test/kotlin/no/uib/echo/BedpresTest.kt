@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import no.uib.echo.plugins.Routing
 
 import no.uib.echo.plugins.configureRouting
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -13,7 +14,7 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class BedpresTest : StringSpec({
+internal class BedpresTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleBedpresSlug = BedpresSlugJson(exampleBedpres.slug)
 
@@ -41,11 +42,11 @@ class BedpresTest : StringSpec({
         return """{ "slug": "${bedpresSlug.slug}" }"""
     }
 
-    "PUT request on /bedpres with correct payload should return OK" {
+    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody(bedpresToJson(exampleBedpres))
@@ -55,11 +56,11 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /bedpres with correct payload should return OK, when the slug already exists" {
+    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK, when the slug already exists" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody(bedpresToJson(exampleBedpres))
@@ -67,7 +68,7 @@ class BedpresTest : StringSpec({
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
 
-            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody(bedpresToJson(exampleBedpres.copy(spots = 123)))
@@ -77,11 +78,11 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /bedpres with correct payload should return ACCEPTED, when the slug already exists and the spots are the same" {
+    "PUT request on /${Routing.bedpresRoute} with correct payload should return ACCEPTED, when the slug already exists and the spots are the same" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody(bedpresToJson(exampleBedpres))
@@ -89,7 +90,7 @@ class BedpresTest : StringSpec({
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
 
-            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody(bedpresToJson(exampleBedpres))
@@ -99,11 +100,11 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /bedpres with incorrect payload should return BAD_REQUEST" {
+    "PUT request on /${Routing.bedpresRoute} with incorrect payload should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "secret")
                 setBody("""{ "spots": 69, "registrationDate": "2021-04-29T20:43:29Z" }""")
@@ -113,11 +114,11 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /bedpres with wrong Authorization header should return UNAUTHORIZED" {
+    "PUT request on /${Routing.bedpresRoute} with wrong Authorization header should return UNAUTHORIZED" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/bedpres") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.Authorization, "feil auth header")
             }
 
@@ -125,11 +126,11 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "DELETE request on /bedpres with wrong Authorization header should return UNAUTHORIZED" {
+    "DELETE request on /${Routing.bedpresRoute} with wrong Authorization header should return UNAUTHORIZED" {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/bedpres") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 addHeader(HttpHeaders.Authorization, "feil auth header")
                 setBody(bedpresToJson(exampleBedpres))

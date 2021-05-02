@@ -13,12 +13,14 @@ services:
       - '8080:8080'
     command: ./gradlew test --build-cache --no-rebuild --no-daemon --info
     environment:
+      # The value of DEV doesn't matter.
       DEV: ja
       DATABASE_HOST: database-test
       AUTH_KEY: hemmelig
 
   database-test:
-    image: postgres:13
+    # Postgres 13.2 is the version Heroku uses.
+    image: postgres:13.2-alpine
     restart: always
     ports:
       - '5432:5432'

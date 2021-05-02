@@ -2,8 +2,8 @@
 FROM openjdk:8-jdk-buster as deps
 
 WORKDIR /opt/build
-COPY *.kts gradle.properties gradlew* /opt/build/
-COPY gradle /opt/build/gradle
+COPY *.kts gradle.properties gradlew* ./
+COPY gradle gradle
 
 # Add or remove '--info' as needed.
 RUN ./gradlew installDist --build-cache --no-daemon
@@ -14,4 +14,4 @@ FROM openjdk:8-jdk-buster as build
 
 WORKDIR /opt/build
 COPY --from=deps /root/.gradle /root/.gradle/
-COPY . /opt/build/
+COPY . .
