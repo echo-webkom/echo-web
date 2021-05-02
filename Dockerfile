@@ -1,5 +1,5 @@
 # Download Gradle wrapper and install dependencies.
-FROM openjdk:11-jdk-buster as deps
+FROM openjdk:8-jdk-buster as deps
 
 WORKDIR /opt/build
 COPY *.kts gradle.properties gradlew* /opt/build/
@@ -10,7 +10,7 @@ RUN ./gradlew installDist --build-cache --no-daemon
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.
-FROM openjdk:11-jdk-buster as build
+FROM openjdk:8-jdk-buster as build
 
 WORKDIR /opt/build
 COPY --from=deps /root/.gradle /root/.gradle/
@@ -22,7 +22,7 @@ RUN ./gradlew shadowJar --build-cache --no-rebuild --no-daemon
 
 
 # Run the server
-FROM openjdk:11-jdk-buster
+FROM openjdk:8-jdk-buster
 WORKDIR /opt/app
 
 # NB! This might break if version or name changes.

@@ -76,3 +76,7 @@ tasks.withType<KotlinCompile>().configureEach {
         useIR = true
     }
 }
+
+task("stage") {
+    dependsOn("shadowJar")
+}
