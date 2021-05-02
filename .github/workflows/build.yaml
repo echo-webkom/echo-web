@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  gradle_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+
+    - name: Build with Gradle and Shadow
+      run: ./gradlew shadowJar
