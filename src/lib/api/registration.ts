@@ -67,7 +67,7 @@ export const RegistrationAPI = {
         slug: string,
     ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
         try {
-            const { data } = await axios.get(`${process.env.BACKEND_URL}/registration?slug=${slug}`, {
+            const { data } = await axios.get(`https://${process.env.BACKEND_HOST}/registration?slug=${slug}`, {
                 headers: { Authorization: auth },
             });
 

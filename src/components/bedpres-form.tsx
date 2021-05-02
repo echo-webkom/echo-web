@@ -44,14 +44,10 @@ const getFooterText = (formStatus: FormStatus): string => {
     }
 };
 
-const BedpresForm = ({ slug }: { slug: string }): JSX.Element => {
+const BedpresForm = ({ slug, backendHost }: { slug: string; backendHost: string }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { register, handleSubmit } = useForm();
     const [formStatus, setFormStatus] = useState(FormStatus.INITIAL);
-    const backendHost =
-        !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
-            ? 'echo-web-backend-develop.herokuapp.com'
-            : 'echo-web-backend-prod.herokuapp.com';
 
     const submitForm = (data: Registration) =>
         axios

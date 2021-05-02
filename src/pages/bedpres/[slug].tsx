@@ -45,10 +45,12 @@ import ErrorBox from '../../components/error-box';
 const BedpresPage = ({
     bedpres,
     registrations,
+    backendHost,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
+    backendHost: string;
     error: string;
 }): JSX.Element => {
     const router = useRouter();
@@ -115,7 +117,7 @@ const BedpresPage = ({
                                     </Text>
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && <BedpresForm slug={bedpres.slug} />}
+                            {bedpres.registrationLinks && <BedpresForm slug={bedpres.slug} backendHost={backendHost} />}
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>
@@ -189,6 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
     const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
     const authKey = process.env.BACKEND_AUTH_KEY;
+    const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
 
     if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
 
@@ -205,6 +208,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         props: {
             bedpres,
             registrations: realReg,
+            backendHost,
             error,
         },
     };
