@@ -13,7 +13,7 @@ const Layout = ({ children }: Props): JSX.Element => {
     return (
         <Box pos="relative" minHeight="100vh" data-testid="layout">
             <Header />
-            <Box px={['5%', '10%']} pb={['550px', '360px']}>
+            <Box px={['5%', '10%']} pb={['450px', '260px']}>
                 {children}
             </Box>
             <Footer />
