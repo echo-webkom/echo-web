@@ -86,9 +86,9 @@ const BedpresForm = ({
                     <form onSubmit={handleSubmit(submitForm)}>
                         <ModalHeader>Påmelding</ModalHeader>
                         <ModalCloseButton />
-                        <ModalBody pb={6}>
-                            <VStack spacing="4">
-                                <FormControl id="email" mt={4} isRequired>
+                        <ModalBody pb="8px">
+                            <VStack spacing={4}>
+                                <FormControl id="email" isRequired>
                                     <FormLabel>E-post</FormLabel>
                                     <Input
                                         type="email"
