@@ -88,13 +88,8 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && hours > 23 && (
+                            {!bedpres.registrationLinks && (
                                 <Center my="3">
-                                    <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
-                                </Center>
-                            )}
-                            {!bedpres.registrationLinks && hours <= 23 && (
-                                <Center>
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
