@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
-import { Center, Box, Text, Grid, GridItem, Heading, Icon, Spinner } from '@chakra-ui/react';
+import { Center, Box, Text, Grid, GridItem, Heading, Icon, Spinner, Divider } from '@chakra-ui/react';
 import { BiCalendar } from 'react-icons/bi';
 import { ImTicket, ImLocation } from 'react-icons/im';
 import Markdown from 'markdown-to-jsx';
@@ -57,20 +57,10 @@ const EventPage = ({ event, error }: { event: Event; error: string }): JSX.Eleme
                                 rowSpan={2}
                             >
                                 <ContentBox>
-                                    <Heading mb="0.5em" mt="0.5em">
-                                        {event.title}
-                                    </Heading>
+                                    <Heading mb="0.2em">{event.title}</Heading>
+                                    <Divider mb="1em" />
                                     <Markdown options={{ overrides: MapMarkdownChakra }}>{event.body}</Markdown>
                                 </ContentBox>
-                            </GridItem>
-                            <GridItem colSpan={1}>
-                                {event.imageUrl && (
-                                    <ContentBox>
-                                        <Center>
-                                            <Image src={event.imageUrl} alt="Eventlogo" width={250} height={250} />
-                                        </Center>
-                                    </ContentBox>
-                                )}
                             </GridItem>
                         </Grid>
                     </Box>
