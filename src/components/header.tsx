@@ -64,7 +64,14 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
-        <Box mt="1rem" mb="2rem" pb="1rem" borderColor={borderBg} data-testid="header-standard">
+        <Box
+            mt="1rem"
+            mb="2rem"
+            pb="1rem"
+            borderColor={borderBg}
+            data-testid="header-standard"
+            pt={['12px', null, '0']}
+        >
             <Center>
                 <Flex w={['90%', '70%']} h="120px" justify="space-between" alignItems="flex-end">
                     <HeaderLogo />
