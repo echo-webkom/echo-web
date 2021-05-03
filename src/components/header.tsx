@@ -17,7 +17,7 @@ import {
 import NavBar from './navbar';
 
 const RandomHeaderMessage = (): string => {
-    const messageArray = ['Ny nettside :)', 'Bring back vaffeltorsdag', 'Gi oss feedback på Github'];
+    const messageArray = ['Ny nettside!', 'Bring back vaffeltorsdag'];
 
     return messageArray[Math.floor(Math.random() * messageArray.length)];
 };
