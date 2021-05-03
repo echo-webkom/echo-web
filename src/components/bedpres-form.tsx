@@ -79,10 +79,11 @@ const BedpresForm = ({
             <Button w="100%" colorScheme="teal" onClick={onOpen}>
                 Påmelding
             </Button>
-            <form onSubmit={handleSubmit(submitForm)}>
-                <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent mx="2">
+
+            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent mx="2">
+                    <form onSubmit={handleSubmit(submitForm)}>
                         <ModalHeader>Påmelding</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody pb={6}>
@@ -162,9 +163,9 @@ const BedpresForm = ({
                             </Button>
                             <Button onClick={onClose}>Lukk</Button>
                         </ModalFooter>
-                    </ModalContent>
-                </Modal>
-            </form>
+                    </form>
+                </ModalContent>
+            </Modal>
         </>
     );
 };
