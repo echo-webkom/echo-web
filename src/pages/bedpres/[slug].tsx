@@ -108,7 +108,9 @@ const BedpresPage = ({
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && <BedpresForm slug={bedpres.slug} backendHost={backendHost} />}
+                            {bedpres.registrationLinks && (
+                                <BedpresForm slug={bedpres.slug} title={bedpres.title} backendHost={backendHost} />
+                            )}
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>

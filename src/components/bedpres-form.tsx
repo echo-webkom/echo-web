@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -15,39 +15,28 @@ import {
     Radio,
     RadioGroup,
     VStack,
-    Center,
     Select,
-    Text,
     Checkbox,
+    useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Degree, Registration } from '../lib/api/registration';
 
-enum FormStatus {
-    INITIAL,
-    PENDING,
-    SUCCESS,
-    ERROR,
-}
-
-const getFooterText = (formStatus: FormStatus): string => {
-    switch (formStatus) {
-        case FormStatus.PENDING:
-            return 'Laster ... ';
-        case FormStatus.SUCCESS:
-            return 'Ditt svar ble registrert!';
-        case FormStatus.ERROR:
-            return 'Det har skjedd en feil.';
-        default:
-            return '';
-    }
-};
-
-const BedpresForm = ({ slug, backendHost }: { slug: string; backendHost: string }): JSX.Element => {
+const BedpresForm = ({
+    slug,
+    title,
+    backendHost,
+}: {
+    slug: string;
+    title: string;
+    backendHost: string;
+}): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { register, handleSubmit } = useForm();
-    const [formStatus, setFormStatus] = useState(FormStatus.INITIAL);
+    const toast = useToast();
+    const initialRef = useRef<HTMLInputElement | null>(null);
+    const { ref, ...rest } = register('email'); // needed for inital focus ref
 
     const submitForm = (data: Registration) =>
         axios
@@ -67,30 +56,49 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; backendHost: string 
                 },
             )
             .then(() => {
-                setFormStatus(() => FormStatus.SUCCESS);
+                toast({
+                    title: 'Ditt svar ble registrert!',
+                    description: `Du er meldt på ${title}.`,
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                });
             })
             .catch(() => {
-                setFormStatus(() => FormStatus.ERROR);
+                toast({
+                    title: 'Det har skjedd en feil.',
+                    description: `Vennligst prøv igjen.`,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                });
             });
-
-    const initialRef = useRef<HTMLInputElement>(null);
 
     return (
         <>
             <Button w="100%" colorScheme="teal" onClick={onOpen}>
                 Påmelding
             </Button>
-            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent mx="2">
-                    <ModalHeader>Påmelding</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody pb={6}>
-                        <VStack spacing="4">
-                            <form onSubmit={handleSubmit(submitForm)}>
+            <form onSubmit={handleSubmit(submitForm)}>
+                <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent mx="2">
+                        <ModalHeader>Påmelding</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pb={6}>
+                            <VStack spacing="4">
                                 <FormControl id="email" mt={4} isRequired>
                                     <FormLabel>E-post</FormLabel>
-                                    <Input type="email" placeholder="E-post" {...register('email')} />
+                                    <Input
+                                        type="email"
+                                        placeholder="E-post"
+                                        {...rest}
+                                        // using multiple refs
+                                        ref={(e) => {
+                                            ref(e);
+                                            initialRef.current = e;
+                                        }}
+                                    />
                                 </FormControl>
                                 <FormControl id="firstName" isRequired>
                                     <FormLabel>Fornavn</FormLabel>
@@ -146,24 +154,17 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; backendHost: string 
                                         Jeg godkjenner retningslinjene til Bedkom.
                                     </Checkbox>
                                 </FormControl>
-                                <Center>
-                                    <Button type="submit" colorScheme="teal" mt="2em" mx="3em">
-                                        Send inn
-                                    </Button>
-                                    <Button onClick={onClose} mt="2em" mx="3em">
-                                        Lukk
-                                    </Button>
-                                </Center>
-                            </form>
-                        </VStack>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Center>
-                            <Text>{getFooterText(formStatus)}</Text>
-                        </Center>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+                            </VStack>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button type="submit" mr={3} colorScheme="teal">
+                                Send inn
+                            </Button>
+                            <Button onClick={onClose}>Lukk</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            </form>
         </>
     );
 };
