@@ -130,7 +130,9 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             rowSpan={2}
                         >
                             <ContentBox>
-                                <Heading>{bedpres.title}</Heading>
+                                <Heading mb="0.2em" size="2xl">
+                                    {bedpres.title}
+                                </Heading>
                                 <Divider my=".5em" />
                                 <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>

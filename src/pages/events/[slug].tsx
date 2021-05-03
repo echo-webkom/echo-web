@@ -57,7 +57,9 @@ const EventPage = ({ event, error }: { event: Event; error: string }): JSX.Eleme
                                 rowSpan={2}
                             >
                                 <ContentBox>
-                                    <Heading mb="0.2em">{event.title}</Heading>
+                                    <Heading mb="0.2em" size="2xl">
+                                        {event.title}
+                                    </Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={{ overrides: MapMarkdownChakra }}>{event.body}</Markdown>
                                 </ContentBox>

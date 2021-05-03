@@ -1,8 +1,8 @@
 import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img, useColorModeValue } from '@chakra-ui/react';
 
-const getLinkColor = () =>{
-    return(useColorModeValue('blue', 'blue.400'))
-}
+const getLinkColor = () => {
+    return useColorModeValue('blue', 'blue.400');
+};
 
 const MapMarkdownChakra = {
     p: {
