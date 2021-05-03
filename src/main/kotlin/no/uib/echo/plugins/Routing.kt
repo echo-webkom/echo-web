@@ -7,20 +7,21 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import no.uib.echo.BedpresJson
-import no.uib.echo.BedpresSlugJson
-import no.uib.echo.RegistrationJson
-import no.uib.echo.ShortRegistrationJson
-import no.uib.echo.deleteBedpresBySlug
-import no.uib.echo.deleteRegistration
-import no.uib.echo.insertOrUpdateBedpres
-import no.uib.echo.insertRegistration
 import no.uib.echo.plugins.Routing.deleteBedpres
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistration
-import no.uib.echo.plugins.Routing.submitBedpres
-import no.uib.echo.plugins.Routing.submitRegistration
-import no.uib.echo.selectRegistrations
+import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.putBedpres
+import no.uib.echo.schema.BedpresJson
+import no.uib.echo.schema.BedpresSlugJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.ShortRegistrationJson
+import no.uib.echo.schema.deleteBedpresBySlug
+import no.uib.echo.schema.deleteRegistration
+import no.uib.echo.schema.insertOrUpdateBedpres
+import no.uib.echo.schema.insertRegistration
+import no.uib.echo.schema.selectRegistrations
 
 fun Application.configureRouting(authKey: String) {
     install(ContentNegotiation) {
@@ -29,16 +30,15 @@ fun Application.configureRouting(authKey: String) {
 
     routing {
         getRegistration(authKey)
-        submitRegistration()
+        postRegistration()
         deleteRegistration(authKey)
 
-        submitBedpres(authKey)
+        putBedpres(authKey)
         deleteBedpres(authKey)
     }
 }
 
 object Routing {
-
     const val registrationRoute: String = "registration"
     const val bedpresRoute: String = "bedpres"
 
@@ -62,7 +62,7 @@ object Routing {
         }
     }
 
-    fun Route.submitRegistration() {
+    fun Route.postRegistration() {
         post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
@@ -77,6 +77,35 @@ object Routing {
                     return@post
                 }
 
+                if ((registration.degree == Degree.DTEK ||
+                        registration.degree == Degree.DSIK ||
+                        registration.degree == Degree.DVIT ||
+                        registration.degree == Degree.BINF ||
+                        registration.degree == Degree.IMØ ||
+                        registration.degree == Degree.IKT ||
+                        registration.degree == Degree.KOGNI ||
+                        registration.degree == Degree.ÅRMNINF ||
+                        registration.degree == Degree.MISC) && registration.degreeYear > 3
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (bachelor).")
+                    return@post
+                }
+
+                if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear != 4 || registration.degreeYear != 5)) {
+                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (master).")
+                    return@post
+                }
+
+                if (registration.degree == Degree.ÅRMNINF && registration.degreeYear != 1) {
+                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (ÅRMNINF).")
+                    return@post
+                }
+
+                if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
+                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (KOGNI).")
+                    return@post
+                }
+
                 if (!registration.terms) {
                     call.respond(HttpStatusCode.BadRequest, "Terms not accepted.")
                     return@post
@@ -84,9 +113,8 @@ object Routing {
 
                 try {
                     insertRegistration(registration)
-                }
-                catch (e: Exception) {
-                call.respond(HttpStatusCode.UnprocessableEntity, "Registration already exists.")
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.UnprocessableEntity, "Registration already exists.")
                     return@post
                 }
 
@@ -122,7 +150,7 @@ object Routing {
         }
     }
 
-    fun Route.submitBedpres(authKey: String) {
+    fun Route.putBedpres(authKey: String) {
         put("/$bedpresRoute") {
             val auth: String? = call.request.header(HttpHeaders.Authorization)
 

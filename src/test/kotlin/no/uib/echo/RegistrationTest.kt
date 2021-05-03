@@ -11,6 +11,12 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
+import no.uib.echo.schema.Bedpres
+import no.uib.echo.schema.BedpresJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.insertOrUpdateBedpres
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -19,16 +25,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 internal class RegistrationTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleReg1 = RegistrationJson(
-        "test1@test.com", "Én", "Navnesen", Degree.ÅRMNINF, 1, exampleBedpres.slug, true, "2021-01-29T20:11:11Z"
-    )
-    val exampleReg2 = RegistrationJson(
-        "test2@test.com", "To", "Navnesen", Degree.BINF, 2, exampleBedpres.slug, true, "2021-09-30T20:18:11Z"
-    )
-    val exampleReg3 = RegistrationJson(
-        "test3@test.com", "Tre", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, "2021-01-30T20:41:01Z"
-    )
-    val exampleReg4 = RegistrationJson(
-        "test4@test.com", "Fire", "Navnesen", Degree.INF, 4, exampleBedpres.slug, true, "2022-02-30T20:08:21Z"
+        "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null
     )
 
     fun regToJson(reg: RegistrationJson): String {
@@ -40,8 +37,7 @@ internal class RegistrationTest : StringSpec({
           "degree": "${reg.degree}",
           "degreeYear": ${reg.degreeYear},
           "slug": "${reg.slug}",
-          "terms": ${reg.terms},
-          "submitDate": "${reg.submitDate}"
+          "terms": ${reg.terms}
         }
     """.trimIndent().replace("\\s".toRegex(), "")
     }
@@ -61,11 +57,77 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
+        }
+    }
+
+
+    "POST request on /${Routing.registrationRoute} with valid payloads should return OK." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val submitRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(regToJson(exampleReg1))
+                }
+
+            submitRegCall.response.status() shouldBe HttpStatusCode.OK
+
+            val submitMasterRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val validMaster =
+                        exampleReg1.copy(
+                            degree = Degree.INF,
+                            degreeYear = 4,
+                            email = "masterboi@lol.com"
+                        )
+                    setBody(
+                        regToJson(
+                            validMaster
+                        )
+                    )
+                }
+
+            submitMasterRegCall.response.status() shouldBe HttpStatusCode.OK
+
+            val submitKogniRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val validKogni =
+                        exampleReg1.copy(
+                            degree = Degree.KOGNI,
+                            degreeYear = 3,
+                            email = "kogni@bruh.com"
+                        )
+
+                    setBody(
+                        regToJson(
+                            validKogni
+                        )
+                    )
+                }
+
+            submitKogniRegCall.response.status() shouldBe HttpStatusCode.OK
+
+            val submitArmninfRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val validArmnfinf = exampleReg1.copy(
+                        degree = Degree.ÅRMNINF,
+                        degreeYear = 1,
+                        email = "årinfass@100.tk"
+                    )
+                    setBody(regToJson(validArmnfinf))
+                }
+
+            submitArmninfRegCall.response.status() shouldBe HttpStatusCode.OK
         }
     }
 
@@ -76,10 +138,11 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitRegCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                setBody(regToJson(exampleReg1))
-            }
+            val submitRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(regToJson(exampleReg1))
+                }
 
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
 
@@ -92,6 +155,7 @@ internal class RegistrationTest : StringSpec({
             submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
         }
     }
+
     "POST request on /${Routing.registrationRoute} with invalid email should return BAD_REQUEST" {
         withTestApplication({
             configureRouting("secret")
@@ -110,11 +174,12 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg1.copy(degreeYear = 0)
-                setBody(regToJson(invalidDegreeYear))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 0)
+                    setBody(regToJson(invalidDegreeYear))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
         }
@@ -124,11 +189,73 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg1.copy(degreeYear = 6)
-                setBody(regToJson(invalidDegreeYear))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 6)
+                    setBody(regToJson(invalidDegreeYear))
+                }
+
+            testCall.response.status() shouldBe HttpStatusCode.BadRequest
+        }
+    }
+
+
+    "POST request on /${Routing.registrationRoute} with degree year larger than 3 and a Degree corresponding to a bachelors degree should return BAD_REQUEST" {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 4, degree = Degree.DVIT)
+                    setBody(regToJson(invalidDegreeYear))
+                }
+
+            testCall.response.status() shouldBe HttpStatusCode.BadRequest
+        }
+    }
+
+    "POST request on /${Routing.registrationRoute} with degree year not equal to 4 or 5 and a degree corresponding to a masters degree should return BAD_REQUEST" {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 3, degree = Degree.INF)
+                    setBody(regToJson(invalidDegreeYear))
+                }
+
+            testCall.response.status() shouldBe HttpStatusCode.BadRequest
+        }
+    }
+
+    "POST request on /${Routing.registrationRoute} with degree equal to KOGNI and degree year not equal to 3 should return BAD_REQUEST" {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.KOGNI)
+                    setBody(regToJson(invalidDegreeYear))
+                }
+
+            testCall.response.status() shouldBe HttpStatusCode.BadRequest
+        }
+    }
+
+    "POST request on /${Routing.registrationRoute} with degree equal to ARMNINF and degree year not equal to 1 should return BAD_REQUEST" {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.ÅRMNINF)
+                    setBody(regToJson(invalidDegreeYear))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
         }
@@ -138,11 +265,12 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidDegreeYear = exampleReg1.copy(terms = false)
-                setBody(regToJson(invalidDegreeYear))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidDegreeYear = exampleReg1.copy(terms = false)
+                    setBody(regToJson(invalidDegreeYear))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
         }
@@ -152,11 +280,12 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-                setBody("""{ "slug": "bedpres-med-noen", "email": "test@test.com" }""")
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                    setBody("""{ "slug": "bedpres-med-noen", "email": "test@test.com" }""")
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }

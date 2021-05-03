@@ -9,6 +9,10 @@ import io.ktor.http.HttpStatusCode
 import no.uib.echo.plugins.Routing
 
 import no.uib.echo.plugins.configureRouting
+import no.uib.echo.schema.Bedpres
+import no.uib.echo.schema.BedpresJson
+import no.uib.echo.schema.BedpresSlugJson
+import no.uib.echo.schema.Registration
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -46,11 +50,12 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody(bedpresToJson(exampleBedpres))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(bedpresToJson(exampleBedpres))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.OK
         }
@@ -60,19 +65,21 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody(bedpresToJson(exampleBedpres))
-            }
+            val submitBedpresCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(bedpresToJson(exampleBedpres))
+                }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
 
-            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody(bedpresToJson(exampleBedpres.copy(spots = 123)))
-            }
+            val updateBedpresCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(bedpresToJson(exampleBedpres.copy(spots = 123)))
+                }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.OK
         }
@@ -82,19 +89,21 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody(bedpresToJson(exampleBedpres))
-            }
+            val submitBedpresCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(bedpresToJson(exampleBedpres))
+                }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
 
-            val updateBedpresCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody(bedpresToJson(exampleBedpres))
-            }
+            val updateBedpresCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody(bedpresToJson(exampleBedpres))
+                }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.Accepted
         }
@@ -104,11 +113,12 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "secret")
-                setBody("""{ "spots": 69, "registrationDate": "2021-04-29T20:43:29Z" }""")
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "secret")
+                    setBody("""{ "spots": 69, "registrationDate": "2021-04-29T20:43:29Z" }""")
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
         }
@@ -118,9 +128,10 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
@@ -130,12 +141,13 @@ internal class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                addHeader(HttpHeaders.Authorization, "feil auth header")
-                setBody(bedpresToJson(exampleBedpres))
-                setBody(bedpresSlugToJson(exampleBedpresSlug))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                    setBody(bedpresToJson(exampleBedpres))
+                    setBody(bedpresSlugToJson(exampleBedpresSlug))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
