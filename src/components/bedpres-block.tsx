@@ -1,6 +1,18 @@
 import React from 'react';
 import NextLink from 'next/link';
-import { Box, Text, Stack, StackDivider, Heading, Center, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
+import {
+    Box,
+    Text,
+    Stack,
+    StackDivider,
+    Heading,
+    Center,
+    LinkBox,
+    LinkOverlay,
+    Button,
+    useColorModeValue,
+    useBreakpointValue,
+} from '@chakra-ui/react';
 
 import { isBefore } from 'date-fns';
 import { Bedpres } from '../lib/api/bedpres';
@@ -21,12 +33,20 @@ const BedpresBlock = ({
         })
         .slice(0, 3);
 
+    const heading = useBreakpointValue([
+        'Bedpres',
+        'Bedpresolini',
+        'Bedriftspresentasjoner',
+        'Bedpres',
+        'Bedriftspresentasjoner',
+    ]);
+
     return (
         <ContentBox data-testid="bedpres-block">
             <Center wordBreak="break-word">
-                <Heading>Bedriftspresentasjoner</Heading>
+                <Heading>{heading}</Heading>
             </Center>
-            <Box my=".5em">
+            <Box my=".52em">
                 {bedpreses && !error && bedpresesFiltered && bedpresesFiltered.length === 0 && (
                     <Center>
                         <Text>Ingen kommende bedriftspresentasjoner</Text>

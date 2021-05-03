@@ -47,7 +47,13 @@ const IndexPage = ({
     eventsError: string;
 }): JSX.Element => {
     const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
-    const hspHeading = useBreakpointValue(['HSP', 'Vibe Partner', 'Hovedsamarbeidspartner']);
+    const hspHeading = useBreakpointValue([
+        'HSP',
+        'Vibe Partner',
+        'Hovedsamarbeidspartner',
+        'Vibe Partner',
+        'Hovedsamarbeidspartner',
+    ]);
 
     return (
         <Layout>
