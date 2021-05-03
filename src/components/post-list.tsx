@@ -1,4 +1,4 @@
-import { Button, Center, Divider, Text, SimpleGrid } from '@chakra-ui/react';
+import { Button, Center, Divider, Text, SimpleGrid, Wrap } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { Post } from '../lib/api/post';
 import ErrorBox from './error-box';
@@ -25,18 +25,11 @@ const PostList = ({
                 {posts.length === 0 && !error && <Text>No posts found</Text>}
                 {posts.length === 0 && error && <ErrorBox error={error} />}
                 {posts.length !== 0 && (
-                    <SimpleGrid
-                        pt="1rem"
-                        columns={[1, null, null, 2]}
-                        className="post-list"
-                        spacing={10}
-                        align="stretch"
-                        w={['100%', null, null, null, '70%']}
-                    >
+                    <Wrap pt="1rem" className="post-list" spacing={4} w="100%" justify="center">
                         {posts.slice(index, index + postsPerPage).map((post: Post) => {
                             return <PostPreview key={post.slug} post={post} data-testid={post.slug} />;
                         })}
-                    </SimpleGrid>
+                    </Wrap>
                 )}
             </Center>
             <Divider my="5" />
