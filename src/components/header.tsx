@@ -80,7 +80,14 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('gray.300', 'gray.800');
 
     return (
-        <Center mt="1rem" mb="1rem" pb="1rem" pt={['12px', null, '0']} borderColor={borderBg} data-testid="header-standard">
+        <Center
+            mt="1rem"
+            mb="1rem"
+            pb="1rem"
+            pt={['12px', null, '0']}
+            borderColor={borderBg}
+            data-testid="header-standard"
+        >
             <Flex w={['90%', '70%']} h="120px" alignItems="flex-end" justify="">
                 <HeaderLogo />
                 <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
