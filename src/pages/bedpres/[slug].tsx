@@ -31,7 +31,7 @@ import {
     LinkOverlay,
     Icon,
 } from '@chakra-ui/react';
-import { useTimeout, useCountdown } from '../../lib/hooks';
+import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { Registration, RegistrationAPI } from '../../lib/api/registration';
@@ -41,6 +41,7 @@ import BedpresForm from '../../components/bedpres-form';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
+import Countdown from '../../components/countdown';
 
 const BedpresPage = ({
     bedpres,
@@ -64,8 +65,6 @@ const BedpresPage = ({
     useTimeout(() => {
         router.replace(router.asPath);
     }, time);
-
-    const { hours, minutes, seconds } = useCountdown(regDate);
 
     return (
         <Layout>
@@ -104,17 +103,9 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && hours > 23 && (
+                            {!bedpres.registrationLinks && (
                                 <Center my="3">
-                                    <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
-                                </Center>
-                            )}
-                            {!bedpres.registrationLinks && hours <= 23 && (
-                                <Center>
-                                    <Text fontWeight="bold" fontSize="5xl" suppressHydrationWarning>
-                                        {hours < 10 ? `0${hours}` : hours} : {minutes < 10 ? `0${minutes}` : minutes} :{' '}
-                                        {seconds < 10 ? `0${seconds}` : seconds}
-                                    </Text>
+                                    <Countdown date={regDate} />
                                 </Center>
                             )}
                             {bedpres.registrationLinks && <BedpresForm slug={bedpres.slug} backendHost={backendHost} />}
@@ -130,7 +121,9 @@ const BedpresPage = ({
                             rowSpan={2}
                         >
                             <ContentBox>
-                                <Heading>{bedpres.title}</Heading>
+                                <Heading mb="0.2em" size="2xl">
+                                    {bedpres.title}
+                                </Heading>
                                 <Divider my=".5em" />
                                 <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>
