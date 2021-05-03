@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { Bedpres } from '../lib/api/bedpres';
 
 const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
-    const hoverColor = useColorModeValue('gray.100', 'gray.800');
+    const hoverColor = useColorModeValue('gray.100', 'gray.700');
 
     return (
         <LinkBox data-testid={bedpres.slug}>
