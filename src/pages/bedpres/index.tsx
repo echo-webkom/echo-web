@@ -1,13 +1,13 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-import { Center, Text, SimpleGrid, Stack, StackDivider, Heading, GridItem } from '@chakra-ui/react';
+import { Center, Text, SimpleGrid, Heading, GridItem } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { BedpresAPI, Bedpres } from '../../lib/api/bedpres';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import BedpresPreview from '../../components/bedpres-preview';
 import ContentBox from '../../components/content-box';
 import ErrorBox from '../../components/error-box';
+import EntryList from '../../components/entry-list';
 
 const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
     const upcoming = bedpreses.filter((bedpres: Bedpres) => {
@@ -36,19 +36,7 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
                                     <Text fontSize="xl">Ingen tidligere bedriftspresentasjoner</Text>
                                 </Center>
                             )}
-                            {previous && (
-                                <Stack spacing={5} divider={<StackDivider />}>
-                                    {previous.map((bedpres: Bedpres) => {
-                                        return (
-                                            <BedpresPreview
-                                                key={bedpres.slug}
-                                                bedpres={bedpres}
-                                                data-testid={bedpres.slug}
-                                            />
-                                        );
-                                    })}
-                                </Stack>
-                            )}
+                            {previous && <EntryList entries={previous} type="bedpres" />}
                         </ContentBox>
                     </GridItem>
                     <GridItem rowStart={1}>
@@ -61,19 +49,7 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
                                     <Text fontSize="xl">Ingen kommende bedriftspresentasjoner :(</Text>
                                 </Center>
                             )}
-                            {upcoming.length !== 0 && (
-                                <Stack spacing={5} divider={<StackDivider />}>
-                                    {upcoming.map((bedpres: Bedpres) => {
-                                        return (
-                                            <BedpresPreview
-                                                key={bedpres.slug}
-                                                bedpres={bedpres}
-                                                data-testid={bedpres.slug}
-                                            />
-                                        );
-                                    })}
-                                </Stack>
-                            )}
+                            {upcoming.length !== 0 && <EntryList entries={upcoming} type="bedpres" />}
                         </ContentBox>
                     </GridItem>
                 </SimpleGrid>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-import { Center, GridItem, Heading, SimpleGrid, Stack, StackDivider, Text } from '@chakra-ui/react';
+import { Center, GridItem, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { Event, EventAPI } from '../../lib/api/event';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 import ContentBox from '../../components/content-box';
-import EventPreview from '../../components/event-preview';
+import EntryList from '../../components/entry-list';
 
 const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: string }): JSX.Element => {
     const upcoming = events.filter((event: Event) => {
@@ -36,13 +36,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                                     <Text fontSize="xl">Ingen tidligere arrangementer :(</Text>
                                 </Center>
                             )}
-                            {past && (
-                                <Stack spacing={5} divider={<StackDivider />}>
-                                    {past.map((event: Event) => (
-                                        <EventPreview key={event.slug} event={event} />
-                                    ))}
-                                </Stack>
-                            )}
+                            {past && <EntryList entries={past} type="event" />}
                         </ContentBox>
                     </GridItem>
                     <GridItem rowStart={1}>
@@ -55,13 +49,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                                     <Text fontSize="xl">Ingen kommende arrangementer :(</Text>
                                 </Center>
                             )}
-                            {upcoming && (
-                                <Stack spacing={5} divider={<StackDivider />}>
-                                    {upcoming.map((event: Event) => (
-                                        <EventPreview key={event.slug} event={event} />
-                                    ))}
-                                </Stack>
-                            )}
+                            {upcoming && <EntryList entries={upcoming} type="event" />}
                         </ContentBox>
                     </GridItem>
                 </SimpleGrid>
