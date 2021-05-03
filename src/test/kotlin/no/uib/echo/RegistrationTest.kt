@@ -22,25 +22,12 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal class RegistrationTest : StringSpec({
+class RegistrationTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleReg1 = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null
     )
 
-    fun regToJson(reg: RegistrationJson): String {
-        return """
-        {
-          "email": "${reg.email}",
-          "firstName": "${reg.firstName}",
-          "lastName": "${reg.lastName}",
-          "degree": "${reg.degree}",
-          "degreeYear": ${reg.degreeYear},
-          "slug": "${reg.slug}",
-          "terms": ${reg.terms}
-        }
-    """.trimIndent().replace("\\s".toRegex(), "")
-    }
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -80,51 +67,40 @@ internal class RegistrationTest : StringSpec({
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
 
             val submitMasterRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val validMaster =
-                        exampleReg1.copy(
-                            degree = Degree.INF,
-                            degreeYear = 4,
-                            email = "masterboi@lol.com"
-                        )
-                    setBody(
-                        regToJson(
-                            validMaster
-                        )
+                    val validMaster = exampleReg1.copy(
+                        degree = Degree.INF,
+                        degreeYear = 4,
+                        email = "masterboi@lol.com"
                     )
+                    setBody(regToJson(validMaster))
                 }
 
             submitMasterRegCall.response.status() shouldBe HttpStatusCode.OK
 
             val submitKogniRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val validKogni =
-                        exampleReg1.copy(
-                            degree = Degree.KOGNI,
-                            degreeYear = 3,
-                            email = "kogni@bruh.com"
-                        )
-
-                    setBody(
-                        regToJson(
-                            validKogni
-                        )
+                    val validKogni = exampleReg1.copy(
+                        degree = Degree.KOGNI,
+                        degreeYear = 3,
+                        email = "kogni@bruh.com"
                     )
+                    setBody(regToJson(validKogni))
                 }
 
             submitKogniRegCall.response.status() shouldBe HttpStatusCode.OK
 
             val submitArmninfRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val validArmnfinf = exampleReg1.copy(
+                    val validArmninf = exampleReg1.copy(
                         degree = Degree.ÅRMNINF,
                         degreeYear = 1,
                         email = "årinfass@100.tk"
                     )
-                    setBody(regToJson(validArmnfinf))
+                    setBody(regToJson(validArmninf))
                 }
 
             submitArmninfRegCall.response.status() shouldBe HttpStatusCode.OK
@@ -147,7 +123,7 @@ internal class RegistrationTest : StringSpec({
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
 
             val submitRegAgainCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = Routing.registrationRoute) {
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     setBody(regToJson(exampleReg1))
                 }
@@ -160,7 +136,7 @@ internal class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/registration") {
+            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                 addHeader(HttpHeaders.ContentType, "application/json")
                 val invalidEmail = exampleReg1.copy(email = "test_test.com")
                 setBody(regToJson(invalidEmail))
@@ -268,8 +244,8 @@ internal class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(terms = false)
-                    setBody(regToJson(invalidDegreeYear))
+                    val invalidTerms = exampleReg1.copy(terms = false)
+                    setBody(regToJson(invalidTerms))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
@@ -284,10 +260,27 @@ internal class RegistrationTest : StringSpec({
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "feil auth header")
-                    setBody("""{ "slug": "bedpres-med-noen", "email": "test@test.com" }""")
+                    setBody(regToJson(exampleReg1))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
     }
 })
+
+/**
+ * USE ONLY FOR TESTS!
+ */
+fun regToJson(reg: RegistrationJson): String {
+    return """
+        {
+          "email": "${reg.email}",
+          "firstName": "${reg.firstName}",
+          "lastName": "${reg.lastName}",
+          "degree": "${reg.degree}",
+          "degreeYear": ${reg.degreeYear},
+          "slug": "${reg.slug}",
+          "terms": ${reg.terms}
+        }
+    """.trimIndent().replace("\\s".toRegex(), "")
+}

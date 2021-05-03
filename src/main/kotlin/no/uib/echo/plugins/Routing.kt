@@ -72,7 +72,7 @@ object Routing {
                     return@post
                 }
 
-                if (registration.degreeYear < 1 || registration.degreeYear > 5) {
+                if (registration.degreeYear !in 1..5) {
                     call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
                     return@post
                 }
@@ -84,14 +84,13 @@ object Routing {
                         registration.degree == Degree.IMØ ||
                         registration.degree == Degree.IKT ||
                         registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ÅRMNINF ||
-                        registration.degree == Degree.MISC) && registration.degreeYear > 3
+                        registration.degree == Degree.ÅRMNINF) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (bachelor).")
                     return@post
                 }
 
-                if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear != 4 || registration.degreeYear != 5)) {
+                if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
                     call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (master).")
                     return@post
                 }

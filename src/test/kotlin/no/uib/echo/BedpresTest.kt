@@ -1,6 +1,7 @@
 package no.uib.echo
 
 import io.ktor.server.testing.*
+
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
@@ -18,7 +19,8 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal class BedpresTest : StringSpec({
+
+class BedpresTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleBedpresSlug = BedpresSlugJson(exampleBedpres.slug)
 
@@ -32,19 +34,6 @@ internal class BedpresTest : StringSpec({
         }
     }
 
-    fun bedpresToJson(bedpres: BedpresJson): String {
-        return """
-        {
-          "slug": "${bedpres.slug}",
-          "spots": ${bedpres.spots},
-          "registrationDate": "${bedpres.registrationDate}"
-        }
-    """.trimIndent().replace("\\s".toRegex(), "")
-    }
-
-    fun bedpresSlugToJson(bedpresSlug: BedpresSlugJson): String {
-        return """{ "slug": "${bedpresSlug.slug}" }"""
-    }
 
     "PUT request on /${Routing.bedpresRoute} with correct payload should return OK" {
         withTestApplication({
@@ -153,3 +142,23 @@ internal class BedpresTest : StringSpec({
         }
     }
 })
+
+/**
+ * USE ONLY FOR TESTS!
+ */
+fun bedpresToJson(bedpres: BedpresJson): String {
+    return """
+        {
+          "slug": "${bedpres.slug}",
+          "spots": ${bedpres.spots},
+          "registrationDate": "${bedpres.registrationDate}"
+        }
+    """.trimIndent().replace("\\s".toRegex(), "")
+}
+
+/**
+ * USE ONLY FOR TESTS!
+ */
+fun bedpresSlugToJson(bedpresSlug: BedpresSlugJson): String {
+    return """{ "slug": "${bedpresSlug.slug}" }"""
+}
