@@ -97,7 +97,7 @@ export const PostAPI = {
         } catch (error) {
             return {
                 posts: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },
@@ -131,7 +131,7 @@ export const PostAPI = {
 
             return {
                 post: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },

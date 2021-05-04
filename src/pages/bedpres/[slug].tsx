@@ -56,7 +56,6 @@ const BedpresPage = ({
 }): JSX.Element => {
     const router = useRouter();
     const regDate = parseISO(bedpres?.registrationTime);
-    const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
         !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
             ? null
@@ -190,7 +189,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
 
-    const { registrations } = await RegistrationAPI.getRegistrations(authKey || '', slug);
+    const { registrations } = await RegistrationAPI.getRegistrations(authKey || '', slug, backendHost);
     const realReg = showAdmin ? registrations || [] : [];
 
     if (error === '404') {

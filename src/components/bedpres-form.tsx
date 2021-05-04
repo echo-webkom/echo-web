@@ -20,8 +20,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-import { Degree, Registration } from '../lib/api/registration';
+import { Degree, Registration, RegistrationAPI } from '../lib/api/registration';
 
 const BedpresForm = ({
     slug,
@@ -33,46 +32,29 @@ const BedpresForm = ({
     backendHost: string;
 }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm<Registration>();
     const toast = useToast();
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
-    const submitForm = (data: Registration) =>
-        axios
-            .post(
-                `https://${backendHost}/registration`,
-                {
-                    email: data.email,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    degree: data.degree,
-                    degreeYear: data.degreeYear,
-                    slug,
-                    terms: data.terms,
-                },
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                },
-            )
-            .then(() => {
-                toast({
-                    title: 'Ditt svar ble registrert!',
-                    description: `Du er meldt på ${title}.`,
-                    status: 'success',
-                    duration: 9000,
-                    isClosable: true,
-                });
-            })
-            .catch(() => {
-                toast({
-                    title: 'Det har skjedd en feil.',
-                    description: `Vennligst prøv igjen.`,
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true,
-                });
+    const submitForm = async (data: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        degree: Degree;
+        degreeYear: number;
+        terms: boolean;
+    }) => {
+        RegistrationAPI.submitRegistration({ ...data, slug, submitDate: '' }, backendHost).then(({ response }) => {
+            toast({
+                title: response.msg,
+                description: response?.status === 'success' ? `Du er meldt på ${title}.` : 'Vennligst prøv igjen.',
+                status: response?.status || 'error',
+                duration: 9000,
+                isClosable: true,
             });
+        });
+    };
 
     return (
         <>
@@ -115,14 +97,14 @@ const BedpresForm = ({
                                         <option value={Degree.DTEK}>Datateknologi</option>
                                         <option value={Degree.DVIT}>Datasikkerhet</option>
                                         <option value={Degree.BINF}>Bioinformatikk</option>
-                                        <option value={Degree.IMØ}>Informatikk-matematikk-økonomi</option>
+                                        <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
                                         <option value={Degree.IKT}>Informasjons- og kommunikasjonsvitenskap</option>
                                         <option value={Degree.KOGNI}>
                                             Kognitiv vitenskap med spesialisering i informatikk
                                         </option>
                                         <option value={Degree.INF}>Master i informatikk</option>
                                         <option value={Degree.PROG}>Felles master i programvareutvikling</option>
-                                        <option value={Degree.ÅRMNINF}>Årsstudium i informatikk</option>
+                                        <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
                                         <option value={Degree.POST}>Postbachelor</option>
                                         <option value={Degree.MISC}>Annet studieløp</option>
                                     </Select>

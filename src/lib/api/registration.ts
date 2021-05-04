@@ -6,12 +6,12 @@ export enum Degree {
     DSIK = 'DSIK',
     DVIT = 'DVIT',
     BINF = 'BINF',
-    IMØ = 'IMØ',
+    IMO = 'IMO',
     IKT = 'IKT',
     KOGNI = 'KOGNI',
     INF = 'INF',
     PROG = 'PROG',
-    ÅRMNINF = 'ÅRMNINF',
+    ARMNINF = 'ARMNINF',
     POST = 'POST',
     MISC = 'MISC',
 }
@@ -28,8 +28,8 @@ const degreeDecoder = (value: Pojo): Degree => {
             return Degree.DVIT;
         case 'BINF':
             return Degree.BINF;
-        case 'IMØ':
-            return Degree.IMØ;
+        case 'IMO':
+            return Degree.IMO;
         case 'IKT':
             return Degree.IKT;
         case 'KOGNI':
@@ -38,8 +38,8 @@ const degreeDecoder = (value: Pojo): Degree => {
             return Degree.INF;
         case 'PROG':
             return Degree.PROG;
-        case 'ÅRMINF':
-            return Degree.ÅRMNINF;
+        case 'ARMINF':
+            return Degree.ARMNINF;
         case 'POST':
             return Degree.POST;
         default:
@@ -59,15 +59,35 @@ const registrationDecoder = record({
     submitDate: string,
 });
 
+const statusDecoder = (value: Pojo): 'success' | 'warning' | 'error' | 'info' | undefined => {
+    const raw = string(value);
+    if (raw === 'success' || raw === 'warning' || raw === 'error' || raw === 'info') return raw;
+    return undefined;
+};
+
+export type Response = decodeType<typeof responseDecoder>;
+const responseDecoder = record({
+    code: string,
+    msg: string,
+    status: statusDecoder,
+});
+
 const registrationListDecoder = array(registrationDecoder);
+
+const decodeError: Response = {
+    code: 'decode-error',
+    msg: 'Det har skjedd en feil.',
+    status: 'error',
+};
 
 export const RegistrationAPI = {
     getRegistrations: async (
         auth: string,
         slug: string,
+        backendHost: string,
     ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
         try {
-            const { data } = await axios.get(`https://${process.env.BACKEND_HOST}/registration?slug=${slug}`, {
+            const { data } = await axios.get(`http://${backendHost}/registration?slug=${slug}`, {
                 headers: { Authorization: auth },
             });
 
@@ -79,6 +99,24 @@ export const RegistrationAPI = {
             return {
                 registrations: null,
                 errorReg: error,
+            };
+        }
+    },
+
+    submitRegistration: async (registration: Registration, backendHost: string): Promise<{ response: Response }> => {
+        try {
+            const { data } = await axios.post(`http://${backendHost}/registration`, registration, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            return {
+                response: responseDecoder(data) || decodeError,
+            };
+        } catch (err) {
+            return {
+                response: {
+                    ...(err?.response?.data || decodeError),
+                },
             };
         }
     },
