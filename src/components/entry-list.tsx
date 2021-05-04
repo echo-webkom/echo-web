@@ -13,11 +13,11 @@ interface Props {
 const EntryList = ({ entries, type }: Props): JSX.Element => {
     return (
         <Stack spacing={5} divider={<StackDivider />}>
-            {entries.map((event: Event | Bedpres) => {
+            {entries.map((entry: Event | Bedpres) => {
                 return type === 'bedpres' ? (
-                    <BedpresPreview key={event.slug} bedpres={event as Bedpres} data-testid={event.slug} />
+                    <BedpresPreview key={entry.slug} bedpres={entry as Bedpres} data-testid={entry.slug} />
                 ) : (
-                    <EventPreview key={event.slug} event={event as Event} />
+                    <EventPreview key={entry.slug} event={entry as Event} />
                 );
             })}
         </Stack>
