@@ -96,7 +96,7 @@ class RegistrationTest : StringSpec({
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     val validArmninf = exampleReg1.copy(
-                        degree = Degree.ÅRMNINF,
+                        degree = Degree.ARMNINF,
                         degreeYear = 1,
                         email = "årinfass@100.tk"
                     )
@@ -136,11 +136,12 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall = handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                addHeader(HttpHeaders.ContentType, "application/json")
-                val invalidEmail = exampleReg1.copy(email = "test_test.com")
-                setBody(regToJson(invalidEmail))
-            }
+            val testCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    val invalidEmail = exampleReg1.copy(email = "test_test.com")
+                    setBody(regToJson(invalidEmail))
+                }
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
         }
@@ -229,7 +230,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.ÅRMNINF)
+                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.ARMNINF)
                     setBody(regToJson(invalidDegreeYear))
                 }
 
