@@ -1,5 +1,6 @@
 import React, { RefObject } from 'react';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { VscColorMode } from 'react-icons/vsc';
 import {
     Center,
@@ -21,10 +22,15 @@ import {
 } from '@chakra-ui/react';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
+    const router = useRouter();
+    const isActive = router?.pathname === href || '';
+
     return (
         <LinkBox data-testid={testid}>
             <NextLink href={href} passHref>
-                <LinkOverlay as={Link}>{text}</LinkOverlay>
+                <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''} py="0.2rem" px="0.4rem">
+                    {text}
+                </LinkOverlay>
             </NextLink>
         </LinkBox>
     );
@@ -46,7 +52,6 @@ const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
         justifyContent="space-between"
         textAlign="end"
         alignItems="flex-end"
-        pl={{ lg: '0.5rem', xl: '2rem' }}
     >
         <NavLink text="Hjem" href="/" testid="hjem" />
         <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
@@ -77,8 +82,19 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
 
     return (
         <>
-            <Box ml="5" flex="2 1 auto" data-testid="navbar-standard">
-                <Flex display={['none', null, null, 'flex']} align="center" justify="space-between" w="full">
+            <Box
+                flex="2 1 auto"
+                data-testid="navbar-standard"
+                pb="1rem"
+                pl={['0.5rem', null, null, null, '3rem', '4rem']}
+            >
+                <Flex
+                    display={['none', null, null, 'flex']}
+                    align="center"
+                    justify="space-between"
+                    w="full"
+                    direction="column"
+                >
                     <Nav toggleColorMode={toggleColorMode} />
                 </Flex>
             </Box>

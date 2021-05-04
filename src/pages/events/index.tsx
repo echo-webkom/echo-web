@@ -1,4 +1,5 @@
 import React from 'react';
+import { GetStaticProps } from 'next';
 import { Center, GridItem, Heading, SimpleGrid, Stack, StackDivider, Text } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { Event, EventAPI } from '../../lib/api/event';
@@ -27,7 +28,9 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                 <SimpleGrid columns={[1, null, null, 2]} spacing="5">
                     <GridItem rowStart={[2, null, null, 1]}>
                         <ContentBox>
-                            <Heading mb="5">Tidligere</Heading>
+                            <Center minW="0">
+                                <Heading mb="5">Tidligere</Heading>
+                            </Center>
                             {past.length === 0 && (
                                 <Center mt="3em">
                                     <Text fontSize="xl">Ingen tidligere arrangementer :(</Text>
@@ -42,9 +45,11 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
                             )}
                         </ContentBox>
                     </GridItem>
-                    <GridItem rowStart={[1, null, null, 1]}>
+                    <GridItem rowStart={1}>
                         <ContentBox>
-                            <Heading mb="5">Kommende</Heading>
+                            <Center minW="0">
+                                <Heading mb="5">Kommende</Heading>
+                            </Center>
                             {upcoming.length === 0 && (
                                 <Center mt="3em">
                                     <Text fontSize="xl">Ingen kommende arrangementer :(</Text>
@@ -65,7 +70,7 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: 
     );
 };
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     const { events, error } = await EventAPI.getEvents(0);
 
     return {

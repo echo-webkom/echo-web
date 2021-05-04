@@ -48,7 +48,9 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                 minW="0"
                             >
                                 <ContentBox>
-                                    <Heading mb="0.2em">{post.title}</Heading>
+                                    <Heading mb="0.2em" size="2xl">
+                                        {post.title}
+                                    </Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
                                 </ContentBox>

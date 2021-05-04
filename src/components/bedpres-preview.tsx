@@ -16,11 +16,11 @@ import { format } from 'date-fns';
 
 import { Bedpres } from '../lib/api/bedpres';
 
-const BedpresPreview = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string }): JSX.Element => {
-    const hoverColor = useColorModeValue('gray.100', 'gray.800');
+const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
+    const hoverColor = useColorModeValue('gray.100', 'gray.700');
 
     return (
-        <LinkBox data-testid={testid}>
+        <LinkBox data-testid={bedpres.slug}>
             <Box display="block" p={[0, null, null, null, 5]} _hover={{ backgroundColor: hoverColor }}>
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
@@ -41,10 +41,6 @@ const BedpresPreview = ({ bedpres, testid }: { bedpres: Bedpres; testid?: string
             </Box>
         </LinkBox>
     );
-};
-
-BedpresPreview.defaultProps = {
-    testid: null,
 };
 
 export default BedpresPreview;

@@ -82,7 +82,7 @@ const OmOssPage = ({
                 tabPanels={[
                     <>
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
-                        <StudentGroupSection studentGroups={boards} error={boardsError} groupType="styrer" />
+                        <StudentGroupSection studentGroups={boards.reverse()} error={boardsError} groupType="styrer" />
                     </>,
                     <Markdown options={{ overrides: MapMarkdownChakra }}>{instituttraadet}</Markdown>,
                     <Markdown options={{ overrides: MapMarkdownChakra }}>{statutter}</Markdown>,

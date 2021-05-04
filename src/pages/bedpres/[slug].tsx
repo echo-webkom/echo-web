@@ -27,13 +27,15 @@ import {
     LinkOverlay,
     Icon,
 } from '@chakra-ui/react';
-import useTimeout from '../../lib/hooks';
+import { useTimeout } from '../../lib/hooks';
+
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
+import Countdown from '../../components/countdown';
 
 const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
     const router = useRouter();
@@ -88,7 +90,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             </Center>
                             {!bedpres.registrationLinks && (
                                 <Center my="3">
-                                    <Text fontSize="2xl">Åpner {formattedRegDate}</Text>
+                                    <Countdown date={regDate} />
                                 </Center>
                             )}
                             {bedpres.registrationLinks && (
@@ -118,7 +120,9 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             rowSpan={2}
                         >
                             <ContentBox>
-                                <Heading>{bedpres.title}</Heading>
+                                <Heading mb="0.2em" size="2xl">
+                                    {bedpres.title}
+                                </Heading>
                                 <Divider my=".5em" />
                                 <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>
