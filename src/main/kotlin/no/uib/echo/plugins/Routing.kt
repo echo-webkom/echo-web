@@ -7,6 +7,8 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
+import no.uib.echo.Response
+import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.deleteBedpres
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistration
@@ -68,12 +70,12 @@ object Routing {
                 val registration = call.receive<RegistrationJson>()
 
                 if (!registration.email.contains('@')) {
-                    call.respond(HttpStatusCode.BadRequest, "Email is not valid.")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail))
                     return@post
                 }
 
                 if (registration.degreeYear !in 1..5) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear))
                     return@post
                 }
 
@@ -81,45 +83,45 @@ object Routing {
                         registration.degree == Degree.DSIK ||
                         registration.degree == Degree.DVIT ||
                         registration.degree == Degree.BINF ||
-                        registration.degree == Degree.IMØ ||
+                        registration.degree == Degree.IMO ||
                         registration.degree == Degree.IKT ||
                         registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ÅRMNINF) && registration.degreeYear !in 1..3
+                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (bachelor).")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchBachelor))
                     return@post
                 }
 
                 if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (master).")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster))
                     return@post
                 }
 
-                if (registration.degree == Degree.ÅRMNINF && registration.degreeYear != 1) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (ÅRMNINF).")
+                if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchArmninf))
                     return@post
                 }
 
                 if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree and degree year do not match (KOGNI).")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni))
                     return@post
                 }
 
                 if (!registration.terms) {
-                    call.respond(HttpStatusCode.BadRequest, "Terms not accepted.")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms))
                     return@post
                 }
 
                 try {
                     insertRegistration(registration)
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.UnprocessableEntity, "Registration already exists.")
+                    call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
                     return@post
                 }
 
-                call.respond(HttpStatusCode.OK, "Submitted registration.")
+                call.respond(HttpStatusCode.OK, resToJson(Response.OK))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error submitting registration.")
+                call.respond(HttpStatusCode.InternalServerError, resToJson(Response.Error))
                 System.err.println(e.printStackTrace())
             }
         }
@@ -143,7 +145,7 @@ object Routing {
                     "Registration with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
                 )
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error deleting bedpres.")
+                call.respond(HttpStatusCode.BadRequest, "Response deleting bedpres.")
                 System.err.println(e.printStackTrace())
             }
         }
@@ -165,7 +167,7 @@ object Routing {
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
+                call.respond(HttpStatusCode.BadRequest, "Response submitting bedpres.")
                 System.err.println(e.printStackTrace())
             }
         }
