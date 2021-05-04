@@ -42,6 +42,7 @@ const IndexPage = ({
                             title="Arrangementer"
                             entries={events}
                             error={eventsError}
+                            altText="Ingen kommende arrangementer :("
                             linkTo="/events"
                             type="event"
                         />
@@ -58,6 +59,7 @@ const IndexPage = ({
                         ]}
                         entries={bedpreses}
                         error={bedpresError}
+                        altText="Ingen kommende bedriftspresentasjoner :("
                         linkTo="/bedpres"
                         type="bedpres"
                     />

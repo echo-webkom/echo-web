@@ -12,11 +12,12 @@ interface Props {
     titles?: Array<string>;
     entries: Array<Event | Bedpres> | null;
     error: string | null;
+    altText?: string;
     linkTo?: string;
     type: 'event' | 'bedpres';
 }
 
-const EntryBox = ({ title, titles, entries, error, linkTo, type }: Props): JSX.Element => {
+const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Props): JSX.Element => {
     const choises = titles || [title];
     const heading = useBreakpointValue(choises); // cannot call hooks conditionally
 
@@ -28,9 +29,9 @@ const EntryBox = ({ title, titles, entries, error, linkTo, type }: Props): JSX.E
                 </Center>
             )}
             {!entries && error && <ErrorBox error={error} />}
-            {entries && !error && entries.length === 0 && (
+            {altText && entries && !error && entries.length === 0 && (
                 <Center>
-                    <Text>Ingen kommende arrangementer.</Text>
+                    <Text>{altText}</Text>
                 </Center>
             )}
             {entries && !error && entries.length !== 0 && <EntryList entries={entries} type={type} />}
@@ -55,6 +56,7 @@ EntryBox.defaultProps = {
     title: undefined,
     titles: undefined,
     linkTo: undefined,
+    altText: undefined,
 };
 
 export default EntryBox;

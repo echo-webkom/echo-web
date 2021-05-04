@@ -1,59 +1,15 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-import { Center, GridItem, Heading, SimpleGrid, Text } from '@chakra-ui/react';
-import { isFuture, isPast } from 'date-fns';
 import { Event, EventAPI } from '../../lib/api/event';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import ErrorBox from '../../components/error-box';
-import ContentBox from '../../components/content-box';
-import EntryList from '../../components/entry-list';
+import EntryOverview from '../../components/entry-overview';
 
 const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: string }): JSX.Element => {
-    const upcoming = events.filter((event: Event) => {
-        return isFuture(new Date(event.date));
-    });
-
-    const past = events
-        .filter((event: Event) => {
-            return isPast(new Date(event.date));
-        })
-        .reverse();
-
     return (
         <Layout>
             <SEO title="Arrangementer" />
-            {error && <ErrorBox error={error} />}
-            {!error && (
-                <SimpleGrid columns={[1, null, null, 2]} spacing="5">
-                    <GridItem rowStart={[2, null, null, 1]}>
-                        <ContentBox>
-                            <Center minW="0">
-                                <Heading mb="5">Tidligere</Heading>
-                            </Center>
-                            {past.length === 0 && (
-                                <Center mt="3em">
-                                    <Text fontSize="xl">Ingen tidligere arrangementer :(</Text>
-                                </Center>
-                            )}
-                            {past && <EntryList entries={past} type="event" />}
-                        </ContentBox>
-                    </GridItem>
-                    <GridItem rowStart={1}>
-                        <ContentBox>
-                            <Center minW="0">
-                                <Heading mb="5">Kommende</Heading>
-                            </Center>
-                            {upcoming.length === 0 && (
-                                <Center mt="3em">
-                                    <Text fontSize="xl">Ingen kommende arrangementer :(</Text>
-                                </Center>
-                            )}
-                            {upcoming && <EntryList entries={upcoming} type="event" />}
-                        </ContentBox>
-                    </GridItem>
-                </SimpleGrid>
-            )}
+            <EntryOverview entries={events} error={error} type="event" />
         </Layout>
     );
 };
