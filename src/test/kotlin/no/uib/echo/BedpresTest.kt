@@ -1,5 +1,6 @@
 package no.uib.echo
 
+import com.google.gson.Gson
 import io.ktor.server.testing.*
 
 import io.kotest.core.spec.style.StringSpec
@@ -19,10 +20,10 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 class BedpresTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleBedpresSlug = BedpresSlugJson(exampleBedpres.slug)
+    val gson = Gson()
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -43,7 +44,7 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "secret")
-                    setBody(bedpresToJson(exampleBedpres))
+                    setBody(gson.toJson(exampleBedpres))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.OK
@@ -58,7 +59,7 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "secret")
-                    setBody(bedpresToJson(exampleBedpres))
+                    setBody(gson.toJson(exampleBedpres))
                 }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -67,7 +68,7 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "secret")
-                    setBody(bedpresToJson(exampleBedpres.copy(spots = 123)))
+                    setBody(gson.toJson(exampleBedpres.copy(spots = 123)))
                 }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -82,7 +83,7 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "secret")
-                    setBody(bedpresToJson(exampleBedpres))
+                    setBody(gson.toJson(exampleBedpres))
                 }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -91,7 +92,7 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "secret")
-                    setBody(bedpresToJson(exampleBedpres))
+                    setBody(gson.toJson(exampleBedpres))
                 }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.Accepted
@@ -134,31 +135,11 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "feil auth header")
-                    setBody(bedpresToJson(exampleBedpres))
-                    setBody(bedpresSlugToJson(exampleBedpresSlug))
+                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleBedpresSlug))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
     }
 })
-
-/**
- * USE ONLY FOR TESTS!
- */
-fun bedpresToJson(bedpres: BedpresJson): String {
-    return """
-        {
-          "slug": "${bedpres.slug}",
-          "spots": ${bedpres.spots},
-          "registrationDate": "${bedpres.registrationDate}"
-        }
-    """.trimIndent().replace("\\s".toRegex(), "")
-}
-
-/**
- * USE ONLY FOR TESTS!
- */
-fun bedpresSlugToJson(bedpresSlug: BedpresSlugJson): String {
-    return """{ "slug": "${bedpresSlug.slug}" }"""
-}
