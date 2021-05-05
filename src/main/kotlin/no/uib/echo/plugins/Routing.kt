@@ -121,7 +121,7 @@ object Routing {
 
                 call.respond(HttpStatusCode.OK, resToJson(Response.OK))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, resToJson(Response.Error))
+                call.respond(HttpStatusCode.InternalServerError)
                 System.err.println(e.printStackTrace())
             }
         }
