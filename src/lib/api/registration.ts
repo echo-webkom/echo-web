@@ -59,17 +59,10 @@ const registrationDecoder = record({
     submitDate: string,
 });
 
-const statusDecoder = (value: Pojo): 'success' | 'warning' | 'error' | 'info' | undefined => {
-    const raw = string(value);
-    if (raw === 'success' || raw === 'warning' || raw === 'error' || raw === 'info') return raw;
-    return undefined;
-};
-
 export type Response = decodeType<typeof responseDecoder>;
 const responseDecoder = record({
     code: string,
     msg: string,
-    status: statusDecoder,
 });
 
 const registrationListDecoder = array(registrationDecoder);
@@ -77,7 +70,6 @@ const registrationListDecoder = array(registrationDecoder);
 const decodeError: Response = {
     code: 'decode-error',
     msg: 'Det har skjedd en feil.',
-    status: 'error',
 };
 
 export const RegistrationAPI = {
@@ -103,20 +95,48 @@ export const RegistrationAPI = {
         }
     },
 
-    submitRegistration: async (registration: Registration, backendHost: string): Promise<{ response: Response }> => {
+    submitRegistration: async (
+        registration: Registration,
+        backendHost: string,
+    ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data } = await axios.post(`http://${backendHost}/registration`, registration, {
+            const { data, status } = await axios.post(`http://${backendHost}/registration`, registration, {
                 headers: { 'Content-Type': 'application/json' },
+                validateStatus: (statusCode: number) => {
+                    return statusCode < 500;
+                },
             });
 
             return {
                 response: responseDecoder(data) || decodeError,
+                statusCode: status,
             };
         } catch (err) {
+            if (err.response) {
+                return {
+                    response: {
+                        code: 'internal-server-error',
+                        msg: 'Det har skjedd en feil.',
+                    },
+                    statusCode: err.reponse.status,
+                };
+            }
+            if (err.request) {
+                return {
+                    response: {
+                        code: 'no-response-error',
+                        msg: 'Det har skjedd en feil.',
+                    },
+                    statusCode: 500,
+                };
+            }
+
             return {
                 response: {
-                    ...(err?.response?.data || decodeError),
+                    code: 'request-error',
+                    msg: 'Det har skjedd en feil.',
                 },
+                statusCode: 500,
             };
         }
     },

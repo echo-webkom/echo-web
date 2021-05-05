@@ -20,7 +20,20 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { Degree, Registration, RegistrationAPI } from '../lib/api/registration';
+import { Degree, RegistrationAPI } from '../lib/api/registration';
+
+const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
+    switch (statusCode) {
+        case 200:
+            return 'success';
+        case 400:
+            return 'warning';
+        case 422:
+            return 'warning';
+        default:
+            return 'error';
+    }
+};
 
 const BedpresForm = ({
     slug,
@@ -32,8 +45,10 @@ const BedpresForm = ({
     backendHost: string;
 }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { register, handleSubmit } = useForm<Registration>();
+    const { register, handleSubmit } = useForm();
+
     const toast = useToast();
+
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
@@ -45,15 +60,17 @@ const BedpresForm = ({
         degreeYear: number;
         terms: boolean;
     }) => {
-        RegistrationAPI.submitRegistration({ ...data, slug, submitDate: '' }, backendHost).then(({ response }) => {
-            toast({
-                title: response.msg,
-                description: response?.status === 'success' ? `Du er meldt på ${title}.` : 'Vennligst prøv igjen.',
-                status: response?.status || 'error',
-                duration: 9000,
-                isClosable: true,
-            });
-        });
+        RegistrationAPI.submitRegistration({ ...data, slug, submitDate: '' }, backendHost).then(
+            ({ response, statusCode }) => {
+                toast({
+                    title: response.msg,
+                    description: statusCode === 200 ? `Du er meldt på ${title}.` : 'Vennligst prøv igjen.',
+                    status: codeToStatus(statusCode),
+                    duration: 9000,
+                    isClosable: true,
+                });
+            },
+        );
     };
 
     return (
