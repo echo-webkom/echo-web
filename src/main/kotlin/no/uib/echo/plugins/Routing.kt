@@ -113,19 +113,19 @@ object Routing {
                     return@post
                 }
 
-                try {
-                    val (regDate, regStatus) = insertRegistration(registration)
+                val (regDate, regStatus) = insertRegistration(registration)
 
-                    when (regStatus) {
-                        RegistrationStatus.ACCEPTED ->
-                            call.respond(HttpStatusCode.OK, resToJson(Response.OK))
-                        RegistrationStatus.WAITLIST ->
-                            call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
-                        RegistrationStatus.DECLINED ->
-                            call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regDate))
-                    }
-                } catch (e: Exception) {
-                    call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
+                when (regStatus) {
+                    RegistrationStatus.ACCEPTED ->
+                        call.respond(HttpStatusCode.OK, resToJson(Response.OK))
+                    RegistrationStatus.WAITLIST ->
+                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
+                    RegistrationStatus.TOO_EARLY ->
+                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regDate))
+                    RegistrationStatus.ALREADY_EXISTS ->
+                        call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
+                    RegistrationStatus.BEDPRES_DOESNT_EXIST ->
+                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist))
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)

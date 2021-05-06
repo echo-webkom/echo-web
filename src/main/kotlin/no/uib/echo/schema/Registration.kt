@@ -15,8 +15,10 @@ import org.joda.time.DateTime
 
 enum class RegistrationStatus {
     ACCEPTED,
+    ALREADY_EXISTS,
+    BEDPRES_DOESNT_EXIST,
     WAITLIST,
-    DECLINED,
+    TOO_EARLY
 }
 
 data class RegistrationJson(
@@ -101,13 +103,19 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
     return transaction {
         addLogger(StdOutSqlLogger)
 
-        val bedpres = selectBedpresBySlug(reg.slug) ?: throw Exception("bruh momentum")
+        val bedpres = selectBedpresBySlug(reg.slug)
+        if (bedpres == null)
+            return@transaction Pair(null, RegistrationStatus.BEDPRES_DOESNT_EXIST)
 
         if (DateTime(bedpres.registrationDate).isAfterNow)
-            return@transaction Pair(bedpres.registrationDate, RegistrationStatus.DECLINED)
+            return@transaction Pair(bedpres.registrationDate, RegistrationStatus.TOO_EARLY)
 
         val countRegs = Registration.select { Registration.bedpresSlug eq reg.slug }.toList()
         val waitList = countRegs.size >= bedpres.spots
+
+        val oldReg = Registration.select { Registration.email eq reg.email }.firstOrNull()
+        if (oldReg != null)
+            return@transaction Pair(null, RegistrationStatus.ALREADY_EXISTS)
 
         Registration.insert {
             it[email] = reg.email
