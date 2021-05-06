@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.adarshr.gradle.testlogger.theme.ThemeType
 
 val ktor_version: String by project
 val logback_version: String by project
@@ -15,6 +16,8 @@ plugins {
     kotlin("jvm") version "1.4.32"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.0.0"
+    id("com.adarshr.test-logger") version "3.0.0"
+
 }
 
 group = "no.uib.echo"
@@ -64,13 +67,25 @@ tasks.withType<Jar> {
 // Make tests accessible to Gradle.
 tasks.withType<Test> {
     useJUnitPlatform()
+}
 
-    testLogging {
-        events("failed", "skipped")
-        showExceptions
-        showCauses
-        showStackTraces
-    }
+testlogger {
+    theme = ThemeType.STANDARD
+    showExceptions = true
+    showStackTraces = true
+    showFullStackTraces = false
+    showCauses = true
+    slowThreshold = 2000
+    showSummary = true
+    showSimpleNames = false
+    showPassed = true
+    showSkipped = true
+    showFailed = true
+    showStandardStreams = false
+    showPassedStandardStreams = true
+    showSkippedStandardStreams = true
+    showFailedStandardStreams = true
+    logLevel = LogLevel.LIFECYCLE
 }
 
 // Use new JVM IR backend (yolo).

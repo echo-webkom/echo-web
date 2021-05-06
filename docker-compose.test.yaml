@@ -11,7 +11,7 @@ services:
       - database-test
     ports:
       - '8080:8080'
-    command: ./gradlew test --build-cache --no-rebuild --no-daemon --info
+    command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
       # The value of DEV doesn't matter.
       DEV: ja

@@ -18,6 +18,7 @@ import no.uib.echo.schema.BedpresJson
 import no.uib.echo.schema.BedpresSlugJson
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.RegistrationStatus
 import no.uib.echo.schema.ShortRegistrationJson
 import no.uib.echo.schema.deleteBedpresBySlug
 import no.uib.echo.schema.deleteRegistration
@@ -113,15 +114,15 @@ object Routing {
                 }
 
                 try {
-                    val (regDate, success) = insertRegistration(registration)
+                    val (regDate, regStatus) = insertRegistration(registration)
 
-                    if (success) {
-                        call.respond(HttpStatusCode.OK, resToJson(Response.OK))
-                    } else {
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            resToJson(Response.TooEarly, regDate)
-                        )
+                    when (regStatus) {
+                        RegistrationStatus.ACCEPTED ->
+                            call.respond(HttpStatusCode.OK, resToJson(Response.OK))
+                        RegistrationStatus.WAITLIST ->
+                            call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
+                        RegistrationStatus.DECLINED ->
+                            call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regDate))
                     }
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
@@ -168,12 +169,11 @@ object Routing {
 
             try {
                 val bedpres = call.receive<BedpresJson>()
-
                 val result = insertOrUpdateBedpres(bedpres)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Response submitting bedpres.")
+                call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
                 System.err.println(e.printStackTrace())
             }
         }

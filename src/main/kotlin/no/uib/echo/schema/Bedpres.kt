@@ -24,14 +24,20 @@ object Bedpres : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
 
-fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String> {
-    val bedpresList = transaction {
+fun selectBedpresBySlug(slug: String): BedpresJson? {
+    val bedpres = transaction {
         addLogger(StdOutSqlLogger)
 
-        Bedpres.select { Bedpres.slug eq newBedpres.slug }.toList()
+        Bedpres.select { Bedpres.slug eq slug }.firstOrNull()
     }
 
-    if (bedpresList.isEmpty()) {
+    return bedpres?.let { BedpresJson(it[Bedpres.slug], it[Bedpres.spots], it[Bedpres.registrationDate].toString()) }
+}
+
+fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String> {
+    val bedpres = selectBedpresBySlug(newBedpres.slug)
+
+    if (bedpres == null) {
         transaction {
             addLogger(StdOutSqlLogger)
 
@@ -45,13 +51,14 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
         return Pair(HttpStatusCode.OK, "Bedpres submitted.")
     }
 
-    val bedpres = bedpresList[0]
-
-    if (bedpres[Bedpres.slug] == newBedpres.slug && bedpres[Bedpres.spots] == newBedpres.spots && bedpres[Bedpres.registrationDate] == DateTime(
-            newBedpres.registrationDate
-        )
+    if (bedpres.slug == newBedpres.slug &&
+        bedpres.spots == newBedpres.spots &&
+        DateTime(bedpres.registrationDate) == DateTime(newBedpres.registrationDate)
     ) {
-        return Pair(HttpStatusCode.Accepted, "Bedpres with slug = ${newBedpres.slug} has already been submitted.")
+        return Pair(
+            HttpStatusCode.Accepted,
+            "Bedpres with slug = ${newBedpres.slug} and registrationDate = ${newBedpres.registrationDate} has already been submitted."
+        )
     }
 
     transaction {

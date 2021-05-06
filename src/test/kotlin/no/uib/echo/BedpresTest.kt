@@ -51,7 +51,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK, when the slug already exists" {
+    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK, when the slug already exists but the value for spots is different" {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -75,7 +75,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with correct payload should return ACCEPTED, when the slug already exists and the spots are the same" {
+    "PUT request on /${Routing.bedpresRoute} with correct payload should return ACCEPTED, when the slug already exists and spots and registrationDate both have the same values" {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -135,7 +135,6 @@ class BedpresTest : StringSpec({
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "feil auth header")
-                    setBody(gson.toJson(exampleBedpres))
                     setBody(gson.toJson(exampleBedpresSlug))
                 }
 
