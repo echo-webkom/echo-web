@@ -113,13 +113,19 @@ object Routing {
                 }
 
                 try {
-                    insertRegistration(registration)
+                    val (regDate, success) = insertRegistration(registration)
+
+                    if (success) {
+                        call.respond(HttpStatusCode.OK, resToJson(Response.OK))
+                    } else {
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            resToJson(Response.TooEarly, regDate)
+                        )
+                    }
                 } catch (e: Exception) {
                     call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
-                    return@post
                 }
-
-                call.respond(HttpStatusCode.OK, resToJson(Response.OK))
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
                 System.err.println(e.printStackTrace())

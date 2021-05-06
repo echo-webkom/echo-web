@@ -1,6 +1,8 @@
 package no.uib.echo
 
-data class ResponseJson(val code: Response, val msg: String)
+import org.joda.time.DateTime
+
+data class ResponseJson(val code: Response, val msg: String, val date: String?)
 
 enum class Response {
     InvalidEmail,
@@ -11,6 +13,7 @@ enum class Response {
     DegreeMismatchArmninf,
     InvalidTerms,
     AlreadySubmitted,
+    TooEarly,
     OK,
 }
 
@@ -24,6 +27,8 @@ private fun resToMsg(res: Response): String {
             return "Du må godkjenne Bedkom sine retningslinjer."
         Response.AlreadySubmitted ->
             return "Du kan ikke melde deg på flere ganger."
+        Response.TooEarly ->
+            return "Påmeldingen er ikke åpen enda."
         Response.OK ->
             return "Påmeldingen din er registrert!"
         else ->
@@ -31,6 +36,6 @@ private fun resToMsg(res: Response): String {
     }
 }
 
-fun resToJson(res: Response): ResponseJson {
-    return ResponseJson(res, resToMsg(res))
+fun resToJson(res: Response, date: DateTime? = null): ResponseJson {
+    return ResponseJson(res, resToMsg(res), date.toString())
 }

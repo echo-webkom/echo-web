@@ -47,7 +47,10 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
 
     val bedpres = bedpresList[0]
 
-    if (bedpres[Bedpres.slug] == newBedpres.slug && bedpres[Bedpres.spots] == newBedpres.spots) {
+    if (bedpres[Bedpres.slug] == newBedpres.slug && bedpres[Bedpres.spots] == newBedpres.spots && bedpres[Bedpres.registrationDate] == DateTime(
+            newBedpres.registrationDate
+        )
+    ) {
         return Pair(HttpStatusCode.Accepted, "Bedpres with slug = ${newBedpres.slug} has already been submitted.")
     }
 
@@ -56,12 +59,13 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
 
         Bedpres.update({ Bedpres.slug eq newBedpres.slug }) {
             it[spots] = newBedpres.spots
+            it[registrationDate] = DateTime(newBedpres.registrationDate)
         }
     }
 
     return Pair(
         HttpStatusCode.OK,
-        "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots}."
+        "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots} and registrationDate = ${newBedpres.registrationDate}."
     )
 }
 
