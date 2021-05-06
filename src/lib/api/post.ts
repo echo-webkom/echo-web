@@ -91,13 +91,13 @@ export const PostAPI = {
             });
 
             return {
-                posts: postListDecoder(data.data.postCollection.items),
+                posts: postListDecoder(data.data.postCollection.items) || null,
                 error: null,
             };
         } catch (error) {
             return {
                 posts: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },
@@ -131,7 +131,7 @@ export const PostAPI = {
 
             return {
                 post: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },

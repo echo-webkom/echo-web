@@ -26,6 +26,7 @@ module.exports = {
     },
     rules: {
         'no-console': 2,
+        'react/jsx-props-no-spreading': 'off',
         'linebreak-style': 'off',
         'prettier/prettier': [
             'error',

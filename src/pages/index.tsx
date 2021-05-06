@@ -78,7 +78,7 @@ const IndexPage = ({
                             </Center>
                         </ContentBox>
                         <EventBlock
-                            events={events.filter((event: Event) => isFuture(new Date(event.date)))}
+                            events={events?.filter((event: Event) => isFuture(new Date(event.date))) || null}
                             error={eventsError}
                         />
                     </Stack>
@@ -108,9 +108,9 @@ export const getStaticProps: GetStaticProps = async () => {
         props: {
             bedpreses: bedpresesResponse.bedpreses,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts?.slice(0, 3),
+            posts: postsResponse.posts?.slice(0, 3) || null,
             postsError: postsResponse.error,
-            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4),
+            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4) || null,
             eventsError: eventsResponse.error,
         },
     };
