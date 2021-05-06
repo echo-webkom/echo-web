@@ -1,6 +1,6 @@
 package no.uib.echo
 
-data class ResponseJson(val code: Response, val msg: String, val date: String?)
+data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
 
 enum class Response {
     InvalidEmail,
@@ -11,32 +11,38 @@ enum class Response {
     DegreeMismatchKogni,
     DegreeMismatchArmninf,
     AlreadySubmitted,
+    BedpresDosntExist,
     TooEarly,
     WaitList,
     OK,
 }
 
-private fun resToMsg(res: Response): String {
+private fun resToMsg(res: Response): Pair<String, String> {
+    val defaultDesc = "Vennligst prøv igjen."
+
     when (res) {
         Response.InvalidEmail ->
-            return "Vennligst skriv inn en gyldig mail."
+            return Pair("Vennligst skriv inn en gyldig mail.", "")
         Response.InvalidDegreeYear ->
-            return "Vennligst velgt et gyldig trinn."
+            return Pair("Vennligst velgt et gyldig trinn.", "")
         Response.InvalidTerms ->
-            return "Du må godkjenne Bedkom sine retningslinjer."
+            return Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
-            return "Studieretning og årstrinn stemmer ikke overens."
+            return Pair("Studieretning og årstrinn stemmer ikke overens.", defaultDesc)
         Response.AlreadySubmitted ->
-            return "Du kan ikke melde deg på flere ganger."
+            return Pair("Du er allerede påmeldt.", "Du kan ikke melde deg på flere ganger.")
         Response.TooEarly ->
-            return "Påmeldingen er ikke åpen enda."
+            return Pair("Påmeldingen er ikke åpen enda.", "Vennligst vent.")
         Response.WaitList ->
-            return "Plassene er fylt opp, men du har blitt satt på venteliste."
+            return Pair("Plassene er dessverre fylt opp...", "Du har blitt satt på venteliste.")
+        Response.BedpresDosntExist ->
+            return Pair("Denne bedpres'en finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
         Response.OK ->
-            return "Påmeldingen din er registrert!"
+            return Pair("Påmeldingen din er registrert!", "")
     }
 }
 
 fun resToJson(res: Response, date: String? = null): ResponseJson {
-    return ResponseJson(res, resToMsg(res), date)
+    val (title, desc) = resToMsg(res)
+    return ResponseJson(res, title, desc, date)
 }

@@ -10,7 +10,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      # The value of DEV doesn't matter.
+      # The value of DEV doesn't matter, only that it's defined.
       DEV: ja
       DATABASE_HOST: database
       AUTH_KEY: hemmelig

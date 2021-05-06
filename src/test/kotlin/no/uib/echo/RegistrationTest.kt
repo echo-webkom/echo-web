@@ -69,7 +69,8 @@ class RegistrationTest : StringSpec({
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.OK
-            res.msg shouldBe "Påmeldingen din er registrert!"
+            res.title shouldBe "Påmeldingen din er registrert!"
+            res.desc shouldBe ""
 
             val submitMasterRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -85,7 +86,8 @@ class RegistrationTest : StringSpec({
             submitMasterRegCall.response.status() shouldBe HttpStatusCode.OK
             val masterRes = gson.fromJson(submitMasterRegCall.response.content, ResponseJson::class.java)
             masterRes.code shouldBe Response.OK
-            masterRes.msg shouldBe "Påmeldingen din er registrert!"
+            masterRes.title shouldBe "Påmeldingen din er registrert!"
+            masterRes.desc shouldBe ""
 
             val submitKogniRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -100,8 +102,8 @@ class RegistrationTest : StringSpec({
 
             submitKogniRegCall.response.status() shouldBe HttpStatusCode.OK
             val kogniRes = gson.fromJson(submitKogniRegCall.response.content, ResponseJson::class.java)
-            kogniRes.code shouldBe Response.OK
-            kogniRes.msg shouldBe "Påmeldingen din er registrert!"
+            kogniRes.title shouldBe "Påmeldingen din er registrert!"
+            kogniRes.desc shouldBe ""
 
             val submitArmninfRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -117,7 +119,8 @@ class RegistrationTest : StringSpec({
             submitArmninfRegCall.response.status() shouldBe HttpStatusCode.OK
             val armninfRes = gson.fromJson(submitArmninfRegCall.response.content, ResponseJson::class.java)
             armninfRes.code shouldBe Response.OK
-            armninfRes.msg shouldBe "Påmeldingen din er registrert!"
+            armninfRes.title shouldBe "Påmeldingen din er registrert!"
+            armninfRes.desc shouldBe ""
         }
     }
 
@@ -137,7 +140,8 @@ class RegistrationTest : StringSpec({
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.OK
-            res.msg shouldBe "Påmeldingen din er registrert!"
+            res.title shouldBe "Påmeldingen din er registrert!"
+            res.desc shouldBe ""
 
             val submitRegAgainCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -148,7 +152,8 @@ class RegistrationTest : StringSpec({
             submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
             val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
             resAgain.code shouldBe Response.AlreadySubmitted
-            resAgain.msg shouldBe "Du kan ikke melde deg på flere ganger."
+            resAgain.title shouldBe "Du er allerede påmeldt."
+            resAgain.desc shouldBe "Du kan ikke melde deg på flere ganger."
         }
     }
 
@@ -166,7 +171,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.InvalidEmail
-            res.msg shouldBe "Vennligst skriv inn en gyldig mail."
+            res.title shouldBe "Vennligst skriv inn en gyldig mail."
+            res.desc shouldBe ""
         }
     }
 
@@ -184,7 +190,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.InvalidDegreeYear
-            res.msg shouldBe "Vennligst velgt et gyldig trinn."
+            res.title shouldBe "Vennligst velgt et gyldig trinn."
+            res.desc shouldBe ""
         }
     }
 
@@ -202,7 +209,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.InvalidDegreeYear
-            res.msg shouldBe "Vennligst velgt et gyldig trinn."
+            res.title shouldBe "Vennligst velgt et gyldig trinn."
+            res.desc shouldBe ""
         }
     }
 
@@ -220,8 +228,8 @@ class RegistrationTest : StringSpec({
 
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-            res.code shouldBe Response.DegreeMismatchBachelor
-            res.msg shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.desc shouldBe "Vennligst prøv igjen."
         }
     }
 
@@ -239,7 +247,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.DegreeMismatchMaster
-            res.msg shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.desc shouldBe "Vennligst prøv igjen."
         }
     }
 
@@ -257,7 +266,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.DegreeMismatchKogni
-            res.msg shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.desc shouldBe "Vennligst prøv igjen."
         }
     }
 
@@ -275,7 +285,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.DegreeMismatchArmninf
-            res.msg shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+            res.desc shouldBe "Vennligst prøv igjen."
         }
     }
 
@@ -293,7 +304,8 @@ class RegistrationTest : StringSpec({
             testCall.response.status() shouldBe HttpStatusCode.BadRequest
             val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.InvalidTerms
-            res.msg shouldBe "Du må godkjenne Bedkom sine retningslinjer."
+            res.title shouldBe "Du må godkjenne Bedkom sine retningslinjer."
+            res.desc shouldBe "Vennligst prøv igjen."
         }
     }
 
@@ -329,7 +341,8 @@ class RegistrationTest : StringSpec({
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.OK
-                res.msg shouldBe "Påmeldingen din er registrert!"
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe ""
             }
 
             for (i in 1..2) {
@@ -342,7 +355,8 @@ class RegistrationTest : StringSpec({
                 submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
                 val res = gson.fromJson(submitRegWaitlistCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.WaitList
-                res.msg shouldBe "Plassene er fylt opp, men du har blitt satt på venteliste."
+                res.title shouldBe "Plassene er dessverre fylt opp..."
+                res.desc shouldBe "Du har blitt satt på venteliste."
             }
         }
     }

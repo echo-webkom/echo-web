@@ -1,3 +1,4 @@
+# We use OpenJDK 8 since Heroku uses it by default.
 # Download Gradle wrapper and install dependencies.
 FROM openjdk:8-jdk-buster as deps
 
