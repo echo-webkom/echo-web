@@ -1,7 +1,7 @@
 import React from 'react';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import { format, differenceInMilliseconds, parseISO } from 'date-fns';
+import { format, isFuture, isPast, differenceInMilliseconds, parseISO } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -105,13 +105,18 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && (
-                                <Center my="3">
+                            {!bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
+                                <Center data-testid="bedpres-not-open" my="3">
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && (
+                            {bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
                                 <BedpresForm slug={bedpres.slug} title={bedpres.title} backendHost={backendHost} />
+                            )}
+                            {isPast(parseISO(bedpres.date)) && (
+                                <Center my="3" data-testid="bedpres-has-been">
+                                    <Text>Påmeldingen er stengt.</Text>
+                                </Center>
                             )}
                             <Divider my=".5em" />
                             <Center>

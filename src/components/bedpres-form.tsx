@@ -16,6 +16,7 @@ import {
     RadioGroup,
     VStack,
     Select,
+    Box,
     Checkbox,
     useToast,
 } from '@chakra-ui/react';
@@ -89,7 +90,7 @@ const BedpresForm = ({
     };
 
     return (
-        <>
+        <Box data-testid="bedpres-form">
             <Button w="100%" colorScheme="teal" onClick={onOpen}>
                 Påmelding
             </Button>
@@ -180,7 +181,7 @@ const BedpresForm = ({
                     </form>
                 </ModalContent>
             </Modal>
-        </>
+        </Box>
     );
 };
 
