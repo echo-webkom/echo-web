@@ -1,5 +1,6 @@
 package no.uib.echo.schema
 
+import no.uib.echo.schema.Bedpres.registrationDate
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
@@ -88,9 +89,17 @@ fun selectRegistrations(
     })
 }
 
-fun insertRegistration(reg: RegistrationJson) {
-    transaction {
+fun insertRegistration(reg: RegistrationJson): Pair<DateTime?, Boolean> {
+    return transaction {
         addLogger(StdOutSqlLogger)
+
+        val result = Bedpres.select { Bedpres.slug eq reg.slug }.toList()
+        val bedpres = result.getOrNull(0) ?: throw Exception("bruh momentum")
+
+        if (bedpres[registrationDate].isAfterNow)
+            return@transaction Pair(
+                bedpres[registrationDate], false
+            )
 
         Registration.insert {
             it[email] = reg.email
@@ -101,6 +110,8 @@ fun insertRegistration(reg: RegistrationJson) {
             it[bedpresSlug] = reg.slug
             it[terms] = reg.terms
         }
+
+        return@transaction Pair(null, true)
     }
 }
 

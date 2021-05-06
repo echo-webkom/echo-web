@@ -2,13 +2,14 @@
 
 host=http://echo-web-backend.herokuapp.com
 
-while getopts zp:s:o:x: flag
+while getopts zp:s:o:r:x: flag
 do
     case "${flag}" in
         z) host=http://localhost;;
         p) port=${OPTARG};;
         s) slug=${OPTARG};;
         o) spots=${OPTARG};;
+        r) regdate=${OPTARG};;
         x) secret=${OPTARG};;
     esac
 done
@@ -32,12 +33,14 @@ elif [ -z ${slug+x} ]; then
 elif [ -z ${spots+x} ]; then
     echo "Spots not defined (use -o)";
     exit 1;
+elif [ -z ${regdate+x} ]; then
+    echo "RegistrationDate not defined (use -r)";
 else
     curl --verbose \
     -X PUT \
     -H "Authorization: $secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
-    -d '{ "slug": "'${slug}'", "spots": '${spots}' }' \
+    -d '{ "slug": "'${slug}'", "spots": '${spots}', "registrationDate": "'${regdate}'" }' \
     $host:$port/bedpres;
 fi
