@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import { SimpleGrid, Stack, GridItem } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import getRssXML from '../lib/generateRssFeed';
+import getRssXML from '../lib/generate-rss-feed';
 import Layout from '../components/layout';
 
 import SEO from '../components/seo';
