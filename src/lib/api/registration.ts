@@ -1,4 +1,4 @@
-import { Pojo, array, boolean, record, string, number, decodeType } from 'typescript-json-decoder';
+import { Pojo, array, boolean, record, string, number, decodeType, union, nil } from 'typescript-json-decoder';
 import axios from 'axios';
 
 export enum Degree {
@@ -63,6 +63,7 @@ export type Response = decodeType<typeof responseDecoder>;
 const responseDecoder = record({
     code: string,
     msg: string,
+    date: union(string, nil),
 });
 
 const registrationListDecoder = array(registrationDecoder);
@@ -70,6 +71,7 @@ const registrationListDecoder = array(registrationDecoder);
 const decodeError: Response = {
     code: 'decode-error',
     msg: 'Det har skjedd en feil.',
+    date: null,
 };
 
 export const RegistrationAPI = {
@@ -117,6 +119,7 @@ export const RegistrationAPI = {
                     response: {
                         code: 'internal-server-error',
                         msg: 'Det har skjedd en feil.',
+                        date: null,
                     },
                     statusCode: err.reponse.status,
                 };
@@ -126,6 +129,7 @@ export const RegistrationAPI = {
                     response: {
                         code: 'no-response-error',
                         msg: 'Det har skjedd en feil.',
+                        date: null,
                     },
                     statusCode: 500,
                 };
@@ -135,6 +139,7 @@ export const RegistrationAPI = {
                 response: {
                     code: 'request-error',
                     msg: 'Det har skjedd en feil.',
+                    date: null,
                 },
                 statusCode: 500,
             };

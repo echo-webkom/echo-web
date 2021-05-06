@@ -14,6 +14,7 @@ import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
 import {
+    Button,
     Heading,
     Table,
     Thead,
@@ -27,6 +28,7 @@ import {
     GridItem,
     Divider,
     Center,
+    useToast,
     LinkBox,
     LinkOverlay,
     Icon,
@@ -64,6 +66,7 @@ const BedpresPage = ({
     useTimeout(() => {
         router.replace(router.asPath);
     }, time);
+    const toast = useToast();
 
     return (
         <Layout>
@@ -138,6 +141,28 @@ const BedpresPage = ({
                             >
                                 <ContentBox>
                                     <Heading mb=".75rem">Påmeldte</Heading>
+                                    <Button
+                                        my="1rem"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(
+                                                registrations
+                                                    .map((reg: Registration) => {
+                                                        return reg.email;
+                                                    })
+                                                    .reduce((acc: string, email: string) => {
+                                                        return `${acc}\n${email}`;
+                                                    }),
+                                            );
+                                            toast({
+                                                title: 'Mailer kopiert til utklippstavlen!',
+                                                status: 'info',
+                                                duration: 5000,
+                                                isClosable: true,
+                                            });
+                                        }}
+                                    >
+                                        Kopier mailer
+                                    </Button>
                                     <Table variant="simple">
                                         <Thead>
                                             <Tr>

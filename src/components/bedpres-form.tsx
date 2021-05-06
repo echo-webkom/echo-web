@@ -20,6 +20,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { format, parseISO } from 'date-fns';
 import { Degree, RegistrationAPI } from '../lib/api/registration';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
@@ -28,10 +29,24 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
             return 'success';
         case 400:
             return 'warning';
+        case 403:
+            return 'warning';
         case 422:
             return 'warning';
         default:
             return 'error';
+    }
+};
+
+const codeToDesc = (statusCode: number, title: string, date: string | null): string => {
+    switch (statusCode) {
+        case 200:
+            return `Du er meldt på ${title}`;
+        case 403:
+            if (date) return `Den åpner ${format(parseISO(date), 'dd.MM kk:mm:ss')}.`;
+            return 'Vennligst vent.';
+        default:
+            return 'Vennligst prøv igjen.';
     }
 };
 
@@ -64,7 +79,7 @@ const BedpresForm = ({
             ({ response, statusCode }) => {
                 toast({
                     title: response.msg,
-                    description: statusCode === 200 ? `Du er meldt på ${title}.` : 'Vennligst prøv igjen.',
+                    description: codeToDesc(statusCode, title, response?.date),
                     status: codeToStatus(statusCode),
                     duration: 9000,
                     isClosable: true,
