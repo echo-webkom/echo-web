@@ -37,9 +37,9 @@
         "prop-types": "15.7.2",
         "react": "17.0.2",
         "react-dom": "17.0.2",
-        "react-hook-form": "^7.3.4",
+        "react-hook-form": "7.3.4",
         "react-icons": "4.2.0",
-        "remove-markdown": "^0.3.0",
+        "remove-markdown": "0.3.0",
         "typescript-json-decoder": "1.0.3"
     },
     "devDependencies": {
@@ -52,7 +52,7 @@
         "@types/node": "14.14.43",
         "@types/nprogress": "0.2.0",
         "@types/react": "17.0.4",
-        "@types/remove-markdown": "^0.3.0",
+        "@types/remove-markdown": "0.3.0",
         "@typescript-eslint/eslint-plugin": "4.22.0",
         "@typescript-eslint/parser": "4.22.0",
         "babel-jest": "26.6.3",
