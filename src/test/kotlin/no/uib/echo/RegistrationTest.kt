@@ -319,11 +319,11 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            for (i in 1..6) {
+            for (i in 1..5) {
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleReg1.copy(email = "test${i}@test.com")))
+                        setBody(gson.toJson(exampleReg1.copy(email = "tesadasdt${i}@test.com")))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK

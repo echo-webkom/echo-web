@@ -107,7 +107,7 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
             return@transaction Pair(bedpres.registrationDate, RegistrationStatus.DECLINED)
 
         val countRegs = Registration.select { Registration.bedpresSlug eq reg.slug }.toList()
-        val waitList = countRegs.size > bedpres.spots
+        val waitList = countRegs.size >= bedpres.spots
 
         Registration.insert {
             it[email] = reg.email
