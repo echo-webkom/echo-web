@@ -91,9 +91,9 @@ export const getStaticProps: GetStaticProps = async () => {
                     })
                     .slice(0, 3) || null,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts?.slice(0, 3),
+            posts: postsResponse.posts?.slice(0, 3) || null,
             postsError: postsResponse.error,
-            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4),
+            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4) || null,
             eventsError: eventsResponse.error,
         },
     };

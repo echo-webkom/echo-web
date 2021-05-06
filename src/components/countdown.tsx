@@ -3,7 +3,7 @@ import { Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useCountdown } from '../lib/hooks';
 
-const Countdown = ({ date }: { date: Date }) => {
+const Countdown = ({ date }: { date: Date }): JSX.Element => {
     const { hours, minutes, seconds } = useCountdown(date);
 
     if (hours > 23) {
