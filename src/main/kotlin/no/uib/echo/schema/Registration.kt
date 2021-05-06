@@ -1,6 +1,5 @@
 package no.uib.echo.schema
 
-import no.uib.echo.schema.Bedpres.registrationDate
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
@@ -14,6 +13,12 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
+enum class RegistrationStatus {
+    ACCEPTED,
+    WAITLIST,
+    DECLINED,
+}
+
 data class RegistrationJson(
     val email: String,
     val firstName: String,
@@ -22,7 +27,8 @@ data class RegistrationJson(
     val degreeYear: Int,
     val slug: String,
     val terms: Boolean,
-    val submitDate: String?
+    val submitDate: String?,
+    val waitList: Boolean
 )
 
 data class ShortRegistrationJson(val slug: String, val email: String)
@@ -36,6 +42,7 @@ object Registration : Table() {
     val bedpresSlug: Column<String> = varchar("bedpresSlug", 40) references Bedpres.slug
     val terms: Column<Boolean> = bool("terms")
     val submitDate: Column<DateTime> = datetime("submitDate").defaultExpression(CurrentDateTime())
+    val waitList: Column<Boolean> = bool("waitList")
 
     override val primaryKey: PrimaryKey = PrimaryKey(email, bedpresSlug)
 }
@@ -84,22 +91,23 @@ fun selectRegistrations(
             reg[Registration.degreeYear],
             reg[Registration.bedpresSlug],
             reg[Registration.terms],
-            reg[Registration.submitDate].toString()
+            reg[Registration.submitDate].toString(),
+            reg[Registration.waitList]
         )
     })
 }
 
-fun insertRegistration(reg: RegistrationJson): Pair<DateTime?, Boolean> {
+fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus> {
     return transaction {
         addLogger(StdOutSqlLogger)
 
-        val result = Bedpres.select { Bedpres.slug eq reg.slug }.toList()
-        val bedpres = result.getOrNull(0) ?: throw Exception("bruh momentum")
+        val bedpres = selectBedpresBySlug(reg.slug) ?: throw Exception("bruh momentum")
 
-        if (bedpres[registrationDate].isAfterNow)
-            return@transaction Pair(
-                bedpres[registrationDate], false
-            )
+        if (DateTime(bedpres.registrationDate).isAfterNow)
+            return@transaction Pair(bedpres.registrationDate, RegistrationStatus.DECLINED)
+
+        val countRegs = Registration.select { Registration.bedpresSlug eq reg.slug }.toList()
+        val waitList = countRegs.size > bedpres.spots
 
         Registration.insert {
             it[email] = reg.email
@@ -109,9 +117,10 @@ fun insertRegistration(reg: RegistrationJson): Pair<DateTime?, Boolean> {
             it[degreeYear] = reg.degreeYear
             it[bedpresSlug] = reg.slug
             it[terms] = reg.terms
+            it[Registration.waitList] = waitList
         }
 
-        return@transaction Pair(null, true)
+        return@transaction Pair(null, if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED)
     }
 }
 

@@ -24,9 +24,9 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class RegistrationTest : StringSpec({
-    val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
+    val exampleBedpres = BedpresJson("bedpres-med-noen", 5, "2020-04-29T20:43:29Z")
     val exampleReg1 = RegistrationJson(
-        "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null
+        "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null, false
     )
 
     val gson = Gson()
@@ -309,6 +309,41 @@ class RegistrationTest : StringSpec({
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
+        }
+    }
+
+    """
+    POST request on /${Routing.registrationRoute} with valid payloads should return OK for the first two requests,
+    and ACCEPTED for the next request if the bedpres has two spots.
+    """ {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            for (i in 1..6) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleReg1.copy(email = "test${i}@test.com")))
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.msg shouldBe "Påmeldingen din er registrert!"
+            }
+
+            for (i in 1..2) {
+                val submitRegWaitlistCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleReg1.copy(email = "takadhasdh${i}@test.com")))
+                    }
+
+                submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
+                val res = gson.fromJson(submitRegWaitlistCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.WaitList
+                res.msg shouldBe "Plassene er fylt opp, men du har blitt satt på venteliste."
+            }
         }
     }
 })
