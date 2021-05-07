@@ -13,6 +13,7 @@ import {
     FormLabel,
     Input,
     Radio,
+    Text,
     RadioGroup,
     VStack,
     Select,
@@ -78,9 +79,22 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
         lastName: string;
         degree: Degree;
         degreeYear: number;
-        terms: boolean;
+        terms1: boolean;
+        terms2: boolean;
+        terms3: boolean;
     }) => {
-        RegistrationAPI.submitRegistration({ ...data, slug }, backendHost).then(({ response, statusCode }) => {
+        RegistrationAPI.submitRegistration(
+            {
+                email: data.email,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                degree: data.degree,
+                degreeYear: data.degreeYear,
+                slug,
+                terms: data.terms1 && data.terms2 && data.terms3,
+            },
+            backendHost,
+        ).then(({ response, statusCode }) => {
             toast({
                 title: response.title,
                 description: response.desc,
@@ -99,7 +113,7 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
 
             <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent mx="2">
+                <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <form onSubmit={handleSubmit(submitForm)}>
                         <ModalHeader>Påmelding</ModalHeader>
                         <ModalCloseButton />
@@ -166,10 +180,30 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
                                         </VStack>
                                     </RadioGroup>
                                 </FormControl>
-                                <FormControl id="terms" isRequired>
-                                    <FormLabel>Bedkom Terms of Service</FormLabel>
-                                    <Checkbox {...register('terms')}>
-                                        Jeg godkjenner retningslinjene til Bedkom.
+                                <FormControl id="terms1" isRequired>
+                                    <FormLabel>Bekreft</FormLabel>
+                                    <Checkbox {...register('terms1')}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            Jeg bekrefter at jeg har valgt riktig årstrinn.
+                                        </Text>
+                                    </Checkbox>
+                                </FormControl>
+                                <FormControl id="terms2" isRequired>
+                                    <FormLabel>Bekreft</FormLabel>
+                                    <Checkbox {...register('terms2')}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli utestengt
+                                            fra fremtidige bedriftspresentasjoner.
+                                        </Text>
+                                    </Checkbox>
+                                </FormControl>
+                                <FormControl id="terms3" isRequired>
+                                    <FormLabel>Bekreft</FormLabel>
+                                    <Checkbox {...register('terms3')}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            Jeg er klar over at jeg må melde meg av innen 48 timer før
+                                            bedriftspresentasjonen starter dersom jeg ikke har mulighet til å delta.
+                                        </Text>
                                     </Checkbox>
                                 </FormControl>
                             </VStack>
