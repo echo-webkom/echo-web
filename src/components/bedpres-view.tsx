@@ -1,12 +1,14 @@
 import React from 'react';
-import { Button, Heading, Table, Thead, Tbody, Tr, Th, Td, useToast } from '@chakra-ui/react';
-import { format, parseISO } from 'date-fns';
+import { Button, Heading, Table, Thead, Tbody, Tr, Th, Td, useToast, useBreakpointValue } from '@chakra-ui/react';
+import { format, parseISO, compareAsc } from 'date-fns';
 
 import ContentBox from './content-box';
 import { Registration } from '../lib/api/registration';
 
 const BedpresView = ({ registrations }: { registrations: Array<Registration> }): JSX.Element => {
     const toast = useToast();
+    const tbSize = useBreakpointValue(['sm', null, null, 'md']) || 'md';
+    registrations.sort((fst, snd) => compareAsc(parseISO(fst.submitDate), parseISO(snd.submitDate)));
 
     return (
         <ContentBox>
@@ -33,7 +35,7 @@ const BedpresView = ({ registrations }: { registrations: Array<Registration> }):
             >
                 Kopier mailer
             </Button>
-            <Table variant="simple">
+            <Table variant="simple" size={tbSize}>
                 <Thead>
                     <Tr>
                         <Th>Email</Th>
