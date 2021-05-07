@@ -103,9 +103,8 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
     return transaction {
         addLogger(StdOutSqlLogger)
 
-        val bedpres = selectBedpresBySlug(reg.slug)
-        if (bedpres == null)
-            return@transaction Pair(null, RegistrationStatus.BEDPRES_DOESNT_EXIST)
+        val bedpres =
+            selectBedpresBySlug(reg.slug) ?: return@transaction Pair(null, RegistrationStatus.BEDPRES_DOESNT_EXIST)
 
         if (DateTime(bedpres.registrationDate).isAfterNow)
             return@transaction Pair(bedpres.registrationDate, RegistrationStatus.TOO_EARLY)

@@ -2,41 +2,41 @@
 
 host=https://echo-web-backend.herokuapp.com
 
-while getopts zp:e:s:x: flag
-do
-    case "${flag}" in
-        z) host=http://localhost;;
-        p) port=${OPTARG};;
-        e) email=${OPTARG};;
-        s) slug=${OPTARG};;
-        x) secret=${OPTARG};
-    esac
+while getopts zp:e:s:x: flag; do
+  case "${flag}" in
+  z) host=http://localhost ;;
+  p) port=${OPTARG} ;;
+  e) email=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
 done
 
 if [ -z ${secret+x} ]; then
-    echo "No authorization header specified (use -x)."
-    exit 1;
+  echo "No authorization header specified (use -x)."
+  exit 1
 fi
 
 if [ -z ${port+x} ]; then
-    echo "Port not defined (use -p)";
-    exit 1;
+  echo "Port not defined (use -p)"
+  exit 1
 fi
 
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
-    curl --verbose \
+  curl --verbose \
     -H "Authorization: $secret" \
     $host:$port/registration
 elif [ -z ${slug+x} ]; then
-    curl --verbose \
+  curl --verbose \
     -H "Authorization: $secret" \
     $host:$port/registration?email=$email
 elif [ -z ${email+x} ]; then
-    curl --verbose \
+  curl --verbose \
     -H "Authorization: $secret" \
     "$host:$port/registration?slug=$slug"
 else
-    curl --verbose \
+  curl --verbose \
     -H "Authorization: $secret" \
     "$host:$port/registration?email=$email&slug=$slug"
 fi

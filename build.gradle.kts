@@ -7,6 +7,7 @@ val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
 val kotest_version: String by project
+val ktor_rate_limit_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
@@ -29,6 +30,7 @@ application {
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
@@ -46,6 +48,8 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
 
     implementation("com.zaxxer:HikariCP:$hikari_version")
+
+    implementation("guru.zoroark:ktor-rate-limit:$ktor_rate_limit_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 

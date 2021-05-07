@@ -1,5 +1,7 @@
 package no.uib.echo.plugins
 
+import guru.zoroark.ratelimit.RateLimit
+import guru.zoroark.ratelimit.rateLimited
 import io.ktor.routing.*
 import io.ktor.application.*
 import io.ktor.gson.*
@@ -31,13 +33,19 @@ fun Application.configureRouting(authKey: String) {
         gson()
     }
 
-    routing {
-        getRegistration(authKey)
-        postRegistration()
-        deleteRegistration(authKey)
+    install(RateLimit) {
+        limit = 200
+    }
 
-        putBedpres(authKey)
-        deleteBedpres(authKey)
+    routing {
+        rateLimited {
+            getRegistration(authKey)
+            postRegistration()
+            deleteRegistration(authKey)
+
+            putBedpres(authKey)
+            deleteBedpres(authKey)
+        }
     }
 }
 
@@ -129,7 +137,7 @@ object Routing {
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
-                System.err.println(e.printStackTrace())
+                e.printStackTrace()
             }
         }
     }
@@ -152,8 +160,8 @@ object Routing {
                     "Registration with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
                 )
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Response deleting bedpres.")
-                System.err.println(e.printStackTrace())
+                call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
+                e.printStackTrace()
             }
         }
     }
@@ -173,8 +181,8 @@ object Routing {
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
-                System.err.println(e.printStackTrace())
+                call.respond(HttpStatusCode.InternalServerError, "Error submitting bedpres.")
+                e.printStackTrace()
             }
         }
     }

@@ -2,25 +2,25 @@
 
 host=http://echo-web-backend.herokuapp.com
 
-while getopts zp:e:f:l:d:y:s:t: flag
-do
-    case "${flag}" in
-        z) host=http://localhost;;
-        p) port=${OPTARG};;
-        e) email=${OPTARG};;
-        f) firstName=${OPTARG};;
-        l) lastName=${OPTARG};;
-        d) degree=${OPTARG};;
-        y) degree_year=${OPTARG};;
-        s) slug=${OPTARG};;
-        t) terms=${OPTARG};;
-    esac
+while getopts zp:e:f:l:d:y:s:t: flag; do
+  case "${flag}" in
+  z) host=http://localhost ;;
+  p) port=${OPTARG} ;;
+  e) email=${OPTARG} ;;
+  f) firstName=${OPTARG} ;;
+  l) lastName=${OPTARG} ;;
+  d) degree=${OPTARG} ;;
+  y) degree_year=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  t) terms=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
 done
 
-if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${degree_year+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ] ; then
-    echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -y for degree year, -s for slug, -t for terms";
+if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${degree_year+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ]; then
+  echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -y for degree year, -s for slug, -t for terms"
 else
-    curl --verbose \
+  curl --verbose \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "email": "'${email}'",
@@ -30,5 +30,5 @@ else
           "degreeYear": '${degree_year}',
           "slug": "'${slug}'",
           "terms": '${terms}' }' \
-    $host:$port/registration;
+    $host:$port/registration
 fi
