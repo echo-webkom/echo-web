@@ -30,11 +30,13 @@ import Countdown from '../../components/countdown';
 const BedpresPage = ({
     bedpres,
     registrations,
+    spotsTaken,
     backendHost,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
+    spotsTaken: number | null;
     backendHost: string;
     error: string;
 }): JSX.Element => {
@@ -74,7 +76,11 @@ const BedpresPage = ({
                                     </Link>
                                 </NextLink>
                                 <Icon as={MdEventSeat} boxSize={10} />
-                                <Text>{bedpres.spots} plasser</Text>
+                                <Text>
+                                    {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
+                                        (!spotsTaken && `${bedpres.spots}`)}{' '}
+                                    plasser
+                                </Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
                                 <Icon as={RiTimeLine} boxSize={10} />
@@ -143,13 +149,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
     const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
-    const authKey = process.env.BACKEND_AUTH_KEY;
+    const authKey = process.env.BACKEND_AUTH_KEY || '';
     const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
 
     if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
 
-    const { registrations } = await RegistrationAPI.getRegistrations(authKey || '', slug, backendHost);
+    const { registrations } = await RegistrationAPI.getRegistrations(authKey, slug, backendHost);
     const realReg = showAdmin ? registrations || [] : [];
+    const spotsTaken = registrations?.length;
 
     if (error === '404') {
         return {
@@ -161,6 +168,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         props: {
             bedpres,
             registrations: realReg,
+            spotsTaken,
             backendHost,
             error,
         },
