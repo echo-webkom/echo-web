@@ -99,7 +99,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with incorrect payload should return BAD_REQUEST" {
+    "PUT request on /${Routing.bedpresRoute} with incorrect payload should return INTERNAL_SERVER_ERROR" {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -110,7 +110,7 @@ class BedpresTest : StringSpec({
                     setBody("""{ "spots": 69, "registrationDate": "2021-04-29T20:43:29Z" }""")
                 }
 
-            testCall.response.status() shouldBe HttpStatusCode.BadRequest
+            testCall.response.status() shouldBe HttpStatusCode.InternalServerError
         }
     }
 

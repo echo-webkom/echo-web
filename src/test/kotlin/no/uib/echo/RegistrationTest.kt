@@ -25,7 +25,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class RegistrationTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 5, "2020-04-29T20:43:29Z")
-    val exampleReg1 = RegistrationJson(
+    val exampleReg = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null, false
     )
 
@@ -60,67 +60,34 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val submitRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    setBody(gson.toJson(exampleReg1))
-                }
+            val regs = listOf(
+                Pair(Degree.DTEK, 2),
+                Pair(Degree.INF, 4),
+                Pair(Degree.ARMNINF, 1),
+                Pair(Degree.KOGNI, 3)
+            )
 
-            submitRegCall.response.status() shouldBe HttpStatusCode.OK
-            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
-            res.code shouldBe Response.OK
-            res.title shouldBe "Påmeldingen din er registrert!"
-            res.desc shouldBe ""
+            for ((index, reg) in regs.withIndex()) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    degree = reg.first,
+                                    degreeYear = reg.second,
+                                    email = "test${index}@test.com"
+                                )
+                            )
+                        )
+                    }
 
-            val submitMasterRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    val validMaster = exampleReg1.copy(
-                        degree = Degree.INF,
-                        degreeYear = 4,
-                        email = "masterboi@lol.com"
-                    )
-                    setBody(gson.toJson(validMaster))
-                }
-
-            submitMasterRegCall.response.status() shouldBe HttpStatusCode.OK
-            val masterRes = gson.fromJson(submitMasterRegCall.response.content, ResponseJson::class.java)
-            masterRes.code shouldBe Response.OK
-            masterRes.title shouldBe "Påmeldingen din er registrert!"
-            masterRes.desc shouldBe ""
-
-            val submitKogniRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    val validKogni = exampleReg1.copy(
-                        degree = Degree.KOGNI,
-                        degreeYear = 3,
-                        email = "kogni@bruh.com"
-                    )
-                    setBody(gson.toJson(validKogni))
-                }
-
-            submitKogniRegCall.response.status() shouldBe HttpStatusCode.OK
-            val kogniRes = gson.fromJson(submitKogniRegCall.response.content, ResponseJson::class.java)
-            kogniRes.title shouldBe "Påmeldingen din er registrert!"
-            kogniRes.desc shouldBe ""
-
-            val submitArmninfRegCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    val validArmninf = exampleReg1.copy(
-                        degree = Degree.ARMNINF,
-                        degreeYear = 1,
-                        email = "årinfass@100.tk"
-                    )
-                    setBody(gson.toJson(validArmninf))
-                }
-
-            submitArmninfRegCall.response.status() shouldBe HttpStatusCode.OK
-            val armninfRes = gson.fromJson(submitArmninfRegCall.response.content, ResponseJson::class.java)
-            armninfRes.code shouldBe Response.OK
-            armninfRes.title shouldBe "Påmeldingen din er registrert!"
-            armninfRes.desc shouldBe ""
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe ""
+            }
         }
     }
 
@@ -134,7 +101,7 @@ class RegistrationTest : StringSpec({
             val submitRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    setBody(gson.toJson(exampleReg1))
+                    setBody(gson.toJson(exampleReg))
                 }
 
             submitRegCall.response.status() shouldBe HttpStatusCode.OK
@@ -146,7 +113,7 @@ class RegistrationTest : StringSpec({
             val submitRegAgainCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    setBody(gson.toJson(exampleReg1))
+                    setBody(gson.toJson(exampleReg))
                 }
 
             submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
@@ -164,7 +131,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidEmail = exampleReg1.copy(email = "test_test.com")
+                    val invalidEmail = exampleReg.copy(email = "test_test.com")
                     setBody(gson.toJson(invalidEmail))
                 }
 
@@ -183,7 +150,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 0)
+                    val invalidDegreeYear = exampleReg.copy(degreeYear = 0)
                     setBody(gson.toJson(invalidDegreeYear))
                 }
 
@@ -202,7 +169,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 6)
+                    val invalidDegreeYear = exampleReg.copy(degreeYear = 6)
                     setBody(gson.toJson(invalidDegreeYear))
                 }
 
@@ -219,17 +186,31 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 4, degree = Degree.DVIT)
-                    setBody(gson.toJson(invalidDegreeYear))
-                }
+            val bachelorDegrees =
+                listOf(
+                    Degree.DTEK,
+                    Degree.DSIK,
+                    Degree.DVIT,
+                    Degree.BINF,
+                    Degree.IMO,
+                    Degree.IKT,
+                )
 
-            testCall.response.status() shouldBe HttpStatusCode.BadRequest
-            val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-            res.desc shouldBe "Vennligst prøv igjen."
+            for (deg in bachelorDegrees) {
+                for (year in 4..5) {
+                    val testCall: TestApplicationCall =
+                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                            addHeader(HttpHeaders.ContentType, "application/json")
+                            val invalidDegreeYear = exampleReg.copy(degreeYear = year, degree = deg)
+                            setBody(gson.toJson(invalidDegreeYear))
+                        }
+
+                    testCall.response.status() shouldBe HttpStatusCode.BadRequest
+                    val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                    res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+                    res.desc shouldBe "Vennligst prøv igjen."
+                }
+            }
         }
     }
 
@@ -237,18 +218,35 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting("secret")
         }) {
-            val testCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 3, degree = Degree.INF)
-                    setBody(gson.toJson(invalidDegreeYear))
-                }
+            for (i in 1..3) {
+                val testCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        val invalidDegreeYear = exampleReg.copy(degreeYear = i, degree = Degree.INF)
+                        setBody(gson.toJson(invalidDegreeYear))
+                    }
 
-            testCall.response.status() shouldBe HttpStatusCode.BadRequest
-            val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-            res.code shouldBe Response.DegreeMismatchMaster
-            res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-            res.desc shouldBe "Vennligst prøv igjen."
+                testCall.response.status() shouldBe HttpStatusCode.BadRequest
+                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.DegreeMismatchMaster
+                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+                res.desc shouldBe "Vennligst prøv igjen."
+            }
+
+            for (i in 1..3) {
+                val testCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        val invalidDegreeYear = exampleReg.copy(degreeYear = i, degree = Degree.PROG)
+                        setBody(gson.toJson(invalidDegreeYear))
+                    }
+
+                testCall.response.status() shouldBe HttpStatusCode.BadRequest
+                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.DegreeMismatchMaster
+                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+                res.desc shouldBe "Vennligst prøv igjen."
+            }
         }
     }
 
@@ -259,7 +257,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.KOGNI)
+                    val invalidDegreeYear = exampleReg.copy(degreeYear = 2, degree = Degree.KOGNI)
                     setBody(gson.toJson(invalidDegreeYear))
                 }
 
@@ -278,7 +276,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidDegreeYear = exampleReg1.copy(degreeYear = 2, degree = Degree.ARMNINF)
+                    val invalidDegreeYear = exampleReg.copy(degreeYear = 2, degree = Degree.ARMNINF)
                     setBody(gson.toJson(invalidDegreeYear))
                 }
 
@@ -297,7 +295,7 @@ class RegistrationTest : StringSpec({
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    val invalidTerms = exampleReg1.copy(terms = false)
+                    val invalidTerms = exampleReg.copy(terms = false)
                     setBody(gson.toJson(invalidTerms))
                 }
 
@@ -317,7 +315,7 @@ class RegistrationTest : StringSpec({
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(HttpHeaders.Authorization, "feil auth header")
-                    setBody(gson.toJson(exampleReg1))
+                    setBody(gson.toJson(exampleReg))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
@@ -335,7 +333,7 @@ class RegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleReg1.copy(email = "tesadasdt${i}@test.com")))
+                        setBody(gson.toJson(exampleReg.copy(email = "tesadasdt${i}@test.com")))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
@@ -349,7 +347,7 @@ class RegistrationTest : StringSpec({
                 val submitRegWaitlistCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleReg1.copy(email = "takadhasdh${i}@test.com")))
+                        setBody(gson.toJson(exampleReg.copy(email = "takadhasdh${i}@test.com")))
                     }
 
                 submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
@@ -357,6 +355,52 @@ class RegistrationTest : StringSpec({
                 res.code shouldBe Response.WaitList
                 res.title shouldBe "Plassene er dessverre fylt opp..."
                 res.desc shouldBe "Du har blitt satt på venteliste."
+            }
+        }
+    }
+
+    "POST request on ${Routing.registrationRoute} returns TOO_MANY_REQUESTS after 200 requests in under two minutes." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            for (i in 1..200) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "tajajaesadasdt${i}@test.com",
+                                    degree = Degree.PROG,
+                                    degreeYear = 1
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.BadRequest
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.DegreeMismatchMaster
+                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+                res.desc shouldBe "Vennligst prøv igjen."
+            }
+
+            for (i in 1..10) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "tajajaesadasdt${i}@test.com",
+                                    degree = Degree.PROG,
+                                    degreeYear = 1
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.TooManyRequests
             }
         }
     }

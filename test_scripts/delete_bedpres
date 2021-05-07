@@ -2,35 +2,35 @@
 
 host=http://echo-web-backend.herokuapp.com
 
-while getopts zp:s:x: flag
-do
-    case "${flag}" in
-        z) host=http://localhost;;
-        p) port=${OPTARG};;
-        s) slug=${OPTARG};;
-        x) secret=${OPTARG};;
-    esac
+while getopts zp:s:x: flag; do
+  case "${flag}" in
+  z) host=http://localhost ;;
+  p) port=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
 done
 
 if [ -z ${secret+x} ]; then
-    echo "No authorization header specified (use -x)"
-    exit 1;
+  echo "No authorization header specified (use -x)"
+  exit 1
 fi
 
 if [ -z ${port+x} ]; then
-    echo "Port not defined (use -p)";
-    exit 1;
+  echo "Port not defined (use -p)"
+  exit 1
 fi
 
 if [ -z ${slug+x} ]; then
-    echo "Slug not defined (use -s)";
-    exit 1;
+  echo "Slug not defined (use -s)"
+  exit 1
 else
-    curl --verbose \
+  curl --verbose \
     -X DELETE \
     -H "Authorization: $secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "slug": "'$slug'" }' \
-    $host:$port/bedpres;
+    $host:$port/bedpres
 fi
