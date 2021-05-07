@@ -1,0 +1,16 @@
+name: Release
+
+on:
+  pull_request:
+    types: closed
+
+jobs:
+  tag_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag latest PR to master
+        uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
