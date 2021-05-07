@@ -21,45 +21,49 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { format, parseISO } from 'date-fns';
 import { Degree, RegistrationAPI } from '../lib/api/registration';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
+        // OK
+        // The registration is submitted.
         case 200:
             return 'success';
+
+        // ACCEPTED
+        // The bedpres spots are filled up,
+        // and the user is placed on the waitlist.
+        case 202:
+            return 'warning';
+
+        // BAD_REQUEST
+        // The form has bad or invalid data.
         case 400:
             return 'warning';
+
+        // FORBIDDEN
+        // User submits registration before bedpres is open (shouldn't be possible).
         case 403:
             return 'warning';
+
+        // CONFLICT
+        // The bedpres the user is trying to sign up for does not exist.
+        case 409:
+            return 'error';
+
+        // UNPROCESSABLE_ENTITY
+        // The registration already exists.
         case 422:
             return 'warning';
+
+        // INTERNAL_SERVER_ERROR
+        // Something has gone horribly wrong.
         default:
             return 'error';
     }
 };
 
-const codeToDesc = (statusCode: number, title: string, date: string | null): string => {
-    switch (statusCode) {
-        case 200:
-            return `Du er meldt på ${title}`;
-        case 403:
-            if (date) return `Den åpner ${format(parseISO(date), 'dd.MM kk:mm:ss')}.`;
-            return 'Vennligst vent.';
-        default:
-            return 'Vennligst prøv igjen.';
-    }
-};
-
-const BedpresForm = ({
-    slug,
-    title,
-    backendHost,
-}: {
-    slug: string;
-    title: string;
-    backendHost: string;
-}): JSX.Element => {
+const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backendHost: string }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { register, handleSubmit } = useForm();
 
@@ -76,17 +80,15 @@ const BedpresForm = ({
         degreeYear: number;
         terms: boolean;
     }) => {
-        RegistrationAPI.submitRegistration({ ...data, slug, submitDate: '' }, backendHost).then(
-            ({ response, statusCode }) => {
-                toast({
-                    title: response.msg,
-                    description: codeToDesc(statusCode, title, response?.date),
-                    status: codeToStatus(statusCode),
-                    duration: 9000,
-                    isClosable: true,
-                });
-            },
-        );
+        RegistrationAPI.submitRegistration({ ...data, slug }, backendHost).then(({ response, statusCode }) => {
+            toast({
+                title: response.title,
+                description: response.desc,
+                status: codeToStatus(statusCode),
+                duration: 9000,
+                isClosable: true,
+            });
+        });
     };
 
     return (

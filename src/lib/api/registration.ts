@@ -1,4 +1,4 @@
-import { Pojo, array, boolean, record, string, number, decodeType, union, nil } from 'typescript-json-decoder';
+import { Pojo, array, optional, boolean, record, string, number, decodeType } from 'typescript-json-decoder';
 import axios from 'axios';
 
 export enum Degree {
@@ -57,22 +57,35 @@ const registrationDecoder = record({
     slug: string,
     terms: boolean,
     submitDate: string,
+    waitList: boolean,
 });
 
 export type Response = decodeType<typeof responseDecoder>;
 const responseDecoder = record({
     code: string,
-    msg: string,
-    date: union(string, nil),
+    title: string,
+    desc: string,
+    date: optional(string),
 });
 
 const registrationListDecoder = array(registrationDecoder);
 
-const decodeError: Response = {
-    code: 'decode-error',
-    msg: 'Det har skjedd en feil.',
-    date: null,
+const genericError: { title: string; desc: string; date: string | undefined } = {
+    title: 'Det har skjedd en feil.',
+    desc: 'Vennligst prøv igjen',
+    date: undefined,
 };
+
+// The data from the form + slug
+interface FormRegistration {
+    email: string;
+    firstName: string;
+    lastName: string;
+    degree: Degree;
+    degreeYear: number;
+    slug: string;
+    terms: boolean;
+}
 
 export const RegistrationAPI = {
     getRegistrations: async (
@@ -98,7 +111,7 @@ export const RegistrationAPI = {
     },
 
     submitRegistration: async (
-        registration: Registration,
+        registration: FormRegistration,
         backendHost: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
@@ -110,37 +123,25 @@ export const RegistrationAPI = {
             });
 
             return {
-                response: responseDecoder(data) || decodeError,
+                response: responseDecoder(data) || { ...genericError, code: 'DecodeError' },
                 statusCode: status,
             };
         } catch (err) {
             if (err.response) {
                 return {
-                    response: {
-                        code: 'internal-server-error',
-                        msg: 'Det har skjedd en feil.',
-                        date: null,
-                    },
+                    response: { ...genericError, code: 'InternalServerError' },
                     statusCode: err.reponse.status,
                 };
             }
             if (err.request) {
                 return {
-                    response: {
-                        code: 'no-response-error',
-                        msg: 'Det har skjedd en feil.',
-                        date: null,
-                    },
+                    response: { ...genericError, code: 'NoResponseError' },
                     statusCode: 500,
                 };
             }
 
             return {
-                response: {
-                    code: 'request-error',
-                    msg: 'Det har skjedd en feil.',
-                    date: null,
-                },
+                response: { ...genericError, code: 'RequestError' },
                 statusCode: 500,
             };
         }

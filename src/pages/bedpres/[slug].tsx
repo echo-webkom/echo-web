@@ -13,26 +13,7 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import {
-    Button,
-    Heading,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    Link,
-    Grid,
-    Text,
-    GridItem,
-    Divider,
-    Center,
-    useToast,
-    LinkBox,
-    LinkOverlay,
-    Icon,
-} from '@chakra-ui/react';
+import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
 import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
@@ -40,6 +21,7 @@ import { Registration, RegistrationAPI } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 import BedpresForm from '../../components/bedpres-form';
+import BedpresView from '../../components/bedpres-view';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
@@ -66,7 +48,6 @@ const BedpresPage = ({
     useTimeout(() => {
         router.replace(router.asPath);
     }, time);
-    const toast = useToast();
 
     return (
         <Layout>
@@ -144,59 +125,7 @@ const BedpresPage = ({
                                 colSpan={[1, null, null, 3]}
                                 rowSpan={1}
                             >
-                                <ContentBox>
-                                    <Heading mb=".75rem">Påmeldte</Heading>
-                                    <Button
-                                        my="1rem"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(
-                                                registrations
-                                                    .map((reg: Registration) => {
-                                                        return reg.email;
-                                                    })
-                                                    .reduce((acc: string, email: string) => {
-                                                        return `${acc}\n${email}`;
-                                                    }),
-                                            );
-                                            toast({
-                                                title: 'Mailer kopiert til utklippstavlen!',
-                                                status: 'info',
-                                                duration: 5000,
-                                                isClosable: true,
-                                            });
-                                        }}
-                                    >
-                                        Kopier mailer
-                                    </Button>
-                                    <Table variant="simple">
-                                        <Thead>
-                                            <Tr>
-                                                <Th>Email</Th>
-                                                <Th>Fornavn</Th>
-                                                <Th>Etternavn</Th>
-                                                <Th>Studieretning</Th>
-                                                <Th>Studieår</Th>
-                                                <Th>Godkjent retningslinjer</Th>
-                                                <Th>Påmeldingstidspunkt</Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {registrations.map((reg: Registration) => {
-                                                return (
-                                                    <Tr key={reg.email}>
-                                                        <Td>{reg.email}</Td>
-                                                        <Td>{reg.firstName}</Td>
-                                                        <Td>{reg.lastName}</Td>
-                                                        <Td>{reg.degree}</Td>
-                                                        <Td>{reg.degreeYear}</Td>
-                                                        <Td>{reg.terms ? 'Ja' : 'Nei'}</Td>
-                                                        <Td>{format(parseISO(reg.submitDate), 'dd.MM kk:mm:ss')}</Td>
-                                                    </Tr>
-                                                );
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </ContentBox>
+                                <BedpresView registrations={registrations} />
                             </GridItem>
                         )}
                     </Grid>
