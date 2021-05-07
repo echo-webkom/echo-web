@@ -79,7 +79,7 @@ const BedpresPage = ({
                                 <Text>
                                     {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
                                         (!spotsTaken && `${bedpres.spots}`)}{' '}
-                                    plasser
+                                    påmeldt
                                 </Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
@@ -124,17 +124,8 @@ const BedpresPage = ({
                                 <Markdown options={{ overrides: MapMarkdownChakra }}>{bedpres.body}</Markdown>
                             </ContentBox>
                         </GridItem>
-                        {registrations && registrations.length > 0 && (
-                            <GridItem
-                                colStart={[1, null, null, 2]}
-                                rowStart={[4, null, null, 2]}
-                                colSpan={[1, null, null, 3]}
-                                rowSpan={1}
-                            >
-                                <BedpresView registrations={registrations} />
-                            </GridItem>
-                        )}
                     </Grid>
+                    {registrations && registrations.length > 0 && <BedpresView registrations={registrations} />}
                 </>
             )}
         </Layout>
