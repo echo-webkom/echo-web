@@ -36,7 +36,6 @@ jobs:
             elif [[ "$LABELS" == *"patch"* ]]; then
               PATCH=$((PATCH+1))
             else
-              exit 1
               echo "No release labels found."
             fi
             if [[ "$VERSION" == "" ]]; then
