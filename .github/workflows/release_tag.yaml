@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  pull_request:
+    branches: [master]
+    types: closed
+
+jobs:
+  release_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh
+      - name: Create & tag release
+        run: |
+          git fetch --tags;
+          gh config set prompt disabled;
+          VERSION=$(git tag --sort=-committerdate | head -n1 | cut -c 2-)
+          MAJOR=$(echo $VERSION | cut -d. -f1);
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          LABELS=$(echo "${{ toJson(github.event.pull_request.labels.*.name) }}")
+          { if [[ "$LABELS" == *"major"* ]]; then
+              MAJOR=$((MAJOR+1))
+            elif [[ "$LABELS" == *"minor"* ]]; then
+              MINOR=$((MINOR+1))
+            elif [[ "$LABELS" == *"patch"* ]]; then
+              PATCH=$((PATCH+1))
+            else
+              exit 1
+              echo "No release labels found."
+            fi
+            if [[ "$VERSION" == "" ]]; then
+              MAJOR=1
+              MINOR=0
+              PATCH=0
+            fi
+          }
+          gh release create "v$MAJOR.$MINOR.$PATCH" \
+            -t "$MAJOR.$MINOR.$PATCH" \
+            -n "Release for version $MAJOR.$MINOR.$PATCH." \
+            --target master
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

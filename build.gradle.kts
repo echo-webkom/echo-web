@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.adarshr.gradle.testlogger.theme.ThemeType
 
 val ktor_version: String by project
 val logback_version: String by project
@@ -6,6 +7,7 @@ val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
 val kotest_version: String by project
+val ktor_rate_limit_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
@@ -15,6 +17,8 @@ plugins {
     kotlin("jvm") version "1.4.32"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.0.0"
+    id("com.adarshr.test-logger") version "3.0.0"
+
 }
 
 group = "no.uib.echo"
@@ -26,6 +30,7 @@ application {
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
@@ -43,6 +48,8 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
 
     implementation("com.zaxxer:HikariCP:$hikari_version")
+
+    implementation("guru.zoroark:ktor-rate-limit:$ktor_rate_limit_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 
@@ -64,13 +71,25 @@ tasks.withType<Jar> {
 // Make tests accessible to Gradle.
 tasks.withType<Test> {
     useJUnitPlatform()
+}
 
-    testLogging {
-        events("failed", "skipped")
-        showExceptions
-        showCauses
-        showStackTraces
-    }
+testlogger {
+    theme = ThemeType.STANDARD
+    showExceptions = true
+    showStackTraces = true
+    showFullStackTraces = false
+    showCauses = true
+    slowThreshold = 2000
+    showSummary = true
+    showSimpleNames = false
+    showPassed = true
+    showSkipped = true
+    showFailed = true
+    showStandardStreams = false
+    showPassedStandardStreams = true
+    showSkippedStandardStreams = true
+    showFailedStandardStreams = true
+    logLevel = LogLevel.LIFECYCLE
 }
 
 // Use new JVM IR backend (yolo).

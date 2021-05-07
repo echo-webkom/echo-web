@@ -1,5 +1,7 @@
 package no.uib.echo.plugins
 
+import guru.zoroark.ratelimit.RateLimit
+import guru.zoroark.ratelimit.rateLimited
 import io.ktor.routing.*
 import io.ktor.application.*
 import io.ktor.gson.*
@@ -7,38 +9,47 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import no.uib.echo.BedpresJson
-import no.uib.echo.BedpresSlugJson
-import no.uib.echo.RegistrationJson
-import no.uib.echo.ShortRegistrationJson
-import no.uib.echo.deleteBedpresBySlug
-import no.uib.echo.deleteRegistration
-import no.uib.echo.insertOrUpdateBedpres
-import no.uib.echo.insertRegistration
+import no.uib.echo.Response
+import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.deleteBedpres
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistration
-import no.uib.echo.plugins.Routing.submitBedpres
-import no.uib.echo.plugins.Routing.submitRegistration
-import no.uib.echo.selectRegistrations
+import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.putBedpres
+import no.uib.echo.schema.BedpresJson
+import no.uib.echo.schema.BedpresSlugJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.RegistrationStatus
+import no.uib.echo.schema.ShortRegistrationJson
+import no.uib.echo.schema.deleteBedpresBySlug
+import no.uib.echo.schema.deleteRegistration
+import no.uib.echo.schema.insertOrUpdateBedpres
+import no.uib.echo.schema.insertRegistration
+import no.uib.echo.schema.selectRegistrations
 
 fun Application.configureRouting(authKey: String) {
     install(ContentNegotiation) {
         gson()
     }
 
-    routing {
-        getRegistration(authKey)
-        submitRegistration()
-        deleteRegistration(authKey)
+    install(RateLimit) {
+        limit = 200
+    }
 
-        submitBedpres(authKey)
-        deleteBedpres(authKey)
+    routing {
+        rateLimited {
+            getRegistration(authKey)
+            postRegistration()
+            deleteRegistration(authKey)
+
+            putBedpres(authKey)
+            deleteBedpres(authKey)
+        }
     }
 }
 
 object Routing {
-
     const val registrationRoute: String = "registration"
     const val bedpresRoute: String = "bedpres"
 
@@ -62,38 +73,71 @@ object Routing {
         }
     }
 
-    fun Route.submitRegistration() {
+    fun Route.postRegistration() {
         post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
 
                 if (!registration.email.contains('@')) {
-                    call.respond(HttpStatusCode.BadRequest, "Email is not valid.")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail))
                     return@post
                 }
 
-                if (registration.degreeYear < 1 || registration.degreeYear > 5) {
-                    call.respond(HttpStatusCode.BadRequest, "Degree year is not valid.")
+                if (registration.degreeYear !in 1..5) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear))
+                    return@post
+                }
+
+                if ((registration.degree == Degree.DTEK ||
+                        registration.degree == Degree.DSIK ||
+                        registration.degree == Degree.DVIT ||
+                        registration.degree == Degree.BINF ||
+                        registration.degree == Degree.IMO ||
+                        registration.degree == Degree.IKT ||
+                        registration.degree == Degree.KOGNI ||
+                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchBachelor))
+                    return@post
+                }
+
+                if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster))
+                    return@post
+                }
+
+                if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchArmninf))
+                    return@post
+                }
+
+                if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni))
                     return@post
                 }
 
                 if (!registration.terms) {
-                    call.respond(HttpStatusCode.BadRequest, "Terms not accepted.")
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms))
                     return@post
                 }
 
-                try {
-                    insertRegistration(registration)
-                }
-                catch (e: Exception) {
-                call.respond(HttpStatusCode.UnprocessableEntity, "Registration already exists.")
-                    return@post
-                }
+                val (regDate, regStatus) = insertRegistration(registration)
 
-                call.respond(HttpStatusCode.OK, "Submitted registration.")
+                when (regStatus) {
+                    RegistrationStatus.ACCEPTED ->
+                        call.respond(HttpStatusCode.OK, resToJson(Response.OK))
+                    RegistrationStatus.WAITLIST ->
+                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
+                    RegistrationStatus.TOO_EARLY ->
+                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regDate))
+                    RegistrationStatus.ALREADY_EXISTS ->
+                        call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
+                    RegistrationStatus.BEDPRES_DOESNT_EXIST ->
+                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist))
+                }
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error submitting registration.")
-                System.err.println(e.printStackTrace())
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
             }
         }
     }
@@ -116,13 +160,13 @@ object Routing {
                     "Registration with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
                 )
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error deleting bedpres.")
-                System.err.println(e.printStackTrace())
+                call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
+                e.printStackTrace()
             }
         }
     }
 
-    fun Route.submitBedpres(authKey: String) {
+    fun Route.putBedpres(authKey: String) {
         put("/$bedpresRoute") {
             val auth: String? = call.request.header(HttpHeaders.Authorization)
 
@@ -133,13 +177,12 @@ object Routing {
 
             try {
                 val bedpres = call.receive<BedpresJson>()
-
                 val result = insertOrUpdateBedpres(bedpres)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, "Error submitting bedpres.")
-                System.err.println(e.printStackTrace())
+                call.respond(HttpStatusCode.InternalServerError, "Error submitting bedpres.")
+                e.printStackTrace()
             }
         }
     }
