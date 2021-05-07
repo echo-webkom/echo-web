@@ -323,8 +323,8 @@ class RegistrationTest : StringSpec({
     }
 
     """
-    POST request on /${Routing.registrationRoute} with valid payloads should return OK for the first two requests,
-    and ACCEPTED for the next request if the bedpres has two spots.
+    POST request on /${Routing.registrationRoute} with valid payloads should return OK for the first five requests,
+    and ACCEPTED for the next requests if the bedpres has five spots.
     """ {
         withTestApplication({
             configureRouting("secret")
@@ -343,7 +343,7 @@ class RegistrationTest : StringSpec({
                 res.desc shouldBe ""
             }
 
-            for (i in 1..2) {
+            for (i in 1..3) {
                 val submitRegWaitlistCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
@@ -370,7 +370,7 @@ class RegistrationTest : StringSpec({
                         setBody(
                             gson.toJson(
                                 exampleReg.copy(
-                                    email = "tajajaesadasdt${i}@test.com",
+                                    email = "ta123t${i}@test.com",
                                     degree = Degree.PROG,
                                     degreeYear = 1
                                 )
@@ -385,14 +385,14 @@ class RegistrationTest : StringSpec({
                 res.desc shouldBe "Vennligst prøv igjen."
             }
 
-            for (i in 1..10) {
+            for (i in 1..5) {
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
                             gson.toJson(
                                 exampleReg.copy(
-                                    email = "tajajaesadasdt${i}@test.com",
+                                    email = "jn12sdpp3t${i}@test.xyz",
                                     degree = Degree.PROG,
                                     degreeYear = 1
                                 )
