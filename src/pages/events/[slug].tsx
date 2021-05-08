@@ -1,6 +1,5 @@
 import React from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import Image from 'next/image';
 import { ParsedUrlQuery } from 'querystring';
 import { useRouter } from 'next/router';
 import { Center, Box, Text, Grid, GridItem, Heading, Icon, Spinner, Divider } from '@chakra-ui/react';
