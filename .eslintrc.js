@@ -25,7 +25,8 @@ module.exports = {
         SharedArrayBuffer: 'readonly',
     },
     rules: {
-        'no-console': 2,
+        'no-console': 1,
+        '@typescript-eslint/no-unused-vars': 2,
         'react/jsx-props-no-spreading': 'off',
         'linebreak-style': 'off',
         'prettier/prettier': [
