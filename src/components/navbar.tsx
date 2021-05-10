@@ -26,7 +26,7 @@ const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: 
     const isActive = router?.pathname === href || '';
 
     return (
-        <LinkBox data-testid={testid}>
+        <LinkBox data-testid={testid} data-cy="nav-item">
             <NextLink href={href} passHref>
                 <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''} py="0.2rem" px="0.4rem">
                     {text}

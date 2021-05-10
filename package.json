@@ -12,7 +12,9 @@
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
         "lint": "tsc --noEmit && eslint src --fix",
         "test": "jest",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "cypress:open": "cypress open",
+        "cypress:run": "cypress run"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [
@@ -28,6 +30,7 @@
         "@emotion/react": "11.4.0",
         "@emotion/styled": "11.3.0",
         "axios": "0.21.1",
+        "cypress": "^7.2.0",
         "date-fns": "2.21.1",
         "dotenv": "9.0.0",
         "framer-motion": "4.1.11",

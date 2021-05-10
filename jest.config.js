@@ -6,6 +6,7 @@ module.exports = {
         'testing-utils.js',
         'testing-wrapper.tsx',
         'mock-responses.ts',
+        '<rootDir>/cypress/',
     ],
     transform: {
         '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
