@@ -22,7 +22,7 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
     const heading = useBreakpointValue(choises); // cannot call hooks conditionally
 
     return (
-        <ContentBox>
+        <ContentBox data-cy={`entry-box-${type}`}>
             {heading && (
                 <Center minW="0">
                     <Heading mb="5">{heading}</Heading>
@@ -40,7 +40,7 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
                     <LinkBox>
                         <NextLink href={linkTo} passHref>
                             <LinkOverlay>
-                                <Button colorScheme="teal" mt="1.5rem" fontSize="xl">
+                                <Button data-cy="se-mer" colorScheme="teal" mt="1.5rem" fontSize="xl">
                                     Se mer
                                 </Button>
                             </LinkOverlay>
