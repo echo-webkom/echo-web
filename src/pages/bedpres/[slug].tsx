@@ -1,7 +1,7 @@
 import React from 'react';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import { format, differenceInMilliseconds, parseISO } from 'date-fns';
+import { format, isFuture, isPast, differenceInMilliseconds, parseISO } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -13,35 +13,35 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import {
-    Heading,
-    Link,
-    Grid,
-    Text,
-    GridItem,
-    Divider,
-    Stack,
-    Button,
-    Center,
-    LinkBox,
-    LinkOverlay,
-    Icon,
-} from '@chakra-ui/react';
+import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
 import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
+import { Registration, RegistrationAPI } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
+import BedpresForm from '../../components/bedpres-form';
+import BedpresView from '../../components/bedpres-view';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 import Countdown from '../../components/countdown';
 
-const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): JSX.Element => {
+const BedpresPage = ({
+    bedpres,
+    registrations,
+    spotsTaken,
+    backendHost,
+    error,
+}: {
+    bedpres: Bedpres;
+    registrations: Array<Registration>;
+    spotsTaken: number | null;
+    backendHost: string;
+    error: string;
+}): JSX.Element => {
     const router = useRouter();
-
     const regDate = parseISO(bedpres?.registrationTime);
-    const formattedRegDate = bedpres ? format(regDate, 'dd. MMM yyyy, HH:mm') : null;
     const time =
         !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
             ? null
@@ -76,7 +76,11 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                                     </Link>
                                 </NextLink>
                                 <Icon as={MdEventSeat} boxSize={10} />
-                                <Text>{bedpres.spots} plasser</Text>
+                                <Text>
+                                    {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
+                                        (!spotsTaken && `${bedpres.spots}`)}{' '}
+                                    påmeldt
+                                </Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
                                 <Icon as={RiTimeLine} boxSize={10} />
@@ -88,25 +92,18 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && (
-                                <Center my="3">
+                            {!bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
+                                <Center data-testid="bedpres-not-open" my="3">
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && (
-                                <Stack>
-                                    {bedpres.registrationLinks.map((regLink) => (
-                                        <LinkBox key={regLink.link}>
-                                            <NextLink href={regLink.link} passHref>
-                                                <LinkOverlay isExternal>
-                                                    <Button w="100%" colorScheme="teal">
-                                                        {regLink.description}
-                                                    </Button>
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    ))}
-                                </Stack>
+                            {bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
+                                <BedpresForm slug={bedpres.slug} title={bedpres.title} backendHost={backendHost} />
+                            )}
+                            {isPast(parseISO(bedpres.date)) && (
+                                <Center my="3" data-testid="bedpres-has-been">
+                                    <Text>Påmeldingen er stengt.</Text>
+                                </Center>
                             )}
                             <Divider my=".5em" />
                             <Center>
@@ -128,6 +125,7 @@ const BedpresPage = ({ bedpres, error }: { bedpres: Bedpres; error: string }): J
                             </ContentBox>
                         </GridItem>
                     </Grid>
+                    {registrations && registrations.length > 0 && <BedpresView registrations={registrations} />}
                 </>
             )}
         </Layout>
@@ -141,6 +139,15 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
+    const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
+    const authKey = process.env.BACKEND_AUTH_KEY || '';
+    const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
+
+    if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
+
+    const { registrations } = await RegistrationAPI.getRegistrations(authKey, slug, backendHost);
+    const realReg = showAdmin ? registrations || [] : [];
+    const spotsTaken = registrations?.length;
 
     if (error === '404') {
         return {
@@ -151,6 +158,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             bedpres,
+            registrations: realReg,
+            spotsTaken,
+            backendHost,
             error,
         },
     };

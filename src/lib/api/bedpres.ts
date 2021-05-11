@@ -84,7 +84,7 @@ export const BedpresAPI = {
         } catch (error) {
             return {
                 bedpreses: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },
@@ -120,7 +120,7 @@ export const BedpresAPI = {
 
             return {
                 bedpres: null,
-                error: handleError(error.response.status),
+                error: handleError(error.response?.status),
             };
         }
     },
