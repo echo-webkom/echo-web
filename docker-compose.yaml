@@ -18,7 +18,7 @@ services:
   backend:
     # Runs tests against backend master branch.
     # This might change (?)
-    build: git@github.com:echo-webkom/echo-web-backend.git#master
+    build: https://github.com/echo-webkom/echo-web-backend.git#master
     image: echo-web-backend:latest
     # Don't start backend before database is up.
     depends_on:
