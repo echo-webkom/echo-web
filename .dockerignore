@@ -1,9 +1,6 @@
-.git/
-.gitignore
-.github/
+.git*
 .idea/
 build/
 docker-compose*
-test_scripts/
-test*
+test
 renovate.json
