@@ -30,6 +30,7 @@ WORKDIR /opt/app
 # Should probably use some environment variable or something.
 COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar .
 COPY Procfile .
+COPY test_scripts test_scripts
 
 # NB! This might break if version or name changes.
 # Should probably use some environment variable or something.
