@@ -99,7 +99,7 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
                 title: response.title,
                 description: response.desc,
                 status: codeToStatus(statusCode),
-                duration: 9000,
+                duration: 8000,
                 isClosable: true,
             });
         });
@@ -107,14 +107,14 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
 
     return (
         <Box data-testid="bedpres-form">
-            <Button w="100%" colorScheme="teal" onClick={onOpen}>
+            <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
                 Påmelding
             </Button>
 
             <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
-                    <form onSubmit={handleSubmit(submitForm)}>
+                    <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
                         <ModalHeader>Påmelding</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody pb="8px">
