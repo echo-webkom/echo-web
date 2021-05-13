@@ -14,6 +14,7 @@ import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.deleteBedpres
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistration
+import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putBedpres
 import no.uib.echo.schema.BedpresJson
@@ -39,6 +40,8 @@ fun Application.configureRouting(authKey: String) {
 
     routing {
         rateLimited {
+            getStatus()
+
             getRegistration(authKey)
             postRegistration()
             deleteRegistration(authKey)
@@ -52,6 +55,12 @@ fun Application.configureRouting(authKey: String) {
 object Routing {
     const val registrationRoute: String = "registration"
     const val bedpresRoute: String = "bedpres"
+
+    fun Route.getStatus() {
+        get("/status") {
+            call.respond(HttpStatusCode.OK)
+        }
+    }
 
     fun Route.getRegistration(authKey: String) {
         get("/$registrationRoute") {
