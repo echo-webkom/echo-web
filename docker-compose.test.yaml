@@ -1,24 +1,24 @@
 version: '3.9'
 services:
-  backend-test:
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile.test
-    image: echo-web-backend-test:latest
+      target: build
+    image: echo-web-backend:latest
     depends_on:
-      - database-test
+      - database
     links:
-      - database-test
+      - database
     ports:
       - '8080:8080'
     command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
       # The value of DEV doesn't matter, only that it's defined.
       DEV: ja
-      DATABASE_HOST: database-test
+      DATABASE_HOST: database
       AUTH_KEY: hemmelig
 
-  database-test:
+  database:
     # Postgres 13.2 is the version Heroku uses.
     image: postgres:13.2-alpine
     restart: always
