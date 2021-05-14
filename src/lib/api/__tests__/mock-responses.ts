@@ -20,7 +20,13 @@ export interface RawBedpres {
     location: string;
     author: { authorName: string };
     companyLink: string;
-    registrationLinksCollection: { items: Array<{ link: string; description: string }> };
+    additionalQuestionsCollection: {
+        items: Array<{
+            questionText: string;
+            inputType: 'radio' | 'checkbox' | 'textbox';
+            alternatives: Array<string> | null;
+        }>;
+    };
     sys: { firstPublishedAt: string };
     registrationTime: string;
 }
@@ -77,8 +83,7 @@ const mockResponses: {
                         slug: 'sick-event-bruh',
                         date: '2021-01-31T00:00:00.000Z',
                         spots: 30,
-                        body:
-                            '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                        body: '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                         image: null,
                         location: 'Store Auditorium -> Keeg Resturant',
                         sys: {
@@ -95,8 +100,7 @@ const mockResponses: {
                         spots: 45,
                         body: 'blasdfkjasldkfjasldkfj\n\n> Quote\n\n**Hallo**',
                         image: {
-                            url:
-                                'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
+                            url: 'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
                         },
                         location: 'Lesesalen',
                         sys: {
@@ -119,8 +123,7 @@ const mockResponses: {
                         slug: 'sick-event-bruh',
                         date: '2021-01-31T00:00:00.000Z',
                         spots: 30,
-                        body:
-                            '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                        body: '> Dette blir gøy!\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                         image: null,
                         location: 'Store Auditorium -> Keeg Resturant',
                         sys: {
@@ -193,8 +196,7 @@ const mockResponses: {
                     {
                         title: 'Post McPost',
                         slug: 'post-mcpost',
-                        body:
-                            'Desverre må alle nå ha hjemmekontor, ja det er kjipt.\n\n    print("det var dumt")\n\n>"Alle må være hjemme" -Staten\n\n* Det er kjipt\n* Veldig kjipt\n\n1. Grunn nr. 1\n2. Grunn nr. 2\n\nMeld deg av hjemmekontor [her](https://uib.no/)',
+                        body: 'Desverre må alle nå ha hjemmekontor, ja det er kjipt.\n\n    print("det var dumt")\n\n>"Alle må være hjemme" -Staten\n\n* Det er kjipt\n* Veldig kjipt\n\n1. Grunn nr. 1\n2. Grunn nr. 2\n\nMeld deg av hjemmekontor [her](https://uib.no/)',
                         author: {
                             authorName: 'Bo Aanes',
                         },
@@ -264,26 +266,31 @@ const mockResponses: {
                         slug: 'bedriftspresentasjon-med-bekk',
                         date: '2021-04-22T16:15:00.000Z',
                         spots: 35,
-                        body:
-                            'Velkommen til bedrifstpresentasjon med Bekk **torsdag 5. september!**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n**Påmelding**\n\nPåmeldingen er åpen for alle! Det er to påmeldingslinker, velg riktig årstrinn:- 2. klasse:\n\n**Program**\n\n* 16:15 – Velkommen og intro om Bekk\n* 16:30 – (student) prater om hvordan det er å ha sommerjobb i Bekk\n* 16:45 – (Bekker) prater om hvordan det er å være ny i Bekk\n* 17:00 – Spørsmålsrunde',
+                        body: 'Velkommen til bedrifstpresentasjon med Bekk **torsdag 5. september!**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n**Påmelding**\n\nPåmeldingen er åpen for alle! Det er to påmeldingslinker, velg riktig årstrinn:- 2. klasse:\n\n**Program**\n\n* 16:15 – Velkommen og intro om Bekk\n* 16:30 – (student) prater om hvordan det er å ha sommerjobb i Bekk\n* 16:45 – (Bekker) prater om hvordan det er å være ny i Bekk\n* 17:00 – Spørsmålsrunde',
                         logo: {
-                            url:
-                                'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
+                            url: 'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
                         },
                         location: 'Lesesalen',
                         author: {
                             authorName: 'Bo Aanes',
                         },
                         companyLink: 'https://bekk.no/',
-                        registrationLinksCollection: {
+                        additionalQuestionsCollection: {
                             items: [
                                 {
-                                    link: 'https://forms.new/',
-                                    description: '1. - 2. klasse',
+                                    questionText: 'Har du noen allergier?',
+                                    inputType: 'textbox',
+                                    alternatives: null,
                                 },
                                 {
-                                    link: 'https://forms.google.com/',
-                                    description: '3. - 5. klasse',
+                                    questionText: 'Er bedkom wack',
+                                    inputType: 'checkbox',
+                                    alternatives: ['ja', 'nei', 'kanskje?'],
+                                },
+                                {
+                                    questionText: 'bærger eller pizza',
+                                    inputType: 'checkbox',
+                                    alternatives: ['bærger', 'pizza'],
                                 },
                             ],
                         },
@@ -304,13 +311,8 @@ const mockResponses: {
                             authorName: 'Author McAuthor',
                         },
                         companyLink: 'https://deloitte.no/',
-                        registrationLinksCollection: {
-                            items: [
-                                {
-                                    link: 'https://forms.new/',
-                                    description: 'Åpen for alle trinn',
-                                },
-                            ],
+                        additionalQuestionsCollection: {
+                            items: [],
                         },
                         sys: {
                             firstPublishedAt: '2019-03-24T13:41:19.592Z',
@@ -330,26 +332,31 @@ const mockResponses: {
                         slug: 'bedriftspresentasjon-med-bekk',
                         date: '2021-04-22T16:15:00.000Z',
                         spots: 35,
-                        body:
-                            'Velkommen til bedrifstpresentasjon med Bekk **torsdag 5. september!**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n**Påmelding**\n\nPåmeldingen er åpen for alle! Det er to påmeldingslinker, velg riktig årstrinn:- 2. klasse:\n\n**Program**\n\n* 16:15 – Velkommen og intro om Bekk\n* 16:30 – (student) prater om hvordan det er å ha sommerjobb i Bekk\n* 16:45 – (Bekker) prater om hvordan det er å være ny i Bekk\n* 17:00 – Spørsmålsrunde',
+                        body: 'Velkommen til bedrifstpresentasjon med Bekk **torsdag 5. september!**\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n**Påmelding**\n\nPåmeldingen er åpen for alle! Det er to påmeldingslinker, velg riktig årstrinn:- 2. klasse:\n\n**Program**\n\n* 16:15 – Velkommen og intro om Bekk\n* 16:30 – (student) prater om hvordan det er å ha sommerjobb i Bekk\n* 16:45 – (Bekker) prater om hvordan det er å være ny i Bekk\n* 17:00 – Spørsmålsrunde',
                         logo: {
-                            url:
-                                'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
+                            url: 'https://images.ctfassets.net/7ygn1zpoiz5r/2WuQ8fCIvoLMUnJ2m77dVr/f10a2f53471732d2289d5d7bd5a06967/bekk.png',
                         },
                         location: 'Lesesalen',
                         author: {
                             authorName: 'Bo Aanes',
                         },
                         companyLink: 'https://bekk.no/',
-                        registrationLinksCollection: {
+                        additionalQuestionsCollection: {
                             items: [
                                 {
-                                    link: 'https://forms.new/',
-                                    description: '1. - 2. klasse',
+                                    questionText: 'Har du noen allergier?',
+                                    inputType: 'textbox',
+                                    alternatives: null,
                                 },
                                 {
-                                    link: 'https://forms.google.com/',
-                                    description: '3. - 5. klasse',
+                                    questionText: 'Er bedkom wack',
+                                    inputType: 'checkbox',
+                                    alternatives: ['ja', 'nei', 'kanskje?'],
+                                },
+                                {
+                                    questionText: 'bærger eller pizza',
+                                    inputType: 'checkbox',
+                                    alternatives: ['bærger', 'pizza'],
                                 },
                             ],
                         },
@@ -372,13 +379,8 @@ const mockResponses: {
                             authorName: 'Author McAuthor',
                         },
                         companyLink: 'https://deloitte.no/',
-                        registrationLinksCollection: {
-                            items: [
-                                {
-                                    link: 'https://forms.new/',
-                                    description: 'Åpen for alle trinn',
-                                },
-                            ],
+                        additionalQuestionsCollection: {
+                            items: [],
                         },
                         sys: {
                             firstPublishedAt: '2019-03-24T13:41:19.592Z',

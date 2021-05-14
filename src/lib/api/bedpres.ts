@@ -1,14 +1,19 @@
-import { parseISO, isBefore } from 'date-fns';
-import { Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
+import { union, nil, Pojo, array, record, string, number, literal, decodeType } from 'typescript-json-decoder';
 import API from './api';
 import { publishedAtDecoder, authorDecoder } from './decoders';
 import handleError from './errors';
 import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 
+export type Question = decodeType<typeof questionDecoder>;
+const questionDecoder = record({
+    questionText: string,
+    inputType: union(literal('radio'), literal('checkbox'), literal('textbox')),
+    alternatives: union(nil, array(string)),
+});
+
 // Automatically creates the Bedpres type with the
 // fields we specify in our bedpresDecoder.
 export type Bedpres = decodeType<typeof bedpresDecoder>;
-
 const bedpresDecoder = (value: Pojo) => {
     // Defines the structure of the JSON object we
     // are trying to decode, WITHOUT any fields
@@ -30,19 +35,15 @@ const bedpresDecoder = (value: Pojo) => {
         registrationTime: string,
     });
 
-    // Decoders for the nested fields.
-    const registrationLinksDecoder = record({
-        registrationLinksCollection: record({
-            items: array({
-                link: string,
-                description: string,
-            }),
-        }),
-    });
-
     const logoUrlDecoder = record({
         logo: record({
             url: string,
+        }),
+    });
+
+    const additionalQuestionsDecoder = record({
+        additionalQuestionsCollection: record({
+            items: array(questionDecoder),
         }),
     });
 
@@ -52,9 +53,7 @@ const bedpresDecoder = (value: Pojo) => {
     return {
         ...baseDecoder(value),
         logoUrl: logoUrlDecoder(value).logo.url,
-        registrationLinks: isBefore(parseISO(baseDecoder(value).registrationTime), new Date())
-            ? registrationLinksDecoder(value).registrationLinksCollection.items
-            : null,
+        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestionsCollection.items,
         publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
         author: authorDecoder(value).author.authorName,
     };
@@ -107,7 +106,7 @@ export const BedpresAPI = {
             return {
                 // Contentful returns a list with a single element,
                 // therefore we need [0] to get the element out of the list.
-                bedpres: bedpresListDecoder(data.data.bedpresCollection.items)[0],
+                bedpres: bedpresListDecoder(data.data.bedpresCollection.items)[0] || null,
                 error: null,
             };
         } catch (error) {

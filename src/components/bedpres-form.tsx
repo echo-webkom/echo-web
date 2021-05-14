@@ -21,8 +21,62 @@ import {
     Checkbox,
     useToast,
 } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { Degree, RegistrationAPI } from '../lib/api/registration';
+import { Question } from '../lib/api/bedpres';
+
+const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
+    const { register } = useFormContext();
+
+    if (q.inputType === 'checkbox') {
+        return (
+            <FormControl isRequired>
+                <FormLabel>{q.questionText}</FormLabel>
+                <VStack align="left">
+                    {q.alternatives &&
+                        q.alternatives.map((alt: string) => {
+                            return (
+                                <Checkbox key={`key-${alt}`} {...register(`question-${index}`)}>
+                                    <Text ml="0.5rem" fontWeight="bold">
+                                        {alt}
+                                    </Text>
+                                </Checkbox>
+                            );
+                        })}
+                </VStack>
+            </FormControl>
+        );
+    }
+    if (q.inputType === 'radio') {
+        return (
+            <FormControl as="fieldset" isRequired>
+                <FormLabel as="legend">{q.questionText}</FormLabel>
+                <RadioGroup defaultValue="1">
+                    <VStack align="left">
+                        {q.alternatives &&
+                            q.alternatives.map((alt: string) => {
+                                return (
+                                    <Radio key={alt} value={alt} {...register('alt')}>
+                                        {alt}
+                                    </Radio>
+                                );
+                            })}
+                    </VStack>
+                </RadioGroup>
+            </FormControl>
+        );
+    }
+    if (q.inputType === 'textbox') {
+        return (
+            <FormControl id={q.questionText} isRequired>
+                <FormLabel>{q.questionText}</FormLabel>
+                <Input {...register(q.questionText)} />
+            </FormControl>
+        );
+    }
+
+    return <Text>damn</Text>;
+};
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -64,9 +118,19 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backendHost: string }): JSX.Element => {
+const BedpresForm = ({
+    slug,
+    questions,
+    backendHost,
+}: {
+    slug: string;
+    questions: Array<Question>;
+    title: string;
+    backendHost: string;
+}): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { register, handleSubmit } = useForm();
+    const methods = useForm();
+    const { register, handleSubmit } = methods;
 
     const toast = useToast();
 
@@ -114,107 +178,119 @@ const BedpresForm = ({ slug, backendHost }: { slug: string; title: string; backe
             <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
-                    <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
-                        <ModalHeader>Påmelding</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody pb="8px">
-                            <VStack spacing={4}>
-                                <FormControl id="email" isRequired>
-                                    <FormLabel>E-post</FormLabel>
-                                    <Input
-                                        type="email"
-                                        placeholder="E-post"
-                                        {...rest}
-                                        // using multiple refs
-                                        ref={(e) => {
-                                            ref(e);
-                                            initialRef.current = e;
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormControl id="firstName" isRequired>
-                                    <FormLabel>Fornavn</FormLabel>
-                                    <Input placeholder="Fornavn" {...register('firstName')} />
-                                </FormControl>
-                                <FormControl id="lastName" isRequired>
-                                    <FormLabel>Etternavn</FormLabel>
-                                    <Input placeholder="Etternavn" {...register('lastName')} />
-                                </FormControl>
-                                <FormControl id="degree" isRequired>
-                                    <FormLabel>Studieretning</FormLabel>
-                                    <Select placeholder="Velg studieretning" {...register('degree')}>
-                                        <option value={Degree.DTEK}>Datateknologi</option>
-                                        <option value={Degree.DVIT}>Datasikkerhet</option>
-                                        <option value={Degree.BINF}>Bioinformatikk</option>
-                                        <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
-                                        <option value={Degree.IKT}>Informasjons- og kommunikasjonsvitenskap</option>
-                                        <option value={Degree.KOGNI}>
-                                            Kognitiv vitenskap med spesialisering i informatikk
-                                        </option>
-                                        <option value={Degree.INF}>Master i informatikk</option>
-                                        <option value={Degree.PROG}>Felles master i programvareutvikling</option>
-                                        <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
-                                        <option value={Degree.POST}>Postbachelor</option>
-                                        <option value={Degree.MISC}>Annet studieløp</option>
-                                    </Select>
-                                </FormControl>
-                                <FormControl as="fieldset" isRequired>
-                                    <FormLabel as="legend">Hvilket trinn går du på?</FormLabel>
-                                    <RadioGroup defaultValue="1">
-                                        <VStack align="left">
-                                            <Radio value="1" {...register('degreeYear')}>
-                                                1. trinn
-                                            </Radio>
-                                            <Radio value="2" {...register('degreeYear')}>
-                                                2. trinn
-                                            </Radio>
-                                            <Radio value="3" {...register('degreeYear')}>
-                                                3. trinn
-                                            </Radio>
-                                            <Radio value="4" {...register('degreeYear')}>
-                                                4. trinn
-                                            </Radio>
-                                            <Radio value="5" {...register('degreeYear')}>
-                                                5. trinn
-                                            </Radio>
-                                        </VStack>
-                                    </RadioGroup>
-                                </FormControl>
-                                <FormControl id="terms1" isRequired>
-                                    <FormLabel>Bekreft</FormLabel>
-                                    <Checkbox {...register('terms1')}>
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            Jeg bekrefter at jeg har valgt riktig årstrinn.
-                                        </Text>
-                                    </Checkbox>
-                                </FormControl>
-                                <FormControl id="terms2" isRequired>
-                                    <FormLabel>Bekreft</FormLabel>
-                                    <Checkbox {...register('terms2')}>
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli utestengt
-                                            fra fremtidige bedriftspresentasjoner.
-                                        </Text>
-                                    </Checkbox>
-                                </FormControl>
-                                <FormControl id="terms3" isRequired>
-                                    <FormLabel>Bekreft</FormLabel>
-                                    <Checkbox {...register('terms3')}>
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            Jeg er klar over at jeg må melde meg av innen 48 timer før
-                                            bedriftspresentasjonen starter dersom jeg ikke har mulighet til å delta.
-                                        </Text>
-                                    </Checkbox>
-                                </FormControl>
-                            </VStack>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button type="submit" mr={3} colorScheme="teal">
-                                Send inn
-                            </Button>
-                            <Button onClick={onClose}>Lukk</Button>
-                        </ModalFooter>
-                    </form>
+                    <FormProvider {...methods}>
+                        <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
+                            <ModalHeader>Påmelding</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody pb="8px">
+                                <VStack spacing={4}>
+                                    <FormControl id="email" isRequired>
+                                        <FormLabel>E-post</FormLabel>
+                                        <Input
+                                            type="email"
+                                            placeholder="E-post"
+                                            {...rest}
+                                            // using multiple refs
+                                            ref={(e) => {
+                                                ref(e);
+                                                initialRef.current = e;
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormControl id="firstName" isRequired>
+                                        <FormLabel>Fornavn</FormLabel>
+                                        <Input placeholder="Fornavn" {...register('firstName')} />
+                                    </FormControl>
+                                    <FormControl id="lastName" isRequired>
+                                        <FormLabel>Etternavn</FormLabel>
+                                        <Input placeholder="Etternavn" {...register('lastName')} />
+                                    </FormControl>
+                                    <FormControl id="degree" isRequired>
+                                        <FormLabel>Studieretning</FormLabel>
+                                        <Select placeholder="Velg studieretning" {...register('degree')}>
+                                            <option value={Degree.DTEK}>Datateknologi</option>
+                                            <option value={Degree.DVIT}>Datasikkerhet</option>
+                                            <option value={Degree.BINF}>Bioinformatikk</option>
+                                            <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
+                                            <option value={Degree.IKT}>Informasjons- og kommunikasjonsvitenskap</option>
+                                            <option value={Degree.KOGNI}>
+                                                Kognitiv vitenskap med spesialisering i informatikk
+                                            </option>
+                                            <option value={Degree.INF}>Master i informatikk</option>
+                                            <option value={Degree.PROG}>Felles master i programvareutvikling</option>
+                                            <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
+                                            <option value={Degree.POST}>Postbachelor</option>
+                                            <option value={Degree.MISC}>Annet studieløp</option>
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl as="fieldset" isRequired>
+                                        <FormLabel as="legend">Hvilket trinn går du på?</FormLabel>
+                                        <RadioGroup defaultValue="1">
+                                            <VStack align="left">
+                                                <Radio value="1" {...register('degreeYear')}>
+                                                    1. trinn
+                                                </Radio>
+                                                <Radio value="2" {...register('degreeYear')}>
+                                                    2. trinn
+                                                </Radio>
+                                                <Radio value="3" {...register('degreeYear')}>
+                                                    3. trinn
+                                                </Radio>
+                                                <Radio value="4" {...register('degreeYear')}>
+                                                    4. trinn
+                                                </Radio>
+                                                <Radio value="5" {...register('degreeYear')}>
+                                                    5. trinn
+                                                </Radio>
+                                            </VStack>
+                                        </RadioGroup>
+                                    </FormControl>
+                                    {questions &&
+                                        questions.map((q: Question, index: number) => {
+                                            return (
+                                                <QuestionComponent
+                                                    key={`q.questionText-${q.inputType}`}
+                                                    q={q}
+                                                    index={index}
+                                                />
+                                            );
+                                        })}
+                                    <FormControl id="terms1" isRequired>
+                                        <FormLabel>Bekreft</FormLabel>
+                                        <Checkbox {...register('terms1')}>
+                                            <Text ml="0.5rem" fontWeight="bold">
+                                                Jeg bekrefter at jeg har valgt riktig årstrinn.
+                                            </Text>
+                                        </Checkbox>
+                                    </FormControl>
+                                    <FormControl id="terms2" isRequired>
+                                        <FormLabel>Bekreft</FormLabel>
+                                        <Checkbox {...register('terms2')}>
+                                            <Text ml="0.5rem" fontWeight="bold">
+                                                Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
+                                                utestengt fra fremtidige bedriftspresentasjoner.
+                                            </Text>
+                                        </Checkbox>
+                                    </FormControl>
+                                    <FormControl id="terms3" isRequired>
+                                        <FormLabel>Bekreft</FormLabel>
+                                        <Checkbox {...register('terms3')}>
+                                            <Text ml="0.5rem" fontWeight="bold">
+                                                Jeg er klar over at jeg må melde meg av innen 48 timer før
+                                                bedriftspresentasjonen starter dersom jeg ikke har mulighet til å delta.
+                                            </Text>
+                                        </Checkbox>
+                                    </FormControl>
+                                </VStack>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button type="submit" mr={3} colorScheme="teal">
+                                    Send inn
+                                </Button>
+                                <Button onClick={onClose}>Lukk</Button>
+                            </ModalFooter>
+                        </form>
+                    </FormProvider>
                 </ModalContent>
             </Modal>
         </Box>
