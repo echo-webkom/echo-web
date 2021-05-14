@@ -18,8 +18,8 @@ interface Props {
 }
 
 const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Props): JSX.Element => {
-    const choises = titles || [title];
-    const heading = useBreakpointValue(choises); // cannot call hooks conditionally
+    const choices = titles || [title];
+    const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
     return (
         <ContentBox data-cy={`entry-box-${type}`}>

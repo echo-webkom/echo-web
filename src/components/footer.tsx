@@ -25,7 +25,7 @@ const Footer = (): JSX.Element => {
             mt="5em"
             bottom="0"
             pos="absolute"
-            data-testid="footer-standard"
+            data-testid="footer"
         >
             <SimpleGrid columns={2} spacing="3">
                 <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>

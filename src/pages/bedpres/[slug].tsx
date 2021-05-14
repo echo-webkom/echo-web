@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { registrations } = await RegistrationAPI.getRegistrations(authKey, slug, backendHost);
     const realReg = showAdmin ? registrations || [] : [];
-    const spotsTaken = registrations?.length;
+    const spotsTaken = registrations?.length || null;
 
     if (error === '404') {
         return {

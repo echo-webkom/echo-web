@@ -1,0 +1,45 @@
+name: Cypress
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  cypress_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout frontend repository
+      uses: actions/checkout@v2
+
+    - name: Checkout backend repository
+      uses: actions/checkout@v2
+      with:
+        repository: echo-webkom/echo-web-backend
+        path: backend
+        ref: master
+
+    - name: Set up environment
+      run: |
+        echo "CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID_TEST }}" >> .env
+        echo "CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN_TEST }}" >> .env
+        echo "CONTENTFUL_ENVIRONMENT_ID=develop" >> .env
+        echo "BACKEND_AUTH_KEY=hemmelig" >> .env
+        echo "ADMIN_KEY=hemmelig" >> .env
+
+    - name: Set up Docker images
+      run: |
+        docker-compose -f backend/docker-compose.yaml pull
+        docker-compose -f backend/docker-compose.yaml build
+
+    - name: Install dependencies and build
+      run: |
+        yarn
+        yarn build
+
+    - name: Run Cypress end-to-end tests
+      run: |
+        yarn start &
+        docker-compose -f backend/docker-compose.yaml up &
+        yarn wait-on --interval 1000 http-get://localhost:3000
+        yarn wait-on --interval 1000 http-get://localhost:8080/status
+        sh backend/test_scripts/submit_bedpres -z -p 8080 -x hemmelig -s bedriftspresentasjon-med-bekk -o 5 -r 2021-05-06T16:46+01:00
+        yarn cypress run

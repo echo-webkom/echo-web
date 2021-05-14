@@ -1,0 +1,8 @@
+node_modules
+build
+.next
+.cache
+
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/

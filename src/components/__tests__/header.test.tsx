@@ -11,6 +11,7 @@ describe('Header', () => {
 
     test('renders correctly', () => {
         const { getByTestId } = render(<Header />);
+        expect(getByTestId(/header-standard/i)).toBeInTheDocument();
         expect(getByTestId(/header-logo/i)).toBeInTheDocument();
         expect(getByTestId(/navbar-standard/i)).toBeInTheDocument();
         expect(getByTestId(/drawer-button/i)).toBeInTheDocument();
