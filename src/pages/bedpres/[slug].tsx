@@ -92,13 +92,18 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
+                            {isFuture(parseISO(bedpres.registrationTime)) && (
                                 <Center data-testid="bedpres-not-open" my="3">
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
-                                <BedpresForm slug={bedpres.slug} title={bedpres.title} backendHost={backendHost} />
+                            {isFuture(parseISO(bedpres.date)) && (
+                                <BedpresForm
+                                    slug={bedpres.slug}
+                                    questions={bedpres.additionalQuestions}
+                                    title={bedpres.title}
+                                    backendHost={backendHost}
+                                />
                             )}
                             {isPast(parseISO(bedpres.date)) && (
                                 <Center my="3" data-testid="bedpres-has-been">
