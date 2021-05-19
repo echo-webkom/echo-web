@@ -25,10 +25,10 @@ jobs:
 
       - name: Create & tag release
         run: |
-          git fetch --tags;
-          gh config set prompt disabled;
+          git fetch --tags
+          gh config set prompt disabled
           VERSION=$(git tag --sort=-committerdate | head -n1 | cut -c 2-)
-          MAJOR=$(echo $VERSION | cut -d. -f1);
+          MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
           PATCH=$(echo $VERSION | cut -d. -f3)
           LABELS=$(echo "${{ toJson(github.event.pull_request.labels.*.name) }}")
@@ -47,10 +47,9 @@ jobs:
               PATCH=0
             fi
           }
-          COMMITS=$(git log origin/master..origin/develop --no-merges --reverse --format=format:%h\ %s\<br\>\<br\>)
           gh release create "v$MAJOR.$MINOR.$PATCH" \
             -t "$MAJOR.$MINOR.$PATCH" \
-            -n "<h1>Release for version $MAJOR.$MINOR.$PATCH</h1><h2>Commits since last release</h2><b>$COMMITS</b>" \
+            -n "<h1>Release for version $MAJOR.$MINOR.$PATCH</h1><h2>Commits since last release</h2><b>$(git log origin/master..origin/develop --no-merges --reverse --format=format:%h\ %s\<br\>\<br\>)</b>" \
             --target master
         shell: bash
         env:
