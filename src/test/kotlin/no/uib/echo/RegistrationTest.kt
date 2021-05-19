@@ -12,21 +12,19 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
-import no.uib.echo.schema.Bedpres
-import no.uib.echo.schema.BedpresJson
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.insertOrUpdateBedpres
+import no.uib.echo.schema.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class RegistrationTest : StringSpec({
-    val exampleBedpres = BedpresJson("bedpres-med-noen", 5, "2020-04-29T20:43:29Z")
+    val exampleBedpres1 = BedpresJson("bedpres-med-noen", 50, "2020-04-29T20:43:29Z")
+    val exampleBedpres2 = BedpresJson("bedpres-med-noen-andre", 40, "2019-07-29T20:10:11Z")
+    val exampleBedpres3 = BedpresJson("bedpres-dritlang-i-fremtiden", 40, "2037-07-29T20:10:11Z")
     val exampleReg = RegistrationJson(
-        "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres.slug, true, null, false
+        "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres1.slug, true, null, false,
+        listOf(AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100"))
     )
 
     val gson = Gson()
@@ -36,13 +34,15 @@ class RegistrationTest : StringSpec({
         transaction {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.drop(Registration, Bedpres)
-            SchemaUtils.create(Registration, Bedpres)
-            insertOrUpdateBedpres(exampleBedpres)
+            SchemaUtils.drop(Registration, Answer, Bedpres)
+            SchemaUtils.create(Registration, Answer, Bedpres)
+            insertOrUpdateBedpres(exampleBedpres1)
+            insertOrUpdateBedpres(exampleBedpres2)
+            insertOrUpdateBedpres(exampleBedpres3)
         }
     }
 
-    "GET request on /${Routing.registrationRoute} with wrong Authorization header should return UNAUTHORIZED" {
+    "Trying to get registrations with wrong Authorization header should not work." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -56,27 +56,20 @@ class RegistrationTest : StringSpec({
     }
 
 
-    "POST request on /${Routing.registrationRoute} with valid payloads should return OK." {
+    "Registrations with valid data should submit correctly." {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val regs = listOf(
-                Pair(Degree.DTEK, 2),
-                Pair(Degree.INF, 4),
-                Pair(Degree.ARMNINF, 1),
-                Pair(Degree.KOGNI, 3)
-            )
-
-            for ((index, reg) in regs.withIndex()) {
+            fun submitReg(degree: Degree, degreeYear: Int) {
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
                             gson.toJson(
                                 exampleReg.copy(
-                                    degree = reg.first,
-                                    degreeYear = reg.second,
-                                    email = "test${index}@test.com"
+                                    degree = degree,
+                                    degreeYear = degreeYear,
+                                    email = "test${degree}${degreeYear}@test.com"
                                 )
                             )
                         )
@@ -88,13 +81,64 @@ class RegistrationTest : StringSpec({
                 res.title shouldBe "Påmeldingen din er registrert!"
                 res.desc shouldBe ""
             }
+
+            for (b in bachelors) {
+                for (y in 1..3) {
+                    submitReg(b, y)
+                }
+            }
+
+            for (m in masters) {
+                for (y in 4..5) {
+                    submitReg(m, y)
+                }
+            }
+
+            submitReg(Degree.KOGNI, 3)
+            submitReg(Degree.ARMNINF, 1)
         }
     }
 
-    """
-        POST request on /${Routing.registrationRoute} with valid payload should insert the registration in the database,
-        and a subsequent POST request on /${Routing.registrationRoute} with the same email as in the initial payload should return BAD_REQUEST."
-    """ {
+    "The same user should be able to sign up for two different bedpres's." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            for (b in listOf(exampleBedpres1, exampleBedpres2)) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleReg.copy(slug = b.slug)))
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe ""
+            }
+        }
+    }
+
+    "Registration with valid data and empty question list should submit correctly." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+
+            val submitRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(gson.toJson(exampleReg.copy(answers = emptyList())))
+                }
+
+            submitRegCall.response.status() shouldBe HttpStatusCode.OK
+            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+            res.code shouldBe Response.OK
+            res.title shouldBe "Påmeldingen din er registrert!"
+            res.desc shouldBe ""
+        }
+    }
+
+     "You should not be able to sign up for a bedpres more than once." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -124,7 +168,43 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with invalid email should return BAD_REQUEST" {
+    "You should not be able to sign up for a bedpres before the registration date." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val submitRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(gson.toJson(exampleReg.copy(slug = exampleBedpres3.slug)))
+                }
+
+            submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
+            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+            res.code shouldBe Response.TooEarly
+            res.title shouldBe "Påmeldingen er ikke åpen enda."
+            res.desc shouldBe "Vennligst vent."
+        }
+    }
+
+    "You should not be able to sign up for a bedpres that doesn't exist." {
+        withTestApplication({
+            configureRouting("secret")
+        }) {
+            val submitRegCall: TestApplicationCall =
+                handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(gson.toJson(exampleReg.copy(slug = "ikke-eksisterende-bedpres-som-ikke-finnes")))
+                }
+
+            submitRegCall.response.status() shouldBe HttpStatusCode.Conflict
+            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+            res.code shouldBe Response.BedpresDosntExist
+            res.title shouldBe "Denne bedpres'en finnes ikke."
+            res.desc shouldBe "Om du mener dette ikke stemmer, ta kontakt med Webkom."
+        }
+    }
+
+    "Email should contain @-sign." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -143,7 +223,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with degree year smaller than 1 should return BAD_REQUEST" {
+    "Degree year should not be smaller than one." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -162,7 +242,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with degree year larger than 5 should return BAD_REQUEST" {
+    "Degree year should not be bigger than five." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -182,21 +262,18 @@ class RegistrationTest : StringSpec({
     }
 
 
-    "POST request on /${Routing.registrationRoute} with degree year larger than 3 and a Degree corresponding to a bachelors degree should return BAD_REQUEST" {
+    "If the degree year is either four or five, the degree should not correspond to a bachelors degree." {
         withTestApplication({
             configureRouting("secret")
         }) {
-            val bachelorDegrees =
-                listOf(
-                    Degree.DTEK,
-                    Degree.DSIK,
-                    Degree.DVIT,
-                    Degree.BINF,
-                    Degree.IMO,
-                    Degree.IKT,
-                )
-
-            for (deg in bachelorDegrees) {
+            listOf(
+                Degree.DTEK,
+                Degree.DSIK,
+                Degree.DVIT,
+                Degree.BINF,
+                Degree.IMO,
+                Degree.IKT,
+            ).map { deg ->
                 for (year in 4..5) {
                     val testCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -214,43 +291,30 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with degree year not equal to 4 or 5 and a degree corresponding to a masters degree should return BAD_REQUEST" {
+    "If the degree year is between one and three, the degree should not correspond to a masters degree." {
         withTestApplication({
             configureRouting("secret")
         }) {
-            for (i in 1..3) {
-                val testCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        val invalidDegreeYear = exampleReg.copy(degreeYear = i, degree = Degree.INF)
-                        setBody(gson.toJson(invalidDegreeYear))
-                    }
+            listOf(Degree.INF, Degree.PROG).map { deg ->
+                for (i in 1..3) {
+                    val testCall: TestApplicationCall =
+                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                            addHeader(HttpHeaders.ContentType, "application/json")
+                            val invalidDegreeYear = exampleReg.copy(degreeYear = i, degree = deg)
+                            setBody(gson.toJson(invalidDegreeYear))
+                        }
 
-                testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-                res.code shouldBe Response.DegreeMismatchMaster
-                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-                res.desc shouldBe "Vennligst prøv igjen."
-            }
-
-            for (i in 1..3) {
-                val testCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        val invalidDegreeYear = exampleReg.copy(degreeYear = i, degree = Degree.PROG)
-                        setBody(gson.toJson(invalidDegreeYear))
-                    }
-
-                testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-                res.code shouldBe Response.DegreeMismatchMaster
-                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-                res.desc shouldBe "Vennligst prøv igjen."
+                    testCall.response.status() shouldBe HttpStatusCode.BadRequest
+                    val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                    res.code shouldBe Response.DegreeMismatchMaster
+                    res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
+                    res.desc shouldBe "Vennligst prøv igjen."
+                }
             }
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with degree equal to KOGNI and degree year not equal to 3 should return BAD_REQUEST" {
+    "If degree is KOGNI, degree year should be equal to three." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -269,7 +333,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with degree equal to ARMNINF and degree year not equal to 1 should return BAD_REQUEST" {
+    "If degree is ARMNINF, degree year should be equal to one." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -288,7 +352,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on /${Routing.registrationRoute} with terms = false should return BAD_REQUEST" {
+    "Terms should be accepted." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -307,7 +371,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "DELETE request on /${Routing.registrationRoute} with wrong Authorization header should return UNAUTHORIZED" {
+    "Trying to delete a registration with wrong Authorization header should not work." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -322,14 +386,11 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    """
-    POST request on /${Routing.registrationRoute} with valid payloads should return OK for the first five requests,
-    and ACCEPTED for the next requests if the bedpres has five spots.
-    """ {
+    "If a bedpres has filled up every spot, a registration should be put on the wait list." {
         withTestApplication({
             configureRouting("secret")
         }) {
-            for (i in 1..5) {
+            for (i in 1..(exampleBedpres1.spots)) {
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
@@ -359,7 +420,7 @@ class RegistrationTest : StringSpec({
         }
     }
 
-    "POST request on ${Routing.registrationRoute} returns TOO_MANY_REQUESTS after 200 requests in under two minutes." {
+    "Rate limit should work as expected." {
         withTestApplication({
             configureRouting("secret")
         }) {
