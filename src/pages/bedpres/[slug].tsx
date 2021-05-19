@@ -13,14 +13,26 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
+import {
+    Stack,
+    Link,
+    Button,
+    Grid,
+    Text,
+    GridItem,
+    Divider,
+    Center,
+    LinkBox,
+    LinkOverlay,
+    Icon,
+    Heading,
+} from '@chakra-ui/react';
 import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { Registration, RegistrationAPI } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
-import BedpresForm from '../../components/bedpres-form';
 import BedpresView from '../../components/bedpres-view';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -31,13 +43,11 @@ const BedpresPage = ({
     bedpres,
     registrations,
     spotsTaken,
-    backendHost,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
     spotsTaken: number | null;
-    backendHost: string;
     error: string;
 }): JSX.Element => {
     const router = useRouter();
@@ -79,7 +89,7 @@ const BedpresPage = ({
                                 <Text>
                                     {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
                                         (!spotsTaken && `${bedpres.spots}`)}{' '}
-                                    påmeldt
+                                    plasser
                                 </Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
@@ -98,7 +108,19 @@ const BedpresPage = ({
                                 </Center>
                             )}
                             {bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
-                                <BedpresForm slug={bedpres.slug} title={bedpres.title} backendHost={backendHost} />
+                                <Stack>
+                                    {bedpres.registrationLinks.map((regLink) => (
+                                        <LinkBox key={regLink.link}>
+                                            <NextLink href={regLink.link} passHref>
+                                                <LinkOverlay isExternal>
+                                                    <Button w="100%" colorScheme="teal">
+                                                        {regLink.description}
+                                                    </Button>
+                                                </LinkOverlay>
+                                            </NextLink>
+                                        </LinkBox>
+                                    ))}
+                                </Stack>
                             )}
                             {isPast(parseISO(bedpres.date)) && (
                                 <Center my="3" data-testid="bedpres-has-been">
@@ -147,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { registrations } = await RegistrationAPI.getRegistrations(authKey, slug, backendHost);
     const realReg = showAdmin ? registrations || [] : [];
-    const spotsTaken = registrations?.length;
+    const spotsTaken = registrations?.length || null;
 
     if (error === '404') {
         return {
