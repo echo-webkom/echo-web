@@ -1,10 +1,11 @@
 #!/bin/bash
 
-host=http://echo-web-backend.herokuapp.com
+host=http://localhost
+port=8080
 
-while getopts zp:s:e:x: flag; do
+while getopts zps:e:x: flag; do
   case "${flag}" in
-  z) host=http://localhost ;;
+  z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   e) email=${OPTARG} ;;
@@ -18,20 +19,20 @@ if [ -z ${secret+x} ]; then
   exit 1
 fi
 
-if [ -z ${port+x} ]; then
-  echo "Port not defined (use -p)"
+if [ -z ${slug+x} ]; then
+  echo "Slug not defined (use -s)"
   exit 1
 fi
 
-if [ -z ${slug+x} ] || [ -z ${email+x} ]; then
-  echo "Slug and/or email not defined (use -s and -e)"
+if [ -z ${email+x} ]; then
+  echo "Email not defined (use -e)"
   exit 1
-else
-  curl --verbose \
-    -X DELETE \
-    -H "Authorization: $secret" \
-    -H "Connection: close" \
-    -H "Content-Type: application/json" \
-    -d '{ "slug": "'${slug}'", "email": "'${email}'" }' \
-    "$host:$port/registration"
 fi
+
+curl --verbose \
+  -X DELETE \
+  -H "Authorization: $secret" \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "slug": "'"${slug}"'", "email": "'"${email}"'" }' \
+  "$host:$port/registration"
