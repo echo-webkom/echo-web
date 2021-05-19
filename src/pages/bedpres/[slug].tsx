@@ -130,7 +130,9 @@ const BedpresPage = ({
                             </ContentBox>
                         </GridItem>
                     </Grid>
-                    {registrations && registrations.length > 0 && <BedpresView registrations={registrations} />}
+                    {registrations && registrations.length > 0 && (
+                        <BedpresView registrations={registrations} bedpres={bedpres} />
+                    )}
                 </>
             )}
         </Layout>
@@ -144,7 +146,7 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
-    const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
+    const showAdmin = (context.query?.admin || null) === process.env.ADMIN_KEY || false;
     const authKey = process.env.BACKEND_AUTH_KEY || '';
     const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
 

@@ -28,35 +28,16 @@ import { Question } from '../lib/api/bedpres';
 const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
     const { register } = useFormContext();
 
-    if (q.inputType === 'checkbox') {
-        return (
-            <FormControl isRequired>
-                <FormLabel>{q.questionText}</FormLabel>
-                <VStack align="left">
-                    {q.alternatives &&
-                        q.alternatives.map((alt: string) => {
-                            return (
-                                <Checkbox key={`key-${alt}`} {...register(`question-${index}`)}>
-                                    <Text ml="0.5rem" fontWeight="bold">
-                                        {alt}
-                                    </Text>
-                                </Checkbox>
-                            );
-                        })}
-                </VStack>
-            </FormControl>
-        );
-    }
     if (q.inputType === 'radio') {
         return (
             <FormControl as="fieldset" isRequired>
-                <FormLabel as="legend">{q.questionText}</FormLabel>
-                <RadioGroup defaultValue="1">
+                <FormLabel>{q.questionText}</FormLabel>
+                <RadioGroup defaultValue={q?.alternatives?.[0] || ''}>
                     <VStack align="left">
                         {q.alternatives &&
                             q.alternatives.map((alt: string) => {
                                 return (
-                                    <Radio key={alt} value={alt} {...register('alt')}>
+                                    <Radio key={`radio-key-${alt}`} value={alt} {...register(`answers.${index}`)}>
                                         {alt}
                                     </Radio>
                                 );
@@ -68,14 +49,14 @@ const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.El
     }
     if (q.inputType === 'textbox') {
         return (
-            <FormControl id={q.questionText} isRequired>
+            <FormControl isRequired>
                 <FormLabel>{q.questionText}</FormLabel>
-                <Input {...register(q.questionText)} />
+                <Input {...register(`answers.${index}`)} />
             </FormControl>
         );
     }
 
-    return <Text>damn</Text>;
+    return <></>;
 };
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
@@ -146,6 +127,7 @@ const BedpresForm = ({
         terms1: boolean;
         terms2: boolean;
         terms3: boolean;
+        answers: Array<string>;
     }) => {
         RegistrationAPI.submitRegistration(
             {
@@ -156,6 +138,9 @@ const BedpresForm = ({
                 degreeYear: data.degreeYear,
                 slug,
                 terms: data.terms1 && data.terms2 && data.terms3,
+                answers: questions.map((q: Question, index: number) => {
+                    return { question: q.questionText, answer: data.answers[index] };
+                }),
             },
             backendHost,
         ).then(({ response, statusCode }) => {
@@ -209,7 +194,8 @@ const BedpresForm = ({
                                         <FormLabel>Studieretning</FormLabel>
                                         <Select placeholder="Velg studieretning" {...register('degree')}>
                                             <option value={Degree.DTEK}>Datateknologi</option>
-                                            <option value={Degree.DVIT}>Datasikkerhet</option>
+                                            <option value={Degree.DSIK}>Datasikkerhet</option>
+                                            <option value={Degree.DVIT}>Data Science/Datavitenskap</option>
                                             <option value={Degree.BINF}>Bioinformatikk</option>
                                             <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
                                             <option value={Degree.IKT}>Informasjons- og kommunikasjonsvitenskap</option>

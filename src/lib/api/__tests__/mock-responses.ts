@@ -23,7 +23,7 @@ export interface RawBedpres {
     additionalQuestionsCollection: {
         items: Array<{
             questionText: string;
-            inputType: 'radio' | 'checkbox' | 'textbox';
+            inputType: 'radio' | 'textbox';
             alternatives: Array<string> | null;
         }>;
     };
@@ -284,13 +284,8 @@ const mockResponses: {
                                 },
                                 {
                                     questionText: 'Er bedkom wack',
-                                    inputType: 'checkbox',
+                                    inputType: 'radio',
                                     alternatives: ['ja', 'nei', 'kanskje?'],
-                                },
-                                {
-                                    questionText: 'bærger eller pizza',
-                                    inputType: 'checkbox',
-                                    alternatives: ['bærger', 'pizza'],
                                 },
                             ],
                         },
@@ -350,13 +345,8 @@ const mockResponses: {
                                 },
                                 {
                                     questionText: 'Er bedkom wack',
-                                    inputType: 'checkbox',
+                                    inputType: 'radio',
                                     alternatives: ['ja', 'nei', 'kanskje?'],
-                                },
-                                {
-                                    questionText: 'bærger eller pizza',
-                                    inputType: 'checkbox',
-                                    alternatives: ['bærger', 'pizza'],
                                 },
                             ],
                         },

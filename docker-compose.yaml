@@ -30,7 +30,7 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -z -p 8080 -x hemmelig -s bedriftspresentasjon-med-bekk -o 5 -r 2021-05-06T16:46+01:00 || exit 1"]
+      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$AUTH_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
