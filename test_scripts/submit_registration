@@ -1,10 +1,13 @@
 #!/bin/bash
 
-host=http://echo-web-backend.herokuapp.com
+# Default values
+host=http://localhost
+port=8080
+qa="[]"
 
-while getopts zp:e:f:l:d:y:s:t: flag; do
+while getopts zpe:f:l:d:y:s:t:q: flag; do
   case "${flag}" in
-  z) host=http://localhost ;;
+  z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   e) email=${OPTARG} ;;
   f) firstName=${OPTARG} ;;
@@ -13,22 +16,57 @@ while getopts zp:e:f:l:d:y:s:t: flag; do
   y) degree_year=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   t) terms=${OPTARG} ;;
+  q) qa=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
 
-if [ -z ${port+x} ] || [ -z ${email+x} ] || [ -z ${firstName+x} ] || [ -z ${lastName+x} ] || [ -z ${degree+x} ] || [ -z ${degree_year+x} ] || [ -z ${slug+x} ] || [ -z ${terms+x} ]; then
-  echo "Arguments not defined: -p for port, -e for email, -f for firstName, -l for lastName, -d for degree, -y for degree year, -s for slug, -t for terms"
-else
-  curl --verbose \
-    -H "Connection: close" \
-    -H "Content-Type: application/json" \
-    -d '{ "email": "'${email}'",
-          "firstName": "'${firstName}'",
-          "lastName": "'${lastName}'",
-          "degree": "'${degree}'",
-          "degreeYear": '${degree_year}',
-          "slug": "'${slug}'",
-          "terms": '${terms}' }' \
-    $host:$port/registration
+if [ -z ${email+x} ]; then
+  echo "Email not defined (use -e)"
+  exit 1
 fi
+
+if [ -z ${firstName+x} ]; then
+  echo "First name not defined (use -f)"
+  exit 1
+fi
+
+if [ -z ${lastName+x} ]; then
+  echo "Last name not defined (use -l)"
+  exit 1
+fi
+
+if [ -z ${degree+x} ]; then
+  echo "Degree not defined (use -d)"
+  exit 1
+fi
+
+if [ -z ${degree_year+x} ]; then 
+  echo "Degree year not defined (use -y)"
+  exit 1
+fi
+   
+if [ -z ${slug+x} ]; then 
+  echo "Slug not defined (use -s)"
+  exit 1
+fi
+ 
+if [ -z ${terms+x} ]; then
+  echo "Terms not defined (use -t)"
+  exit 1
+fi
+
+echo $qa
+
+curl --verbose \
+-H "Connection: close" \
+-H "Content-Type: application/json" \
+-d '{ "email": "'"${email}"'",
+      "firstName": "'"${firstName}"'",
+      "lastName": "'"${lastName}"'",
+      "degree": "'"${degree}"'",
+      "degreeYear": '"${degree_year}"',
+      "slug": "'"${slug}"'",
+      "terms": '"${terms}"',
+      "answers": '"${qa}"' }' \
+"$host":"$port"/registration

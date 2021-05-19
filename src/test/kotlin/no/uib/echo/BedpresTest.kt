@@ -11,10 +11,7 @@ import io.ktor.http.HttpStatusCode
 import no.uib.echo.plugins.Routing
 
 import no.uib.echo.plugins.configureRouting
-import no.uib.echo.schema.Bedpres
-import no.uib.echo.schema.BedpresJson
-import no.uib.echo.schema.BedpresSlugJson
-import no.uib.echo.schema.Registration
+import no.uib.echo.schema.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -30,13 +27,13 @@ class BedpresTest : StringSpec({
         transaction {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.drop(Registration, Bedpres)
-            SchemaUtils.create(Registration, Bedpres)
+            SchemaUtils.drop(Registration, Answer, Bedpres)
+            SchemaUtils.create(Registration, Answer, Bedpres)
         }
     }
 
 
-    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK" {
+    "When trying to submit a bedpres, server should respond with OK." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -51,7 +48,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with correct payload should return OK, when the slug already exists but the value for spots is different" {
+    "Whe trying to update bedpres spots, server should respond with OK." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -75,7 +72,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with correct payload should return ACCEPTED, when the slug already exists and spots and registrationDate both have the same values" {
+    "When trying to update a bedpres with the excact same values, server should respond with ACCEPTED." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -99,7 +96,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with incorrect payload should return INTERNAL_SERVER_ERROR" {
+    "When trying to submit a bedpres with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -114,7 +111,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "PUT request on /${Routing.bedpresRoute} with wrong Authorization header should return UNAUTHORIZED" {
+    "When trying to submit or update a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
             configureRouting("secret")
         }) {
@@ -127,7 +124,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "DELETE request on /${Routing.bedpresRoute} with wrong Authorization header should return UNAUTHORIZED" {
+    "When trying to delete a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
             configureRouting("secret")
         }) {

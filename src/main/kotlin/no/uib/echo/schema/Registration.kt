@@ -1,15 +1,11 @@
 package no.uib.echo.schema
 
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
-import org.jetbrains.exposed.sql.jodatime.datetime
-import org.jetbrains.exposed.sql.select
+import no.uib.echo.schema.Answer.answer
+import no.uib.echo.schema.Answer.bedpresSlug
+import no.uib.echo.schema.Answer.question
+import no.uib.echo.schema.Answer.registrationEmail
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.jodatime.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -30,39 +26,26 @@ data class RegistrationJson(
     val slug: String,
     val terms: Boolean,
     val submitDate: String?,
-    val waitList: Boolean
+    val waitList: Boolean,
+    val answers: List<AnswerJson>
 )
 
 data class ShortRegistrationJson(val slug: String, val email: String)
 
 object Registration : Table() {
-    val email: Column<String> = varchar("email", 40)
-    val firstName: Column<String> = varchar("firstName", 40)
-    val lastName: Column<String> = varchar("lastName", 40)
+    val email: Column<String> = varchar("email", 50)
+    val firstName: Column<String> = varchar("first_name", 50)
+    val lastName: Column<String> = varchar("last_name", 50)
     val degree: Column<String> = varchar("degree", 50)
-    val degreeYear: Column<Int> = integer("degreeYear")
-    val bedpresSlug: Column<String> = varchar("bedpresSlug", 40) references Bedpres.slug
+    val degreeYear: Column<Int> = integer("degree_year")
+    val bedpresSlug: Column<String> = varchar("bedpres_slug", 50) references Bedpres.slug
     val terms: Column<Boolean> = bool("terms")
-    val submitDate: Column<DateTime> = datetime("submitDate").defaultExpression(CurrentDateTime())
-    val waitList: Column<Boolean> = bool("waitList")
+    val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime())
+    val waitList: Column<Boolean> = bool("wait_list")
 
     override val primaryKey: PrimaryKey = PrimaryKey(email, bedpresSlug)
 }
 
-enum class Degree {
-    DTEK,
-    DSIK,
-    DVIT,
-    BINF,
-    IMO,
-    IKT,
-    KOGNI,
-    INF,
-    PROG,
-    ARMNINF,
-    POST,
-    MISC,
-}
 
 fun selectRegistrations(
     emailParam: String?,
@@ -85,6 +68,7 @@ fun selectRegistrations(
     }
 
     return (result?.map { reg ->
+
         RegistrationJson(
             reg[Registration.email],
             reg[Registration.firstName],
@@ -94,7 +78,8 @@ fun selectRegistrations(
             reg[Registration.bedpresSlug],
             reg[Registration.terms],
             reg[Registration.submitDate].toString(),
-            reg[Registration.waitList]
+            reg[Registration.waitList],
+            selectQuestionsByEmailAndSlug(reg[Registration.email], reg[Registration.bedpresSlug])
         )
     })
 }
@@ -112,7 +97,7 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
         val countRegs = Registration.select { Registration.bedpresSlug eq reg.slug }.toList()
         val waitList = countRegs.size >= bedpres.spots
 
-        val oldReg = Registration.select { Registration.email eq reg.email }.firstOrNull()
+        val oldReg = Registration.select { Registration.email eq reg.email and (Registration.bedpresSlug eq bedpres.slug)}.firstOrNull()
         if (oldReg != null)
             return@transaction Pair(null, RegistrationStatus.ALREADY_EXISTS)
 
@@ -125,6 +110,15 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
             it[bedpresSlug] = reg.slug
             it[terms] = reg.terms
             it[Registration.waitList] = waitList
+        }
+
+        if (reg.answers.isNotEmpty()) {
+            Answer.batchInsert(reg.answers) { a ->
+                this[registrationEmail] = reg.email
+                this[bedpresSlug] = reg.slug
+                this[question] = a.question
+                this[answer] = a.answer
+            }
         }
 
         return@transaction Pair(null, if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED)

@@ -1,9 +1,12 @@
 package no.uib.echo
 
-import com.zaxxer.hikari.*
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Bedpres
 import no.uib.echo.schema.Registration
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
@@ -45,7 +48,7 @@ object Db {
 
     fun init() {
         transaction(conn) {
-            SchemaUtils.create(Bedpres, Registration)
+            SchemaUtils.create(Bedpres, Registration, Answer)
         }
     }
 }
