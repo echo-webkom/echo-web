@@ -31,7 +31,7 @@
         "axios": "0.21.1",
         "date-fns": "2.21.3",
         "dotenv": "9.0.2",
-        "framer-motion": "4.1.16",
+        "framer-motion": "4.1.17",
         "markdown-to-jsx": "7.1.2",
         "next": "10.2.0",
         "nextjs-progressbar": "0.0.9",
