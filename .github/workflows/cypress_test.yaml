@@ -41,5 +41,7 @@ jobs:
         docker-compose -f backend/docker-compose.yaml up &
         yarn wait-on --interval 1000 http-get://localhost:3000
         yarn wait-on --interval 1000 http-get://localhost:8080/status
-        sh backend/test_scripts/submit_bedpres -z -p 8080 -x hemmelig -s bedriftspresentasjon-med-bekk -o 5 -r 2021-05-06T16:46+01:00
+        sh backend/test_scripts/submit_bedpres -t -x $AUTH_KEY
         yarn cypress run
+      env:
+        AUTH_KEY: hemmelig

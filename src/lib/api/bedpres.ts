@@ -7,7 +7,7 @@ import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
 export type Question = decodeType<typeof questionDecoder>;
 const questionDecoder = record({
     questionText: string,
-    inputType: union(literal('radio'), literal('checkbox'), literal('textbox')),
+    inputType: union(literal('radio'), literal('textbox')),
     alternatives: union(nil, array(string)),
 });
 

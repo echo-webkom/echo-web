@@ -47,6 +47,12 @@ const degreeDecoder = (value: Pojo): Degree => {
     }
 };
 
+export type Answer = decodeType<typeof answerDecoder>;
+const answerDecoder = record({
+    question: string,
+    answer: string,
+});
+
 export type Registration = decodeType<typeof registrationDecoder>;
 const registrationDecoder = record({
     email: string,
@@ -58,6 +64,7 @@ const registrationDecoder = record({
     terms: boolean,
     submitDate: string,
     waitList: boolean,
+    answers: array(answerDecoder),
 });
 
 export type Response = decodeType<typeof responseDecoder>;
@@ -85,6 +92,7 @@ interface FormRegistration {
     degreeYear: number;
     slug: string;
     terms: boolean;
+    answers: Array<Answer>;
 }
 
 export const RegistrationAPI = {

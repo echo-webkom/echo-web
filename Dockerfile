@@ -6,7 +6,7 @@ FROM node:16-alpine as deps
 WORKDIR /opt/build
 COPY package.json yarn.lock ./
 
-RUN yarn
+RUN yarn --frozen-lockfile
 
 
 # Build with Next (no default command).
