@@ -32,7 +32,7 @@ jobs:
 
     - name: Install dependencies and build
       run: |
-        yarn
+        yarn --frozen-lockfile
         yarn build
 
     - name: Run Cypress end-to-end tests
