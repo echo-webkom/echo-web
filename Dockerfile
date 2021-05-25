@@ -1,7 +1,7 @@
 # ONLY FOR DEVELOPMENT AND TESTING USE
 
 # Install dependencies with yarn.
-FROM node:16-alpine as deps
+FROM node:14-alpine as deps
 
 WORKDIR /opt/build
 COPY package.json yarn.lock ./
