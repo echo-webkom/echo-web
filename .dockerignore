@@ -1,0 +1,15 @@
+node_modules
+build
+.next
+.cache
+.git
+.github
+README.md
+LICENSE
+renovate.json
+Dockerfile
+docker-compose.yaml
+
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/

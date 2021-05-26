@@ -6,7 +6,7 @@ import Footer from '../footer';
 describe('Footer', () => {
     test('renders without crashing', () => {
         render(<Footer />);
-        expect(screen.getByTestId(/footer-standard/i)).toBeInTheDocument();
+        expect(screen.getByTestId(/footer/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {

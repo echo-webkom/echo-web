@@ -125,10 +125,11 @@ const GET_N_BEDPRESES = `
                     authorName
                 }
                 companyLink
-                registrationLinksCollection {
+                additionalQuestionsCollection {
                     items {
-                        link
-                        description
+                        questionText
+                        inputType
+                        alternatives
                     }
                 }
                 sys {
@@ -157,10 +158,11 @@ const GET_BEDPRES_BY_SLUG = `
                     authorName
                 }
                 companyLink
-                registrationLinksCollection {
+                additionalQuestionsCollection {
                     items {
-                        link
-                        description
+                        questionText
+                        inputType
+                        alternatives
                     }
                 }
                 sys {

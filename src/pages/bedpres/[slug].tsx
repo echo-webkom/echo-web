@@ -13,20 +13,7 @@ import { MdEventSeat } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
-import {
-    Stack,
-    Link,
-    Button,
-    Grid,
-    Text,
-    GridItem,
-    Divider,
-    Center,
-    LinkBox,
-    LinkOverlay,
-    Icon,
-    Heading,
-} from '@chakra-ui/react';
+import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
 import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
@@ -38,15 +25,18 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 import Countdown from '../../components/countdown';
+import BedpresForm from '../../components/bedpres-form';
 
 const BedpresPage = ({
     bedpres,
     registrations,
+    backendHost,
     spotsTaken,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
+    backendHost: string;
     spotsTaken: number | null;
     error: string;
 }): JSX.Element => {
@@ -102,25 +92,18 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {!bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
+                            {isFuture(parseISO(bedpres.registrationTime)) && (
                                 <Center data-testid="bedpres-not-open" my="3">
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {bedpres.registrationLinks && isFuture(parseISO(bedpres.date)) && (
-                                <Stack>
-                                    {bedpres.registrationLinks.map((regLink) => (
-                                        <LinkBox key={regLink.link}>
-                                            <NextLink href={regLink.link} passHref>
-                                                <LinkOverlay isExternal>
-                                                    <Button w="100%" colorScheme="teal">
-                                                        {regLink.description}
-                                                    </Button>
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    ))}
-                                </Stack>
+                            {isFuture(parseISO(bedpres.date)) && (
+                                <BedpresForm
+                                    slug={bedpres.slug}
+                                    questions={bedpres.additionalQuestions}
+                                    title={bedpres.title}
+                                    backendHost={backendHost}
+                                />
                             )}
                             {isPast(parseISO(bedpres.date)) && (
                                 <Center my="3" data-testid="bedpres-has-been">
@@ -147,7 +130,9 @@ const BedpresPage = ({
                             </ContentBox>
                         </GridItem>
                     </Grid>
-                    {registrations && registrations.length > 0 && <BedpresView registrations={registrations} />}
+                    {registrations && registrations.length > 0 && (
+                        <BedpresView registrations={registrations} bedpres={bedpres} />
+                    )}
                 </>
             )}
         </Layout>
@@ -161,7 +146,7 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
-    const showAdmin = context.query?.admin === process.env.ADMIN_KEY || false;
+    const showAdmin = (context.query?.admin || null) === process.env.ADMIN_KEY || false;
     const authKey = process.env.BACKEND_AUTH_KEY || '';
     const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
 

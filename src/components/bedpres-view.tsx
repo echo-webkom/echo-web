@@ -3,38 +3,84 @@ import { Button, Heading, Table, Thead, Tbody, Tr, Th, Td, useToast, useBreakpoi
 import { format, parseISO, compareAsc } from 'date-fns';
 
 import ContentBox from './content-box';
-import { Registration } from '../lib/api/registration';
+import { Registration, Answer } from '../lib/api/registration';
+import { Bedpres, Question } from '../lib/api/bedpres';
 
-const BedpresView = ({ registrations }: { registrations: Array<Registration> }): JSX.Element => {
+const CopyEmailButton = ({
+    buttonText,
+    toastText,
+    emailsString,
+}: {
+    buttonText: string;
+    toastText: string;
+    emailsString: string;
+}): JSX.Element => {
     const toast = useToast();
+
+    return (
+        <Button
+            my="1rem"
+            onClick={() => {
+                navigator.clipboard.writeText(emailsString);
+                toast({
+                    title: toastText,
+                    status: 'info',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }}
+        >
+            {buttonText}
+        </Button>
+    );
+};
+
+const BedpresView = ({
+    registrations,
+    bedpres,
+}: {
+    registrations: Array<Registration>;
+    bedpres: Bedpres;
+}): JSX.Element => {
     const tbSize = useBreakpointValue(['sm', null, null, 'md']) || 'md';
     registrations.sort((fst, snd) => compareAsc(parseISO(fst.submitDate), parseISO(snd.submitDate)));
 
     return (
         <ContentBox>
             <Heading mb=".75rem">Påmeldte</Heading>
-            <Button
-                my="1rem"
-                onClick={() => {
-                    navigator.clipboard.writeText(
-                        registrations
-                            .map((reg: Registration) => {
-                                return reg.email;
-                            })
-                            .reduce((acc: string, email: string) => {
-                                return `${acc}\n${email}`;
-                            }),
-                    );
-                    toast({
-                        title: 'Mailer kopiert til utklippstavlen!',
-                        status: 'info',
-                        duration: 5000,
-                        isClosable: true,
-                    });
-                }}
-            >
-                Kopier mailer
-            </Button>
+            <CopyEmailButton
+                emailsString={registrations
+                    .map((reg: Registration) => {
+                        return reg.email;
+                    })
+                    .reduce((acc: string, email: string) => {
+                        return `${acc}\n${email}`;
+                    })}
+                buttonText="Kopier alle mailer"
+                toastText="Mailer kopiert til utklippstavlen!"
+            />
+            <CopyEmailButton
+                emailsString={registrations
+                    .map((reg: Registration) => {
+                        return reg.waitList ? '' : reg.email;
+                    })
+                    .reduce((acc: string, email: string) => {
+                        return `${acc}\n${email}`;
+                    })}
+                buttonText="Kopier mailer (uten venteliste)"
+                toastText="Mailer (uten venteliste) kopiert til utklippstavlen!"
+            />
+            <CopyEmailButton
+                emailsString={registrations
+                    .map((reg: Registration) => {
+                        return reg.waitList ? reg.email : '';
+                    })
+                    .reduce((acc: string, email: string) => {
+                        return `${acc}\n${email}`;
+                    })}
+                buttonText="Kopier mailer (bare venteliste)"
+                toastText="Mailer (bare venteliste) kopiert til utklippstavlen!"
+            />
             <Table variant="simple" size={tbSize}>
                 <Thead>
                     <Tr>
@@ -46,6 +92,9 @@ const BedpresView = ({ registrations }: { registrations: Array<Registration> }):
                         <Th>Godkjent retningslinjer</Th>
                         <Th>Påmeldingstidspunkt</Th>
                         <Th>Venteliste</Th>
+                        {bedpres.additionalQuestions.map((q: Question) => {
+                            return <Th key={`table-th-${q.questionText}`}>{q.questionText}</Th>;
+                        })}
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -60,6 +109,9 @@ const BedpresView = ({ registrations }: { registrations: Array<Registration> }):
                                 <Td>{reg.terms ? 'Ja' : 'Nei'}</Td>
                                 <Td>{format(parseISO(reg.submitDate), 'dd.MM kk:mm:ss')}</Td>
                                 <Td>{reg.waitList ? 'Ja' : 'Nei'}</Td>
+                                {reg.answers.map((a: Answer) => {
+                                    return <Td key={`table-td-${a.question}`}>{a.answer}</Td>;
+                                })}
                             </Tr>
                         );
                     })}

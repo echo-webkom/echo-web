@@ -27,7 +27,7 @@ const compare = (bedpres: Bedpres, json: RawBedpres) => {
         location: json.location,
         author: json.author.authorName,
         companyLink: json.companyLink,
-        registrationLinks: json.registrationLinksCollection.items,
+        additionalQuestions: json.additionalQuestionsCollection.items,
         publishedAt: json.sys.firstPublishedAt,
         registrationTime: json.registrationTime,
     });
