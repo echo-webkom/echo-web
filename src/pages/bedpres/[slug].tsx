@@ -20,24 +20,24 @@ import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { Registration, RegistrationAPI } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
-import BedpresForm from '../../components/bedpres-form';
 import BedpresView from '../../components/bedpres-view';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 import Countdown from '../../components/countdown';
+import BedpresForm from '../../components/bedpres-form';
 
 const BedpresPage = ({
     bedpres,
     registrations,
-    spotsTaken,
     backendHost,
+    spotsTaken,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
-    spotsTaken: number | null;
     backendHost: string;
+    spotsTaken: number | null;
     error: string;
 }): JSX.Element => {
     const router = useRouter();
@@ -79,7 +79,7 @@ const BedpresPage = ({
                                 <Text>
                                     {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
                                         (!spotsTaken && `${bedpres.spots}`)}{' '}
-                                    påmeldt
+                                    plasser
                                 </Text>
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
