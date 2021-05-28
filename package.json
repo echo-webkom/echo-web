@@ -24,6 +24,18 @@
             "prettier --write"
         ]
     },
+    "prettier": {
+        "semi": true,
+        "trailingComma": "all",
+        "singleQuote": true,
+        "printWidth": 120,
+        "tabWidth": 4
+    },
+    "babel": {
+        "presets": [
+            "next/babel"
+        ]
+    },
     "dependencies": {
         "@chakra-ui/react": "1.6.2",
         "@emotion/react": "11.4.0",
