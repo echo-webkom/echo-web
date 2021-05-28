@@ -20,7 +20,6 @@ if [ -z ${secret+x} ]; then
   exit 1
 fi
 
-
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
   curl --verbose \
     -H "Authorization: $secret" \

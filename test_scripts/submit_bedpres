@@ -24,14 +24,14 @@ if [ -z ${secret+x} ]; then
 fi
 
 if [ "$testing" = true ]; then
-    curl --verbose \
+  curl --verbose \
     -X PUT \
     -H "Authorization: $secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "slug": "bedriftspresentasjon-med-bekk", "spots": 50, "registrationDate": "2021-05-06T16:46+01:00" }' \
     "$host":"$port"/bedpres
-    exit 0
+  exit 0
 fi
 
 if [ -z ${slug+x} ]; then
@@ -50,9 +50,9 @@ if [ -z ${regdate+x} ]; then
 fi
 
 curl --verbose \
--X PUT \
--H "Authorization: $secret" \
--H "Connection: close" \
--H "Content-Type: application/json" \
--d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'" }' \
-"$host":"$port"/bedpres
+  -X PUT \
+  -H "Authorization: $secret" \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'" }' \
+  "$host":"$port"/bedpres

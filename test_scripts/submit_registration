@@ -41,27 +41,25 @@ if [ -z ${degree+x} ]; then
   exit 1
 fi
 
-if [ -z ${degree_year+x} ]; then 
+if [ -z ${degree_year+x} ]; then
   echo "Degree year not defined (use -y)"
   exit 1
 fi
-   
-if [ -z ${slug+x} ]; then 
+
+if [ -z ${slug+x} ]; then
   echo "Slug not defined (use -s)"
   exit 1
 fi
- 
+
 if [ -z ${terms+x} ]; then
   echo "Terms not defined (use -t)"
   exit 1
 fi
 
-echo $qa
-
 curl --verbose \
--H "Connection: close" \
--H "Content-Type: application/json" \
--d '{ "email": "'"${email}"'",
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "'"${email}"'",
       "firstName": "'"${firstName}"'",
       "lastName": "'"${lastName}"'",
       "degree": "'"${degree}"'",
@@ -69,4 +67,4 @@ curl --verbose \
       "slug": "'"${slug}"'",
       "terms": '"${terms}"',
       "answers": '"${qa}"' }' \
-"$host":"$port"/registration
+  "$host":"$port"/registration
