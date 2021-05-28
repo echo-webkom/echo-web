@@ -2,7 +2,7 @@ name: Release
 
 on:
   pull_request:
-    branches: [master]
+    branches: master
     types: closed
 
 jobs:
@@ -13,8 +13,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: master
-          # Needed for git log history
-          fetch-depth: 0
 
       - name: Install GitHub CLI
         run: |
@@ -31,15 +29,14 @@ jobs:
           MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
           PATCH=$(echo $VERSION | cut -d. -f3)
-          LABELS=$(echo "${{ toJson(github.event.pull_request.labels.*.name) }}")
           { if [[ "$LABELS" == *"major"* ]]; then
-              MAJOR=$((MAJOR+1))
+              MAJOR=$((MAJOR + 1))
               MINOR=0
               PATCH=0
             elif [[ "$LABELS" == *"minor"* ]]; then
-              MINOR=$((MINOR+1))
+              MINOR=$((MINOR + 1))
             elif [[ "$LABELS" == *"patch"* ]]; then
-              PATCH=$((PATCH+1))
+              PATCH=$((PATCH + 1))
             else
               echo "No release labels found."
               exit 0
@@ -52,8 +49,8 @@ jobs:
           }
           gh release create "v$MAJOR.$MINOR.$PATCH" \
             -t "$MAJOR.$MINOR.$PATCH" \
-            -n "<h1>Release for version $MAJOR.$MINOR.$PATCH</h1><h2>Commits since last release</h2><b>$(git log origin/master..origin/develop --no-merges --reverse --format=format:%h\ %s\<br\>\<br\>)</b>" \
+            -n "<h1>Release for version $MAJOR.$MINOR.$PATCH.</h1>" \
             --target master
-        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}

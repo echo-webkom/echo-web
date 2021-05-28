@@ -1,6 +1,11 @@
 .git*
 .idea/
 build/
+
+*.iml
+Dockerfile
 docker-compose*
 test
+LICENSE
+README.md
 renovate.json

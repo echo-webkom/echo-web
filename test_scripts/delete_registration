@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Default values
 host=http://localhost
 port=8080
 

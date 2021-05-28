@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Default values
 host=http://localhost
 port=8080
 
@@ -24,9 +25,9 @@ if [ -z ${slug+x} ]; then
 fi
 
 curl --verbose \
--X DELETE \
--H "Authorization: $secret" \
--H "Connection: close" \
--H "Content-Type: application/json" \
--d '{ "slug": "'"$slug"'" }' \
-"$host":"$port"/bedpres
+  -X DELETE \
+  -H "Authorization: $secret" \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "slug": "'"$slug"'" }' \
+  "$host":"$port"/bedpres
