@@ -1,5 +1,6 @@
 module.exports = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testEnvironment: 'jsdom',
     testPathIgnorePatterns: [
         '<rootDir>/.next/',
         '<rootDir>/node_modules/',
@@ -8,8 +9,4 @@ module.exports = {
         'mock-responses.ts',
         '<rootDir>/cypress/',
     ],
-    transform: {
-        '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
-        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    },
 };
