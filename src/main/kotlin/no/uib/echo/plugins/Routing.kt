@@ -4,6 +4,10 @@ import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.routing.*
 import io.ktor.application.*
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.authenticate
+import io.ktor.auth.basic
 import io.ktor.gson.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -29,7 +33,10 @@ import no.uib.echo.schema.insertOrUpdateBedpres
 import no.uib.echo.schema.insertRegistration
 import no.uib.echo.schema.selectRegistrations
 
-fun Application.configureRouting(authKey: String) {
+fun Application.configureRouting(keys: Map<String, String>) {
+    val bedkom = "bedkom"
+    val webkom = "webkom"
+
     install(ContentNegotiation) {
         gson()
     }
@@ -38,16 +45,42 @@ fun Application.configureRouting(authKey: String) {
         limit = 200
     }
 
+    install(Authentication) {
+        basic("auth-${bedkom}") {
+            realm = "Access to registrations."
+            validate { credentials ->
+                if (credentials.name == bedkom && credentials.password == keys[bedkom])
+                    UserIdPrincipal(credentials.name)
+                else
+                    null
+            }
+        }
+
+        basic("auth-${webkom}") {
+            realm = "Access to bedpreses."
+            validate { credentials ->
+                if (credentials.name == webkom && credentials.password == keys[webkom])
+                    UserIdPrincipal(credentials.name)
+                else
+                    null
+            }
+        }
+    }
+
     routing {
         rateLimited {
             getStatus()
 
-            getRegistration(authKey)
+            authenticate("auth-${bedkom}") {
+                getRegistration()
+                deleteRegistration()
+            }
             postRegistration()
-            deleteRegistration(authKey)
 
-            putBedpres(authKey)
-            deleteBedpres(authKey)
+            authenticate("auth-${webkom}") {
+                putBedpres()
+                deleteBedpres()
+            }
         }
     }
 }
@@ -62,16 +95,10 @@ object Routing {
         }
     }
 
-    fun Route.getRegistration(authKey: String) {
+    fun Route.getRegistration() {
         get("/$registrationRoute") {
             val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
-            val auth: String? = call.request.header(HttpHeaders.Authorization)
-
-            if (auth != authKey) {
-                call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-                return@get
-            }
 
             val result = selectRegistrations(emailParam, slugParam)
 
@@ -151,16 +178,10 @@ object Routing {
         }
     }
 
-    fun Route.deleteRegistration(authKey: String) {
+    fun Route.deleteRegistration() {
         delete("/$registrationRoute") {
             try {
                 val shortReg = call.receive<ShortRegistrationJson>()
-                val auth: String? = call.request.header(HttpHeaders.Authorization)
-
-                if (auth != authKey) {
-                    call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-                    return@delete
-                }
 
                 deleteRegistration(shortReg)
 
@@ -175,15 +196,8 @@ object Routing {
         }
     }
 
-    fun Route.putBedpres(authKey: String) {
+    fun Route.putBedpres() {
         put("/$bedpresRoute") {
-            val auth: String? = call.request.header(HttpHeaders.Authorization)
-
-            if (auth != authKey) {
-                call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-                return@put
-            }
-
             try {
                 val bedpres = call.receive<BedpresJson>()
                 val result = insertOrUpdateBedpres(bedpres)
@@ -196,15 +210,9 @@ object Routing {
         }
     }
 
-    fun Route.deleteBedpres(authKey: String) {
+    fun Route.deleteBedpres() {
         delete("/$bedpresRoute") {
-            val auth: String? = call.request.header(HttpHeaders.Authorization)
             val slug = call.receive<BedpresSlugJson>()
-
-            if (auth != authKey) {
-                call.respond(HttpStatusCode.Unauthorized, "Not authorized.")
-                return@delete
-            }
 
             deleteBedpresBySlug(slug)
 

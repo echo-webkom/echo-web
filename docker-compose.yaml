@@ -15,7 +15,8 @@ services:
       # The value of DEV doesn't matter, only that it's defined.
       DEV: ja
       DATABASE_HOST: database
-      AUTH_KEY: hemmelig
+      BEDKOM_KEY: bedkom-passord
+      WEBKOM_KEY: webkom-passord
 
   database:
     # Postgres 13.2 is the version Heroku uses.

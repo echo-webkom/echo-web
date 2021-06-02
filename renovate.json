@@ -8,7 +8,10 @@
   "prHourlyLimit": 0,
   "stabilityDays": 3,
   "prCreation": "not-pending",
-  "ignoreDeps": ["openjdk", "postgres"],
+  "ignoreDeps": [
+      "openjdk",
+      "postgres"
+  ],
   "packageRules": [
     {
       "matchPackagePatterns": [

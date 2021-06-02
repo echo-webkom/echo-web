@@ -17,6 +17,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.Base64
 
 class RegistrationTest : StringSpec({
     val exampleBedpres1 = BedpresJson("bedpres-med-noen", 50, "2020-04-29T20:43:29Z")
@@ -28,6 +29,11 @@ class RegistrationTest : StringSpec({
     )
 
     val gson = Gson()
+
+    val bedkom = "bedkom"
+    val keys = mapOf(
+        bedkom to "bedkom-passord"
+    )
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -44,21 +50,26 @@ class RegistrationTest : StringSpec({
 
     "Trying to get registrations with wrong Authorization header should not work." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
+            val wrongAuth = "$bedkom:damn-feil-passord-100"
+
             val testCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
+                    )
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
     }
 
-
     "Registrations with valid data should submit correctly." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             fun submitReg(degree: Degree, degreeYear: Int) {
                 val submitRegCall: TestApplicationCall =
@@ -101,7 +112,7 @@ class RegistrationTest : StringSpec({
 
     "The same user should be able to sign up for two different bedpres's." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             for (b in listOf(exampleBedpres1, exampleBedpres2)) {
                 val submitRegCall: TestApplicationCall =
@@ -121,7 +132,7 @@ class RegistrationTest : StringSpec({
 
     "Registration with valid data and empty question list should submit correctly." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
 
             val submitRegCall: TestApplicationCall =
@@ -138,9 +149,9 @@ class RegistrationTest : StringSpec({
         }
     }
 
-     "You should not be able to sign up for a bedpres more than once." {
+    "You should not be able to sign up for a bedpres more than once." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val submitRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -170,7 +181,7 @@ class RegistrationTest : StringSpec({
 
     "You should not be able to sign up for a bedpres before the registration date." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val submitRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -188,7 +199,7 @@ class RegistrationTest : StringSpec({
 
     "You should not be able to sign up for a bedpres that doesn't exist." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val submitRegCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -206,7 +217,7 @@ class RegistrationTest : StringSpec({
 
     "Email should contain @-sign." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -225,7 +236,7 @@ class RegistrationTest : StringSpec({
 
     "Degree year should not be smaller than one." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -244,7 +255,7 @@ class RegistrationTest : StringSpec({
 
     "Degree year should not be bigger than five." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -264,7 +275,7 @@ class RegistrationTest : StringSpec({
 
     "If the degree year is either four or five, the degree should not correspond to a bachelors degree." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             listOf(
                 Degree.DTEK,
@@ -293,7 +304,7 @@ class RegistrationTest : StringSpec({
 
     "If the degree year is between one and three, the degree should not correspond to a masters degree." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             listOf(Degree.INF, Degree.PROG).map { deg ->
                 for (i in 1..3) {
@@ -316,7 +327,7 @@ class RegistrationTest : StringSpec({
 
     "If degree is KOGNI, degree year should be equal to three." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -335,7 +346,7 @@ class RegistrationTest : StringSpec({
 
     "If degree is ARMNINF, degree year should be equal to one." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -354,7 +365,7 @@ class RegistrationTest : StringSpec({
 
     "Terms should be accepted." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -373,12 +384,16 @@ class RegistrationTest : StringSpec({
 
     "Trying to delete a registration with wrong Authorization header should not work." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
+            val wrongAuth = "$bedkom:feil-passord-100-bruh"
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleReg))
                 }
 
@@ -388,7 +403,7 @@ class RegistrationTest : StringSpec({
 
     "If a bedpres has filled up every spot, a registration should be put on the wait list." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             for (i in 1..(exampleBedpres1.spots)) {
                 val submitRegCall: TestApplicationCall =
@@ -422,7 +437,7 @@ class RegistrationTest : StringSpec({
 
     "Rate limit should work as expected." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             for (i in 1..200) {
                 val submitRegCall: TestApplicationCall =

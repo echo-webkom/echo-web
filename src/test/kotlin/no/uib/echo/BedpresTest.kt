@@ -16,11 +16,18 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.Base64
 
 class BedpresTest : StringSpec({
     val exampleBedpres = BedpresJson("bedpres-med-noen", 420, "2021-04-29T20:43:29Z")
     val exampleBedpresSlug = BedpresSlugJson(exampleBedpres.slug)
     val gson = Gson()
+
+    val webkom = "webkom"
+    val keys = mapOf(
+        webkom to "webkom-passord"
+    )
+    val auth = "$webkom:${keys[webkom]}"
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -35,12 +42,15 @@ class BedpresTest : StringSpec({
 
     "When trying to submit a bedpres, server should respond with OK." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpres))
                 }
 
@@ -50,12 +60,15 @@ class BedpresTest : StringSpec({
 
     "Whe trying to update bedpres spots, server should respond with OK." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val submitBedpresCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpres))
                 }
 
@@ -64,7 +77,10 @@ class BedpresTest : StringSpec({
             val updateBedpresCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpres.copy(spots = 123)))
                 }
 
@@ -74,12 +90,15 @@ class BedpresTest : StringSpec({
 
     "When trying to update a bedpres with the excact same values, server should respond with ACCEPTED." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val submitBedpresCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpres))
                 }
 
@@ -88,7 +107,10 @@ class BedpresTest : StringSpec({
             val updateBedpresCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpres))
                 }
 
@@ -98,12 +120,15 @@ class BedpresTest : StringSpec({
 
     "When trying to submit a bedpres with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "secret")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
+                    )
                     setBody("""{ "spots": 69, "registrationDate": "2021-04-29T20:43:29Z" }""")
                 }
 
@@ -113,11 +138,18 @@ class BedpresTest : StringSpec({
 
     "When trying to submit or update a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
+            val wrongAuth = "$webkom:damn-feil-passord-100"
+
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
-                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
+                    )
+                    setBody(gson.toJson(exampleBedpres))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
@@ -126,12 +158,17 @@ class BedpresTest : StringSpec({
 
     "When trying to delete a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting("secret")
+            configureRouting(keys)
         }) {
+            val wrongAuth = "$webkom:damn-feil-passord-100"
+
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.bedpresRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
-                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
+                    )
                     setBody(gson.toJson(exampleBedpresSlug))
                 }
 

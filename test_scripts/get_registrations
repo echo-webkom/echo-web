@@ -3,14 +3,16 @@
 # Default values
 host=http://localhost
 port=8080
+user=bedkom
 
-while getopts zpe:s:x: flag; do
+while getopts zpe:s:x:u flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   e) email=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   x) secret=${OPTARG} ;;
+  u) user=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -20,21 +22,20 @@ if [ -z ${secret+x} ]; then
   exit 1
 fi
 
-
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
   curl --verbose \
-    -H "Authorization: $secret" \
+    -u $user:$secret \
     "$host":"$port"/registration
 elif [ -z ${slug+x} ]; then
   curl --verbose \
-    -H "Authorization: $secret" \
+    -u $user:$secret \
     "$host":"$port"/registration?email="$email"
 elif [ -z ${email+x} ]; then
   curl --verbose \
-    -H "Authorization: $secret" \
+    -u $user:$secret \
     "$host:$port/registration?slug=$slug"
 else
   curl --verbose \
-    -H "Authorization: $secret" \
+    -u $user:$secret \
     "$host:$port/registration?email=$email&slug=$slug"
 fi
