@@ -52,8 +52,14 @@ fun Application.module() {
         }
     }
 
-    val authKey = System.getenv("AUTH_KEY") ?: throw Exception("AUTH_KEY not defined.")
+    val bedkomKey = System.getenv("BEDKOM_KEY") ?: throw Exception("BEDKOM_KEY not defined.")
+    val webkomKey = System.getenv("WEBKOM_KEY") ?: throw Exception("WEBKOM_KEY not defined.")
+
+    val keys: Map<String, String> = mapOf(
+        "bedkom" to bedkomKey,
+        "webkom" to webkomKey
+    )
 
     Db.init()
-    configureRouting(authKey)
+    configureRouting(keys)
 }

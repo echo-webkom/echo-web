@@ -85,11 +85,8 @@ fabric.properties
 .idea/
 
 # Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
-
-*.iml
 modules.xml
 .idea/misc.xml
-*.ipr
 
 # Sonarlint plugin
 .idea/sonarlint
@@ -144,7 +141,6 @@ gradle-app.setting
 ### Node ###
 # Logs
 logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -216,7 +212,6 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
 .env.test
 .env*.local
 

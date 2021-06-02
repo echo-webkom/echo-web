@@ -18,7 +18,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.0.0"
     id("com.adarshr.test-logger") version "3.0.0"
-
 }
 
 group = "no.uib.echo"
@@ -37,6 +36,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-gson:$ktor_version")
+    implementation("io.ktor:ktor-auth:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -77,6 +77,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// Test logging config.
 testlogger {
     theme = ThemeType.STANDARD
     showExceptions = true
@@ -98,12 +99,16 @@ testlogger {
 
 // Use new JVM IR backend (yolo).
 // https://blog.jetbrains.com/kotlin/2021/02/the-jvm-backend-is-in-beta-let-s-make-it-stable-together
+// Also set JVM target.
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         useIR = true
+        jvmTarget = "1.8"
     }
 }
 
+// Heroku Gradle buildpack runs `./gradlew stage`,
+// therefore we make `stage` run `shadowJar`.
 task("stage") {
     dependsOn("shadowJar")
 }

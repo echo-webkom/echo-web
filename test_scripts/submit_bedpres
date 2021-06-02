@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Default values
-host=http://localhost
-port=8080
+host="http://localhost"
+port="8080"
 testing=false
+user="webkom"
 
-while getopts zpts:o:r:x: flag; do
+while getopts zpts:o:r:x:u flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -14,6 +15,7 @@ while getopts zpts:o:r:x: flag; do
   o) spots=${OPTARG} ;;
   r) regdate=${OPTARG} ;;
   x) secret=${OPTARG} ;;
+  u) user=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -26,7 +28,7 @@ fi
 if [ "$testing" = true ]; then
   curl --verbose \
     -X PUT \
-    -H "Authorization: $secret" \
+    -u $user:$secret \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "slug": "bedriftspresentasjon-med-bekk", "spots": 50, "registrationDate": "2021-05-06T16:46+01:00" }' \
@@ -51,7 +53,7 @@ fi
 
 curl --verbose \
   -X PUT \
-  -H "Authorization: $secret" \
+  -u $user:$secret \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
   -d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'" }' \

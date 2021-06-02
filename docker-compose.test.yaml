@@ -5,8 +5,10 @@ services:
       context: .
       target: build
     image: echo-web-backend:latest
+    # Don't start backend before database is up.
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     links:
       - database
     ports:
@@ -16,7 +18,8 @@ services:
       # The value of DEV doesn't matter, only that it's defined.
       DEV: ja
       DATABASE_HOST: database
-      AUTH_KEY: hemmelig
+      BEDKOM_KEY: bedkom-passord
+      WEBKOM_KEY: webkom-passord
 
   database:
     # Postgres 13.2 is the version Heroku uses.
@@ -24,6 +27,12 @@ services:
     restart: always
     ports:
       - '5432:5432'
+    # Check if database is ready.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
