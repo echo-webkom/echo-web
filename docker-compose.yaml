@@ -3,7 +3,7 @@ services:
   frontend:
     build: .
     image: echo-web-frontend:latest
-    command: bash -c "yarn start & yarn cypress run && kill $$!"
+    command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
       backend:
