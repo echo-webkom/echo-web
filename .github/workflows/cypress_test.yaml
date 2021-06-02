@@ -19,11 +19,15 @@ jobs:
 
     - name: Set up environment
       run: |
-        echo "CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID_TEST }}" >> .env
-        echo "CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN_TEST }}" >> .env
-        echo "CONTENTFUL_ENVIRONMENT_ID=develop" >> .env
-        echo "BACKEND_AUTH_KEY=hemmelig" >> .env
-        echo "ADMIN_KEY=hemmelig" >> .env
+        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> .env
+        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> .env
+        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> .env
+        echo "BEDKOM_KEY=$BEDKOM_KEY" >> .env
+      env:
+        CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TEST }}
+        CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TEST }}
+        CONTENTFUL_ENVIRONMENT_ID: develop
+        BEDKOM_KEY: bedkom-passord
 
     - name: Set up Docker images
       run: |
@@ -41,7 +45,7 @@ jobs:
         docker-compose -f backend/docker-compose.yaml up &
         yarn wait-on --interval 1000 http-get://localhost:3000
         yarn wait-on --interval 1000 http-get://localhost:8080/status
-        sh backend/test_scripts/submit_bedpres -t -x $AUTH_KEY
+        sh backend/test_scripts/submit_bedpres -t -x $BEDKOM_KEY
         yarn cypress run
       env:
-        AUTH_KEY: hemmelig
+        BEDKOM_KEY: bedkom-passord

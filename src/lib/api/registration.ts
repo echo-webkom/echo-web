@@ -99,11 +99,14 @@ export const RegistrationAPI = {
     getRegistrations: async (
         auth: string,
         slug: string,
-        backendHost: string,
+        backendUrl: string,
     ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
         try {
-            const { data } = await axios.get(`http://${backendHost}/registration?slug=${slug}`, {
-                headers: { Authorization: auth },
+            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}`, {
+                auth: {
+                    username: 'bedkom',
+                    password: auth,
+                },
             });
 
             return {
@@ -120,10 +123,10 @@ export const RegistrationAPI = {
 
     submitRegistration: async (
         registration: FormRegistration,
-        backendHost: string,
+        backendUrl: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`http://${backendHost}/registration`, registration, {
+            const { data, status } = await axios.post(`${backendUrl}/registration`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;

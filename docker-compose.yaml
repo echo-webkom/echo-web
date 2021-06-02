@@ -13,7 +13,8 @@ services:
     ports:
       - '3000:3000'
     environment:
-      BACKEND_HOST: backend:8080
+      BACKEND_URL: http://backend:8080
+      BEDKOM_KEY: bedkom-passord
 
   backend:
     # Runs tests against backend master branch.
@@ -30,14 +31,15 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$AUTH_KEY || exit 1" ]
+      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
     environment:
       DEV: ja
       DATABASE_HOST: database
-      AUTH_KEY: hemmelig
+      BEDKOM_KEY: bedkom-passord
+      WEBKOM_KEY: webkom-passord
 
   database:
     image: postgres:13.2-alpine

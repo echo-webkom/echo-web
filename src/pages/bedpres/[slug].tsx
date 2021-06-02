@@ -30,13 +30,13 @@ import BedpresForm from '../../components/bedpres-form';
 const BedpresPage = ({
     bedpres,
     registrations,
-    backendHost,
+    backendUrl,
     spotsTaken,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
-    backendHost: string;
+    backendUrl: string;
     spotsTaken: number | null;
     error: string;
 }): JSX.Element => {
@@ -102,7 +102,7 @@ const BedpresPage = ({
                                     slug={bedpres.slug}
                                     questions={bedpres.additionalQuestions}
                                     title={bedpres.title}
-                                    backendHost={backendHost}
+                                    backendUrl={backendUrl}
                                 />
                             )}
                             {isPast(parseISO(bedpres.date)) && (
@@ -146,13 +146,13 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
-    const showAdmin = (context.query?.admin || null) === process.env.ADMIN_KEY || false;
-    const authKey = process.env.BACKEND_AUTH_KEY || '';
-    const backendHost = process.env.BACKEND_HOST || 'localhost:8080';
+    const bedkomKey = process.env.BEDKOM_KEY;
+    const showAdmin = context.query?.key === bedkomKey;
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
 
-    if (showAdmin && !authKey) throw Error('No AUTH_KEY defined.');
+    if (showAdmin && !bedkomKey) throw Error('No BEDKOM_KEY defined.');
 
-    const { registrations } = await RegistrationAPI.getRegistrations(authKey, slug, backendHost);
+    const { registrations } = await RegistrationAPI.getRegistrations(bedkomKey || '', slug, backendUrl);
     const realReg = showAdmin ? registrations || [] : [];
     const spotsTaken = registrations?.length || null;
 
@@ -167,7 +167,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             bedpres,
             registrations: realReg,
             spotsTaken,
-            backendHost,
+            backendUrl,
             error,
         },
     };
