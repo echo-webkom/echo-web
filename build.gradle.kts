@@ -57,10 +57,6 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 // Used for Shadow. Sets main class in JAR-file.
 tasks.withType<Jar> {
     manifest {
