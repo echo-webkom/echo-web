@@ -52,15 +52,20 @@ class RegistrationTest : StringSpec({
         withTestApplication({
             configureRouting(keys)
         }) {
+            val wrongAuth = "$bedkom:damn-feil-passord-100"
+
             val testCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}") {
-                    addHeader(HttpHeaders.Authorization, "feil auth header")
+                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
+                    )
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
     }
-
 
     "Registrations with valid data should submit correctly." {
         withTestApplication({
