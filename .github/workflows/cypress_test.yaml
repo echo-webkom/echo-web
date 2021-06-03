@@ -46,6 +46,6 @@ jobs:
         yarn wait-on --interval 1000 http-get://localhost:3000
         yarn wait-on --interval 1000 http-get://localhost:8080/status
         sh backend/test_scripts/submit_bedpres -t -x $BEDKOM_KEY
-        yarn cypress run
+        yarn cypress run --config video=false,screenshotOnRunFailure=false
       env:
         BEDKOM_KEY: bedkom-passord
