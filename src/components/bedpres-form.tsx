@@ -102,12 +102,12 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
 const BedpresForm = ({
     slug,
     questions,
-    backendHost,
+    backendUrl,
 }: {
     slug: string;
     questions: Array<Question>;
     title: string;
-    backendHost: string;
+    backendUrl: string;
 }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const methods = useForm();
@@ -142,7 +142,7 @@ const BedpresForm = ({
                     return { question: q.questionText, answer: data.answers[index] };
                 }),
             },
-            backendHost,
+            backendUrl,
         ).then(({ response, statusCode }) => {
             toast({
                 title: response.title,
