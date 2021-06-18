@@ -84,9 +84,13 @@ const OmOssPage = ({
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
                         <StudentGroupSection studentGroups={boards.reverse()} error={boardsError} groupType="styrer" />
                     </>,
-                    <Markdown options={{ overrides: MapMarkdownChakra }}>{instituttraadet}</Markdown>,
-                    <Markdown options={{ overrides: MapMarkdownChakra }}>{statutter}</Markdown>,
-                    <Minutes minutes={minutes} error={error} />,
+                    <Markdown key="instituttraadet" options={{ overrides: MapMarkdownChakra }}>
+                        {instituttraadet}
+                    </Markdown>,
+                    <Markdown key="statutter" options={{ overrides: MapMarkdownChakra }}>
+                        {statutter}
+                    </Markdown>,
+                    <Minutes key="minutes" minutes={minutes} error={error} />,
                     <>
                         <Center>
                             <LinkBox>

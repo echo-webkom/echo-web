@@ -27,13 +27,21 @@ const ForStudenterPage = ({
             <StaticInfo
                 tabNames={['Undergrupper', 'Underorganisasjoner', 'Masterinfo']}
                 tabPanels={[
-                    <StudentGroupSection studentGroups={subGroups} error={subGroupsError} groupType="undergrupper" />,
                     <StudentGroupSection
+                        key="undergrupper"
+                        studentGroups={subGroups}
+                        error={subGroupsError}
+                        groupType="undergrupper"
+                    />,
+                    <StudentGroupSection
+                        key="underorganisasjoner"
                         studentGroups={subOrgs}
                         error={subOrgsError}
                         groupType="underorganisasjoner"
                     />,
-                    <Markdown options={{ overrides: MapMarkdownChakra }}>{masterinfo}</Markdown>,
+                    <Markdown key="masterinfo" options={{ overrides: MapMarkdownChakra }}>
+                        {masterinfo}
+                    </Markdown>,
                 ]}
             />
         </Layout>
