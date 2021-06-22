@@ -1,0 +1,49 @@
+name: Cypress
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  cypress_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout backend repository
+      uses: actions/checkout@v2
+
+    - name: Checkout frontend repository
+      uses: actions/checkout@v2
+      with:
+        repository: echo-webkom/echo-web-frontend
+        path: frontend
+        ref: master
+
+    - name: Set up environment
+      run: |
+        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> frontend/.env
+        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> frontend/.env
+        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> frontend/.env
+        echo "BEDKOM_KEY=$BEDKOM_KEY" >> frontend/.env
+      env:
+        CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
+        CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
+        CONTENTFUL_ENVIRONMENT_ID: testing
+        BEDKOM_KEY: bedkom-passord
+
+    - name: Set up Docker images
+      run: |
+        docker-compose pull
+        docker-compose build
+    - name: Install dependencies and build
+      run: |
+        yarn --cwd frontend --frozen-lockfile
+        yarn --cwd frontend build
+    - name: Run Cypress end-to-end tests
+      run: |
+        yarn --cwd frontend start &
+        docker-compose up &
+        yarn --cwd frontend wait-on --interval 1000 http-get://localhost:3000
+        yarn --cwd frontend wait-on --interval 1000 http-get://localhost:8080/status
+        sh test_scripts/submit_bedpres -t -x $WEBKOM_KEY || exit 1
+        yarn --cwd frontend cypress run --config video=false,screenshotOnRunFailure=false
+      env:
+        WEBKOM_KEY: webkom-passord
