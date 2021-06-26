@@ -17,33 +17,21 @@ jobs:
         path: frontend
         ref: master
 
+    - name: Build frontend
+      run: docker build -t echo-web-frontend:latest frontend
+
     - name: Set up environment
       run: |
-        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> frontend/.env
-        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> frontend/.env
-        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> frontend/.env
-        echo "BEDKOM_KEY=$BEDKOM_KEY" >> frontend/.env
+        sed -i "s/your-space-id-here/'$CONTENTFUL_SPACE_ID'/" $COMPOSE_FILE
+        sed -i "s/your-access-token-here/$CONTENTFUL_ACCESS_TOKEN/" $COMPOSE_FILE
+        # Remove build context pointing to Git URL, since building
+        # from Git URL in Docker Compose doesn't work with GitHub Actions.
+        sed -i '4d' $COMPOSE_FILE
       env:
         CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
         CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
         CONTENTFUL_ENVIRONMENT_ID: testing
-        BEDKOM_KEY: bedkom-passord
+        COMPOSE_FILE: docker-compose.cypress.yaml
 
-    - name: Set up Docker images
-      run: |
-        docker-compose pull
-        docker-compose build
-    - name: Install dependencies and build
-      run: |
-        yarn --cwd frontend --frozen-lockfile
-        yarn --cwd frontend build
     - name: Run Cypress end-to-end tests
-      run: |
-        yarn --cwd frontend start &
-        docker-compose up &
-        yarn --cwd frontend wait-on --interval 1000 http-get://localhost:3000
-        yarn --cwd frontend wait-on --interval 1000 http-get://localhost:8080/status
-        sh test_scripts/submit_bedpres -t -x $WEBKOM_KEY || exit 1
-        yarn --cwd frontend cypress run --config video=false,screenshotOnRunFailure=false
-      env:
-        WEBKOM_KEY: webkom-passord
+      run: ./cypress
