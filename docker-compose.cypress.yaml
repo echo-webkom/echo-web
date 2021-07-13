@@ -14,11 +14,11 @@ services:
       - '3000:3000'
     environment:
       BACKEND_URL: http://backend:8080
-      BEDKOM_KEY: bedkom-passord
-      CONTENTFUL_ENVIRONMENT_ID: testing
-      # Replace these with real values.
-      CONTENTFUL_SPACE_ID: your-space-id-here
-      CONTENTFUL_ACCESS_TOKEN: your-access-token-here
+      # Values from .env file
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID}
+      CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN}
+      CONTENTFUL_ENVIRONMENT_ID: ${CONTENTFUL_ENVIRONMENT_ID}
+      BEDKOM_KEY: ${BEDKOM_KEY}
 
   backend:
     build: .
@@ -40,8 +40,9 @@ services:
     environment:
       DEV: ja
       DATABASE_HOST: database
-      BEDKOM_KEY: bedkom-passord
-      WEBKOM_KEY: webkom-passord
+      # Values from .env file
+      BEDKOM_KEY: ${BEDKOM_KEY}
+      WEBKOM_KEY: ${WEBKOM_KEY}
 
   database:
     image: postgres:13.2-alpine
