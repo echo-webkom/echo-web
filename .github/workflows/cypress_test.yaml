@@ -22,8 +22,11 @@ jobs:
 
     - name: Set up environment
       run: |
-        sed -i "s/your-space-id-here/'$CONTENTFUL_SPACE_ID'/" $COMPOSE_FILE
-        sed -i "s/your-access-token-here/$CONTENTFUL_ACCESS_TOKEN/" $COMPOSE_FILE
+        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> .env
+        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> .env
+        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> .env
+        echo "BEDKOM_KEY=$BEDKOM_KEY" >> .env
+        echo "WEBKOM_KEY=$WEBKOM_KEY" >> .env
         # Remove build context pointing to Git URL, since building
         # from Git URL in Docker Compose doesn't work with GitHub Actions.
         sed -i '4d' $COMPOSE_FILE
@@ -31,6 +34,8 @@ jobs:
         CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
         CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
         CONTENTFUL_ENVIRONMENT_ID: testing
+        BEDKOM_KEY: bedkom-passord
+        WEBKOM_KEY: webkom-passord
         COMPOSE_FILE: docker-compose.cypress.yaml
 
     - name: Run Cypress end-to-end tests
