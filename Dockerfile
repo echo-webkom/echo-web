@@ -32,6 +32,9 @@ COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar .
 COPY Procfile .
 COPY test_scripts test_scripts
 
+RUN apt-get update \
+ && apt-get -yq --no-install-recommends install curl
+
 # NB! This might break if version or name changes.
 # Should probably use some environment variable or something.
 CMD java -jar -Djava.security.egd=file:/dev/./urandom echo-web-backend-0.0.1-all.jar
