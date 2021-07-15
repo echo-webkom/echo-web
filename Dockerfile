@@ -1,6 +1,6 @@
-# We use OpenJDK 8 since Heroku uses it by default.
+# We use OpenJDK 13 since that is what our Heroku instance uses.
 # Download Gradle wrapper and install dependencies.
-FROM openjdk:8-jdk-buster as deps
+FROM openjdk:13-jdk-slim as deps
 
 WORKDIR /opt/build
 COPY *.kts gradle.properties gradlew* ./
@@ -11,7 +11,7 @@ RUN ./gradlew installDist --build-cache --no-daemon
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.
-FROM openjdk:8-jdk-buster as build
+FROM openjdk:13-jdk-slim as build
 
 WORKDIR /opt/build
 COPY --from=deps /root/.gradle /root/.gradle/
@@ -23,7 +23,7 @@ RUN ./gradlew shadowJar --build-cache --no-rebuild --no-daemon
 
 
 # Run the server
-FROM openjdk:8-jdk-buster
+FROM openjdk:13-jdk-slim
 WORKDIR /opt/app
 
 # NB! This might break if version or name changes.
