@@ -83,7 +83,7 @@
         "husky": "7.0.1",
         "jest": "27.0.6",
         "jest-dom": "4.0.0",
-        "lint-staged": "11.0.0",
+        "lint-staged": "11.0.1",
         "msw": "0.31.0",
         "prettier": "2.3.2",
         "typescript": "4.3.5",
