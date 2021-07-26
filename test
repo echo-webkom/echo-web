@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts bt: flag; do
+while getopts b:t: flag; do
     case "${flag}" in
     b) branch=${OPTARG} ;;
     t) type=${OPTARG} ;;
