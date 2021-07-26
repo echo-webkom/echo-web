@@ -1,4 +1,34 @@
 #!/bin/bash
 
-docker-compose down
-docker-compose -f docker-compose.test.yaml up --build --exit-code-from=backend
+while getopts b:t: flag; do
+    case "${flag}" in
+    b) branch=${OPTARG} ;;
+    t) type=${OPTARG} ;;
+    *) echo "Invalid flag." ;;
+    esac
+done
+
+
+if [ -z ${type+x} ]; then
+    echo "No test type specified (use -t). Options are 'kotest' and 'cypress'."
+    exit 1
+fi
+
+if [ -z ${branch+x} ]; then
+    if [ "$type" = "cypress" ]; then
+        echo "No Git branch specified (use -b)."
+        exit 1
+    fi
+fi
+
+export BRANCH=$branch
+
+docker-compose down --remove-orphans
+
+if [ "$type" = "kotest" ]; then
+    docker-compose -f docker-compose.kotest.yaml up --build --exit-code-from=backend
+elif [ "$type" = "cypress" ]; then
+    docker-compose -f docker-compose.cypress.yaml up --build --exit-code-from=frontend
+else
+    echo "Invalid test type. Options are 'kotest' and 'cypress'."
+fi
