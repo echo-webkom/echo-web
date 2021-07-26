@@ -1,15 +1,15 @@
-name: Tests
+name: Kotest
 
 on:
   pull_request:
     branches: [develop, master]
 
 jobs:
-  test:
+  kotest_tests:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Run tests with docker-compose
-      run: ./test
+    - name: Run Kotest tests with Docker Compose
+      run: ./test -t kotest

@@ -1,10 +1,10 @@
-name: Cypress
+name: Cypress develop
 on:
   pull_request:
-    branches: [develop, master]
+    branches: [develop]
 
 jobs:
-  cypress_tests:
+  cypress_tests_dev:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout backend repository
@@ -15,7 +15,7 @@ jobs:
       with:
         repository: echo-webkom/echo-web-frontend
         path: frontend
-        ref: master
+        ref: develop
 
     - name: Build frontend
       run: docker build -t echo-web-frontend:latest frontend
@@ -38,5 +38,5 @@ jobs:
         WEBKOM_KEY: webkom-passord
         COMPOSE_FILE: docker-compose.cypress.yaml
 
-    - name: Run Cypress end-to-end tests
-      run: ./cypress
+    - name: Run Cypress end-to-end tests against develop frontend
+      run: ./test -b develop -t cypress
