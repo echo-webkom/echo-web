@@ -3,6 +3,7 @@
 FROM openjdk:13-jdk-slim as deps
 
 WORKDIR /opt/build
+
 COPY *.kts gradle.properties gradlew* ./
 COPY gradle gradle
 
@@ -14,6 +15,7 @@ RUN ./gradlew installDist --build-cache --no-daemon
 FROM openjdk:13-jdk-slim as build
 
 WORKDIR /opt/build
+
 COPY --from=deps /root/.gradle /root/.gradle/
 COPY . .
 
@@ -24,17 +26,17 @@ RUN ./gradlew shadowJar --build-cache --no-rebuild --no-daemon
 
 # Run the server
 FROM openjdk:13-jdk-slim
+
 WORKDIR /opt/app
+
+RUN apt-get update \
+ && apt-get install -yq --no-install-recommends curl
 
 # NB! This might break if version or name changes.
 # Should probably use some environment variable or something.
-COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar .
+COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar ./build/libs/
 COPY Procfile .
 COPY test_scripts test_scripts
 
-RUN apt-get update \
- && apt-get -yq --no-install-recommends install curl
-
-# NB! This might break if version or name changes.
-# Should probably use some environment variable or something.
-CMD java -jar -Djava.security.egd=file:/dev/./urandom echo-web-backend-0.0.1-all.jar
+# Use Procfile as single source of truth.
+CMD cat Procfile | sed -e 's/web: //g' | bash
