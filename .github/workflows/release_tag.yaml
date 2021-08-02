@@ -19,7 +19,7 @@ jobs:
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
           sudo apt update
-          sudo apt install gh
+          sudo apt install -yq --no-install-recommends gh
 
       - name: Create & tag release
         run: |
@@ -35,6 +35,7 @@ jobs:
               PATCH=0
             elif [[ "$LABELS" == *"minor"* ]]; then
               MINOR=$((MINOR + 1))
+              PATCH=0
             elif [[ "$LABELS" == *"patch"* ]]; then
               PATCH=$((PATCH + 1))
             else
