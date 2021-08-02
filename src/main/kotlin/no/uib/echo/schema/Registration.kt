@@ -14,7 +14,8 @@ enum class RegistrationStatus {
     ALREADY_EXISTS,
     BEDPRES_DOESNT_EXIST,
     WAITLIST,
-    TOO_EARLY
+    TOO_EARLY,
+    NOT_IN_RANGE
 }
 
 data class RegistrationJson(
@@ -45,7 +46,6 @@ object Registration : Table() {
 
     override val primaryKey: PrimaryKey = PrimaryKey(email, bedpresSlug)
 }
-
 
 fun selectRegistrations(
     emailParam: String?,
@@ -84,22 +84,35 @@ fun selectRegistrations(
     })
 }
 
-fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus> {
+fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, RegistrationStatus> {
     return transaction {
         addLogger(StdOutSqlLogger)
 
         val bedpres =
-            selectBedpresBySlug(reg.slug) ?: return@transaction Pair(null, RegistrationStatus.BEDPRES_DOESNT_EXIST)
+            selectBedpresBySlug(reg.slug) ?: return@transaction Triple(
+                null,
+                null,
+                RegistrationStatus.BEDPRES_DOESNT_EXIST
+            )
 
         if (DateTime(bedpres.registrationDate).isAfterNow)
-            return@transaction Pair(bedpres.registrationDate, RegistrationStatus.TOO_EARLY)
+            return@transaction Triple(bedpres.registrationDate, null, RegistrationStatus.TOO_EARLY)
 
         val countRegs = Registration.select { Registration.bedpresSlug eq reg.slug }.toList()
         val waitList = countRegs.size >= bedpres.spots
 
-        val oldReg = Registration.select { Registration.email eq reg.email and (Registration.bedpresSlug eq bedpres.slug)}.firstOrNull()
+        val oldReg =
+            Registration.select { Registration.email eq reg.email and (Registration.bedpresSlug eq bedpres.slug) }
+                .firstOrNull()
         if (oldReg != null)
-            return@transaction Pair(null, RegistrationStatus.ALREADY_EXISTS)
+            return@transaction Triple(null, null, RegistrationStatus.ALREADY_EXISTS)
+
+        if (reg.degreeYear !in bedpres.minDegreeYear..bedpres.maxDegreeYear)
+            return@transaction Triple(
+                null,
+                bedpres.minDegreeYear..bedpres.maxDegreeYear,
+                RegistrationStatus.NOT_IN_RANGE
+            )
 
         Registration.insert {
             it[email] = reg.email
@@ -121,7 +134,11 @@ fun insertRegistration(reg: RegistrationJson): Pair<String?, RegistrationStatus>
             }
         }
 
-        return@transaction Pair(null, if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED)
+        return@transaction Triple(
+            null,
+            null,
+            if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED
+        )
     }
 }
 

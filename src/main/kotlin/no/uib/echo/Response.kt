@@ -14,6 +14,7 @@ enum class Response {
     BedpresDosntExist,
     TooEarly,
     WaitList,
+    NotInRange,
     OK,
 }
 
@@ -37,12 +38,22 @@ private fun resToMsg(res: Response): Pair<String, String> {
             return Pair("Plassene er dessverre fylt opp...", "Du har blitt satt på venteliste.")
         Response.BedpresDosntExist ->
             return Pair("Denne bedpres'en finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
+        Response.NotInRange ->
+            return Pair("Du kan dessverre ikke melde deg på.", "")
         Response.OK ->
             return Pair("Påmeldingen din er registrert!", "")
     }
 }
 
-fun resToJson(res: Response, date: String? = null): ResponseJson {
+fun resToJson(res: Response, date: String? = null, degreeYearRange: IntRange? = null): ResponseJson {
     val (title, desc) = resToMsg(res)
-    return ResponseJson(res, title, desc, date)
+    return if (degreeYearRange == null)
+        ResponseJson(res, title, desc, date)
+    else
+        ResponseJson(
+            res,
+            title,
+            "Denne bedpres'en er kun åpen for ${degreeYearRange.start}- til ${degreeYearRange.last}-klasse.",
+            date
+        )
 }

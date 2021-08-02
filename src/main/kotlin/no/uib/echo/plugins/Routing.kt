@@ -157,7 +157,7 @@ object Routing {
                     return@post
                 }
 
-                val (regDate, regStatus) = insertRegistration(registration)
+                val (regDate, degreeYearRange, regStatus) = insertRegistration(registration)
 
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
@@ -165,11 +165,16 @@ object Routing {
                     RegistrationStatus.WAITLIST ->
                         call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
                     RegistrationStatus.TOO_EARLY ->
-                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regDate))
+                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, date = regDate))
                     RegistrationStatus.ALREADY_EXISTS ->
                         call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
                     RegistrationStatus.BEDPRES_DOESNT_EXIST ->
                         call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist))
+                    RegistrationStatus.NOT_IN_RANGE ->
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            resToJson(Response.NotInRange, degreeYearRange = degreeYearRange)
+                        )
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)

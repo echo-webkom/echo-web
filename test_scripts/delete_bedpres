@@ -28,7 +28,7 @@ fi
 
 curl --verbose \
   -X DELETE \
-  -u $user:$secret \
+  -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
   -d '{ "slug": "'"$slug"'" }' \
