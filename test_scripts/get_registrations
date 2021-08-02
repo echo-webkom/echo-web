@@ -24,18 +24,18 @@ fi
 
 if [ -z ${email+x} ] && [ -z ${slug+x} ]; then
   curl --verbose \
-    -u $user:$secret \
+    -u "$user":"$secret" \
     "$host":"$port"/registration
 elif [ -z ${slug+x} ]; then
   curl --verbose \
-    -u $user:$secret \
+    -u "$user":"$secret" \
     "$host":"$port"/registration?email="$email"
 elif [ -z ${email+x} ]; then
   curl --verbose \
-    -u $user:$secret \
+    -u "$user":"$secret" \
     "$host:$port/registration?slug=$slug"
 else
   curl --verbose \
-    -u $user:$secret \
+    -u "$user":"$secret" \
     "$host:$port/registration?email=$email&slug=$slug"
 fi

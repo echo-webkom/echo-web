@@ -22,8 +22,6 @@ if [ -z ${secret+x} ]; then
   exit 1
 fi
 
-auth=$(echo "$user:$secret" | base64)
-
 if [ -z ${slug+x} ]; then
   echo "Slug not defined (use -s)"
   exit 1
@@ -36,7 +34,7 @@ fi
 
 curl --verbose \
   -X DELETE \
-  -u $user:$secret \
+  -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
   -d '{ "slug": "'"${slug}"'", "email": "'"${email}"'" }' \
