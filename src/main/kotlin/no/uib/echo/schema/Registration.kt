@@ -107,7 +107,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
         if (oldReg != null)
             return@transaction Triple(null, null, RegistrationStatus.ALREADY_EXISTS)
 
-        if (reg.degreeYear !in bedpres.minDegreeYear..bedpres.maxDegreeYear)
+        if (reg.degreeYear !in bedpres.minDegreeYear!!..bedpres.maxDegreeYear!!)
             return@transaction Triple(
                 null,
                 bedpres.minDegreeYear..bedpres.maxDegreeYear,
