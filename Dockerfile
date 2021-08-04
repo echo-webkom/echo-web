@@ -32,9 +32,7 @@ WORKDIR /opt/app
 RUN apt-get update \
  && apt-get install -yq --no-install-recommends curl
 
-# NB! This might break if version or name changes.
-# Should probably use some environment variable or something.
-COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar ./build/libs/
+COPY --from=build /opt/build/build/libs/*-all.jar ./build/libs/
 COPY Procfile .
 COPY test_scripts test_scripts
 
