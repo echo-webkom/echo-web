@@ -33,7 +33,7 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
+      test: ["CMD-SHELL", "./scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5

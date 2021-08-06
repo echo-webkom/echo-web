@@ -1,6 +1,6 @@
 # We use OpenJDK 13 since that is what our Heroku instance uses.
 # Download Gradle wrapper and install dependencies.
-FROM openjdk:13-jdk-slim as deps
+FROM openjdk:13-jdk-slim AS deps
 
 WORKDIR /opt/build
 
@@ -12,7 +12,7 @@ RUN ./gradlew installDist --build-cache --no-daemon
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.
-FROM openjdk:13-jdk-slim as build
+FROM openjdk:13-jdk-slim AS build
 
 WORKDIR /opt/build
 
@@ -34,7 +34,7 @@ RUN apt-get update \
 
 COPY --from=build /opt/build/build/libs/*-all.jar ./build/libs/
 COPY Procfile .
-COPY test_scripts test_scripts
+COPY scripts scripts
 
 # Use Procfile as single source of truth.
 CMD cat Procfile | sed -e 's/web: //g' | bash
