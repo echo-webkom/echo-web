@@ -38,8 +38,7 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      DEV: ja
-      DATABASE_HOST: database
+      DATABASE_URL: postgres://postgres:password@database/postgres
       # Values from .env file
       BEDKOM_KEY: ${BEDKOM_KEY}
       WEBKOM_KEY: ${WEBKOM_KEY}
