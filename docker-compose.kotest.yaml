@@ -15,9 +15,7 @@ services:
       - '8080:8080'
     command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
-      # The value of DEV doesn't matter, only that it's defined.
-      DEV: ja
-      DATABASE_HOST: database
+      DATABASE_URL: postgres://postgres:password@database/postgres
       # Values from .env file
       BEDKOM_KEY: ${BEDKOM_KEY}
       WEBKOM_KEY: ${WEBKOM_KEY}
