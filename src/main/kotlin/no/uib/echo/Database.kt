@@ -16,7 +16,7 @@ object Db {
         val port = if (dbUri.port == -1) 5432 else dbUri.port
 
         return HikariDataSource(HikariConfig().apply {
-            jdbcUrl = "jdbc:postgresql://${dbUri.host}${port}${dbUri.path}"
+            jdbcUrl = "jdbc:postgresql://${dbUri.host}:${port}${dbUri.path}"
             username = dbUri.userInfo.split(":")[0]
             password = dbUri.userInfo.split(":")[1]
             driverClassName = "org.postgresql.Driver"
