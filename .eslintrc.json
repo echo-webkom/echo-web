@@ -9,14 +9,12 @@
         "project": "./tsconfig.json"
     },
     "extends": [
-        "airbnb-typescript",
-        "airbnb/hooks",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "prettier",
         "plugin:prettier/recommended",
-        "next"
+        "next/core-web-vitals"
     ],
-    "plugins": ["react", "@typescript-eslint"],
     "env": {
         "browser": true,
         "es6": true
@@ -28,14 +26,7 @@
     "ignorePatterns": ["*.js", "node_modules/", "public/", ".next/"],
     "rules": {
         "no-console": 1,
-        "@typescript-eslint/no-unused-vars": 2,
         "react/jsx-props-no-spreading": "off",
-        "linebreak-style": "off",
-        "prettier/prettier": [
-            "error",
-            {
-                "endOfLine": "auto"
-            }
-        ]
+        "linebreak-style": "off"
     }
 }

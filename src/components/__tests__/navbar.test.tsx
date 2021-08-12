@@ -5,13 +5,29 @@ import NavBar from '../navbar';
 describe('NavBar', () => {
     test('renders without crashing', () => {
         const btnRef = React.createRef<HTMLButtonElement>();
-        const { getByTestId } = render(<NavBar isOpen={false} onClose={() => {}} btnRef={btnRef} />);
+        const { getByTestId } = render(
+            <NavBar
+                isOpen={false}
+                onClose={() => {
+                    return;
+                }}
+                btnRef={btnRef}
+            />,
+        );
         expect(getByTestId(/navbar-standard/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {
         const btnRef = React.createRef<HTMLButtonElement>();
-        const { getByTestId } = render(<NavBar isOpen={false} onClose={() => {}} btnRef={btnRef} />);
+        const { getByTestId } = render(
+            <NavBar
+                isOpen={false}
+                onClose={() => {
+                    return;
+                }}
+                btnRef={btnRef}
+            />,
+        );
         // navbar buttons exist
         expect(getByTestId(/hjem/i)).toBeInTheDocument();
         expect(getByTestId(/for-studenter/i)).toBeInTheDocument();
