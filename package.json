@@ -24,6 +24,43 @@
             "prettier --write"
         ]
     },
+    "eslintConfig": {
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "ecmaFeatures": {
+                "jsx": true
+            },
+            "ecmaVersion": 2018,
+            "sourceType": "module",
+            "project": "./tsconfig.json"
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/eslint-recommended",
+            "plugin:@typescript-eslint/recommended",
+            "plugin:prettier/recommended",
+            "next/core-web-vitals"
+        ],
+        "env": {
+            "browser": true,
+            "es6": true
+        },
+        "globals": {
+            "Atomics": "readonly",
+            "SharedArrayBuffer": "readonly"
+        },
+        "ignorePatterns": [
+            "*.js",
+            "node_modules/",
+            "public/",
+            ".next/"
+        ],
+        "rules": {
+            "no-console": 1,
+            "react/jsx-props-no-spreading": "off",
+            "linebreak-style": "off"
+        }
+    },
     "prettier": {
         "semi": true,
         "trailingComma": "all",
@@ -31,9 +68,38 @@
         "printWidth": 120,
         "tabWidth": 4
     },
+    "jest": {
+        "setupFilesAfterEnv": [
+            "<rootDir>/jest.setup.js"
+        ],
+        "testEnvironment": "jsdom",
+        "testPathIgnorePatterns": [
+            "<rootDir>/.next/",
+            "<rootDir>/node_modules/",
+            "testing-utils.js",
+            "testing-wrapper.tsx",
+            "mock-responses.ts",
+            "<rootDir>/cypress/"
+        ]
+    },
     "babel": {
         "presets": [
             "next/babel"
+        ]
+    },
+    "renovate": {
+        "extends": [
+            "config:base"
+        ],
+        "labels": [
+            "dependencies :handshake:"
+        ],
+        "prHourlyLimit": 0,
+        "stabilityDays": 3,
+        "prCreation": "not-pending",
+        "ignoreDeps": [
+            "postgres",
+            "node"
         ]
     },
     "dependencies": {
