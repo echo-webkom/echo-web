@@ -1,12 +1,13 @@
 # ONLY FOR DEVELOPMENT AND TESTING USE
 
 # Install dependencies with yarn.
+# Node 14 is the version Vercel uses.
 FROM node:14-alpine as deps
 
 WORKDIR /opt/build
 COPY package.json yarn.lock ./
 
-RUN yarn --frozen-lockfile
+RUN yarn --frozen-lockfile --ignore-scripts
 
 
 # Build with Next (no default command).

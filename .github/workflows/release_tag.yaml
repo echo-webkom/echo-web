@@ -1,7 +1,8 @@
 name: Create & tag new release
 on:
-  push:
+  pull_request:
     branches: master
+    types: closed
 
 jobs:
   tag:
@@ -17,23 +18,26 @@ jobs:
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
           sudo apt update
-          sudo apt install gh
+          sudo apt install -yq --no-install-recommends gh
           
       - name: Create & tag release
         run: |
           git fetch --tags
           gh config set prompt disabled
-          gh release create "v$(date +%V.%G)" \
-            -t "weekly-$(date +%V.%G)" \
-            -n "Weekly release for week $(date +%V), $(date +%G)." \
-            --target master \
-          || { \
-              VERSION=$(git tag --sort=-committerdate | head -n1);
-              gh release create "v$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
-                -t "weekly-$(echo $VERSION | cut -c 2-8)-$(($(echo $VERSION | cut -c 10-)+1))" \
-                -n "Weekly release for week $(date +%V), $(date +%G)." \
-                --target master; \
-             }
-        shell: bash
+          REVISION=1
+          { if [[ "$LABELS" == *"release"* ]]; then
+              VERSION=$(date +%V.%G)
+            else
+              FULL_TAG=$(git tag --sort=-committerdate | head -n1)
+              VERSION=$(sed -e 's/v//g' -e 's/-[0-9]\+//g' <<< "$FULL_TAG")
+              PREV_REVISION=$(sed 's/v[0-9]\{1,2\}\.[0-9]\{4\}-//g' <<< "$FULL_TAG")
+              REVISION=$(("$PREV_REVISION" + 1))
+            fi
+          }
+          gh release create "v$VERSION-$REVISION" \
+            -t "weekly-$VERSION-$REVISION" \
+            -n "Release for week $(date +%V), $(date +%G) revision $REVISION." \
+            --target master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
