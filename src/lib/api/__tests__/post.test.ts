@@ -27,7 +27,7 @@ const nPostsToGet = 4;
 const validSlug = 'alle-ma-ha-hjemmekontor';
 
 const server = setupServer(
-    rest.post<QueryBody, string>(
+    rest.post<QueryBody, { data: { postCollection: { items: Array<RawPost> | Array<{ slug: string }> } } }>(
         `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${process.env.CONTENTFUL_ENVIRONMENT_ID}`,
         (req, res, ctx) => {
             const { query, variables } = req.body;

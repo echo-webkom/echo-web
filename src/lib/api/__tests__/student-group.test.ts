@@ -32,7 +32,7 @@ const compare = (studentGroup: StudentGroup, json: RawStudentGroup) => {
 };
 
 const server = setupServer(
-    rest.post<QueryBody, string>(
+    rest.post<QueryBody, { data: { studentGroupCollection: { items: Array<RawStudentGroup> } } }>(
         `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${process.env.CONTENTFUL_ENVIRONMENT_ID}`,
         (req, res, ctx) => {
             const { query, variables } = req.body;
