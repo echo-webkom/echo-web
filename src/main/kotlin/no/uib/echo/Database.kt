@@ -12,30 +12,13 @@ import java.net.URI
 
 object Db {
     private fun dataSource(): HikariDataSource {
-        if (System.getenv("DEV") != null) {
-            val dbHost = System.getenv("DATABASE_HOST") ?: throw Exception("DATABASE_HOST not defined.")
-
-            return HikariDataSource(HikariConfig().apply {
-                jdbcUrl = "jdbc:postgresql://$dbHost:5432/postgres"
-                username = "postgres"
-                password = "password"
-                driverClassName = "org.postgresql.Driver"
-                connectionTimeout = 1000
-                maximumPoolSize = 10
-            })
-        }
-
         val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
-
-        val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
-            .toString() + "?sslmode=require"
-        val dbUsername: String = dbUri.userInfo.split(":")[0]
-        val dbPassword: String = dbUri.userInfo.split(":")[1]
+        val port = if (dbUri.port == -1) 5432 else dbUri.port
 
         return HikariDataSource(HikariConfig().apply {
-            jdbcUrl = dbUrl
-            username = dbUsername
-            password = dbPassword
+            jdbcUrl = "jdbc:postgresql://${dbUri.host}:${port}${dbUri.path}"
+            username = dbUri.userInfo.split(":")[0]
+            password = dbUri.userInfo.split(":")[1]
             driverClassName = "org.postgresql.Driver"
             connectionTimeout = 1000
             maximumPoolSize = 10

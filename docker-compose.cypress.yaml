@@ -33,13 +33,12 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
+      test: ["CMD-SHELL", "./scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
     environment:
-      DEV: ja
-      DATABASE_HOST: database
+      DATABASE_URL: postgres://postgres:password@database/postgres
       # Values from .env file
       BEDKOM_KEY: ${BEDKOM_KEY}
       WEBKOM_KEY: ${WEBKOM_KEY}

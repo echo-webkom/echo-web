@@ -1,7 +1,9 @@
 # echo web backend
 
 [![Build](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/build.yaml)
-[![Tests](https://github.com/echo-webkom/echo-web-backend/actions/workflows/test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/test.yaml)
+[![Kotest](https://github.com/echo-webkom/echo-web-backend/actions/workflows/kotest_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/kotest_test.yaml)
+[![Cypress develop](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test_dev.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test_dev.yaml)
+[![Cypress production](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test_prod.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test_prod.yaml)
 
 
 Backend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.

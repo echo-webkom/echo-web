@@ -13,12 +13,21 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
-data class BedpresJson(val slug: String, val spots: Int, val registrationDate: String)
+data class BedpresJson(
+    val slug: String,
+    val spots: Int,
+    val minDegreeYear: Int?,
+    val maxDegreeYear: Int?,
+    val registrationDate: String
+)
+
 data class BedpresSlugJson(val slug: String)
 
 object Bedpres : Table() {
     val slug: Column<String> = varchar("slug", 50).uniqueIndex()
     val spots: Column<Int> = integer("spots")
+    val minDegreeYear: Column<Int> = integer("minDegreeYear")
+    val maxDegreeYear: Column<Int> = integer("maxDegreeYear")
     val registrationDate: Column<DateTime> = datetime("registrationDate")
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
@@ -31,7 +40,15 @@ fun selectBedpresBySlug(slug: String): BedpresJson? {
         Bedpres.select { Bedpres.slug eq slug }.firstOrNull()
     }
 
-    return bedpres?.let { BedpresJson(it[Bedpres.slug], it[Bedpres.spots], it[Bedpres.registrationDate].toString()) }
+    return bedpres?.let {
+        BedpresJson(
+            it[Bedpres.slug],
+            it[Bedpres.spots],
+            it[Bedpres.minDegreeYear],
+            it[Bedpres.maxDegreeYear],
+            it[Bedpres.registrationDate].toString()
+        )
+    }
 }
 
 fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String> {
@@ -44,6 +61,8 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
             Bedpres.insert {
                 it[slug] = newBedpres.slug
                 it[spots] = newBedpres.spots
+                it[minDegreeYear] = newBedpres.minDegreeYear ?: 1
+                it[maxDegreeYear] = newBedpres.maxDegreeYear ?: 5
                 it[registrationDate] = DateTime(newBedpres.registrationDate)
             }
         }
@@ -53,6 +72,8 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
 
     if (bedpres.slug == newBedpres.slug &&
         bedpres.spots == newBedpres.spots &&
+        bedpres.minDegreeYear == newBedpres.minDegreeYear &&
+        bedpres.maxDegreeYear == newBedpres.maxDegreeYear &&
         DateTime(bedpres.registrationDate) == DateTime(newBedpres.registrationDate)
     ) {
         return Pair(
@@ -66,13 +87,15 @@ fun insertOrUpdateBedpres(newBedpres: BedpresJson): Pair<HttpStatusCode, String>
 
         Bedpres.update({ Bedpres.slug eq newBedpres.slug }) {
             it[spots] = newBedpres.spots
+            it[minDegreeYear] = newBedpres.minDegreeYear ?: 1
+            it[maxDegreeYear] = newBedpres.maxDegreeYear ?: 5
             it[registrationDate] = DateTime(newBedpres.registrationDate)
         }
     }
 
     return Pair(
         HttpStatusCode.OK,
-        "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots} and registrationDate = ${newBedpres.registrationDate}."
+        "Updated bedpres with slug = ${newBedpres.slug} to spots = ${newBedpres.spots}, minDegreeYear = ${newBedpres.minDegreeYear}, maxDegreeYear = ${newBedpres.maxDegreeYear} and registrationDate = ${newBedpres.registrationDate}."
     )
 }
 

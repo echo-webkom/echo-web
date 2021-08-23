@@ -20,9 +20,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
 class RegistrationTest : StringSpec({
-    val exampleBedpres1 = BedpresJson("bedpres-med-noen", 50, "2020-04-29T20:43:29Z")
-    val exampleBedpres2 = BedpresJson("bedpres-med-noen-andre", 40, "2019-07-29T20:10:11Z")
-    val exampleBedpres3 = BedpresJson("bedpres-dritlang-i-fremtiden", 40, "2037-07-29T20:10:11Z")
+    val exampleBedpres1 = BedpresJson("bedpres-med-noen", 50, 1, 5, "2020-04-29T20:43:29Z")
+    val exampleBedpres2 = BedpresJson("bedpres-med-noen-andre", 40, 1, 5, "2019-07-29T20:10:11Z")
+    val exampleBedpres3 = BedpresJson("bedpres-dritlang-i-fremtiden", 40, 1, 5, "2037-07-29T20:10:11Z")
+    val exampleBedpres4 = BedpresJson("bedpres-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z")
+    val exampleBedpres5 = BedpresJson("bedpres-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z")
     val exampleReg = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres1.slug, true, null, false,
         listOf(AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100"))
@@ -45,6 +47,8 @@ class RegistrationTest : StringSpec({
             insertOrUpdateBedpres(exampleBedpres1)
             insertOrUpdateBedpres(exampleBedpres2)
             insertOrUpdateBedpres(exampleBedpres3)
+            insertOrUpdateBedpres(exampleBedpres4)
+            insertOrUpdateBedpres(exampleBedpres5)
         }
     }
 
@@ -431,6 +435,57 @@ class RegistrationTest : StringSpec({
                 res.code shouldBe Response.WaitList
                 res.title shouldBe "Plassene er dessverre fylt opp..."
                 res.desc shouldBe "Du har blitt satt på venteliste."
+            }
+        }
+    }
+
+    "You should not be able to sign up for a bedpres if you are not inside the degree year range." {
+        withTestApplication({
+            configureRouting(keys)
+        }) {
+            for (i in 1..2) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "teasds${i}t3t@test.com",
+                                    degreeYear = i,
+                                    slug = exampleBedpres4.slug
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.NotInRange
+                res.title shouldBe "Du kan dessverre ikke melde deg på."
+                res.desc shouldBe "Denne bedpres'en er kun åpen for ${exampleBedpres4.minDegreeYear}- til ${exampleBedpres4.maxDegreeYear}-klasse."
+            }
+
+            for (i in 3..5) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "teasds${i}t3t@test.com",
+                                    degreeYear = i,
+                                    degree = if (i > 3) Degree.INF else Degree.DTEK,
+                                    slug = exampleBedpres5.slug
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.NotInRange
+                res.title shouldBe "Du kan dessverre ikke melde deg på."
+                res.desc shouldBe "Denne bedpres'en er kun åpen for ${exampleBedpres5.minDegreeYear}- til ${exampleBedpres5.maxDegreeYear}-klasse."
             }
         }
     }

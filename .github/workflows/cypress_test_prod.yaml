@@ -39,4 +39,4 @@ jobs:
         COMPOSE_FILE: docker-compose.cypress.yaml
 
     - name: Run Cypress end-to-end tests against production frontend
-      run: ./test -b master -t cypress
+      run: ./scripts/test -b master -t cypress
