@@ -29,8 +29,8 @@ FROM openjdk:13-jdk-slim
 
 WORKDIR /opt/app
 
-RUN apt-get update \
- && apt-get install -yq --no-install-recommends curl
+RUN apt update \
+ && apt install -yq --no-install-recommends curl
 
 COPY --from=build /opt/build/build/libs/*-all.jar ./build/libs/
 COPY Procfile .

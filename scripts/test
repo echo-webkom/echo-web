@@ -26,9 +26,9 @@ export BRANCH=$branch
 docker-compose down --remove-orphans
 
 if [ "$type" = "kotest" ]; then
-    docker-compose -f ../docker-compose.kotest.yaml up --build --exit-code-from=backend
+    docker-compose -f docker-compose.kotest.yaml up --build --exit-code-from=backend
 elif [ "$type" = "cypress" ]; then
-    docker-compose -f ../docker-compose.cypress.yaml up --build --exit-code-from=frontend
+    docker-compose -f docker-compose.cypress.yaml up --build --exit-code-from=frontend
 else
     echo "Invalid test type. Options are 'kotest' and 'cypress'."
 fi

@@ -12,4 +12,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run Kotest tests with Docker Compose
-      run: ./test -t kotest
+      run: ./scripts/test -t kotest
