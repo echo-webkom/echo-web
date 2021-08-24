@@ -34,13 +34,11 @@ const Countdown = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: stri
         );
     }
 
-    if (isPast(parseISO(bedpres.date))) {
-        return (
-            <Center my="3" data-testid="bedpres-has-been">
-                <Text>Påmeldingen er stengt.</Text>
-            </Center>
-        );
-    }
+    return (
+        <Center my="3" data-testid="bedpres-has-been">
+            <Text>Påmeldingen er stengt.</Text>
+        </Center>
+    );
 };
 
 export default Countdown;
