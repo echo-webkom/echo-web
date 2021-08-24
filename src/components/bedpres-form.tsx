@@ -204,19 +204,21 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                                         <FormLabel as="legend">Hvilket trinn går du på?</FormLabel>
                                         <RadioGroup defaultValue="1">
                                             <VStack align="left">
-                                                {[1, 2, 3, 4, 5].map(
-                                                    (i) =>
-                                                        i >= bedpres.minDegreeYear &&
-                                                        i <= bedpres.maxDegreeYear && (
-                                                            <Radio
-                                                                key={`radio-${i}`}
-                                                                value={i}
-                                                                {...register('degreeYear')}
-                                                            >
-                                                                {`${i}. trinn`}
-                                                            </Radio>
-                                                        ),
-                                                )}
+                                                <Radio value="1" {...register('degreeYear')}>
+                                                    1. trinn
+                                                </Radio>
+                                                <Radio value="2" {...register('degreeYear')}>
+                                                    2. trinn
+                                                </Radio>
+                                                <Radio value="3" {...register('degreeYear')}>
+                                                    3. trinn
+                                                </Radio>
+                                                <Radio value="4" {...register('degreeYear')}>
+                                                    4. trinn
+                                                </Radio>
+                                                <Radio value="5" {...register('degreeYear')}>
+                                                    5. trinn
+                                                </Radio>
                                             </VStack>
                                         </RadioGroup>
                                     </FormControl>

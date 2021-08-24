@@ -8,7 +8,7 @@ import { ParsedUrlQuery } from 'querystring';
 
 import { CgOrganisation } from 'react-icons/cg';
 import { RiTimeLine } from 'react-icons/ri';
-import { MdEventSeat } from 'react-icons/md';
+import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
@@ -73,17 +73,26 @@ const BedpresPage = ({
                                 <Text>{format(parseISO(bedpres.date), 'HH:mm')}</Text>
                                 <Icon as={ImLocation} boxSize={10} />
                                 <Text>{bedpres.location}</Text>
+                                {bedpres.minDegreeYear === 1 && bedpres.maxDegreeYear === 5 && (
+                                    <>
+                                        <Icon as={MdLockOpen} boxSize={10} />
+                                        <Text>Åpen for alle trinn</Text>
+                                    </>
+                                )}
+                                {bedpres.minDegreeYear &&
+                                    bedpres.maxDegreeYear &&
+                                    (bedpres.minDegreeYear > 1 || bedpres.maxDegreeYear < 5) && (
+                                        <>
+                                            <Icon as={MdLockOutline} boxSize={10} />
+                                            <Text>{`Bare for ${bedpres.minDegreeYear} - ${bedpres.maxDegreeYear} .trinn`}</Text>
+                                        </>
+                                    )}
                             </Grid>
                             <Divider my=".5em" />
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            <Countdown
-                                bedpres={bedpres}
-                                backendUrl={backendUrl}
-                                minDegreeYear={bedpres.minDegreeYear}
-                                maxDegreeYear={bedpres.maxDegreeYear}
-                            />
+                            <Countdown bedpres={bedpres} backendUrl={backendUrl} />
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>
