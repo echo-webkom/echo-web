@@ -97,7 +97,7 @@ const BedpresPage = ({
                                     <Countdown date={regDate} />
                                 </Center>
                             )}
-                            {isFuture(parseISO(bedpres.date)) && (
+                            {isFuture(parseISO(bedpres.date)) && isPast(parseISO(bedpres.registrationTime)) && (
                                 <BedpresForm
                                     slug={bedpres.slug}
                                     questions={bedpres.additionalQuestions}
