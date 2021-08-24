@@ -73,6 +73,7 @@ export const PostAPI = {
 
             return postSlugListDecoder(data.data.postCollection.items).map((postSlug) => postSlug.slug);
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return [];
         }
     },
@@ -95,6 +96,7 @@ export const PostAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 posts: null,
                 error: handleError(error.response?.status),
@@ -122,6 +124,7 @@ export const PostAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             if (!error.response) {
                 return {
                     post: null,
