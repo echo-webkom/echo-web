@@ -2,7 +2,7 @@ import React from 'react';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { render } from './testing-utils';
-import mockResponses from '../../lib/api/__tests__/mock-responses';
+import mockResponses, { RawPost } from '../../lib/api/__tests__/mock-responses';
 import PostBlock from '../post-block';
 import { PostAPI } from '../../lib/api/post';
 
@@ -15,7 +15,7 @@ interface QueryBody {
 }
 
 const server = setupServer(
-    rest.post<QueryBody, string>(
+    rest.post<QueryBody, { data: { postCollection: { items: Array<RawPost> } } }>(
         `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${process.env.CONTENTFUL_ENVIRONMENT_ID}`,
         (_, res, ctx) => {
             return res(ctx.status(200), ctx.json(mockResponses.nPosts));

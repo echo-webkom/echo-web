@@ -5,6 +5,8 @@ import { GetStaticProps } from 'next';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
+import okonomiskStotte from '../../public/static/for-studenter/okonomiskStotte.md';
+import tilbakemeldingsskjema from '../../public/static/for-studenter/tilbakemeldingsskjema.md';
 import StaticInfo from '../components/static-info';
 import MapMarkdownChakra from '../markdown';
 import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
@@ -25,7 +27,13 @@ const ForStudenterPage = ({
         <Layout>
             <SEO title="For studenter" />
             <StaticInfo
-                tabNames={['Undergrupper', 'Underorganisasjoner', 'Masterinfo']}
+                tabNames={[
+                    'Undergrupper',
+                    'Underorganisasjoner',
+                    'Masterinfo',
+                    'Søknad om økonomisk støtte',
+                    'Tilbakemeldingsskjema',
+                ]}
                 tabPanels={[
                     <StudentGroupSection
                         key="undergrupper"
@@ -41,6 +49,12 @@ const ForStudenterPage = ({
                     />,
                     <Markdown key="masterinfo" options={{ overrides: MapMarkdownChakra }}>
                         {masterinfo}
+                    </Markdown>,
+                    <Markdown key="okonomisk-stotte" options={{ overrides: MapMarkdownChakra }}>
+                        {okonomiskStotte}
+                    </Markdown>,
+                    <Markdown key="tilbakemeldingsskjema" options={{ overrides: MapMarkdownChakra }}>
+                        {tilbakemeldingsskjema}
                     </Markdown>,
                 ]}
             />
