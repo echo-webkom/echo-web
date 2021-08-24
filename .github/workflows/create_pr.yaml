@@ -22,20 +22,20 @@ jobs:
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
           sudo apt update
-          sudo apt install gh
+          sudo apt install -yq --no-install-recommends gh
 
       - name: Create pull request
         run: |
           gh config set prompt disabled
+          COMMITS=$(git log origin/master..origin/develop --no-merges --reverse --format=format:%h\ %s\<br\>\<br\>)
           gh pr create \
             -B master \
             -t "Release for week $(date +%V)" \
-            -b "<h1>Weekly release</h1><h2>Commits since last release</h2><b>$(git log origin/master..origin/develop --no-merges --reverse --format=format:%h\ %s\<br\>\<br\>)</b>" \
-            -r $REVIEWER_1,$REVIEWER_2 \
-            -a $REVIEWER_1,$REVIEWER_2 \
+            -b "<h1>Weekly release</h1><h2>Commits since last release</h2><b>$COMMITS</b>" \
+            -r "$REVIEWER_1","$REVIEWER_2" \
+            -a "$REVIEWER_1","$REVIEWER_2" \
             -l "release :label:" \
           || echo "No new changes. Will not create pull request."
-        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REVIEWER_1: bakseter

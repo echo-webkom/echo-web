@@ -1,10 +1,10 @@
-name: Cypress
+name: Cypress develop
 on:
   pull_request:
-    branches: [develop, master]
+    branches: develop
 
 jobs:
-  cypress_tests:
+  cypress_tests_dev:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout frontend repository
@@ -15,7 +15,10 @@ jobs:
       with:
         repository: echo-webkom/echo-web-backend
         path: backend
-        ref: master
+        ref: develop
+
+    - name: Build backend
+      run: docker build -t echo-web-backend:latest backend
 
     - name: Set up environment
       run: |
@@ -23,29 +26,17 @@ jobs:
         echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> .env
         echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> .env
         echo "BEDKOM_KEY=$BEDKOM_KEY" >> .env
+        echo "WEBKOM_KEY=$WEBKOM_KEY" >> .env
+        # Remove build context pointing to Git URL, since building
+        # from Git URL in Docker Compose doesn't work with GitHub Actions.
+        sed -i 's/build\: https\:\/\/github.com\/echo-webkom\/echo-web-backend\.git\#\${BRANCH}//g' $COMPOSE_FILE
       env:
         CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
         CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
         CONTENTFUL_ENVIRONMENT_ID: testing
         BEDKOM_KEY: bedkom-passord
-
-    - name: Set up Docker images
-      run: |
-        docker-compose -f backend/docker-compose.yaml pull
-        docker-compose -f backend/docker-compose.yaml build
-
-    - name: Install dependencies and build
-      run: |
-        yarn --frozen-lockfile
-        yarn build
-
-    - name: Run Cypress end-to-end tests
-      run: |
-        yarn start &
-        docker-compose -f backend/docker-compose.yaml up &
-        yarn wait-on --interval 1000 http-get://localhost:3000
-        yarn wait-on --interval 1000 http-get://localhost:8080/status
-        sh backend/test_scripts/submit_bedpres -t -x $WEBKOM_KEY || exit 1
-        yarn cypress run --config video=false,screenshotOnRunFailure=false
-      env:
         WEBKOM_KEY: webkom-passord
+        COMPOSE_FILE: docker-compose.yaml
+
+    - name: Run Cypress end-to-end tests against develop backend
+      run: env BRANCH=develop yarn e2e

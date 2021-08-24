@@ -1,0 +1,42 @@
+name: Cypress production
+on:
+  pull_request:
+    branches: master
+
+jobs:
+  cypress_tests_prod:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout frontend repository
+      uses: actions/checkout@v2
+
+    - name: Checkout backend repository
+      uses: actions/checkout@v2
+      with:
+        repository: echo-webkom/echo-web-backend
+        path: backend
+        ref: master
+
+    - name: Build backend
+      run: docker build -t echo-web-backend:latest backend
+
+    - name: Set up environment
+      run: |
+        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> .env
+        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> .env
+        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> .env
+        echo "BEDKOM_KEY=$BEDKOM_KEY" >> .env
+        echo "WEBKOM_KEY=$WEBKOM_KEY" >> .env
+        # Remove build context pointing to Git URL, since building
+        # from Git URL in Docker Compose doesn't work with GitHub Actions.
+        sed -i 's/build\: https\:\/\/github.com\/echo-webkom\/echo-web-backend\.git\#\${BRANCH}//g' $COMPOSE_FILE
+      env:
+        CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
+        CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
+        CONTENTFUL_ENVIRONMENT_ID: testing
+        BEDKOM_KEY: bedkom-passord
+        WEBKOM_KEY: webkom-passord
+        COMPOSE_FILE: docker-compose.yaml
+
+    - name: Run Cypress end-to-end tests against production backend
+      run: env BRANCH=master yarn e2e
