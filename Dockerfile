@@ -1,6 +1,7 @@
 # ONLY FOR DEVELOPMENT AND TESTING USE
 
 # Install dependencies with yarn.
+# Node 14 is the version Vercel uses.
 FROM node:14-alpine as deps
 
 WORKDIR /opt/build
