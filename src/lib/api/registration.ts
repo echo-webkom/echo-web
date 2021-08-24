@@ -114,6 +114,7 @@ export const RegistrationAPI = {
                 errorReg: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 registrations: null,
                 errorReg: error,
@@ -138,6 +139,7 @@ export const RegistrationAPI = {
                 statusCode: status,
             };
         } catch (err) {
+            console.log(err); // eslint-disable-line
             if (err.response) {
                 return {
                     response: { ...genericError, code: 'InternalServerError' },

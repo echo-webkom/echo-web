@@ -61,6 +61,7 @@ export const MinuteAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 minutes: null,
                 error: handleError(error.response.status),
