@@ -13,8 +13,11 @@ services:
     ports:
       - '3000:3000'
     environment:
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID}
+      CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN}
+      CONTENTFUL_ENVIRONMENT_ID: ${CONTENTFUL_ENVIRONMENT_ID}
       BACKEND_URL: http://backend:8080
-      BEDKOM_KEY: bedkom-passord
+      BEDKOM_KEY: ${BEDKOM_KEY}
 
   backend:
     build: https://github.com/echo-webkom/echo-web-backend.git#${BRANCH}
@@ -35,8 +38,8 @@ services:
       retries: 5
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
-      BEDKOM_KEY: bedkom-passord
-      WEBKOM_KEY: webkom-passord
+      BEDKOM_KEY: ${BEDKOM_KEY}
+      WEBKOM_KEY: ${WEBKOM_KEY}
 
   database:
     image: postgres:13.2-alpine

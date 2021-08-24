@@ -24,14 +24,7 @@ const Countdown = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: stri
     }
 
     if (isFuture(parseISO(bedpres.date)) && isPast(regDate)) {
-        return (
-            <BedpresForm
-                slug={bedpres.slug}
-                questions={bedpres.additionalQuestions}
-                title={bedpres.title}
-                backendUrl={backendUrl}
-            />
-        );
+        return <BedpresForm bedpres={bedpres} backendUrl={backendUrl} />;
     }
 
     return (

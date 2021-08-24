@@ -33,6 +33,8 @@ const bedpresDecoder = (value: Pojo) => {
         location: string,
         companyLink: string,
         registrationTime: string,
+        minDegreeYear: union(number, nil),
+        maxDegreeYear: union(number, nil),
     });
 
     const logoUrlDecoder = record({
