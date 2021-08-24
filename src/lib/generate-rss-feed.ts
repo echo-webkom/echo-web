@@ -1,3 +1,4 @@
+import { formatISO, isPast, parseISO, sub } from 'date-fns';
 import { Bedpres } from './api/bedpres';
 import { Event } from './api/event';
 import { Post } from './api/post';
@@ -75,16 +76,18 @@ const getRssXML = (
         : [];
 
     const genericBedpreses = bedpreses
-        ? bedpreses.map((bedpres) => {
-              return {
-                  slug: bedpres.slug,
-                  title: bedpres.title,
-                  publishedAt: bedpres.publishedAt,
-                  author: bedpres.author,
-                  body: bedpres.body,
-                  route: 'bedpres',
-              };
-          })
+        ? bedpreses
+              .filter((bedpres) => isPast(sub(parseISO(bedpres.registrationTime), { hours: 12 })))
+              .map((bedpres) => {
+                  return {
+                      slug: bedpres.slug,
+                      title: bedpres.title,
+                      publishedAt: formatISO(sub(parseISO(bedpres.registrationTime), { hours: 12 })),
+                      author: bedpres.author,
+                      body: bedpres.body,
+                      route: 'bedpres',
+                  };
+              })
         : [];
 
     const all = genericPosts.concat(genericEvents).concat(genericBedpreses);

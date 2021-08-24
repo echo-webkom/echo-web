@@ -61,12 +61,17 @@ const BedpresPage = ({
                                         {bedpres.companyLink.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('/')[0]}
                                     </Link>
                                 </NextLink>
-                                <Icon as={MdEventSeat} boxSize={10} />
-                                <Text>
-                                    {(spotsTaken && `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
-                                        (!spotsTaken && `${bedpres.spots}`)}{' '}
-                                    plasser
-                                </Text>
+                                {bedpres.spots != 0 && (
+                                    <>
+                                        <Icon as={MdEventSeat} boxSize={10} />
+                                        <Text>
+                                            {(spotsTaken &&
+                                                `${Math.min(spotsTaken, bedpres.spots)}/${bedpres.spots}`) ||
+                                                (!spotsTaken && `${bedpres.spots}`)}{' '}
+                                            plasser
+                                        </Text>
+                                    </>
+                                )}
                                 <Icon as={BiCalendar} boxSize={10} />
                                 <Text>{format(parseISO(bedpres.date), 'dd. MMM yyyy')}</Text>
                                 <Icon as={RiTimeLine} boxSize={10} />
