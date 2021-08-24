@@ -29,6 +29,8 @@ export interface RawBedpres {
     };
     sys: { firstPublishedAt: string };
     registrationTime: string;
+    minDegreeYear: number;
+    maxDegreeYear: number;
 }
 
 export interface RawPost {
@@ -293,6 +295,8 @@ const mockResponses: {
                             firstPublishedAt: '2021-02-24T14:11:07.592Z',
                         },
                         registrationTime: '2021-02-27T21:04:00.000Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                     {
                         title: 'Bedriftspresentasjon med Delllllloitte',
@@ -313,6 +317,8 @@ const mockResponses: {
                             firstPublishedAt: '2019-03-24T13:41:19.592Z',
                         },
                         registrationTime: '2021-03-27T12:32:11.000Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                 ],
             },
@@ -354,6 +360,8 @@ const mockResponses: {
                             firstPublishedAt: '2021-02-24T14:11:07.592Z',
                         },
                         registrationTime: '2021-02-27T21:04:00.000Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                     {
                         title: 'Bedriftspresentasjon med Delllllloitte',
@@ -376,6 +384,8 @@ const mockResponses: {
                             firstPublishedAt: '2019-03-24T13:41:19.592Z',
                         },
                         registrationTime: '2021-03-27T12:32:11.000Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                 ],
             },

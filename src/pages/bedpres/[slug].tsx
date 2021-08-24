@@ -78,7 +78,12 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            <Countdown bedpres={bedpres} backendUrl={backendUrl} />
+                            <Countdown
+                                bedpres={bedpres}
+                                backendUrl={backendUrl}
+                                minDegreeYear={bedpres.minDegreeYear}
+                                maxDegreeYear={bedpres.maxDegreeYear}
+                            />
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>

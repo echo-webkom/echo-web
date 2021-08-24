@@ -29,6 +29,8 @@ const compare = (bedpres: Bedpres, json: RawBedpres) => {
         additionalQuestions: json.additionalQuestionsCollection.items,
         publishedAt: json.sys.firstPublishedAt,
         registrationTime: json.registrationTime,
+        minDegreeYear: json.minDegreeYear,
+        maxDegreeYear: json.maxDegreeYear,
     });
 };
 
