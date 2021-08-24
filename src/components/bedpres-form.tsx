@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { Degree, RegistrationAPI } from '../lib/api/registration';
-import { Question } from '../lib/api/bedpres';
+import { Bedpres, Question } from '../lib/api/bedpres';
 
 const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
     const { register } = useFormContext();
@@ -99,16 +99,7 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const BedpresForm = ({
-    slug,
-    questions,
-    backendUrl,
-}: {
-    slug: string;
-    questions: Array<Question>;
-    title: string;
-    backendUrl: string;
-}): JSX.Element => {
+const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: string }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const methods = useForm();
     const { register, handleSubmit } = methods;
@@ -136,9 +127,9 @@ const BedpresForm = ({
                 lastName: data.lastName,
                 degree: data.degree,
                 degreeYear: data.degreeYear,
-                slug,
+                slug: bedpres.slug,
                 terms: data.terms1 && data.terms2 && data.terms3,
-                answers: questions.map((q: Question, index: number) => {
+                answers: bedpres.additionalQuestions.map((q: Question, index: number) => {
                     return { question: q.questionText, answer: data.answers[index] };
                 }),
             },
@@ -231,8 +222,8 @@ const BedpresForm = ({
                                             </VStack>
                                         </RadioGroup>
                                     </FormControl>
-                                    {questions &&
-                                        questions.map((q: Question, index: number) => {
+                                    {bedpres.additionalQuestions &&
+                                        bedpres.additionalQuestions.map((q: Question, index: number) => {
                                             return (
                                                 <QuestionComponent
                                                     key={`q.questionText-${q.inputType}`}

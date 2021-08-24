@@ -13,13 +13,14 @@ services:
     ports:
       - '3000:3000'
     environment:
+      CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID}
+      CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN}
+      CONTENTFUL_ENVIRONMENT_ID: ${CONTENTFUL_ENVIRONMENT_ID}
       BACKEND_URL: http://backend:8080
-      BEDKOM_KEY: bedkom-passord
+      BEDKOM_KEY: ${BEDKOM_KEY}
 
   backend:
-    # Runs tests against backend master branch.
-    # This might change (?)
-    build: https://github.com/echo-webkom/echo-web-backend.git#master
+    build: https://github.com/echo-webkom/echo-web-backend.git#${BRANCH}
     image: echo-web-backend:latest
     # Don't start backend before database is up.
     depends_on:
@@ -31,15 +32,14 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./test_scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
+      test: ["CMD-SHELL", "./scripts/submit_bedpres -t -x $$WEBKOM_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
     environment:
-      DEV: ja
-      DATABASE_HOST: database
-      BEDKOM_KEY: bedkom-passord
-      WEBKOM_KEY: webkom-passord
+      DATABASE_URL: postgres://postgres:password@database/postgres
+      BEDKOM_KEY: ${BEDKOM_KEY}
+      WEBKOM_KEY: ${WEBKOM_KEY}
 
   database:
     image: postgres:13.2-alpine

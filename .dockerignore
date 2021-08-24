@@ -13,6 +13,7 @@ renovate.json
 .prettierignore
 jest*
 public/rss.xml
+.env*
 
 cypress/videos/
 cypress/screenshots/

@@ -136,6 +136,8 @@ const GET_N_BEDPRESES = `
                     firstPublishedAt
                 }
                 registrationTime
+                minDegreeYear
+                maxDegreeYear
             }
         }
     }
@@ -169,6 +171,8 @@ const GET_BEDPRES_BY_SLUG = `
                     firstPublishedAt
                 }
                 registrationTime
+                minDegreeYear
+                maxDegreeYear
             }
         }
     }

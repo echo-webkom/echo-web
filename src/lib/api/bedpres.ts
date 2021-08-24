@@ -33,6 +33,8 @@ const bedpresDecoder = (value: Pojo) => {
         location: string,
         companyLink: string,
         registrationTime: string,
+        minDegreeYear: union(number, nil),
+        maxDegreeYear: union(number, nil),
     });
 
     const logoUrlDecoder = record({
@@ -81,6 +83,7 @@ export const BedpresAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 bedpreses: null,
                 error: handleError(error.response?.status),
@@ -110,6 +113,7 @@ export const BedpresAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             if (!error.response) {
                 return {
                     bedpres: null,

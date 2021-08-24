@@ -79,6 +79,7 @@ export const StudentGroupAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 studentGroups: [],
                 error: handleError(error.response.status),

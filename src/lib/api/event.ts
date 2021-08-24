@@ -72,6 +72,7 @@ export const EventAPI = {
 
             return eventSlugListDecoder(data.data.eventCollection.items).map((eventSlug) => eventSlug.slug);
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return [];
         }
     },
@@ -94,6 +95,7 @@ export const EventAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 events: null,
                 error: handleError(error.response?.status),
@@ -121,6 +123,7 @@ export const EventAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             if (!error.response) {
                 return {
                     event: null,

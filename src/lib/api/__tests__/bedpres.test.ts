@@ -29,11 +29,13 @@ const compare = (bedpres: Bedpres, json: RawBedpres) => {
         additionalQuestions: json.additionalQuestionsCollection.items,
         publishedAt: json.sys.firstPublishedAt,
         registrationTime: json.registrationTime,
+        minDegreeYear: json.minDegreeYear,
+        maxDegreeYear: json.maxDegreeYear,
     });
 };
 
 const server = setupServer(
-    rest.post<QueryBody, string>(
+    rest.post<QueryBody, { data: { bedpresCollection: { items: Array<RawBedpres> } } }>(
         `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${process.env.CONTENTFUL_ENVIRONMENT_ID}`,
         (req, res, ctx) => {
             const { query, variables } = req.body;

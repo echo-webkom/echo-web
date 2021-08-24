@@ -65,6 +65,9 @@ typings/
 # dotenv environment variable files
 .env*
 
+# example dotenv
+!.env.example
+
 # next
 .next
 
