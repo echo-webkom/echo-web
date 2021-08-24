@@ -1,10 +1,9 @@
 import React from 'react';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import { format, isFuture, isPast, differenceInMilliseconds, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 
 import { CgOrganisation } from 'react-icons/cg';
@@ -14,7 +13,6 @@ import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
 import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
-import { useTimeout } from '../../lib/hooks';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { Registration, RegistrationAPI } from '../../lib/api/registration';
@@ -25,7 +23,6 @@ import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import ErrorBox from '../../components/error-box';
 import Countdown from '../../components/countdown';
-import BedpresForm from '../../components/bedpres-form';
 
 const BedpresPage = ({
     bedpres,
@@ -40,17 +37,6 @@ const BedpresPage = ({
     spotsTaken: number | null;
     error: string;
 }): JSX.Element => {
-    const router = useRouter();
-    const regDate = parseISO(bedpres?.registrationTime);
-    const time =
-        !bedpres || differenceInMilliseconds(regDate, new Date()) < 0
-            ? null
-            : differenceInMilliseconds(regDate, new Date());
-
-    useTimeout(() => {
-        router.replace(router.asPath);
-    }, time);
-
     return (
         <Layout>
             {error && !bedpres && <ErrorBox error={error} />}
@@ -92,24 +78,7 @@ const BedpresPage = ({
                             <Center>
                                 <Text fontWeight="bold">PÅMELDING</Text>
                             </Center>
-                            {isFuture(parseISO(bedpres.registrationTime)) && (
-                                <Center data-testid="bedpres-not-open" my="3">
-                                    <Countdown date={regDate} />
-                                </Center>
-                            )}
-                            {isFuture(parseISO(bedpres.date)) && isPast(parseISO(bedpres.registrationTime)) && (
-                                <BedpresForm
-                                    slug={bedpres.slug}
-                                    questions={bedpres.additionalQuestions}
-                                    title={bedpres.title}
-                                    backendUrl={backendUrl}
-                                />
-                            )}
-                            {isPast(parseISO(bedpres.date)) && (
-                                <Center my="3" data-testid="bedpres-has-been">
-                                    <Text>Påmeldingen er stengt.</Text>
-                                </Center>
-                            )}
+                            <Countdown bedpres={bedpres} backendUrl={backendUrl} />
                             <Divider my=".5em" />
                             <Center>
                                 <Heading size="lg">@{bedpres.author}</Heading>
