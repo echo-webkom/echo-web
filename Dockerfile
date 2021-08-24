@@ -7,7 +7,7 @@ FROM node:14-alpine as deps
 WORKDIR /opt/build
 COPY package.json yarn.lock ./
 
-RUN yarn --frozen-lockfile --ignore-scripts
+RUN yarn --frozen-lockfile
 
 
 # Build with Next (no default command).
