@@ -83,6 +83,7 @@ export const BedpresAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 bedpreses: null,
                 error: handleError(error.response?.status),
@@ -112,6 +113,7 @@ export const BedpresAPI = {
                 error: null,
             };
         } catch (error) {
+            console.log(error); // eslint-disable-line
             if (!error.response) {
                 return {
                     bedpres: null,
