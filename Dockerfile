@@ -16,6 +16,7 @@ FROM cypress/base:latest as build
 WORKDIR /opt/build
 COPY --from=deps /opt/build/node_modules ./node_modules/
 COPY --from=deps /root/.cache /root/.cache/
+# NB! Copies any .env files as well.
 COPY . .
 
 RUN yarn build
