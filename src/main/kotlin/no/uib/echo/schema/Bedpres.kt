@@ -26,9 +26,9 @@ data class BedpresSlugJson(val slug: String)
 object Bedpres : Table() {
     val slug: Column<String> = varchar("slug", 50).uniqueIndex()
     val spots: Column<Int> = integer("spots")
-    val minDegreeYear: Column<Int> = integer("minDegreeYear")
-    val maxDegreeYear: Column<Int> = integer("maxDegreeYear")
-    val registrationDate: Column<DateTime> = datetime("registrationDate")
+    val minDegreeYear: Column<Int> = integer("min_degree_year")
+    val maxDegreeYear: Column<Int> = integer("max_degree_year")
+    val registrationDate: Column<DateTime> = datetime("registration_date")
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
