@@ -1,6 +1,5 @@
 import { Pojo, array, optional, boolean, record, string, number, decodeType } from 'typescript-json-decoder';
 import axios from 'axios';
-
 export enum Degree {
     DTEK = 'DTEK',
     DSIK = 'DSIK',
@@ -76,6 +75,12 @@ const responseDecoder = record({
 });
 
 const registrationListDecoder = array(registrationDecoder);
+
+export type RegistrationCount = decodeType<typeof registrationCountDecoder>;
+const registrationCountDecoder = record({
+    regCount: number,
+    waitListCount: number,
+});
 
 const genericError: { title: string; desc: string; date: string | undefined } = {
     title: 'Det har skjedd en feil.',
@@ -156,6 +161,32 @@ export const RegistrationAPI = {
             return {
                 response: { ...genericError, code: 'RequestError' },
                 statusCode: 500,
+            };
+        }
+    },
+
+    getRegistrationCount: async (
+        auth: string,
+        slug: string,
+        backendUrl: string,
+    ): Promise<{ regCount: RegistrationCount | null; regCountErr: string | null }> => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}`, {
+                auth: {
+                    username: 'bedkom',
+                    password: auth,
+                },
+            });
+
+            return {
+                regCount: registrationCountDecoder(data),
+                regCountErr: null,
+            };
+        } catch (err) {
+            console.log(err); // eslint-disable-line
+            return {
+                regCount: null,
+                regCountErr: err,
             };
         }
     },
