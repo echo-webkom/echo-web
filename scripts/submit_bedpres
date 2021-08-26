@@ -31,7 +31,7 @@ if [ "$testing" = true ]; then
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
-    -d '{ "slug": "bedriftspresentasjon-med-bekk", "spots": 50, "registrationDate": "2021-05-06T16:46+01:00" }' \
+    -d '{ "slug": "bedriftspresentasjon-med-bekk", "spots": 50, "registrationDate": "2021-05-06T16:46+01:00", "minDegreeYear": 1, "maxDegreeYear": 5 }' \
     "$host":"$port"/bedpres
   exit 0
 fi
@@ -56,5 +56,5 @@ curl --verbose \
   -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
-  -d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'" }' \
+  -d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'", "minDegreeYear": 1, "maxDegreeYear": 5 }' \
   "$host":"$port"/bedpres

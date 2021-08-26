@@ -14,9 +14,9 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import no.uib.echo.Response
-import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.deleteBedpres
 import no.uib.echo.plugins.Routing.deleteRegistration
+import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.getRegistration
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
@@ -27,6 +27,7 @@ import no.uib.echo.schema.Degree
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.RegistrationStatus
 import no.uib.echo.schema.ShortRegistrationJson
+import no.uib.echo.schema.countRegistrations
 import no.uib.echo.schema.deleteBedpresBySlug
 import no.uib.echo.schema.deleteRegistration
 import no.uib.echo.schema.insertOrUpdateBedpres
@@ -100,12 +101,21 @@ object Routing {
             val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
 
-            val result = selectRegistrations(emailParam, slugParam)
+            when (call.request.queryParameters["count"]) {
+                "y", "Y" ->
+                    if (slugParam != null)
+                        call.respond(countRegistrations(slugParam))
+                    else
+                        call.respond(HttpStatusCode.BadRequest, "Count parameter defined but no slug was given.")
+                else -> {
+                    val result = selectRegistrations(emailParam, slugParam)
 
-            if (result != null)
-                call.respond(result)
-            else
-                call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
+                    if (result == null)
+                        call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
+                    else
+                        call.respond(result)
+                }
+            }
         }
     }
 

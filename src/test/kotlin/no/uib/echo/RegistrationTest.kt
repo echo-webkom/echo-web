@@ -535,4 +535,78 @@ class RegistrationTest : StringSpec({
             }
         }
     }
+
+    "Should get correct count of registrations and wait list registrations" {
+        withTestApplication({
+            configureRouting(keys)
+        }) {
+            val waitListCount = 10
+
+            for (i in 1..(exampleBedpres1.spots + waitListCount)) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "ta123t${i}@test.com",
+                                    degree = Degree.DTEK,
+                                    degreeYear = 1
+                                )
+                            )
+                        )
+                    }
+
+                if (i > exampleBedpres1.spots) {
+                    submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
+                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    res.code shouldBe Response.WaitList
+                    res.title shouldBe "Plassene er dessverre fylt opp..."
+                    res.desc shouldBe "Du har blitt satt på venteliste."
+                } else {
+                    submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    res.code shouldBe Response.OK
+                    res.title shouldBe "Påmeldingen din er registrert!"
+                    res.desc shouldBe ""
+                }
+            }
+
+            val getCountRegCall: TestApplicationCall =
+                handleRequest(
+                    method = HttpMethod.Get,
+                    uri = "/${Routing.registrationRoute}?count=y&slug=${exampleReg.slug}"
+                ) {
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString("$bedkom:${keys[bedkom]}".toByteArray())}"
+                    )
+                }
+
+            getCountRegCall.response.status() shouldBe HttpStatusCode.OK
+            val res = gson.fromJson(getCountRegCall.response.content, RegistrationCountJson::class.java)
+            res.regCount shouldBe exampleBedpres1.spots
+            res.waitListCount shouldBe waitListCount
+        }
+    }
+
+    "Should respond properly when not given slug of bedpres when count of registrations are requested" {
+        withTestApplication({
+            configureRouting(keys)
+        }) {
+            val getCountRegCall: TestApplicationCall =
+                handleRequest(
+                    method = HttpMethod.Get,
+                    uri = "/${Routing.registrationRoute}?count=y"
+                ) {
+                    addHeader(
+                        HttpHeaders.Authorization,
+                        "Basic ${Base64.getEncoder().encodeToString("$bedkom:${keys[bedkom]}".toByteArray())}"
+                    )
+                }
+
+            getCountRegCall.response.status() shouldBe HttpStatusCode.BadRequest
+            getCountRegCall.response.content shouldBe "Count parameter defined but no slug was given."
+        }
+    }
 })
