@@ -9,13 +9,15 @@ import { ParsedUrlQuery } from 'querystring';
 import { CgOrganisation } from 'react-icons/cg';
 import { RiTimeLine } from 'react-icons/ri';
 import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
+import { IoMdListBox } from 'react-icons/io';
+
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 
 import { Link, Grid, Text, GridItem, Divider, Center, LinkBox, LinkOverlay, Icon, Heading } from '@chakra-ui/react';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
-import { Registration, RegistrationAPI } from '../../lib/api/registration';
+import { Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 import MapMarkdownChakra from '../../markdown';
 import ContentBox from '../../components/content-box';
 import BedpresView from '../../components/bedpres-view';
@@ -28,15 +30,18 @@ const BedpresPage = ({
     bedpres,
     registrations,
     backendUrl,
-    spotsTaken,
+    regCount,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
     backendUrl: string;
-    spotsTaken: number | null;
+    regCount: RegistrationCount;
     error: string;
 }): JSX.Element => {
+    const spotsTaken = regCount?.regCount || 0;
+    const waitList = regCount?.waitListCount || 0;
+
     return (
         <Layout>
             {error && !bedpres && <ErrorBox error={error} />}
@@ -61,7 +66,7 @@ const BedpresPage = ({
                                         {bedpres.companyLink.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '').split('/')[0]}
                                     </Link>
                                 </NextLink>
-                                {bedpres.spots != 0 && (
+                                {bedpres.spots !== 0 && (
                                     <>
                                         <Icon as={MdEventSeat} boxSize={10} />
                                         <Text>
@@ -70,6 +75,12 @@ const BedpresPage = ({
                                                 (!spotsTaken && `${bedpres.spots}`)}{' '}
                                             plasser
                                         </Text>
+                                    </>
+                                )}
+                                {bedpres.spots >= spotsTaken && (
+                                    <>
+                                        <Icon as={IoMdListBox} boxSize={10} />
+                                        <Text>{`${waitList} på venteliste`}</Text>
                                     </>
                                 )}
                                 <Icon as={BiCalendar} boxSize={10} />
@@ -134,15 +145,18 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
-    const bedkomKey = process.env.BEDKOM_KEY;
-    const showAdmin = context.query?.key === bedkomKey;
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
 
-    if (showAdmin && !bedkomKey) throw Error('No BEDKOM_KEY defined.');
+    const bedkomKey = process.env.BEDKOM_KEY;
+    if (!bedkomKey) throw Error('No BEDKOM_KEY defined.');
 
-    const { registrations } = await RegistrationAPI.getRegistrations(bedkomKey || '', slug, backendUrl);
-    const realReg = showAdmin ? registrations || [] : [];
-    const spotsTaken = registrations?.length || null;
+    const showAdmin = context.query?.key === bedkomKey;
+
+    const { registrations } = showAdmin
+        ? await RegistrationAPI.getRegistrations(bedkomKey, slug, backendUrl)
+        : { registrations: [] };
+
+    const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, backendUrl);
 
     if (error === '404') {
         return {
@@ -153,8 +167,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             bedpres,
-            registrations: realReg,
-            spotsTaken,
+            registrations,
+            regCount,
             backendUrl,
             error,
         },
