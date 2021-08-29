@@ -31,6 +31,11 @@ data class RegistrationJson(
     val answers: List<AnswerJson>
 )
 
+data class RegistrationCountJson(
+    val regCount: Long,
+    val waitListCount: Long
+)
+
 data class ShortRegistrationJson(val slug: String, val email: String)
 
 object Registration : Table() {
@@ -140,6 +145,26 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED
         )
     }
+}
+
+fun countRegistrations(slug: String): RegistrationCountJson {
+    val regCount = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Registration.select {
+            Registration.waitList eq false and (Registration.bedpresSlug eq slug)
+        }.count()
+    }
+
+    val waitListCount = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Registration.select {
+            Registration.waitList eq true and (Registration.bedpresSlug eq slug)
+        }.count()
+    }
+
+    return RegistrationCountJson(regCount, waitListCount)
 }
 
 fun deleteRegistration(shortReg: ShortRegistrationJson) {
