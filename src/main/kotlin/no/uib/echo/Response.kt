@@ -1,5 +1,7 @@
 package no.uib.echo
 
+import no.uib.echo.schema.HAPPENINGTYPE
+
 data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
 
 enum class Response {
@@ -18,7 +20,7 @@ enum class Response {
     OK,
 }
 
-private fun resToMsg(res: Response): Pair<String, String> {
+private fun resToMsg(res: Response, regType: HAPPENINGTYPE): Pair<String, String> {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -27,7 +29,10 @@ private fun resToMsg(res: Response): Pair<String, String> {
         Response.InvalidDegreeYear ->
             return Pair("Vennligst velgt et gyldig trinn.", "")
         Response.InvalidTerms ->
-            return Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
+            if (regType == HAPPENINGTYPE.BEDPRES)
+                return Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
+            else
+                return Pair("Du må godkjenne noe greier", defaultDesc)
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
             return Pair("Studieretning og årstrinn stemmer ikke overens.", defaultDesc)
         Response.AlreadySubmitted ->
@@ -37,7 +42,10 @@ private fun resToMsg(res: Response): Pair<String, String> {
         Response.WaitList ->
             return Pair("Plassene er dessverre fylt opp...", "Du har blitt satt på venteliste.")
         Response.BedpresDosntExist ->
-            return Pair("Denne bedpres'en finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
+            return if (regType == HAPPENINGTYPE.BEDPRES)
+                Pair("Denne bedpres'en finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
+            else
+                Pair("Dette arrangementet finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
         Response.NotInRange ->
             return Pair("Du kan dessverre ikke melde deg på.", "")
         Response.OK ->
@@ -45,8 +53,13 @@ private fun resToMsg(res: Response): Pair<String, String> {
     }
 }
 
-fun resToJson(res: Response, date: String? = null, degreeYearRange: IntRange? = null): ResponseJson {
-    val (title, desc) = resToMsg(res)
+fun resToJson(
+    res: Response,
+    regType: HAPPENINGTYPE,
+    date: String? = null,
+    degreeYearRange: IntRange? = null
+): ResponseJson {
+    val (title, desc) = resToMsg(res, regType)
     return if (degreeYearRange == null)
         ResponseJson(res, title, desc, date)
     else
