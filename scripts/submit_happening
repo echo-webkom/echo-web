@@ -43,6 +43,18 @@ if [ "$testing" = true ]; then
           "maxDegreeYear": 5,
           "type": "BEDPRES" }' \
     "$host":"$port"/happening
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "fest-med-tilde", 
+          "spots": 50,
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "minDegreeYear": 1,
+          "maxDegreeYear": 5,
+          "type": "EVENT" }' \
+    "$host":"$port"/happening
   exit 0
 fi
 
