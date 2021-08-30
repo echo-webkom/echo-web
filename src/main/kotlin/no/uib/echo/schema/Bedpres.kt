@@ -24,7 +24,7 @@ data class BedpresJson(
 data class BedpresSlugJson(val slug: String)
 
 object Bedpres : Table() {
-    val slug: Column<String> = varchar("slug", 50).uniqueIndex()
+    val slug: Column<String> = text("slug").uniqueIndex()
     val spots: Column<Int> = integer("spots")
     val minDegreeYear: Column<Int> = integer("min_degree_year")
     val maxDegreeYear: Column<Int> = integer("max_degree_year")
