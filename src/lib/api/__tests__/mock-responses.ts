@@ -8,6 +8,16 @@ export interface RawEvent {
     location: string;
     sys: { firstPublishedAt: string };
     author: { authorName: string };
+    additionalQuestionsCollection: {
+        items: Array<{
+            questionText: string;
+            inputType: 'radio' | 'textbox';
+            alternatives: Array<string> | null;
+        }>;
+    };
+    registrationTime: string;
+    minDegreeYear: number;
+    maxDegreeYear: number;
 }
 
 export interface RawBedpres {
@@ -94,6 +104,23 @@ const mockResponses: {
                         author: {
                             authorName: 'Bo Aanes',
                         },
+                        additionalQuestionsCollection: {
+                            items: [
+                                {
+                                    questionText: 'Har du noen allergier?',
+                                    inputType: 'textbox',
+                                    alternatives: null,
+                                },
+                                {
+                                    questionText: 'Er bedkom wack',
+                                    inputType: 'radio',
+                                    alternatives: ['ja', 'nei', 'kanskje?'],
+                                },
+                            ],
+                        },
+                        registrationTime: '2022-03-08T11:47:19.985Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                     {
                         title: 'Halloweenfest på lesesalen',
@@ -111,6 +138,23 @@ const mockResponses: {
                         author: {
                             authorName: 'Bo Aanes',
                         },
+                        additionalQuestionsCollection: {
+                            items: [
+                                {
+                                    questionText: 'Har du noen allergier?',
+                                    inputType: 'textbox',
+                                    alternatives: null,
+                                },
+                                {
+                                    questionText: 'Er bedkom wack',
+                                    inputType: 'radio',
+                                    alternatives: ['ja', 'nei', 'kanskje?'],
+                                },
+                            ],
+                        },
+                        registrationTime: '2022-03-08T11:47:19.985Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                 ],
             },
@@ -134,6 +178,23 @@ const mockResponses: {
                         author: {
                             authorName: 'Bo Aanes',
                         },
+                        additionalQuestionsCollection: {
+                            items: [
+                                {
+                                    questionText: 'Har du noen allergier?',
+                                    inputType: 'textbox',
+                                    alternatives: null,
+                                },
+                                {
+                                    questionText: 'Er bedkom wack',
+                                    inputType: 'radio',
+                                    alternatives: ['ja', 'nei', 'kanskje?'],
+                                },
+                            ],
+                        },
+                        registrationTime: '2022-03-08T11:47:19.985Z',
+                        minDegreeYear: 1,
+                        maxDegreeYear: 5,
                     },
                 ],
             },

@@ -115,7 +115,7 @@ export const RegistrationAPI = {
         backendUrl: string,
     ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/${type.toLowerCase()}registration?slug=${slug}`, {
+            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}&type=${type.toLowerCase}`, {
                 auth: {
                     username: 'bedkom',
                     password: auth,
@@ -140,16 +140,12 @@ export const RegistrationAPI = {
         backendUrl: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(
-                `${backendUrl}/${registration.type.toLowerCase()}/registration`,
-                registration,
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    validateStatus: (statusCode: number) => {
-                        return statusCode < 500;
-                    },
+            const { data, status } = await axios.post(`${backendUrl}/registration`, registration, {
+                headers: { 'Content-Type': 'application/json' },
+                validateStatus: (statusCode: number) => {
+                    return statusCode < 500;
                 },
-            );
+            });
 
             return {
                 response: responseDecoder(data) || { ...genericError, code: 'DecodeError' },
