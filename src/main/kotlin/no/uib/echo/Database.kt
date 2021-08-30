@@ -42,8 +42,8 @@ object Db {
     }
 
     fun init() {
-        // Don't migrate if running in CI or on local machine
-        if (System.getenv("CI") != null && System.getenv("DEV") != null)
+        // Don't migrate if running on local machine
+        if (System.getenv("DEV") == null)
             migrate()
 
         transaction(conn) {
