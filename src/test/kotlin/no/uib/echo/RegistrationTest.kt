@@ -94,7 +94,7 @@ class RegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
-                res.desc shouldBe ""
+                res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
             }
 
             for (b in bachelors) {
@@ -129,7 +129,7 @@ class RegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
-                res.desc shouldBe ""
+                res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
             }
         }
     }
@@ -149,7 +149,7 @@ class RegistrationTest : StringSpec({
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.OK
             res.title shouldBe "Påmeldingen din er registrert!"
-            res.desc shouldBe ""
+            res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
         }
     }
 
@@ -167,7 +167,7 @@ class RegistrationTest : StringSpec({
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.OK
             res.title shouldBe "Påmeldingen din er registrert!"
-            res.desc shouldBe ""
+            res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
 
             val submitRegAgainCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
@@ -214,7 +214,7 @@ class RegistrationTest : StringSpec({
             submitRegCall.response.status() shouldBe HttpStatusCode.Conflict
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
             res.code shouldBe Response.BedpresDosntExist
-            res.title shouldBe "Denne bedpres'en finnes ikke."
+            res.title shouldBe "Denne bedriftspresentasjonen finnes ikke."
             res.desc shouldBe "Om du mener dette ikke stemmer, ta kontakt med Webkom."
         }
     }
@@ -420,7 +420,7 @@ class RegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
-                res.desc shouldBe ""
+                res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
             }
 
             for (i in 1..3) {
@@ -433,8 +433,8 @@ class RegistrationTest : StringSpec({
                 submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
                 val res = gson.fromJson(submitRegWaitlistCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.WaitList
-                res.title shouldBe "Plassene er dessverre fylt opp..."
-                res.desc shouldBe "Du har blitt satt på venteliste."
+                res.title shouldBe "Alle plassene er dessverre fylt opp..."
+                res.desc shouldBe "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
             }
         }
     }
@@ -462,7 +462,7 @@ class RegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.NotInRange
                 res.title shouldBe "Du kan dessverre ikke melde deg på."
-                res.desc shouldBe "Denne bedpres'en er kun åpen for ${exampleBedpres4.minDegreeYear}- til ${exampleBedpres4.maxDegreeYear}-klasse."
+                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres4.minDegreeYear}- til ${exampleBedpres4.maxDegreeYear}-klasse."
             }
 
             for (i in 3..5) {
@@ -485,7 +485,7 @@ class RegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.NotInRange
                 res.title shouldBe "Du kan dessverre ikke melde deg på."
-                res.desc shouldBe "Denne bedpres'en er kun åpen for ${exampleBedpres5.minDegreeYear}- til ${exampleBedpres5.maxDegreeYear}-klasse."
+                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres5.minDegreeYear}- til ${exampleBedpres5.maxDegreeYear}-klasse."
             }
         }
     }
@@ -561,14 +561,14 @@ class RegistrationTest : StringSpec({
                     submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                     res.code shouldBe Response.WaitList
-                    res.title shouldBe "Plassene er dessverre fylt opp..."
-                    res.desc shouldBe "Du har blitt satt på venteliste."
+                    res.title shouldBe "Alle plassene er dessverre fylt opp..."
+                    res.desc shouldBe "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
                 } else {
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                     res.code shouldBe Response.OK
                     res.title shouldBe "Påmeldingen din er registrert!"
-                    res.desc shouldBe ""
+                    res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
                 }
             }
 
