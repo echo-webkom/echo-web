@@ -5,7 +5,7 @@ host=http://localhost
 port=8080
 qa="[]"
 
-while getopts zpe:f:l:d:y:s:t:q: flag; do
+while getopts zpe:f:l:d:y:s:t:q:h: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -16,6 +16,7 @@ while getopts zpe:f:l:d:y:s:t:q: flag; do
   y) degree_year=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   t) terms=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
   q) qa=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
@@ -56,6 +57,11 @@ if [ -z ${terms+x} ]; then
   exit 1
 fi
 
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
 curl --verbose \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
@@ -66,5 +72,6 @@ curl --verbose \
       "degreeYear": '"${degree_year}"',
       "slug": "'"${slug}"'",
       "terms": '"${terms}"',
-      "answers": '"${qa}"' }' \
+      "answers": '"${qa}"',
+      "type": '"${happening}"' }' \
   "$host":"$port"/registration

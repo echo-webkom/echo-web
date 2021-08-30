@@ -5,7 +5,7 @@ host=http://localhost
 port=8080
 user=bedkom
 
-while getopts zpe:s:x:uw flag; do
+while getopts zpe:s:x:uw:h: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -13,6 +13,7 @@ while getopts zpe:s:x:uw flag; do
   x) secret=${OPTARG} ;;
   u) user=${OPTARG} ;;
   w) waitlist=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -22,15 +23,20 @@ if [ -z ${secret+x} ]; then
   exit 1
 fi
 
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)".
+  exit 1
+fi
+
 if [ -z ${slug+x} ]; then
-    echo "No slug specified (use -s)."
+    echo "Slug not defined (use -s)."
     exit 1
 elif [ -z ${waitlist+x} ]; then
   curl --verbose \
     -u "$user":"$secret" \
-    "$host:$port/registration?count=y&slug=$slug"
+    "$host:$port/registration?count=y&slug=$slug&type=$happening"
 else
   curl --verbose \
     -u "$user":"$secret" \
-    "$host:$port/registration?count=y&slug=$slug&waitlist=y"
+    "$host:$port/registration?count=y&slug=$slug&waitlist=y&type=$happening"
 fi

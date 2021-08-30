@@ -115,9 +115,9 @@ fun selectRegistrations(
                     selectHappeningQuestionsByEmailAndSlug(
                         reg[BedpresRegistration.email],
                         reg[BedpresRegistration.bedpresSlug],
-                        HAPPENINGTYPE.BEDPRES
+                        type
                     ),
-                    HAPPENINGTYPE.BEDPRES
+                    type
                 )
             })
         HAPPENINGTYPE.EVENT ->
@@ -135,9 +135,9 @@ fun selectRegistrations(
                     selectHappeningQuestionsByEmailAndSlug(
                         reg[EventRegistration.email],
                         reg[EventRegistration.eventSlug],
-                        HAPPENINGTYPE.EVENT
+                        type
                     ),
-                    HAPPENINGTYPE.EVENT
+                    type
                 )
             })
     }

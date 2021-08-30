@@ -1,5 +1,6 @@
 package no.uib.echo.schema
 
+import com.google.gson.annotations.SerializedName
 import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -14,7 +15,10 @@ import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 enum class HAPPENINGTYPE {
+    @SerializedName("BEDPRES")
     BEDPRES,
+
+    @SerializedName("EVENT")
     EVENT
 }
 
@@ -62,18 +66,30 @@ fun selectHappeningBySlug(slug: String, type: HAPPENINGTYPE): HappeningJson? {
     }
 
     return result?.let {
-        HappeningJson(
-            it[Bedpres.slug],
-            it[Bedpres.spots],
-            it[Bedpres.minDegreeYear],
-            it[Bedpres.maxDegreeYear],
-            it[Bedpres.registrationDate].toString(),
-            type
-        )
+        when (type) {
+            HAPPENINGTYPE.BEDPRES ->
+                HappeningJson(
+                    it[Bedpres.slug],
+                    it[Bedpres.spots],
+                    it[Bedpres.minDegreeYear],
+                    it[Bedpres.maxDegreeYear],
+                    it[Bedpres.registrationDate].toString(),
+                    type
+                )
+            HAPPENINGTYPE.EVENT ->
+                HappeningJson(
+                    it[Event.slug],
+                    it[Event.spots],
+                    it[Event.minDegreeYear],
+                    it[Event.maxDegreeYear],
+                    it[Event.registrationDate].toString(),
+                    type
+                )
+        }
     }
 }
 
-fun insertOrUpdateBedpres(newHappening: HappeningJson): Pair<HttpStatusCode, String> {
+fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, String> {
     val happening = selectHappeningBySlug(newHappening.slug, newHappening.type)
 
     if (happening == null) {

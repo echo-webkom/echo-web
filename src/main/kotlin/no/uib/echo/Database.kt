@@ -42,8 +42,10 @@ object Db {
     }
 
     fun init() {
-        migrate()
-       
+        // Don't migrate if running in CI or on local machine
+        if (System.getenv("CI") != null && System.getenv("DEV") != null)
+            migrate()
+
         transaction(conn) {
             SchemaUtils.create(Bedpres, Event, BedpresRegistration, EventRegistration, BedpresAnswer, EventAnswer)
         }

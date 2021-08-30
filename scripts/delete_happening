@@ -5,13 +5,14 @@ host=http://localhost
 port=8080
 user=webkom
 
-while getopts zps:x:u flag; do
+while getopts zps:x:u:h: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   x) secret=${OPTARG} ;;
   u) user=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -26,10 +27,16 @@ if [ -z ${slug+x} ]; then
   exit 1
 fi
 
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
 curl --verbose \
   -X DELETE \
   -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
-  -d '{ "slug": "'"$slug"'" }' \
-  "$host":"$port"/bedpres
+  -d '{ "slug": "'"$slug"'"
+        "type": "'"$happening"'"}' \
+  "$host":"$port"/happening

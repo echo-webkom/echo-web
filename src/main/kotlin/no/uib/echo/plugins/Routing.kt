@@ -31,7 +31,7 @@ import no.uib.echo.schema.ShortRegistrationJson
 import no.uib.echo.schema.countRegistrations
 import no.uib.echo.schema.deleteHappeningBySlug
 import no.uib.echo.schema.deleteRegistration
-import no.uib.echo.schema.insertOrUpdateBedpres
+import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.insertRegistration
 import no.uib.echo.schema.selectRegistrations
 
@@ -202,7 +202,10 @@ object Routing {
                             resToJson(Response.AlreadySubmitted, registration.type)
                         )
                     RegistrationStatus.HAPPENING_DOESNT_EXIST ->
-                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist, registration.type))
+                        call.respond(
+                            HttpStatusCode.Conflict,
+                            resToJson(Response.HappeningDoesntExist, registration.type)
+                        )
                     RegistrationStatus.NOT_IN_RANGE ->
                         call.respond(
                             HttpStatusCode.Forbidden,
@@ -238,7 +241,7 @@ object Routing {
         put("/$happeningRoute") {
             try {
                 val happ = call.receive<HappeningJson>()
-                val result = insertOrUpdateBedpres(happ)
+                val result = insertOrUpdateHappening(happ)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
@@ -250,11 +253,15 @@ object Routing {
 
     fun Route.deleteHappening() {
         delete("/$happeningRoute") {
-            val happ = call.receive<HappeningSlugJson>()
+            try {
+                val happ = call.receive<HappeningSlugJson>()
 
-            deleteHappeningBySlug(happ)
+                deleteHappeningBySlug(happ)
 
-            call.respond(HttpStatusCode.OK, "Happening (${happ.type}) with slug = ${happ.slug} deleted.")
+                call.respond(HttpStatusCode.OK, "Happening (${happ.type}) with slug = ${happ.slug} deleted.")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
+            }
         }
     }
 }
