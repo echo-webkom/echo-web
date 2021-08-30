@@ -1,5 +1,6 @@
 import { Pojo, array, optional, boolean, record, string, number, decodeType } from 'typescript-json-decoder';
 import axios from 'axios';
+
 export enum Degree {
     DTEK = 'DTEK',
     DSIK = 'DSIK',
@@ -13,6 +14,11 @@ export enum Degree {
     ARMNINF = 'ARMNINF',
     POST = 'POST',
     MISC = 'MISC',
+}
+
+export enum HappeningType {
+    BEDPRES = 'BEDPRES',
+    EVENT = 'EVENT',
 }
 
 const degreeDecoder = (value: Pojo): Degree => {
@@ -88,7 +94,7 @@ const genericError: { title: string; desc: string; date: string | undefined } = 
     date: undefined,
 };
 
-// The data from the form + slug
+// The data from the form + slug and type
 interface FormRegistration {
     email: string;
     firstName: string;
@@ -96,6 +102,7 @@ interface FormRegistration {
     degree: Degree;
     degreeYear: number;
     slug: string;
+    type: HappeningType;
     terms: boolean;
     answers: Array<Answer>;
 }
@@ -104,10 +111,11 @@ export const RegistrationAPI = {
     getRegistrations: async (
         auth: string,
         slug: string,
+        type: HappeningType,
         backendUrl: string,
     ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}`, {
+            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}&type=${type.toLowerCase}`, {
                 auth: {
                     username: 'bedkom',
                     password: auth,
@@ -168,10 +176,11 @@ export const RegistrationAPI = {
     getRegistrationCount: async (
         auth: string,
         slug: string,
+        type: HappeningType,
         backendUrl: string,
     ): Promise<{ regCount: RegistrationCount | null; regCountErr: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}`, {
+            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}&type=${type}`, {
                 auth: {
                     username: 'bedkom',
                     password: auth,

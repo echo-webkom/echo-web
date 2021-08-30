@@ -4,7 +4,9 @@ import { format, parseISO, compareAsc } from 'date-fns';
 
 import ContentBox from './content-box';
 import { Registration, Answer } from '../lib/api/registration';
-import { Bedpres, Question } from '../lib/api/bedpres';
+import { Bedpres } from '../lib/api/bedpres';
+import { Event } from '../lib/api/event';
+import { Question } from '../lib/api/decoders';
 
 const CopyEmailButton = ({
     buttonText,
@@ -35,12 +37,12 @@ const CopyEmailButton = ({
     );
 };
 
-const BedpresView = ({
+const HappeningView = ({
     registrations,
-    bedpres,
+    happening,
 }: {
     registrations: Array<Registration>;
-    bedpres: Bedpres;
+    happening: Bedpres | Event | null;
 }): JSX.Element => {
     const tbSize = useBreakpointValue(['sm', null, null, 'md']) || 'md';
     registrations.sort((fst, snd) => compareAsc(parseISO(fst.submitDate), parseISO(snd.submitDate)));
@@ -92,7 +94,7 @@ const BedpresView = ({
                         <Th>Godkjent retningslinjer</Th>
                         <Th>Påmeldingstidspunkt</Th>
                         <Th>Venteliste</Th>
-                        {bedpres.additionalQuestions.map((q: Question) => {
+                        {happening?.additionalQuestions.map((q: Question) => {
                             return <Th key={`table-th-${q.questionText}`}>{q.questionText}</Th>;
                         })}
                     </Tr>
@@ -121,4 +123,4 @@ const BedpresView = ({
     );
 };
 
-export default BedpresView;
+export default HappeningView;

@@ -22,8 +22,10 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { Degree, RegistrationAPI } from '../lib/api/registration';
-import { Bedpres, Question } from '../lib/api/bedpres';
+import { Degree, HappeningType, RegistrationAPI } from '../lib/api/registration';
+import { Bedpres } from '../lib/api/bedpres';
+import { Question } from '../lib/api/decoders';
+import { Event } from '../lib/api/event';
 
 const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
     const { register } = useFormContext();
@@ -99,7 +101,15 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: string }): JSX.Element => {
+const HappeningForm = ({
+    happening,
+    type,
+    backendUrl,
+}: {
+    happening: Bedpres | Event;
+    type: HappeningType;
+    backendUrl: string;
+}): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const methods = useForm();
     const { register, handleSubmit } = methods;
@@ -127,11 +137,12 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                 lastName: data.lastName,
                 degree: data.degree,
                 degreeYear: data.degreeYear,
-                slug: bedpres.slug,
+                slug: happening.slug,
                 terms: data.terms1 && data.terms2 && data.terms3,
-                answers: bedpres.additionalQuestions.map((q: Question, index: number) => {
+                answers: happening.additionalQuestions.map((q: Question, index: number) => {
                     return { question: q.questionText, answer: data.answers[index] };
                 }),
+                type: type,
             },
             backendUrl,
         ).then(({ response, statusCode }) => {
@@ -222,8 +233,8 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                                             </VStack>
                                         </RadioGroup>
                                     </FormControl>
-                                    {bedpres.additionalQuestions &&
-                                        bedpres.additionalQuestions.map((q: Question, index: number) => {
+                                    {happening.additionalQuestions &&
+                                        happening.additionalQuestions.map((q: Question, index: number) => {
                                             return (
                                                 <QuestionComponent
                                                     key={`q.questionText-${q.inputType}`}
@@ -236,7 +247,7 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms1')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg bekrefter at jeg har valgt riktig årstrinn.
+                                                Jeg bekrefter at jeg har fylt inn riktig informasjon.
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -244,8 +255,13 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms2')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige bedriftspresentasjoner.
+                                                {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
+                                                utestengt fra fremtidige 
+                                                ${
+                                                    type === HappeningType.BEDPRES
+                                                        ? 'bedriftspresentasjoner'
+                                                        : 'arrangementer'
+                                                }.`}
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -253,8 +269,12 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms3')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg er klar over at jeg må melde meg av innen 48 timer før
-                                                bedriftspresentasjonen starter dersom jeg ikke har mulighet til å delta.
+                                                {`Jeg er klar over at jeg må melde meg av innen 48 timer før
+                                                ${
+                                                    type === HappeningType.BEDPRES
+                                                        ? 'bedriftspresentasjonen'
+                                                        : 'arrangementet'
+                                                } starter dersom jeg ikke har mulighet til å delta.`}
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -274,4 +294,4 @@ const BedpresForm = ({ bedpres, backendUrl }: { bedpres: Bedpres; backendUrl: st
     );
 };
 
-export default BedpresForm;
+export default HappeningForm;
