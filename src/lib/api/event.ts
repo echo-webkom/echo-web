@@ -21,10 +21,13 @@ const eventDecoder = (value: Pojo) => {
     const baseDecoder = record({
         title: string,
         slug: string,
-        spots: union(number, nil),
         date: string,
+        spots: union(number, nil),
         body: string,
         location: string,
+        registrationTime: string,
+        minDegreeYear: union(number, nil),
+        maxDegreeYear: union(number, nil),
     });
 
     // Decoders for nested fields.
@@ -37,14 +40,21 @@ const eventDecoder = (value: Pojo) => {
         ),
     });
 
+    const additionalQuestionsDecoder = record({
+        additionalQuestionsCollection: record({
+            items: array(questionDecoder),
+        }),
+    });
+
     // We combine the base decoder with the decoders
     // for the nested fields, and return the final JSON object.
     // This object is of type Event.
     return {
         ...baseDecoder(value),
-        author: authorDecoder(value).author.authorName,
         imageUrl: imageUrlDecoder(value).image?.url || null,
+        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestionsCollection.items,
         publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
+        author: authorDecoder(value).author.authorName,
     };
 };
 
