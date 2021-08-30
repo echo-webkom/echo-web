@@ -29,10 +29,10 @@ private fun resToMsg(res: Response, regType: HAPPENINGTYPE): Pair<String, String
         Response.InvalidDegreeYear ->
             return Pair("Vennligst velgt et gyldig trinn.", "")
         Response.InvalidTerms ->
-            if (regType == HAPPENINGTYPE.BEDPRES)
-                return Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
+            return if (regType == HAPPENINGTYPE.BEDPRES)
+                Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
             else
-                return Pair("Du må godkjenne noe greier", defaultDesc)
+                Pair("Du må godkjenne vilkårene.", defaultDesc)
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
             return Pair("Studieretning og årstrinn stemmer ikke overens.", defaultDesc)
         Response.AlreadySubmitted ->
@@ -46,7 +46,10 @@ private fun resToMsg(res: Response, regType: HAPPENINGTYPE): Pair<String, String
             )
         Response.BedpresDosntExist ->
             return if (regType == HAPPENINGTYPE.BEDPRES)
-                Pair("Denne bedpres'en finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
+                Pair(
+                    "Denne bedriftspresentasjonen finnes ikke.",
+                    "Om du mener dette ikke stemmer, ta kontakt med Webkom."
+                )
             else
                 Pair("Dette arrangementet finnes ikke.", "Om du mener dette ikke stemmer, ta kontakt med Webkom.")
         Response.NotInRange ->

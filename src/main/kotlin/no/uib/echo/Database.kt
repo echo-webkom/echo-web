@@ -42,10 +42,10 @@ object Db {
     }
 
     fun init() {
+        migrate()
+       
         transaction(conn) {
             SchemaUtils.create(Bedpres, Event, BedpresRegistration, EventRegistration, BedpresAnswer, EventAnswer)
         }
-
-        migrate()
     }
 }

@@ -30,7 +30,7 @@ data class HappeningJson(
 data class HappeningSlugJson(val slug: String, val type: HAPPENINGTYPE)
 
 object Bedpres : Table() {
-    val slug: Column<String> = varchar("slug", 50).uniqueIndex()
+    val slug: Column<String> = text("slug").uniqueIndex()
     val spots: Column<Int> = integer("spots")
     val minDegreeYear: Column<Int> = integer("min_degree_year")
     val maxDegreeYear: Column<Int> = integer("max_degree_year")
@@ -40,7 +40,7 @@ object Bedpres : Table() {
 }
 
 object Event : Table() {
-    val slug: Column<String> = varchar("slug", 50).uniqueIndex()
+    val slug: Column<String> = text("slug").uniqueIndex()
     val spots: Column<Int> = integer("spots")
     val minDegreeYear: Column<Int> = integer("min_degree_year")
     val maxDegreeYear: Column<Int> = integer("max_degree_year")

@@ -98,13 +98,13 @@ object Routing {
     }
 
     fun Route.getRegistration() {
-        get("/{type}/$registrationRoute") {
+        get("/$registrationRoute") {
             val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
-            val regType: HAPPENINGTYPE = when (call.parameters["type"]) {
-                "bedpres" ->
+            val regType: HAPPENINGTYPE = when (call.request.queryParameters["type"]) {
+                "bedpres", "BEDPRES" ->
                     HAPPENINGTYPE.BEDPRES
-                "event" ->
+                "event", "EVENT" ->
                     HAPPENINGTYPE.EVENT
                 else -> {
                     call.respond(HttpStatusCode.BadRequest, "No registration type specified.")
@@ -131,28 +131,17 @@ object Routing {
     }
 
     fun Route.postRegistration() {
-        post("/{type}/$registrationRoute") {
-            val regType: HAPPENINGTYPE = when (call.parameters["type"]) {
-                "bedpres" ->
-                    HAPPENINGTYPE.BEDPRES
-                "event" ->
-                    HAPPENINGTYPE.EVENT
-                else -> {
-                    call.respond(HttpStatusCode.BadRequest, "No registration type specified.")
-                    return@post
-                }
-            }
-
+        post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
 
                 if (!registration.email.contains('@')) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, regType))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
                     return@post
                 }
 
                 if (registration.degreeYear !in 1..5) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, regType))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, registration.type))
                     return@post
                 }
 
@@ -165,27 +154,33 @@ object Routing {
                         registration.degree == Degree.KOGNI ||
                         registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchBachelor, regType))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchBachelor, registration.type)
+                    )
                     return@post
                 }
 
                 if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, regType))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, registration.type))
                     return@post
                 }
 
                 if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchArmninf, regType))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchArmninf, registration.type)
+                    )
                     return@post
                 }
 
                 if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni, regType))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni, registration.type))
                     return@post
                 }
 
                 if (!registration.terms) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms, regType))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms, registration.type))
                     return@post
                 }
 
@@ -193,19 +188,25 @@ object Routing {
 
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
-                        call.respond(HttpStatusCode.OK, resToJson(Response.OK, regType))
+                        call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
                     RegistrationStatus.WAITLIST ->
-                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList, regType))
+                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList, registration.type))
                     RegistrationStatus.TOO_EARLY ->
-                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, regType, date = regDate))
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            resToJson(Response.TooEarly, registration.type, date = regDate)
+                        )
                     RegistrationStatus.ALREADY_EXISTS ->
-                        call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted, regType))
+                        call.respond(
+                            HttpStatusCode.UnprocessableEntity,
+                            resToJson(Response.AlreadySubmitted, registration.type)
+                        )
                     RegistrationStatus.HAPPENING_DOESNT_EXIST ->
-                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist, regType))
+                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist, registration.type))
                     RegistrationStatus.NOT_IN_RANGE ->
                         call.respond(
                             HttpStatusCode.Forbidden,
-                            resToJson(Response.NotInRange, regType, degreeYearRange = degreeYearRange)
+                            resToJson(Response.NotInRange, registration.type, degreeYearRange = degreeYearRange)
                         )
                 }
             } catch (e: Exception) {

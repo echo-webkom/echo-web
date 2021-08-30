@@ -16,10 +16,10 @@ object BedpresAnswer : Table() {
 }
 
 object EventAnswer : Table() {
-    val question: Column<String> = varchar("question", 50)
-    val answer: Column<String> = varchar("answer", 50)
-    val eventSlug: Column<String> = varchar("bedpres_slug", 50) references Event.slug
-    val registrationEmail: Column<String> = varchar("registration_email", 50)
+    val question: Column<String> = text("question")
+    val answer: Column<String> = text("answer")
+    val eventSlug: Column<String> = text("bedpres_slug") references Event.slug
+    val registrationEmail: Column<String> = text("registration_email")
 }
 
 fun selectHappeningQuestionsByEmailAndSlug(email: String, slug: String, type: HAPPENINGTYPE): List<AnswerJson> {

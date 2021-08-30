@@ -50,12 +50,12 @@ object BedpresRegistration : Table() {
 }
 
 object EventRegistration : Table() {
-    val email: Column<String> = varchar("email", 50)
-    val firstName: Column<String> = varchar("first_name", 50)
-    val lastName: Column<String> = varchar("last_name", 50)
-    val degree: Column<String> = varchar("degree", 50)
+    val email: Column<String> = text("email")
+    val firstName: Column<String> = text("first_name")
+    val lastName: Column<String> = text("last_name")
+    val degree: Column<String> = text("degree")
     val degreeYear: Column<Int> = integer("degree_year")
-    val eventSlug: Column<String> = varchar("event_slug", 50) references Event.slug
+    val eventSlug: Column<String> = text("event_slug") references Event.slug
     val terms: Column<Boolean> = bool("terms")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime())
     val waitList: Column<Boolean> = bool("wait_list")
