@@ -1,7 +1,7 @@
 import { nil, union, Pojo, record, array, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
 import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
-import { authorDecoder, publishedAtDecoder } from './decoders';
+import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
 
 // Automatically creates the Event type with the
@@ -25,7 +25,7 @@ const eventDecoder = (value: Pojo) => {
         spots: union(number, nil),
         body: string,
         location: string,
-        registrationTime: string,
+        registrationTime: union(string, nil),
         minDegreeYear: union(number, nil),
         maxDegreeYear: union(number, nil),
     });
