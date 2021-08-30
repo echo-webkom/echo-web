@@ -4,7 +4,7 @@ import { format, isFuture, isPast, parseISO } from 'date-fns';
 import { useCountdown } from '../lib/hooks';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
-import BedpresForm from './bedpres-form';
+import HappeningForm from './happening-form';
 import { HappeningType } from '../lib/api/registration';
 
 const Countdown = ({
@@ -39,7 +39,7 @@ const Countdown = ({
         }
 
         if (isFuture(parseISO(happening.date)) && isPast(regDate)) {
-            return <BedpresForm happening={happening} type={type} backendUrl={backendUrl} />;
+            return <HappeningForm happening={happening} type={type} backendUrl={backendUrl} />;
         }
 
         return (

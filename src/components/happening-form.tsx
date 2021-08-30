@@ -101,7 +101,7 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const BedpresForm = ({
+const HappeningForm = ({
     happening,
     type,
     backendUrl,
@@ -247,7 +247,7 @@ const BedpresForm = ({
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms1')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg bekrefter at jeg har valgt riktig årstrinn.
+                                                Jeg bekrefter at jeg har fylt inn riktig informasjon.
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -255,8 +255,13 @@ const BedpresForm = ({
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms2')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige bedriftspresentasjoner.
+                                                {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
+                                                utestengt fra fremtidige 
+                                                ${
+                                                    type === HappeningType.BEDPRES
+                                                        ? 'bedriftspresentasjoner'
+                                                        : 'arrangementer'
+                                                }.`}
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -264,8 +269,12 @@ const BedpresForm = ({
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms3')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg er klar over at jeg må melde meg av innen 48 timer før
-                                                bedriftspresentasjonen starter dersom jeg ikke har mulighet til å delta.
+                                                {`Jeg er klar over at jeg må melde meg av innen 48 timer før
+                                                ${
+                                                    type === HappeningType.BEDPRES
+                                                        ? 'bedriftspresentasjonen'
+                                                        : 'arrangementet'
+                                                } starter dersom jeg ikke har mulighet til å delta.`}
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
@@ -285,4 +294,4 @@ const BedpresForm = ({
     );
 };
 
-export default BedpresForm;
+export default HappeningForm;
