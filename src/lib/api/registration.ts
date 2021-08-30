@@ -176,10 +176,11 @@ export const RegistrationAPI = {
     getRegistrationCount: async (
         auth: string,
         slug: string,
+        type: HappeningType,
         backendUrl: string,
     ): Promise<{ regCount: RegistrationCount | null; regCountErr: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}`, {
+            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}&type=${type}`, {
                 auth: {
                     username: 'bedkom',
                     password: auth,

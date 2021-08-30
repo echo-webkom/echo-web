@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         ? await RegistrationAPI.getRegistrations(bedkomKey, slug, HappeningType.BEDPRES, backendUrl)
         : { registrations: [] };
 
-    const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, backendUrl);
+    const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
 
     if (error === '404') {
         return {

@@ -99,19 +99,19 @@ const HappeningUI = ({
                                 <Text>{format(parseISO(happening?.date), 'HH:mm')}</Text>
                                 <Icon as={ImLocation} boxSize={10} />
                                 <Text>{happening?.location}</Text>
-                                {bedpres && bedpres.minDegreeYear === 1 && bedpres.maxDegreeYear === 5 && (
+                                {happening && happening.minDegreeYear === 1 && happening.maxDegreeYear === 5 && (
                                     <>
                                         <Icon as={MdLockOpen} boxSize={10} />
                                         <Text>Åpen for alle trinn</Text>
                                     </>
                                 )}
-                                {bedpres &&
-                                    bedpres.minDegreeYear &&
-                                    bedpres.maxDegreeYear &&
-                                    (bedpres.minDegreeYear > 1 || bedpres.maxDegreeYear < 5) && (
+                                {happening &&
+                                    happening.minDegreeYear &&
+                                    happening.maxDegreeYear &&
+                                    (happening.minDegreeYear > 1 || happening.maxDegreeYear < 5) && (
                                         <>
                                             <Icon as={MdLockOutline} boxSize={10} />
-                                            <Text>{`Bare for ${bedpres.minDegreeYear} - ${bedpres.maxDegreeYear} .trinn`}</Text>
+                                            <Text>{`Bare for ${happening.minDegreeYear}. - ${happening.maxDegreeYear}. trinn`}</Text>
                                         </>
                                     )}
                             </Grid>
