@@ -19,15 +19,22 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
-class RegistrationTest : StringSpec({
-    val exampleBedpres1 = BedpresJson("bedpres-med-noen", 50, 1, 5, "2020-04-29T20:43:29Z")
-    val exampleBedpres2 = BedpresJson("bedpres-med-noen-andre", 40, 1, 5, "2019-07-29T20:10:11Z")
-    val exampleBedpres3 = BedpresJson("bedpres-dritlang-i-fremtiden", 40, 1, 5, "2037-07-29T20:10:11Z")
-    val exampleBedpres4 = BedpresJson("bedpres-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z")
-    val exampleBedpres5 = BedpresJson("bedpres-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z")
+class BedpresRegistrationTest : StringSpec({
+    val exampleBedpres1 = HappeningJson("bedpres-med-noen", 50, 1, 5, "2020-04-29T20:43:29Z", HAPPENINGTYPE.BEDPRES)
+    val exampleBedpres2 =
+        HappeningJson("bedpres-med-noen-andre", 40, 1, 5, "2019-07-29T20:10:11Z", HAPPENINGTYPE.BEDPRES)
+    val exampleBedpres3 =
+        HappeningJson("bedpres-dritlang-i-fremtiden", 40, 1, 5, "2037-07-29T20:10:11Z", HAPPENINGTYPE.BEDPRES)
+    val exampleBedpres4 =
+        HappeningJson("bedpres-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z", HAPPENINGTYPE.BEDPRES)
+    val exampleBedpres5 =
+        HappeningJson("bedpres-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z", HAPPENINGTYPE.BEDPRES)
     val exampleReg = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres1.slug, true, null, false,
-        listOf(AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100"))
+        listOf(
+            AnswerJson("Skal du ha mat?", "Nei"),
+            AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
+        ), HAPPENINGTYPE.BEDPRES
     )
 
     val gson = Gson()
@@ -42,13 +49,13 @@ class RegistrationTest : StringSpec({
         transaction {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.drop(Registration, Answer, Bedpres)
-            SchemaUtils.create(Registration, Answer, Bedpres)
-            insertOrUpdateBedpres(exampleBedpres1)
-            insertOrUpdateBedpres(exampleBedpres2)
-            insertOrUpdateBedpres(exampleBedpres3)
-            insertOrUpdateBedpres(exampleBedpres4)
-            insertOrUpdateBedpres(exampleBedpres5)
+            SchemaUtils.drop(Bedpres, Event, BedpresRegistration, EventRegistration, BedpresAnswer, EventAnswer)
+            SchemaUtils.create(Bedpres, Event, BedpresRegistration, EventRegistration, BedpresAnswer, EventAnswer)
+            insertOrUpdateHappening(exampleBedpres1)
+            insertOrUpdateHappening(exampleBedpres2)
+            insertOrUpdateHappening(exampleBedpres3)
+            insertOrUpdateHappening(exampleBedpres4)
+            insertOrUpdateHappening(exampleBedpres5)
         }
     }
 
@@ -59,7 +66,7 @@ class RegistrationTest : StringSpec({
             val wrongAuth = "$bedkom:damn-feil-passord-100"
 
             val testCall: TestApplicationCall =
-                handleRequest(method = HttpMethod.Put, uri = "/${Routing.bedpresRoute}") {
+                handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}?type=BEDPRES") {
                     addHeader(HttpHeaders.ContentType, "application/json")
                     addHeader(
                         HttpHeaders.Authorization,
@@ -213,7 +220,7 @@ class RegistrationTest : StringSpec({
 
             submitRegCall.response.status() shouldBe HttpStatusCode.Conflict
             val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
-            res.code shouldBe Response.BedpresDosntExist
+            res.code shouldBe Response.HappeningDoesntExist
             res.title shouldBe "Denne bedriftspresentasjonen finnes ikke."
             res.desc shouldBe "Om du mener dette ikke stemmer, ta kontakt med Webkom."
         }
@@ -575,7 +582,7 @@ class RegistrationTest : StringSpec({
             val getCountRegCall: TestApplicationCall =
                 handleRequest(
                     method = HttpMethod.Get,
-                    uri = "/${Routing.registrationRoute}?count=y&slug=${exampleReg.slug}"
+                    uri = "/${Routing.registrationRoute}?count=y&slug=${exampleReg.slug}&type=BEDPRES"
                 ) {
                     addHeader(
                         HttpHeaders.Authorization,
@@ -597,7 +604,7 @@ class RegistrationTest : StringSpec({
             val getCountRegCall: TestApplicationCall =
                 handleRequest(
                     method = HttpMethod.Get,
-                    uri = "/${Routing.registrationRoute}?count=y"
+                    uri = "/${Routing.registrationRoute}?count=y&type=BEDPRES"
                 ) {
                     addHeader(
                         HttpHeaders.Authorization,

@@ -18,9 +18,9 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
-class BedpresTest : StringSpec({
-    val exampleBedpres = HappeningJson("bedpres-med-noen", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENINGTYPE.BEDPRES)
-    val exampleBedpresSlug = HappeningSlugJson(exampleBedpres.slug, exampleBedpres.type)
+class EventTest : StringSpec({
+    val exampleEvent = HappeningJson("fest-med-tilde", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENINGTYPE.EVENT)
+    val exampleEventSlug = HappeningSlugJson(exampleEvent.slug, exampleEvent.type)
     val gson = Gson()
 
     val webkom = "webkom"
@@ -40,7 +40,7 @@ class BedpresTest : StringSpec({
     }
 
 
-    "When trying to submit a bedpres, server should respond with OK." {
+    "When trying to submit a event, server should respond with OK." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -51,14 +51,14 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleEvent))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.OK
         }
     }
 
-    "Whe trying to update bedpres spots, server should respond with OK." {
+    "Whe trying to update event spots, server should respond with OK." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -69,7 +69,7 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleEvent))
                 }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -81,14 +81,14 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres.copy(spots = 123)))
+                    setBody(gson.toJson(exampleEvent.copy(spots = 123)))
                 }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.OK
         }
     }
 
-    "When trying to update a bedpres with the excact same values, server should respond with ACCEPTED." {
+    "When trying to update a event with the excact same values, server should respond with ACCEPTED." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -99,7 +99,7 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleEvent))
                 }
 
             submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -111,14 +111,14 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleEvent))
                 }
 
             updateBedpresCall.response.status() shouldBe HttpStatusCode.Accepted
         }
     }
 
-    "When trying to submit a bedpres with bad data, server should respond with INTERNAL_SERVER_ERROR." {
+    "When trying to submit a event with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -136,7 +136,7 @@ class BedpresTest : StringSpec({
         }
     }
 
-    "When trying to submit or update a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
+    "When trying to submit or update a event with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -149,14 +149,14 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpres))
+                    setBody(gson.toJson(exampleEvent))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized
         }
     }
 
-    "When trying to delete a bedpres with wrong Authorization header, server should respond with UNAUTHORIZED." {
+    "When trying to delete a event with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
             configureRouting(keys)
         }) {
@@ -169,7 +169,7 @@ class BedpresTest : StringSpec({
                         HttpHeaders.Authorization,
                         "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
                     )
-                    setBody(gson.toJson(exampleBedpresSlug))
+                    setBody(gson.toJson(exampleEventSlug))
                 }
 
             testCall.response.status() shouldBe HttpStatusCode.Unauthorized

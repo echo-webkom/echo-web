@@ -5,8 +5,10 @@ host="http://localhost"
 port="8080"
 testing=false
 user="webkom"
+mindeg=1
+maxdeg=5
 
-while getopts zpts:o:r:x:u flag; do
+while getopts zpts:o:r:x:u:h:ia flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -16,6 +18,9 @@ while getopts zpts:o:r:x:u flag; do
   r) regdate=${OPTARG} ;;
   x) secret=${OPTARG} ;;
   u) user=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
+  i) mindeg=${OPTARG} ;;
+  a) maxdeg=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -31,8 +36,13 @@ if [ "$testing" = true ]; then
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
-    -d '{ "slug": "bedriftspresentasjon-med-bekk", "spots": 50, "registrationDate": "2021-05-06T16:46+01:00", "minDegreeYear": 1, "maxDegreeYear": 5 }' \
-    "$host":"$port"/bedpres
+    -d '{ "slug": "bedriftspresentasjon-med-bekk", 
+          "spots": 50,
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "minDegreeYear": 1,
+          "maxDegreeYear": 5,
+          "type": "BEDPRES" }' \
+    "$host":"$port"/happening
   exit 0
 fi
 
@@ -51,10 +61,33 @@ if [ -z ${regdate+x} ]; then
   exit 1
 fi
 
+if [ -z ${mindeg+x} ]; then
+  echo "Min degree year not defined (use -i)"
+  exit 1
+fi
+
+if [ -z ${maxdeg+x} ]; then
+  echo "Min degree year not defined (use -i)"
+  exit 1
+fi
+
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
+echo "bruh"
+echo $happening
+
 curl --verbose \
   -X PUT \
   -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
-  -d '{ "slug": "'"${slug}"'", "spots": '"${spots}"', "registrationDate": "'"${regdate}"'", "minDegreeYear": 1, "maxDegreeYear": 5 }' \
-  "$host":"$port"/bedpres
+  -d '{ "slug": "'"${slug}"'",
+        "spots": '"${spots}"',
+        "registrationDate": "'"${regdate}"'",
+        "minDegreeYear": "'"${mindeg}"'",
+        "maxDegreeYear": "'"${maxdeg}"'",
+        "type": "'"${happening}"'" }' \
+  "$host":"$port"/happening

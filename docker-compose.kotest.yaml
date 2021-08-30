@@ -16,13 +16,15 @@ services:
     command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
+      # Value of DEV doesn't matter, only that it's defined.
+      DEV: "yes"
       # Values from .env file
       BEDKOM_KEY: ${BEDKOM_KEY}
       WEBKOM_KEY: ${WEBKOM_KEY}
 
   database:
-    # Postgres 13.2 is the version Heroku uses.
-    image: postgres:13.2-alpine
+    # Postgres 13.4 is the version Heroku uses.
+    image: postgres:13.4-alpine
     restart: always
     ports:
       - '5432:5432'

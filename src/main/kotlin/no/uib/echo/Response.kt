@@ -1,5 +1,7 @@
 package no.uib.echo
 
+import no.uib.echo.schema.HAPPENINGTYPE
+
 data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
 
 enum class Response {
@@ -11,14 +13,14 @@ enum class Response {
     DegreeMismatchKogni,
     DegreeMismatchArmninf,
     AlreadySubmitted,
-    BedpresDosntExist,
+    HappeningDoesntExist,
     TooEarly,
     WaitList,
     NotInRange,
     OK,
 }
 
-private fun resToMsg(res: Response): Pair<String, String> {
+private fun resToMsg(res: Response, regType: HAPPENINGTYPE): Pair<String, String> {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -27,7 +29,10 @@ private fun resToMsg(res: Response): Pair<String, String> {
         Response.InvalidDegreeYear ->
             return Pair("Vennligst velgt et gyldig trinn.", "")
         Response.InvalidTerms ->
-            return Pair("Du må godkjenne Bedkom sine retningslinjer.", defaultDesc)
+            return Pair(
+                if (regType == HAPPENINGTYPE.BEDPRES) "Du må godkjenne Bedkom sine retningslinjer." else "Du må godkjenne vilkårene.",
+                defaultDesc
+            )
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
             return Pair("Studieretning og årstrinn stemmer ikke overens.", defaultDesc)
         Response.AlreadySubmitted ->
@@ -39,27 +44,44 @@ private fun resToMsg(res: Response): Pair<String, String> {
                 "Alle plassene er dessverre fylt opp...",
                 "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
             )
-        Response.BedpresDosntExist ->
+        Response.HappeningDoesntExist ->
             return Pair(
-                "Denne bedriftspresentasjonen finnes ikke.",
+                if (regType == HAPPENINGTYPE.BEDPRES) "Denne bedriftspresentasjonen finnes ikke." else "Dette arrangementet finnes ikke.",
                 "Om du mener dette ikke stemmer, ta kontakt med Webkom."
             )
         Response.NotInRange ->
             return Pair("Du kan dessverre ikke melde deg på.", "")
         Response.OK ->
-            return Pair("Påmeldingen din er registrert!", "Du har fått plass på bedriftspresentasjonen.")
+            return Pair(
+                "Påmeldingen din er registrert!",
+                if (regType == HAPPENINGTYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet."
+            )
+
     }
 }
 
-fun resToJson(res: Response, date: String? = null, degreeYearRange: IntRange? = null): ResponseJson {
-    val (title, desc) = resToMsg(res)
-    return if (degreeYearRange == null)
-        ResponseJson(res, title, desc, date)
-    else
-        ResponseJson(
+fun resToJson(
+    res: Response,
+    regType: HAPPENINGTYPE,
+    date: String? = null,
+    degreeYearRange: IntRange? = null
+): ResponseJson {
+    val (title, desc) = resToMsg(res, regType)
+
+    if (degreeYearRange == null)
+        return ResponseJson(res, title, desc, date)
+    else {
+        val str = when (regType) {
+            HAPPENINGTYPE.BEDPRES ->
+                "Denne bedriftspresentasjonen er kun åpen"
+            HAPPENINGTYPE.EVENT ->
+                "Dette arrangementet er kun åpent"
+        }
+        return ResponseJson(
             res,
             title,
-            "Denne bedriftspresentasjonen er kun åpen for ${degreeYearRange.start}- til ${degreeYearRange.last}-klasse.",
+            "$str for ${degreeYearRange.start}- til ${degreeYearRange.last}-klasse.",
             date
         )
+    }
 }
