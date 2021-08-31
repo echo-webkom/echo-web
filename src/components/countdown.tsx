@@ -1,6 +1,6 @@
 import React from 'react';
 import { Center, Text } from '@chakra-ui/react';
-import { format, isAfter, isBefore, isFuture, isPast, parseISO } from 'date-fns';
+import { format, isBefore, parseISO } from 'date-fns';
 import { useCountdown } from '../lib/hooks';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
