@@ -44,7 +44,6 @@ const HappeningUI = ({
 
     return (
         <>
-            <Text>{date.toUTCString()}</Text>
             <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                 <GridItem colSpan={1} as={ContentBox}>
                     {happening && (
