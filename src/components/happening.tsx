@@ -133,6 +133,7 @@ const HappeningUI = ({
                     rowStart={[2, null, null, 1]}
                     colSpan={[1, null, null, 3]}
                     rowSpan={2}
+                    minW="0"
                 >
                     <ContentBox>
                         <Heading mb="0.2em" size="2xl">
