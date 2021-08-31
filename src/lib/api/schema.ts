@@ -27,6 +27,16 @@ const GET_N_EVENTS = `
                 author {
                     authorName
                 }
+                additionalQuestionsCollection {
+                    items {
+                        questionText
+                        inputType
+                        alternatives
+                    }
+                }
+                registrationTime
+                minDegreeYear
+                maxDegreeYear
             }
         }
     }
@@ -51,6 +61,16 @@ const GET_EVENT_BY_SLUG = `
                 author {
                     authorName
                 }
+                additionalQuestionsCollection {
+                    items {
+                        questionText
+                        inputType
+                        alternatives
+                    }
+                }
+                registrationTime
+                minDegreeYear
+                maxDegreeYear
             }
         }
     }

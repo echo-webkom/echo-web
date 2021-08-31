@@ -26,6 +26,10 @@ const compare = (post: Event, json: RawEvent) => {
         location: json.location,
         publishedAt: json.sys.firstPublishedAt,
         author: json.author.authorName,
+        registrationTime: json.registrationTime,
+        additionalQuestions: json.additionalQuestionsCollection.items,
+        minDegreeYear: json.minDegreeYear,
+        maxDegreeYear: json.maxDegreeYear,
     });
 };
 

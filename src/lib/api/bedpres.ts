@@ -1,15 +1,8 @@
-import { union, nil, Pojo, array, record, string, number, literal, decodeType } from 'typescript-json-decoder';
+import { union, nil, Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
 import API from './api';
-import { publishedAtDecoder, authorDecoder } from './decoders';
+import { publishedAtDecoder, authorDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
 import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
-
-export type Question = decodeType<typeof questionDecoder>;
-const questionDecoder = record({
-    questionText: string,
-    inputType: union(literal('radio'), literal('textbox')),
-    alternatives: union(nil, array(string)),
-});
 
 // Automatically creates the Bedpres type with the
 // fields we specify in our bedpresDecoder.
