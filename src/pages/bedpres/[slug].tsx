@@ -9,6 +9,9 @@ import SEO from '../../components/seo';
 
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
+import { useRouter } from 'next/router';
+import { useTimeout } from '@chakra-ui/react';
+import { differenceInMilliseconds, parseISO } from 'date-fns';
 
 const BedpresPage = ({
     bedpres,
@@ -25,6 +28,15 @@ const BedpresPage = ({
     date: number;
     error: string;
 }): JSX.Element => {
+    const router = useRouter();
+    const regDate = parseISO(bedpres?.registrationTime);
+    const time =
+        !bedpres || differenceInMilliseconds(regDate, date) < 0 ? null : differenceInMilliseconds(regDate, date);
+
+    useTimeout(() => {
+        router.replace(router.asPath);
+    }, time);
+
     return (
         <Layout>
             {error && !bedpres && <ErrorBox error={error} />}
