@@ -13,12 +13,14 @@ const BedpresPage = ({
     registrations,
     backendUrl,
     regCount,
+    date,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
+    date: Date;
     error: string;
 }): JSX.Element => {
     return (
@@ -33,6 +35,7 @@ const BedpresPage = ({
                         registrations={registrations}
                         backendUrl={backendUrl}
                         regCount={regCount}
+                        date={date}
                     />
                 </>
             )}
@@ -60,6 +63,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
 
+    const date = new Date();
+
     if (error === '404') {
         return {
             notFound: true,
@@ -71,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             bedpres,
             registrations,
             regCount,
+            date,
             backendUrl,
             error,
         },

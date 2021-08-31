@@ -11,12 +11,14 @@ const Countdown = ({
     happening,
     type,
     backendUrl,
+    date,
 }: {
     happening: Bedpres | Event;
     type: HappeningType;
     backendUrl: string;
+    date: Date;
 }): JSX.Element => {
-    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : new Date();
+    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : date;
     const { hours, minutes, seconds } = useCountdown(regDate);
 
     if (happening.registrationTime) {
