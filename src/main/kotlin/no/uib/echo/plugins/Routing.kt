@@ -14,23 +14,24 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import no.uib.echo.Response
-import no.uib.echo.plugins.Routing.deleteBedpres
+import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.getRegistration
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
-import no.uib.echo.plugins.Routing.putBedpres
-import no.uib.echo.schema.BedpresJson
-import no.uib.echo.schema.BedpresSlugJson
+import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.schema.Degree
+import no.uib.echo.schema.HAPPENINGTYPE
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.RegistrationStatus
 import no.uib.echo.schema.ShortRegistrationJson
 import no.uib.echo.schema.countRegistrations
-import no.uib.echo.schema.deleteBedpresBySlug
+import no.uib.echo.schema.deleteHappeningBySlug
 import no.uib.echo.schema.deleteRegistration
-import no.uib.echo.schema.insertOrUpdateBedpres
+import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.insertRegistration
 import no.uib.echo.schema.selectRegistrations
 
@@ -79,8 +80,8 @@ fun Application.configureRouting(keys: Map<String, String>) {
             postRegistration()
 
             authenticate("auth-${webkom}") {
-                putBedpres()
-                deleteBedpres()
+                putHappening()
+                deleteHappening()
             }
         }
     }
@@ -88,7 +89,7 @@ fun Application.configureRouting(keys: Map<String, String>) {
 
 object Routing {
     const val registrationRoute: String = "registration"
-    const val bedpresRoute: String = "bedpres"
+    const val happeningRoute: String = "happening"
 
     fun Route.getStatus() {
         get("/status") {
@@ -100,15 +101,25 @@ object Routing {
         get("/$registrationRoute") {
             val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
+            val regType: HAPPENINGTYPE = when (call.request.queryParameters["type"]) {
+                "bedpres", "BEDPRES" ->
+                    HAPPENINGTYPE.BEDPRES
+                "event", "EVENT" ->
+                    HAPPENINGTYPE.EVENT
+                else -> {
+                    call.respond(HttpStatusCode.BadRequest, "No registration type specified.")
+                    return@get
+                }
+            }
 
             when (call.request.queryParameters["count"]) {
                 "y", "Y" ->
                     if (slugParam != null)
-                        call.respond(countRegistrations(slugParam))
+                        call.respond(countRegistrations(slugParam, regType))
                     else
                         call.respond(HttpStatusCode.BadRequest, "Count parameter defined but no slug was given.")
                 else -> {
-                    val result = selectRegistrations(emailParam, slugParam)
+                    val result = selectRegistrations(emailParam, slugParam, regType)
 
                     if (result == null)
                         call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
@@ -125,12 +136,12 @@ object Routing {
                 val registration = call.receive<RegistrationJson>()
 
                 if (!registration.email.contains('@')) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
                     return@post
                 }
 
                 if (registration.degreeYear !in 1..5) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, registration.type))
                     return@post
                 }
 
@@ -143,27 +154,33 @@ object Routing {
                         registration.degree == Degree.KOGNI ||
                         registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchBachelor))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchBachelor, registration.type)
+                    )
                     return@post
                 }
 
                 if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, registration.type))
                     return@post
                 }
 
                 if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchArmninf))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchArmninf, registration.type)
+                    )
                     return@post
                 }
 
                 if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni, registration.type))
                     return@post
                 }
 
                 if (!registration.terms) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms))
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms, registration.type))
                     return@post
                 }
 
@@ -171,19 +188,28 @@ object Routing {
 
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
-                        call.respond(HttpStatusCode.OK, resToJson(Response.OK))
+                        call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
                     RegistrationStatus.WAITLIST ->
-                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList))
+                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList, registration.type))
                     RegistrationStatus.TOO_EARLY ->
-                        call.respond(HttpStatusCode.Forbidden, resToJson(Response.TooEarly, date = regDate))
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            resToJson(Response.TooEarly, registration.type, date = regDate)
+                        )
                     RegistrationStatus.ALREADY_EXISTS ->
-                        call.respond(HttpStatusCode.UnprocessableEntity, resToJson(Response.AlreadySubmitted))
-                    RegistrationStatus.BEDPRES_DOESNT_EXIST ->
-                        call.respond(HttpStatusCode.Conflict, resToJson(Response.BedpresDosntExist))
+                        call.respond(
+                            HttpStatusCode.UnprocessableEntity,
+                            resToJson(Response.AlreadySubmitted, registration.type)
+                        )
+                    RegistrationStatus.HAPPENING_DOESNT_EXIST ->
+                        call.respond(
+                            HttpStatusCode.Conflict,
+                            resToJson(Response.HappeningDoesntExist, registration.type)
+                        )
                     RegistrationStatus.NOT_IN_RANGE ->
                         call.respond(
                             HttpStatusCode.Forbidden,
-                            resToJson(Response.NotInRange, degreeYearRange = degreeYearRange)
+                            resToJson(Response.NotInRange, registration.type, degreeYearRange = degreeYearRange)
                         )
                 }
             } catch (e: Exception) {
@@ -202,7 +228,7 @@ object Routing {
 
                 call.respond(
                     HttpStatusCode.OK,
-                    "Registration with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
+                    "Registration (${shortReg.type}) with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
                 )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
@@ -211,27 +237,31 @@ object Routing {
         }
     }
 
-    fun Route.putBedpres() {
-        put("/$bedpresRoute") {
+    fun Route.putHappening() {
+        put("/$happeningRoute") {
             try {
-                val bedpres = call.receive<BedpresJson>()
-                val result = insertOrUpdateBedpres(bedpres)
+                val happ = call.receive<HappeningJson>()
+                val result = insertOrUpdateHappening(happ)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error submitting bedpres.")
+                call.respond(HttpStatusCode.InternalServerError, "Error submitting happening.")
                 e.printStackTrace()
             }
         }
     }
 
-    fun Route.deleteBedpres() {
-        delete("/$bedpresRoute") {
-            val slug = call.receive<BedpresSlugJson>()
+    fun Route.deleteHappening() {
+        delete("/$happeningRoute") {
+            try {
+                val happ = call.receive<HappeningSlugJson>()
 
-            deleteBedpresBySlug(slug)
+                deleteHappeningBySlug(happ)
 
-            call.respond(HttpStatusCode.OK, "Bedpres with slug = ${slug.slug} deleted.")
+                call.respond(HttpStatusCode.OK, "Happening (${happ.type}) with slug = ${happ.slug} deleted.")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
+            }
         }
     }
 }

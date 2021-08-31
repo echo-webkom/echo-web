@@ -2,9 +2,12 @@ package no.uib.echo
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Bedpres
-import no.uib.echo.schema.Registration
+import no.uib.echo.schema.BedpresAnswer
+import no.uib.echo.schema.BedpresRegistration
+import no.uib.echo.schema.Event
+import no.uib.echo.schema.EventAnswer
+import no.uib.echo.schema.EventRegistration
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -39,10 +42,12 @@ object Db {
     }
 
     fun init() {
-        transaction(conn) {
-            SchemaUtils.create(Bedpres, Registration, Answer)
-        }
+        // Don't migrate if running on local machine
+        if (System.getenv("DEV") == null)
+            migrate()
 
-        migrate()
+        transaction(conn) {
+            SchemaUtils.create(Bedpres, Event, BedpresRegistration, EventRegistration, BedpresAnswer, EventAnswer)
+        }
     }
 }

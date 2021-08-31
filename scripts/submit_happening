@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# Default values
+host="http://localhost"
+port="8080"
+testing=false
+user="webkom"
+mindeg=1
+maxdeg=5
+
+while getopts zpts:o:r:x:u:h:ia flag; do
+  case "${flag}" in
+  z) host=${OPTARG} ;;
+  p) port=${OPTARG} ;;
+  t) testing=true ;;
+  s) slug=${OPTARG} ;;
+  o) spots=${OPTARG} ;;
+  r) regdate=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  u) user=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
+  i) mindeg=${OPTARG} ;;
+  a) maxdeg=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
+done
+
+if [ -z ${secret+x} ]; then
+  echo "No authorization header specified (use -x)"
+  exit 1
+fi
+
+if [ "$testing" = true ]; then
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "bedriftspresentasjon-med-bekk", 
+          "spots": 50,
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "minDegreeYear": 1,
+          "maxDegreeYear": 5,
+          "type": "BEDPRES" }' \
+    "$host":"$port"/happening
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "fest-med-tilde", 
+          "spots": 50,
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "minDegreeYear": 1,
+          "maxDegreeYear": 5,
+          "type": "EVENT" }' \
+    "$host":"$port"/happening
+  exit 0
+fi
+
+if [ -z ${slug+x} ]; then
+  echo "Slug not defined (use -s)"
+  exit 1
+fi
+
+if [ -z ${spots+x} ]; then
+  echo "Spots not defined (use -o)"
+  exit 1
+fi
+
+if [ -z ${regdate+x} ]; then
+  echo "Registration date not defined (use -r)"
+  exit 1
+fi
+
+if [ -z ${mindeg+x} ]; then
+  echo "Min degree year not defined (use -i)"
+  exit 1
+fi
+
+if [ -z ${maxdeg+x} ]; then
+  echo "Min degree year not defined (use -i)"
+  exit 1
+fi
+
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
+echo "bruh"
+echo $happening
+
+curl --verbose \
+  -X PUT \
+  -u "$user":"$secret" \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "slug": "'"${slug}"'",
+        "spots": '"${spots}"',
+        "registrationDate": "'"${regdate}"'",
+        "minDegreeYear": "'"${mindeg}"'",
+        "maxDegreeYear": "'"${maxdeg}"'",
+        "type": "'"${happening}"'" }' \
+  "$host":"$port"/happening
