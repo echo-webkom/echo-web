@@ -31,7 +31,9 @@ const BedpresPage = ({
     const router = useRouter();
     const regDate = parseISO(bedpres?.registrationTime);
     const time =
-        !bedpres || differenceInMilliseconds(regDate, date) < 0 ? null : differenceInMilliseconds(regDate, date);
+        !bedpres || differenceInMilliseconds(regDate, date) < 0 || differenceInMilliseconds(regDate, date) > 172800000
+            ? null
+            : differenceInMilliseconds(regDate, date);
 
     useTimeout(() => {
         router.replace(router.asPath, undefined, { scroll: false });
