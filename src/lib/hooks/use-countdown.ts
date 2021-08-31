@@ -15,8 +15,8 @@ const formatMs = (ms: number): CountdownObject => {
     };
 };
 
-const useCountdown = (toDate: Date): CountdownObject => {
-    const initialMs = differenceInMilliseconds(toDate, new Date());
+const useCountdown = (toDate: Date, now: number): CountdownObject => {
+    const initialMs = differenceInMilliseconds(toDate, now);
     const [ms, setMs] = useState(initialMs); // state with current interval
 
     useEffect(() => {
@@ -26,13 +26,6 @@ const useCountdown = (toDate: Date): CountdownObject => {
             }
             setMs(ms - 1000);
         }, 1000); // Interval repeats every second
-
-        const resync = setInterval(() => {
-            if (ms < 0) {
-                clearInterval(resync);
-            }
-            setMs(differenceInMilliseconds(toDate, new Date()));
-        }, 1000 * 30); // refreshes local datetime every minute
 
         return () => {
             clearInterval(interval);

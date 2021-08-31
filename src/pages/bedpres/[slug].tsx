@@ -22,7 +22,7 @@ const BedpresPage = ({
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
-    date: Date;
+    date: number;
     error: string;
 }): JSX.Element => {
     return (
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
 
-    const date = new Date();
+    const date = Date.now();
 
     if (error === '404') {
         return {

@@ -16,10 +16,10 @@ const Countdown = ({
     happening: Bedpres | Event;
     type: HappeningType;
     backendUrl: string;
-    date: Date;
+    date: number;
 }): JSX.Element => {
-    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : date;
-    const { hours, minutes, seconds } = useCountdown(regDate);
+    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
+    const { hours, minutes, seconds } = useCountdown(regDate, date);
 
     if (happening.registrationTime) {
         if (isBefore(date, parseISO(happening.registrationTime))) {

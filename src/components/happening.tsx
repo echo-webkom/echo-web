@@ -34,7 +34,7 @@ const HappeningUI = ({
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
-    date: Date;
+    date: number;
 }): JSX.Element => {
     const happening = bedpres || event;
     const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
