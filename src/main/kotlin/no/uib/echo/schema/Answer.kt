@@ -18,7 +18,7 @@ object BedpresAnswer : Table() {
 object EventAnswer : Table() {
     val question: Column<String> = text("question")
     val answer: Column<String> = text("answer")
-    val eventSlug: Column<String> = text("bedpres_slug") references Event.slug
+    val eventSlug: Column<String> = text("event_slug") references Event.slug
     val registrationEmail: Column<String> = text("registration_email")
 }
 
