@@ -1,6 +1,6 @@
 import React from 'react';
 import { Center, Text } from '@chakra-ui/react';
-import { format, isFuture, isPast, parseISO } from 'date-fns';
+import { format, isBefore, parseISO } from 'date-fns';
 import { useCountdown } from '../lib/hooks';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
@@ -11,16 +11,18 @@ const Countdown = ({
     happening,
     type,
     backendUrl,
+    date,
 }: {
     happening: Bedpres | Event;
     type: HappeningType;
     backendUrl: string;
+    date: number;
 }): JSX.Element => {
-    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : new Date();
+    const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
     const { hours, minutes, seconds } = useCountdown(regDate);
 
     if (happening.registrationTime) {
-        if (isFuture(parseISO(happening.registrationTime))) {
+        if (isBefore(date, parseISO(happening.registrationTime))) {
             if (hours > 23) {
                 return (
                     <Center>
@@ -38,7 +40,7 @@ const Countdown = ({
             );
         }
 
-        if (isFuture(parseISO(happening.date)) && isPast(regDate)) {
+        if (isBefore(date, parseISO(happening.date)) && isBefore(regDate, date)) {
             return <HappeningForm happening={happening} type={type} backendUrl={backendUrl} />;
         }
 

@@ -1,26 +1,42 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { HappeningType, Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
+
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
+import { useRouter } from 'next/router';
+import { useTimeout } from '@chakra-ui/react';
+import { differenceInMilliseconds, parseISO } from 'date-fns';
 
 const BedpresPage = ({
     bedpres,
     registrations,
     backendUrl,
     regCount,
+    date,
     error,
 }: {
     bedpres: Bedpres;
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
+    date: number;
     error: string;
 }): JSX.Element => {
+    const router = useRouter();
+    const regDate = parseISO(bedpres?.registrationTime);
+    const time =
+        !bedpres || differenceInMilliseconds(regDate, date) < 0 ? null : differenceInMilliseconds(regDate, date);
+
+    useTimeout(() => {
+        router.replace(router.asPath, undefined, { scroll: false });
+    }, time);
+
     return (
         <Layout>
             {error && !bedpres && <ErrorBox error={error} />}
@@ -33,6 +49,7 @@ const BedpresPage = ({
                         registrations={registrations}
                         backendUrl={backendUrl}
                         regCount={regCount}
+                        date={date}
                     />
                 </>
             )}
@@ -60,6 +77,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
 
+    const date = Date.now();
+
     if (error === '404') {
         return {
             notFound: true,
@@ -71,6 +90,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             bedpres,
             registrations,
             regCount,
+            date,
             backendUrl,
             error,
         },

@@ -27,12 +27,14 @@ const HappeningUI = ({
     registrations,
     backendUrl,
     regCount,
+    date,
 }: {
     bedpres: Bedpres | null;
     event: Event | null;
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
+    date: number;
 }): JSX.Element => {
     const happening = bedpres || event;
     const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
@@ -116,7 +118,7 @@ const HappeningUI = ({
                             {happening.registrationTime && (
                                 <>
                                     <Divider my="1em" />
-                                    <Countdown happening={happening} type={type} backendUrl={backendUrl} />
+                                    <Countdown happening={happening} type={type} backendUrl={backendUrl} date={date} />
                                 </>
                             )}
                             <Divider my="1em" />
