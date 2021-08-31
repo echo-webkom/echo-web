@@ -19,7 +19,7 @@ const Countdown = ({
     date: Date;
 }): JSX.Element => {
     const regDate = happening.registrationTime ? parseISO(happening.registrationTime) : date;
-    const { hours, minutes, seconds } = useCountdown(regDate);
+    const { hours, minutes, seconds } = useCountdown(regDate, date);
 
     if (happening.registrationTime) {
         if (isBefore(date, parseISO(happening.registrationTime))) {
