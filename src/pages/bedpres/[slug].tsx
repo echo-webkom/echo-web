@@ -1,10 +1,12 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 import { HappeningType, Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
+
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
 

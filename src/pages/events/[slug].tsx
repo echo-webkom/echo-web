@@ -1,8 +1,6 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { useRouter } from 'next/router';
-import { Center, Spinner } from '@chakra-ui/react';
 
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
@@ -17,25 +15,20 @@ const EventPage = ({
     registrations,
     backendUrl,
     regCount,
+    date,
     error,
 }: {
     event: Event;
     registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
+    date: Date;
     error: string;
 }): JSX.Element => {
-    const router = useRouter();
-
     return (
         <Layout>
-            {router.isFallback && (
-                <Center>
-                    <Spinner />
-                </Center>
-            )}
-            {error && !router.isFallback && !event && <ErrorBox error={error} />}
-            {event && !router.isFallback && !error && (
+            {error && !event && <ErrorBox error={error} />}
+            {event && !error && (
                 <>
                     <SEO title={event.title} />
                     <HappeningUI
@@ -44,6 +37,7 @@ const EventPage = ({
                         registrations={registrations}
                         backendUrl={backendUrl}
                         regCount={regCount}
+                        date={date}
                     />
                 </>
             )}
@@ -71,6 +65,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.EVENT, backendUrl);
 
+    const date = new Date();
+
     if (error === '404') {
         return {
             notFound: true,
@@ -82,6 +78,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             event,
             registrations,
             regCount,
+            date,
             backendUrl,
             error,
         },
