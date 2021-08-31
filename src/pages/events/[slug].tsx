@@ -9,6 +9,9 @@ import { EventAPI, Event } from '../../lib/api/event';
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
 import { HappeningType, Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
+import { useRouter } from 'next/router';
+import { differenceInMilliseconds, formatISO, parseISO } from 'date-fns';
+import { useTimeout } from '../../lib/hooks';
 
 const EventPage = ({
     event,
@@ -25,6 +28,17 @@ const EventPage = ({
     date: number;
     error: string;
 }): JSX.Element => {
+    const router = useRouter();
+    const regDate = parseISO(event?.registrationTime || formatISO(new Date()));
+    const time =
+        !event || differenceInMilliseconds(regDate, date) < 0 || differenceInMilliseconds(regDate, date) > 172800000
+            ? null
+            : differenceInMilliseconds(regDate, date);
+
+    useTimeout(() => {
+        if (event.registrationTime) router.replace(router.asPath, undefined, { scroll: false });
+    }, time);
+
     return (
         <Layout>
             {error && !event && <ErrorBox error={error} />}
