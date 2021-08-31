@@ -37,6 +37,7 @@ const HappeningUI = ({
     const happening = bedpres || event;
     const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
     const spotsTaken = regCount?.regCount || 0;
+    const spotsAvailable = happening?.spots || 0;
     const waitList = regCount?.waitListCount || 0;
 
     return (
@@ -76,14 +77,11 @@ const HappeningUI = ({
                                         </NextLink>
                                     </>
                                 )}
-                                {happening?.spots && happening?.spots !== 0 && (
+                                {spotsAvailable !== 0 && (
                                     <>
                                         <Icon as={MdEventSeat} boxSize={10} />
                                         <Text>
-                                            {(spotsTaken &&
-                                                `${Math.min(spotsTaken, happening?.spots)}/${happening?.spots}`) ||
-                                                (!spotsTaken && `${happening?.spots}`)}{' '}
-                                            plasser
+                                            {`${Math.min(spotsTaken, spotsAvailable)}/${spotsAvailable}`} påmeldt
                                         </Text>
                                     </>
                                 )}
