@@ -440,8 +440,8 @@ class BedpresRegistrationTest : StringSpec({
                 submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
                 val res = gson.fromJson(submitRegWaitlistCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.WaitList
-                res.title shouldBe "Alle plassene er dessverre fylt opp..."
-                res.desc shouldBe "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
+                res.title shouldBe "Alle plassene er dessverre fylt opp."
+                res.desc shouldBe "Du er på plass nr. $i på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
             }
         }
     }
@@ -469,7 +469,7 @@ class BedpresRegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.NotInRange
                 res.title shouldBe "Du kan dessverre ikke melde deg på."
-                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres4.minDegreeYear}- til ${exampleBedpres4.maxDegreeYear}-klasse."
+                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres4.minDegreeYear}- til ${exampleBedpres4.maxDegreeYear}-trinn."
             }
 
             for (i in 3..5) {
@@ -492,7 +492,7 @@ class BedpresRegistrationTest : StringSpec({
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                 res.code shouldBe Response.NotInRange
                 res.title shouldBe "Du kan dessverre ikke melde deg på."
-                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres5.minDegreeYear}- til ${exampleBedpres5.maxDegreeYear}-klasse."
+                res.desc shouldBe "Denne bedriftspresentasjonen er kun åpen for ${exampleBedpres5.minDegreeYear}- til ${exampleBedpres5.maxDegreeYear}-trinn."
             }
         }
     }
@@ -568,8 +568,8 @@ class BedpresRegistrationTest : StringSpec({
                     submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                     res.code shouldBe Response.WaitList
-                    res.title shouldBe "Alle plassene er dessverre fylt opp..."
-                    res.desc shouldBe "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
+                    res.title shouldBe "Alle plassene er dessverre fylt opp."
+                    res.desc shouldBe "Du er på plass nr. ${i - exampleBedpres1.spots} på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
                 } else {
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
