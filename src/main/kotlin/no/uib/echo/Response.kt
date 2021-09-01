@@ -20,68 +20,62 @@ enum class Response {
     OK,
 }
 
-private fun resToMsg(res: Response, regType: HAPPENINGTYPE): Pair<String, String> {
+fun resToJson(res: Response, regType: HAPPENINGTYPE, regDate: String? = null, degreeYearRange: IntRange? = null, waitListCount: String? = null): ResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
         Response.InvalidEmail ->
-            return Pair("Vennligst skriv inn en gyldig mail.", "")
+            return ResponseJson(res, "Vennligst skriv inn en gyldig mail.", "", regDate)
         Response.InvalidDegreeYear ->
-            return Pair("Vennligst velgt et gyldig trinn.", "")
+            return ResponseJson(res, "Vennligst velgt et gyldig trinn.", "", regDate)
         Response.InvalidTerms ->
-            return Pair(
+            return ResponseJson(
+                res,
                 if (regType == HAPPENINGTYPE.BEDPRES) "Du må godkjenne Bedkom sine retningslinjer." else "Du må godkjenne vilkårene.",
-                defaultDesc
+                defaultDesc,
+                regDate
             )
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
-            return Pair("Studieretning og årstrinn stemmer ikke overens.", defaultDesc)
+            return ResponseJson(res, "Studieretning og årstrinn stemmer ikke overens.", defaultDesc, regDate)
         Response.AlreadySubmitted ->
-            return Pair("Du er allerede påmeldt.", "Du kan ikke melde deg på flere ganger.")
+            return ResponseJson(res, "Du er allerede påmeldt.", "Du kan ikke melde deg på flere ganger.", regDate)
         Response.TooEarly ->
-            return Pair("Påmeldingen er ikke åpen enda.", "Vennligst vent.")
+            return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
         Response.WaitList ->
-            return Pair(
-                "Alle plassene er dessverre fylt opp...",
-                "Du har blitt satt på venteliste, og vil bli kontaktet om det åpner seg en ledig plass."
+            return ResponseJson(
+                res,
+                "Alle plassene er dessverre fylt opp.",
+                "Du er på plass nr. $waitListCount på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass.",
+                regDate
             )
         Response.HappeningDoesntExist ->
-            return Pair(
+            return ResponseJson(
+                res,
                 if (regType == HAPPENINGTYPE.BEDPRES) "Denne bedriftspresentasjonen finnes ikke." else "Dette arrangementet finnes ikke.",
-                "Om du mener dette ikke stemmer, ta kontakt med Webkom."
+                "Om du mener dette ikke stemmer, ta kontakt med Webkom.",
+                regDate
             )
-        Response.NotInRange ->
-            return Pair("Du kan dessverre ikke melde deg på.", "")
-        Response.OK ->
-            return Pair(
-                "Påmeldingen din er registrert!",
-                if (regType == HAPPENINGTYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet."
+        Response.NotInRange -> {
+            val str = when (regType) {
+                HAPPENINGTYPE.BEDPRES ->
+                    "Denne bedriftspresentasjonen er kun åpen"
+                HAPPENINGTYPE.EVENT ->
+                    "Dette arrangementet er kun åpent"
+            }
+
+            return ResponseJson(
+                res,
+                "Du kan dessverre ikke melde deg på.",
+                "$str for ${degreeYearRange?.first}- til ${degreeYearRange?.last}-trinn.",
+                regDate
             )
-
-    }
-}
-
-fun resToJson(
-    res: Response,
-    regType: HAPPENINGTYPE,
-    date: String? = null,
-    degreeYearRange: IntRange? = null
-): ResponseJson {
-    val (title, desc) = resToMsg(res, regType)
-
-    if (degreeYearRange == null)
-        return ResponseJson(res, title, desc, date)
-    else {
-        val str = when (regType) {
-            HAPPENINGTYPE.BEDPRES ->
-                "Denne bedriftspresentasjonen er kun åpen"
-            HAPPENINGTYPE.EVENT ->
-                "Dette arrangementet er kun åpent"
         }
-        return ResponseJson(
-            res,
-            title,
-            "$str for ${degreeYearRange.start}- til ${degreeYearRange.last}-klasse.",
-            date
-        )
+        Response.OK ->
+            return ResponseJson(
+                res,
+            "Påmeldingen din er registrert!",
+                if (regType == HAPPENINGTYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet.",
+            regDate
+            )
     }
 }
