@@ -165,6 +165,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
         }
 
         val waitList = countRegs.size >= happening.spots
+        val waitListSpot = countRegs.size - happening.spots + 1
 
         val oldReg = when (reg.type) {
             HAPPENINGTYPE.BEDPRES ->
@@ -228,11 +229,10 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             }
         }
 
-        return@transaction Triple(
-            null,
-            null,
-            if (waitList) RegistrationStatus.WAITLIST else RegistrationStatus.ACCEPTED
-        )
+        if (waitList)
+            return@transaction Triple(waitListSpot.toString(), null, RegistrationStatus.WAITLIST)
+        else
+            return@transaction Triple(null, null, RegistrationStatus.ACCEPTED)
     }
 }
 

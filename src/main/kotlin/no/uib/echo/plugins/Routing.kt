@@ -184,17 +184,20 @@ object Routing {
                     return@post
                 }
 
-                val (regDate, degreeYearRange, regStatus) = insertRegistration(registration)
+                val (regDateOrWaitListCount, degreeYearRange, regStatus) = insertRegistration(registration)
 
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
                         call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
                     RegistrationStatus.WAITLIST ->
-                        call.respond(HttpStatusCode.Accepted, resToJson(Response.WaitList, registration.type))
+                        call.respond(
+                            HttpStatusCode.Accepted,
+                            resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
+                        )
                     RegistrationStatus.TOO_EARLY ->
                         call.respond(
                             HttpStatusCode.Forbidden,
-                            resToJson(Response.TooEarly, registration.type, date = regDate)
+                            resToJson(Response.TooEarly, registration.type, regDate = regDateOrWaitListCount)
                         )
                     RegistrationStatus.ALREADY_EXISTS ->
                         call.respond(
