@@ -15,7 +15,7 @@ project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
 
 plugins {
     application
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.30"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.1.0"
     id("com.adarshr.test-logger") version "3.0.0"
