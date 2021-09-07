@@ -1,4 +1,4 @@
-import { Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
+import { Center, Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
@@ -6,6 +6,7 @@ import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { FiMail } from 'react-icons/fi';
 
 const echoLogoWhite = '/echo-logo-text-only-white.png';
+const sanityLogo = '/sanity-logo.svg';
 
 const Footer = (): JSX.Element => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
@@ -59,17 +60,28 @@ const Footer = (): JSX.Element => {
             <Flex display={['none', null, 'block']}>
                 <Image alt="echo" width={300} height={146} src={echoLogoWhite} />
             </Flex>
-            <SimpleGrid columns={1} spacing="1" maxWidth="200px" textAlign="center">
+            <SimpleGrid>
+                <SimpleGrid columns={2} spacing="2" maxWidth="400px" textAlign="center">
+                    <LinkBox>
+                        <NextLink href="mailto:echo@uib.no" passHref>
+                            <LinkOverlay isExternal>
+                                <Text color={color}>echo(at)uib.no</Text>
+                            </LinkOverlay>
+                        </NextLink>
+                    </LinkBox>
+                    <Text color={color}>Thormøhlensgate 55</Text>
+                    <Text color={color}>5006 Bergen</Text>
+                    <Text color={color}>Org nr: 998 995 035</Text>
+                </SimpleGrid>
                 <LinkBox>
-                    <NextLink href="mailto:echo@uib.no" passHref>
+                    <NextLink href="https://sanity.io" passHref>
                         <LinkOverlay isExternal>
-                            <Text color={color}>echo(at)uib.no</Text>
+                            <Center>
+                                <Image alt="sanity" width={200} height={120} src={sanityLogo} />
+                            </Center>
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
-                <Text color={color}>Thormøhlensgate 55</Text>
-                <Text color={color}>5006 Bergen</Text>
-                <Text color={color}>Org nr: 998 995 035</Text>
             </SimpleGrid>
         </SimpleGrid>
     );
