@@ -6,7 +6,8 @@ import Layout from '../components/layout';
 import SEO from '../components/seo';
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
 import okonomiskStotte from '../../public/static/for-studenter/okonomiskStotte.md';
-import tilbakemeldingsskjema from '../../public/static/for-studenter/tilbakemeldingsskjema.md';
+import anononymeTilbakemeldinger from '../../public/static/for-studenter/anonymeTilbakemeldinger.md';
+import utleggsskjema from '../../public/static/for-studenter/utleggsskjema.md';
 import StaticInfo from '../components/static-info';
 import MapMarkdownChakra from '../markdown';
 import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
@@ -31,8 +32,9 @@ const ForStudenterPage = ({
                     'Undergrupper',
                     'Underorganisasjoner',
                     'Masterinfo',
-                    'Søknad om økonomisk støtte',
-                    'Tilbakemeldingsskjema',
+                    'Økonomisk støtte',
+                    'Anonyme tilbakemeldinger',
+                    'Utlegg på vegne av echo',
                 ]}
                 tabPanels={[
                     <StudentGroupSection
@@ -53,8 +55,11 @@ const ForStudenterPage = ({
                     <Markdown key="okonomisk-stotte" options={{ overrides: MapMarkdownChakra }}>
                         {okonomiskStotte}
                     </Markdown>,
-                    <Markdown key="tilbakemeldingsskjema" options={{ overrides: MapMarkdownChakra }}>
-                        {tilbakemeldingsskjema}
+                    <Markdown key="anononyme-tilbakemeldinger" options={{ overrides: MapMarkdownChakra }}>
+                        {anononymeTilbakemeldinger}
+                    </Markdown>,
+                    <Markdown key="utleggsskjema" options={{ overrides: MapMarkdownChakra }}>
+                        {utleggsskjema}
                     </Markdown>,
                 ]}
             />
