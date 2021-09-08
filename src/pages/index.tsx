@@ -71,7 +71,7 @@ const IndexPage = ({
                         entryLimit={useBreakpointValue([2, 2, 2, 2, 2, 3, 4])}
                         error={postsError}
                         altText="Ingen innlegg :("
-                        linkTo="/bedpres"
+                        linkTo="/posts"
                         type="post"
                         direction={useBreakpointValue(['column', 'column', 'column', 'row'])}
                     />
