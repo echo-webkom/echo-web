@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
+import { Post } from '../lib/api/post';
 import ContentBox from './content-box';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
@@ -10,14 +11,26 @@ import ErrorBox from './error-box';
 interface Props {
     title?: string;
     titles?: Array<string>;
-    entries: Array<Event | Bedpres> | null;
+    entries: Array<Event | Bedpres | Post> | null;
+    entryLimit: number;
     error: string | null;
     altText?: string;
     linkTo?: string;
-    type: 'event' | 'bedpres';
+    type: 'event' | 'bedpres' | 'post';
+    direction: 'column' | 'row';
 }
 
-const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Props): JSX.Element => {
+const EntryBox = ({
+    title,
+    titles,
+    entries,
+    entryLimit,
+    error,
+    altText,
+    linkTo,
+    type,
+    direction,
+}: Props): JSX.Element => {
     const choices = titles || [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
@@ -34,7 +47,9 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
                     <Text>{altText}</Text>
                 </Center>
             )}
-            {entries && !error && entries.length !== 0 && <EntryList entries={entries} type={type} />}
+            {entries && !error && entries.length !== 0 && (
+                <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
+            )}
             {linkTo && (
                 <Center>
                     <LinkBox>
@@ -55,8 +70,10 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
 EntryBox.defaultProps = {
     title: undefined,
     titles: undefined,
+    entryLimit: undefined,
     linkTo: undefined,
     altText: undefined,
+    direction: 'column',
 };
 
 export default EntryBox;
