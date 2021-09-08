@@ -14,7 +14,7 @@ interface Props {
     direction: 'column' | 'row';
 }
 
-const EntryStack = ({ entries, entryLimit, type, direction }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type, direction }: Props): JSX.Element => {
     if (entryLimit) {
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
     }
@@ -34,8 +34,8 @@ const EntryStack = ({ entries, entryLimit, type, direction }: Props): JSX.Elemen
     );
 };
 
-EntryStack.defaultProps = {
+EntryList.defaultProps = {
     direction: 'column',
 };
 
-export default EntryStack;
+export default EntryList;
