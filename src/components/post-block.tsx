@@ -1,9 +1,9 @@
 import React from 'react';
-import NextLink from 'next/link';
-import { Text, Stack, StackDivider, Center, Heading, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
+import { Text, Stack, StackDivider, Center, Heading } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
 import PostPreview from './post-preview';
 import ContentBox from './content-box';
+import ButtonLink from './button-link';
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     return (
@@ -26,17 +26,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 </Stack>
             )}
             {!posts && error && <Text>{error}</Text>}
-            <Center>
-                <LinkBox pt="1em" pb="0.5em">
-                    <NextLink href="/posts" passHref>
-                        <LinkOverlay>
-                            <Button colorScheme="teal" mt="1rem" fontSize="xl">
-                                Se flere innlegg
-                            </Button>
-                        </LinkOverlay>
-                    </NextLink>
-                </LinkBox>
-            </Center>
+            <ButtonLink text="Se mer" linkTo="/posts" />
         </ContentBox>
     );
 };
