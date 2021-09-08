@@ -36,7 +36,7 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
                 </Center>
             )}
             {entries && !error && entries.length !== 0 && <EntryList entries={entries} type={type} />}
-            {linkTo && <ButtonLink data-cy="se-mer" text={'se mer'} linkTo={linkTo} />}
+            {linkTo && <ButtonLink data-cy="se-mer" text="Se mer" linkTo={linkTo} />}
         </ContentBox>
     );
 };

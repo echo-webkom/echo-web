@@ -6,13 +6,13 @@ interface Props {
     linkTo: string;
 }
 
-const ButtonLink = ({ text, linkTo }: Props) => {
+const ButtonLink = ({ text, linkTo }: Props): JSX.Element => {
     return (
         <Center>
             <LinkBox>
                 <NextLink href={linkTo} passHref>
                     <LinkOverlay>
-                        <Button data-cy="se-mer" colorScheme="teal" mt="1.5rem" fontSize="xl">
+                        <Button colorScheme="teal" mt="1.5rem" fontSize="xl">
                             {text}
                         </Button>
                     </LinkOverlay>
