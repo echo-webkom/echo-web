@@ -22,6 +22,5 @@ const CustomDocument = (): JSX.Element => {
 };
 
 CustomDocument.getInitialProps = getInitialProps;
-CustomDocument.renderDocument = Document.renderDocument;
 
 export default CustomDocument;
