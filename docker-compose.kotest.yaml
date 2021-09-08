@@ -4,7 +4,7 @@ services:
     build:
       context: .
       target: build
-    image: echo-web-backend:latest
+    image: echo-web-backend:latest-dev
     # Don't start backend before database is up.
     depends_on:
       database:
