@@ -26,7 +26,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
                 </Stack>
             )}
             {!posts && error && <Text>{error}</Text>}
-            <ButtonLink text="se mer" linkTo="/posts" />
+            <ButtonLink text="Se mer" linkTo="/posts" />
         </ContentBox>
     );
 };
