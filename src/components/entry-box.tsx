@@ -6,6 +6,7 @@ import { Event } from '../lib/api/event';
 import ContentBox from './content-box';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
+import ButtonLink from './button-link';
 
 interface Props {
     title?: string;
@@ -35,19 +36,7 @@ const EntryBox = ({ title, titles, entries, error, altText, linkTo, type }: Prop
                 </Center>
             )}
             {entries && !error && entries.length !== 0 && <EntryList entries={entries} type={type} />}
-            {linkTo && (
-                <Center>
-                    <LinkBox>
-                        <NextLink href={linkTo} passHref>
-                            <LinkOverlay>
-                                <Button data-cy="se-mer" colorScheme="teal" mt="1.5rem" fontSize="xl">
-                                    Se mer
-                                </Button>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                </Center>
-            )}
+            {linkTo && <ButtonLink data-cy="se-mer" text={'se mer'} linkTo={linkTo} />}
         </ContentBox>
     );
 };
