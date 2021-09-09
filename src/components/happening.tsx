@@ -13,12 +13,13 @@ import { IoMdListBox } from 'react-icons/io';
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 import { RegistrationCount } from '../lib/api/registration';
-import { format, parseISO } from 'date-fns';
+import { format, isAfter, isBefore, parseISO, differenceInHours } from 'date-fns';
 import Countdown from './countdown';
 import Markdown from 'markdown-to-jsx';
 import MapMarkdownChakra from '../markdown';
 
 import { HappeningType } from '../lib/api/registration';
+import RegistrationForm from './registration-form';
 
 const HappeningUI = ({
     bedpres,
@@ -38,6 +39,9 @@ const HappeningUI = ({
     const spotsTaken = regCount?.regCount || 0;
     const spotsAvailable = happening?.spots || 0;
     const waitList = regCount?.waitListCount || 0;
+
+    const regDate = happening?.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
+    const eventDate = happening?.date ? parseISO(happening.date) : new Date(date);
 
     return (
         <>
@@ -121,7 +125,24 @@ const HappeningUI = ({
                             {happening.registrationTime && (
                                 <>
                                     <Divider my="1em" />
-                                    <Countdown happening={happening} type={type} backendUrl={backendUrl} date={date} />
+                                    {isBefore(date, regDate) &&
+                                        (differenceInHours(regDate, date) > 23 ? (
+                                            <Center>
+                                                <Text fontSize="2xl">
+                                                    Åpner {format(regDate, 'dd. MMM yyyy, HH:mm')}
+                                                </Text>
+                                            </Center>
+                                        ) : (
+                                            <Countdown date={regDate} />
+                                        ))}
+                                    {isBefore(date, eventDate) && isAfter(date, regDate) && (
+                                        <RegistrationForm happening={happening} type={type} backendUrl={backendUrl} />
+                                    )}
+                                    {isAfter(date, eventDate) && (
+                                        <Center my="3" data-testid="bedpres-has-been">
+                                            <Text>Påmeldingen er stengt.</Text>
+                                        </Center>
+                                    )}
                                 </>
                             )}
                             <Divider my="1em" />
