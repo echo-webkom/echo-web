@@ -9,7 +9,7 @@ interface Props {
 const ButtonLink = ({ text, linkTo }: Props): JSX.Element => {
     return (
         <Center>
-            <LinkBox>
+            <LinkBox data-cy="button-link">
                 <NextLink href={linkTo} passHref>
                     <LinkOverlay>
                         <Button colorScheme="teal" mt="1.5rem" fontSize="xl">
