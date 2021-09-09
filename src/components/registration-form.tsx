@@ -101,7 +101,7 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const HappeningForm = ({
+const RegistrationForm = ({
     happening,
     type,
     backendUrl,
@@ -294,4 +294,4 @@ const HappeningForm = ({
     );
 };
 
-export default HappeningForm;
+export default RegistrationForm;

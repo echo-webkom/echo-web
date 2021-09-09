@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
-import { HappeningType, Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
+import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 
@@ -15,14 +15,12 @@ import { differenceInMilliseconds, parseISO } from 'date-fns';
 
 const BedpresPage = ({
     bedpres,
-    registrations,
     backendUrl,
     regCount,
     date,
     error,
 }: {
     bedpres: Bedpres;
-    registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
     date: number;
@@ -48,7 +46,6 @@ const BedpresPage = ({
                     <HappeningUI
                         bedpres={bedpres}
                         event={null}
-                        registrations={registrations}
                         backendUrl={backendUrl}
                         regCount={regCount}
                         date={date}
@@ -71,12 +68,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const bedkomKey = process.env.BEDKOM_KEY;
     if (!bedkomKey) throw Error('No BEDKOM_KEY defined.');
 
-    const showAdmin = context.query?.key === bedkomKey;
-
-    const { registrations } = showAdmin
-        ? await RegistrationAPI.getRegistrations(bedkomKey, slug, HappeningType.BEDPRES, backendUrl)
-        : { registrations: [] };
-
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
 
     const date = Date.now();
@@ -90,7 +81,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             bedpres,
-            registrations,
             regCount,
             date,
             backendUrl,

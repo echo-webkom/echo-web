@@ -4,7 +4,7 @@ import { format, isBefore, parseISO } from 'date-fns';
 import { useCountdown } from '../lib/hooks';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
-import HappeningForm from './happening-form';
+import RegistrationForm from './registration-form';
 import { HappeningType } from '../lib/api/registration';
 
 const Countdown = ({
@@ -41,7 +41,7 @@ const Countdown = ({
         }
 
         if (isBefore(date, parseISO(happening.date)) && isBefore(regDate, date)) {
-            return <HappeningForm happening={happening} type={type} backendUrl={backendUrl} />;
+            return <RegistrationForm happening={happening} type={type} backendUrl={backendUrl} />;
         }
 
         return (

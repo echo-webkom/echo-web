@@ -12,26 +12,23 @@ import { IoMdListBox } from 'react-icons/io';
 
 import { BiCalendar } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
-import { Registration, RegistrationCount } from '../lib/api/registration';
+import { RegistrationCount } from '../lib/api/registration';
 import { format, parseISO } from 'date-fns';
 import Countdown from './countdown';
 import Markdown from 'markdown-to-jsx';
 import MapMarkdownChakra from '../markdown';
 
 import { HappeningType } from '../lib/api/registration';
-import BedpresView from './bedpres-view';
 
 const HappeningUI = ({
     bedpres,
     event,
-    registrations,
     backendUrl,
     regCount,
     date,
 }: {
     bedpres: Bedpres | null;
     event: Event | null;
-    registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
     date: number;
@@ -150,9 +147,6 @@ const HappeningUI = ({
                     </Section>
                 </GridItem>
             </Grid>
-            {registrations && registrations.length > 0 && (
-                <BedpresView registrations={registrations} happening={happening} />
-            )}
         </>
     );
 };
