@@ -13,7 +13,7 @@ import SEO from '../../components/seo';
 import MapMarkdownChakra from '../../markdown';
 import { PostAPI, Post } from '../../lib/api/post';
 
-import ContentBox from '../../components/content-box';
+import Section from '../../components/section';
 import ErrorBox from '../../components/error-box';
 
 const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element => {
@@ -32,7 +32,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     <SEO title={post.title} />
                     <Box>
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={ContentBox}>
+                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author}</Text>
@@ -47,13 +47,13 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                 rowSpan={[1, null, null, 2]}
                                 minW="0"
                             >
-                                <ContentBox>
+                                <Section>
                                     <Heading mb="0.2em" size="2xl">
                                         {post.title}
                                     </Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
-                                </ContentBox>
+                                </Section>
                             </GridItem>
                         </Grid>
                     </Box>

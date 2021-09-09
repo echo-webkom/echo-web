@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Heading, Table, Thead, Tbody, Tr, Th, Td, useToast, useBreakpointValue } from '@chakra-ui/react';
 import { format, parseISO, compareAsc } from 'date-fns';
 
-import ContentBox from './content-box';
+import Section from './section';
 import { Registration, Answer } from '../lib/api/registration';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
@@ -48,7 +48,7 @@ const HappeningView = ({
     registrations.sort((fst, snd) => compareAsc(parseISO(fst.submitDate), parseISO(snd.submitDate)));
 
     return (
-        <ContentBox>
+        <Section>
             <Heading mb=".75rem">Påmeldte</Heading>
             <CopyEmailButton
                 emailsString={registrations
@@ -119,7 +119,7 @@ const HappeningView = ({
                     })}
                 </Tbody>
             </Table>
-        </ContentBox>
+        </Section>
     );
 };
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
 import { Post } from '../lib/api/post';
-import ContentBox from './content-box';
+import Section from './section';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
 
@@ -35,7 +35,7 @@ const EntryBox = ({
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
     return (
-        <ContentBox data-cy={`entry-box-${type}`}>
+        <Section data-cy={`entry-box-${type}`}>
             {heading && (
                 <Center minW="0">
                     <Heading mb="5">{heading}</Heading>
@@ -63,7 +63,7 @@ const EntryBox = ({
                     </LinkBox>
                 </Center>
             )}
-        </ContentBox>
+        </Section>
     );
 };
 

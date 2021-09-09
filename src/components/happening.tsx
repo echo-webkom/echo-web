@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
-import ContentBox from './content-box';
+import Section from './section';
 import { CgOrganisation } from 'react-icons/cg';
 import { RiTimeLine } from 'react-icons/ri';
 import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
@@ -45,7 +45,7 @@ const HappeningUI = ({
     return (
         <>
             <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                <GridItem colSpan={1} as={ContentBox}>
+                <GridItem colSpan={1} as={Section}>
                     {happening && (
                         <>
                             {bedpres && (
@@ -141,13 +141,13 @@ const HappeningUI = ({
                     rowSpan={2}
                     minW="0"
                 >
-                    <ContentBox>
+                    <Section>
                         <Heading mb="0.2em" size="2xl">
                             {happening?.title}
                         </Heading>
                         <Divider my=".5em" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{happening?.body || ''}</Markdown>
-                    </ContentBox>
+                    </Section>
                 </GridItem>
             </Grid>
             {registrations && registrations.length > 0 && (
