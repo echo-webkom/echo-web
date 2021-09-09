@@ -1,5 +1,4 @@
-import { Button, Center, Heading, LinkBox, LinkOverlay, Text, useBreakpointValue } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Center, Heading, Text, useBreakpointValue } from '@chakra-ui/react';
 import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
@@ -7,6 +6,7 @@ import { Post } from '../lib/api/post';
 import ContentBox from './content-box';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
+import ButtonLink from './button-link';
 
 interface Props {
     title?: string;
@@ -50,19 +50,7 @@ const EntryBox = ({
             {entries && !error && entries.length !== 0 && (
                 <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
             )}
-            {linkTo && (
-                <Center>
-                    <LinkBox>
-                        <NextLink href={linkTo} passHref>
-                            <LinkOverlay>
-                                <Button data-cy="se-mer" colorScheme="teal" mt="1.5rem" fontSize="xl">
-                                    Se mer
-                                </Button>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                </Center>
-            )}
+            {linkTo && <ButtonLink data-cy="se-mer" text="Se mer" linkTo={linkTo} />}
         </ContentBox>
     );
 };
