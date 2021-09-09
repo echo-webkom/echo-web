@@ -1,15 +1,14 @@
 node_modules/
 .next/
-.git*
+.git/
 .husky/
 .cache/
+.github/
 
 LICENSE
 README.md
-docker-compose.yaml
+docker-compose*
 Dockerfile
-renovate.json
-.eslintrc.json
 .prettierignore
 jest*
 public/rss.xml

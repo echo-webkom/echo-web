@@ -111,7 +111,13 @@ const HappeningUI = ({
                                     (happening.minDegreeYear > 1 || happening.maxDegreeYear < 5) && (
                                         <>
                                             <Icon as={MdLockOutline} boxSize={10} />
-                                            <Text>{`Bare for ${happening.minDegreeYear}. - ${happening.maxDegreeYear}. trinn`}</Text>
+                                            <Text>
+                                                {`Bare for ${
+                                                    happening.minDegreeYear === happening.maxDegreeYear
+                                                        ? `${happening.minDegreeYear}`
+                                                        : `${happening.minDegreeYear}. - ${happening.maxDegreeYear}`
+                                                }. trinn`}
+                                            </Text>
                                         </>
                                     )}
                             </Grid>
