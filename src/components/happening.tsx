@@ -1,25 +1,23 @@
-import { Center, Grid, GridItem, LinkBox, LinkOverlay, Link, Text, Icon, Divider, Heading } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text, VStack } from '@chakra-ui/react';
+import { differenceInHours, format, isAfter, isBefore, parseISO } from 'date-fns';
+import Markdown from 'markdown-to-jsx';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import React from 'react';
+import { BiCalendar } from 'react-icons/bi';
+import { CgOrganisation } from 'react-icons/cg';
+import { ImLocation } from 'react-icons/im';
+import { IoMdListBox } from 'react-icons/io';
+import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
+import { RiTimeLine } from 'react-icons/ri';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
-import Section from './section';
-import { CgOrganisation } from 'react-icons/cg';
-import { RiTimeLine } from 'react-icons/ri';
-import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
-import { IoMdListBox } from 'react-icons/io';
-
-import { BiCalendar } from 'react-icons/bi';
-import { ImLocation } from 'react-icons/im';
-import { RegistrationCount } from '../lib/api/registration';
-import { format, isAfter, isBefore, parseISO, differenceInHours } from 'date-fns';
-import Countdown from './countdown';
-import Markdown from 'markdown-to-jsx';
+import { HappeningType, RegistrationCount } from '../lib/api/registration';
 import MapMarkdownChakra from '../markdown';
-
-import { HappeningType } from '../lib/api/registration';
+import Countdown from './countdown';
+import IconText from './icon-text';
 import RegistrationForm from './registration-form';
+import Section from './section';
 
 const HappeningUI = ({
     bedpres,
@@ -65,63 +63,44 @@ const HappeningUI = ({
                                     </NextLink>
                                 </LinkBox>
                             )}
-                            <Grid wordBreak="break-word" templateColumns="min-content auto" gap="3" alignItems="center">
+                            <VStack alignItems="left" spacing={3}>
                                 {bedpres && (
-                                    <>
-                                        <CgOrganisation size="2em" />
-                                        <NextLink href={bedpres.companyLink} passHref>
-                                            <Link href={bedpres.companyLink} isExternal>
-                                                {
-                                                    bedpres.companyLink
-                                                        .replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
-                                                        .split('/')[0]
-                                                }
-                                            </Link>
-                                        </NextLink>
-                                    </>
+                                    <IconText
+                                        icon={CgOrganisation}
+                                        text={
+                                            bedpres.companyLink
+                                                .replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
+                                                .split('/')[0]
+                                        }
+                                        link={bedpres.companyLink}
+                                    />
                                 )}
                                 {spotsAvailable !== 0 && (
-                                    <>
-                                        <Icon as={MdEventSeat} boxSize={10} />
-                                        <Text>
-                                            {`${Math.min(spotsTaken, spotsAvailable)}/${spotsAvailable}`} påmeldt
-                                        </Text>
-                                    </>
+                                    <IconText
+                                        icon={MdEventSeat}
+                                        text={`${Math.min(spotsTaken, spotsAvailable)}/${spotsAvailable} påmeldt`}
+                                    />
                                 )}
-                                {waitList != 0 && (
-                                    <>
-                                        <Icon as={IoMdListBox} boxSize={10} />
-                                        <Text>{`${waitList} på venteliste`}</Text>
-                                    </>
+                                {waitList != 0 && <IconText icon={IoMdListBox} text={`${waitList} på venteliste`} />}
+                                <IconText icon={BiCalendar} text={format(parseISO(happening.date), 'dd. MMM yyyy')} />
+                                <IconText icon={RiTimeLine} text={format(parseISO(happening.date), 'HH:mm')} />
+                                <IconText icon={ImLocation} text={happening.location} />
+                                {happening.minDegreeYear === 1 && happening.maxDegreeYear === 5 && (
+                                    <IconText icon={MdLockOpen} text="Åpen for alle trinn" />
                                 )}
-                                <Icon as={BiCalendar} boxSize={10} />
-                                <Text>{format(parseISO(happening?.date), 'dd. MMM yyyy')}</Text>
-                                <Icon as={RiTimeLine} boxSize={10} />
-                                <Text>{format(parseISO(happening?.date), 'HH:mm')}</Text>
-                                <Icon as={ImLocation} boxSize={10} />
-                                <Text>{happening?.location}</Text>
-                                {happening && happening.minDegreeYear === 1 && happening.maxDegreeYear === 5 && (
-                                    <>
-                                        <Icon as={MdLockOpen} boxSize={10} />
-                                        <Text>Åpen for alle trinn</Text>
-                                    </>
-                                )}
-                                {happening &&
-                                    happening.minDegreeYear &&
+                                {happening.minDegreeYear &&
                                     happening.maxDegreeYear &&
                                     (happening.minDegreeYear > 1 || happening.maxDegreeYear < 5) && (
-                                        <>
-                                            <Icon as={MdLockOutline} boxSize={10} />
-                                            <Text>
-                                                {`Bare for ${
-                                                    happening.minDegreeYear === happening.maxDegreeYear
-                                                        ? `${happening.minDegreeYear}`
-                                                        : `${happening.minDegreeYear}. - ${happening.maxDegreeYear}`
-                                                }. trinn`}
-                                            </Text>
-                                        </>
+                                        <IconText
+                                            icon={MdLockOutline}
+                                            text={`Bare for ${
+                                                happening.minDegreeYear === happening.maxDegreeYear
+                                                    ? `${happening.minDegreeYear}`
+                                                    : `${happening.minDegreeYear}. - ${happening.maxDegreeYear}`
+                                            }. trinn`}
+                                        />
                                     )}
-                            </Grid>
+                            </VStack>
                             {happening.registrationTime && (
                                 <>
                                     <Divider my="1em" />
