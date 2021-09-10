@@ -14,6 +14,7 @@ import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
 import { HappeningType, RegistrationCount } from '../lib/api/registration';
 import MapMarkdownChakra from '../markdown';
+import Article from './article';
 import Countdown from './countdown';
 import IconText from './icon-text';
 import RegistrationForm from './registration-form';
@@ -139,11 +140,7 @@ const HappeningUI = ({
                     minW="0"
                 >
                     <Section>
-                        <Heading mb="0.2em" size="2xl">
-                            {happening?.title}
-                        </Heading>
-                        <Divider my=".5em" />
-                        <Markdown options={{ overrides: MapMarkdownChakra }}>{happening?.body || ''}</Markdown>
+                        <Article heading={happening?.title || ''} body={happening?.body || ''} />
                     </Section>
                 </GridItem>
             </Grid>
