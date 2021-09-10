@@ -14,7 +14,6 @@ interface Props {
     location: string;
     companyLink?: string;
     spotsTotal?: number;
-    spotsAvailable?: number;
     spotsTaken?: number;
     spotsWaitlist?: number;
     minDegreeYear?: number;
@@ -26,7 +25,6 @@ const HappeningMetaInfo = ({
     location,
     companyLink,
     spotsTotal,
-    spotsAvailable,
     spotsTaken,
     spotsWaitlist,
     minDegreeYear,
@@ -41,11 +39,8 @@ const HappeningMetaInfo = ({
                     link={companyLink}
                 />
             )}
-            {spotsTaken && spotsAvailable && spotsTotal && spotsTotal !== 0 && (
-                <IconText
-                    icon={MdEventSeat}
-                    text={`${Math.min(spotsTaken, spotsAvailable)}/${spotsAvailable} påmeldt`}
-                />
+            {spotsTaken && spotsTotal && spotsTotal !== 0 && (
+                <IconText icon={MdEventSeat} text={`${Math.min(spotsTaken, spotsTotal)}/${spotsTotal} påmeldt`} />
             )}
             {spotsWaitlist && <IconText icon={IoMdListBox} text={`${spotsWaitlist} på venteliste`} />}
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy')} />
