@@ -1,22 +1,14 @@
-import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text, VStack } from '@chakra-ui/react';
+import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { differenceInHours, format, isAfter, isBefore, parseISO } from 'date-fns';
-import Markdown from 'markdown-to-jsx';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
-import { BiCalendar } from 'react-icons/bi';
-import { CgOrganisation } from 'react-icons/cg';
-import { ImLocation } from 'react-icons/im';
-import { IoMdListBox } from 'react-icons/io';
-import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
-import { RiTimeLine } from 'react-icons/ri';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
 import { HappeningType, RegistrationCount } from '../lib/api/registration';
-import MapMarkdownChakra from '../markdown';
 import Article from './article';
 import Countdown from './countdown';
-import IconText from './icon-text';
+import HappeningMetaInfo from './happening-meta-info';
 import RegistrationForm from './registration-form';
 import Section from './section';
 
@@ -35,9 +27,9 @@ const HappeningUI = ({
 }): JSX.Element => {
     const happening = bedpres || event;
     const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
-    const spotsTaken = regCount?.regCount || 0;
-    const spotsAvailable = happening?.spots || 0;
-    const waitList = regCount?.waitListCount || 0;
+    const spotsTotal = happening?.spots;
+    const spotsTaken = regCount?.regCount;
+    const spotsWaitlist = regCount?.waitListCount;
 
     const regDate = happening?.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
     const eventDate = happening?.date ? parseISO(happening.date) : new Date(date);
@@ -64,44 +56,16 @@ const HappeningUI = ({
                                     </NextLink>
                                 </LinkBox>
                             )}
-                            <VStack alignItems="left" spacing={3}>
-                                {bedpres && (
-                                    <IconText
-                                        icon={CgOrganisation}
-                                        text={
-                                            bedpres.companyLink
-                                                .replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')
-                                                .split('/')[0]
-                                        }
-                                        link={bedpres.companyLink}
-                                    />
-                                )}
-                                {spotsAvailable !== 0 && (
-                                    <IconText
-                                        icon={MdEventSeat}
-                                        text={`${Math.min(spotsTaken, spotsAvailable)}/${spotsAvailable} påmeldt`}
-                                    />
-                                )}
-                                {waitList != 0 && <IconText icon={IoMdListBox} text={`${waitList} på venteliste`} />}
-                                <IconText icon={BiCalendar} text={format(parseISO(happening.date), 'dd. MMM yyyy')} />
-                                <IconText icon={RiTimeLine} text={format(parseISO(happening.date), 'HH:mm')} />
-                                <IconText icon={ImLocation} text={happening.location} />
-                                {happening.minDegreeYear === 1 && happening.maxDegreeYear === 5 && (
-                                    <IconText icon={MdLockOpen} text="Åpen for alle trinn" />
-                                )}
-                                {happening.minDegreeYear &&
-                                    happening.maxDegreeYear &&
-                                    (happening.minDegreeYear > 1 || happening.maxDegreeYear < 5) && (
-                                        <IconText
-                                            icon={MdLockOutline}
-                                            text={`Bare for ${
-                                                happening.minDegreeYear === happening.maxDegreeYear
-                                                    ? `${happening.minDegreeYear}`
-                                                    : `${happening.minDegreeYear}. - ${happening.maxDegreeYear}`
-                                            }. trinn`}
-                                        />
-                                    )}
-                            </VStack>
+                            <HappeningMetaInfo
+                                date={parseISO(happening.date)}
+                                location={happening.location}
+                                companyLink={bedpres ? bedpres.companyLink : undefined}
+                                spotsTotal={spotsTotal || undefined}
+                                spotsAvailable={spotsTaken || undefined}
+                                spotsWaitlist={spotsWaitlist || undefined}
+                                minDegreeYear={happening.minDegreeYear || undefined}
+                                maxDegreeYear={happening.maxDegreeYear || undefined}
+                            />
                             {happening.registrationTime && (
                                 <>
                                     <Divider my="1em" />
