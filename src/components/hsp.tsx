@@ -1,6 +1,6 @@
 import { Center, Heading, LinkBox, LinkOverlay, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import React from 'react';
 import Section from './section';
 

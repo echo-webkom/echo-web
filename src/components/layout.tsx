@@ -1,9 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
-
-import Header from './header';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Footer from './footer';
+import Header from './header';
 
 interface Props {
     children: React.ReactNode;

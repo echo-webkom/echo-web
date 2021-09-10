@@ -1,4 +1,4 @@
-import { ColorProps, Colors, Grid, Icon, Link, Text } from '@chakra-ui/react';
+import { ColorProps, Grid, Icon, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import { IconType } from 'react-icons';

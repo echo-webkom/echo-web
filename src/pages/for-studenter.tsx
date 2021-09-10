@@ -1,17 +1,16 @@
-import React from 'react';
-
 import Markdown from 'markdown-to-jsx';
 import { GetStaticProps } from 'next';
-import Layout from '../components/layout';
-import SEO from '../components/seo';
+import React from 'react';
+import anononymeTilbakemeldinger from '../../public/static/for-studenter/anonymeTilbakemeldinger.md';
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
 import okonomiskStotte from '../../public/static/for-studenter/okonomiskStotte.md';
-import anononymeTilbakemeldinger from '../../public/static/for-studenter/anonymeTilbakemeldinger.md';
 import utleggsskjema from '../../public/static/for-studenter/utleggsskjema.md';
+import Layout from '../components/layout';
+import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
-import MapMarkdownChakra from '../markdown';
-import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
 import StudentGroupSection from '../components/student-group-section';
+import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
+import MapMarkdownChakra from '../markdown';
 
 const ForStudenterPage = ({
     subGroups,

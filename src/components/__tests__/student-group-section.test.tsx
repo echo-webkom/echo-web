@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from './testing-utils';
-import StudentGroupSection from '../student-group-section';
 import { StudentGroup } from '../../lib/api/student-group';
+import StudentGroupSection from '../student-group-section';
+import { render } from './testing-utils';
 
 const studentGroups: Array<StudentGroup> = [
     {

@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import mockResponses, { RawStudentGroup, RawProfile, RawRole } from './mock-responses';
-import { StudentGroupAPI, StudentGroup } from '../student-group';
 import { GET_STUDENTGROUPS_BY_TYPE } from '../schema';
+import { StudentGroup, StudentGroupAPI } from '../student-group';
+import mockResponses, { RawProfile, RawRole, RawStudentGroup } from './mock-responses';
 
 interface QueryBody {
     query: string;

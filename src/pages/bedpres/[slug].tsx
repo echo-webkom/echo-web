@@ -1,17 +1,15 @@
-import React from 'react';
-import { GetServerSideProps } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-
-import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
-import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-
-import ErrorBox from '../../components/error-box';
-import HappeningUI from '../../components/happening';
-import { useRouter } from 'next/router';
 import { useTimeout } from '@chakra-ui/react';
 import { differenceInMilliseconds, parseISO } from 'date-fns';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
+import React from 'react';
+import ErrorBox from '../../components/error-box';
+import HappeningUI from '../../components/happening';
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
+import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 
 const BedpresPage = ({
     bedpres,

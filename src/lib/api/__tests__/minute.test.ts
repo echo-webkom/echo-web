@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import mockResponses, { RawMinute } from './mock-responses';
 import { Minute, MinuteAPI } from '../minute';
 import { GET_N_MINUTES } from '../schema';
+import mockResponses, { RawMinute } from './mock-responses';
 
 interface QueryBody {
     query: string;

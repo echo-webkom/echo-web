@@ -1,20 +1,18 @@
-import React from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Heading, Divider, Icon, Center, Spinner } from '@chakra-ui/react';
-import { CgProfile } from 'react-icons/cg';
-import { BiCalendar } from 'react-icons/bi';
-import Markdown from 'markdown-to-jsx';
+import { Box, Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
-
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-import MapMarkdownChakra from '../../markdown';
-import { PostAPI, Post } from '../../lib/api/post';
-
-import Section from '../../components/section';
+import Markdown from 'markdown-to-jsx';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
+import React from 'react';
+import { BiCalendar } from 'react-icons/bi';
+import { CgProfile } from 'react-icons/cg';
 import ErrorBox from '../../components/error-box';
+import Layout from '../../components/layout';
+import Section from '../../components/section';
+import SEO from '../../components/seo';
+import { Post, PostAPI } from '../../lib/api/post';
+import MapMarkdownChakra from '../../markdown';
 
 const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element => {
     const router = useRouter();

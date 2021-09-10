@@ -1,5 +1,5 @@
+import { Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import React from 'react';
-import { Tabs, Grid, GridItem, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
 import Section from './section';
 
 const StaticInfo = ({

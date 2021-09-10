@@ -1,5 +1,5 @@
-import { Pojo, array, optional, boolean, record, string, number, decodeType } from 'typescript-json-decoder';
 import axios from 'axios';
+import { array, boolean, decodeType, number, optional, Pojo, record, string } from 'typescript-json-decoder';
 
 export enum Degree {
     DTEK = 'DTEK',

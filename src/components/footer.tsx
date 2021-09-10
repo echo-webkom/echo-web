@@ -1,10 +1,9 @@
-import React from 'react';
-import NextLink from 'next/link';
+import { Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text } from '@chakra-ui/react';
 import Image from 'next/image';
-import { Flex, SimpleGrid, Text, LinkBox, LinkOverlay, Icon } from '@chakra-ui/react';
-
+import NextLink from 'next/link';
+import React from 'react';
+import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { FiMail } from 'react-icons/fi';
-import { FaFacebook, FaInstagram, FaGithub } from 'react-icons/fa';
 
 const echoLogoWhite = '/echo-logo-text-only-white.png';
 

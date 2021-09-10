@@ -1,18 +1,16 @@
-import React from 'react';
-import { GetStaticProps } from 'next';
-import fs from 'fs';
-
-import { SimpleGrid, Stack, GridItem, useBreakpointValue } from '@chakra-ui/react';
+import { GridItem, SimpleGrid, Stack, useBreakpointValue } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import getRssXML from '../lib/generate-rss-feed';
+import fs from 'fs';
+import { GetStaticProps } from 'next';
+import React from 'react';
+import EntryBox from '../components/entry-box';
+import Hsp from '../components/hsp';
 import Layout from '../components/layout';
-
 import SEO from '../components/seo';
 import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
-import { Post, PostAPI } from '../lib/api/post';
 import { Event, EventAPI } from '../lib/api/event';
-import Hsp from '../components/hsp';
-import EntryBox from '../components/entry-box';
+import { Post, PostAPI } from '../lib/api/post';
+import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,

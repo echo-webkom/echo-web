@@ -1,16 +1,14 @@
-import React from 'react';
+import { differenceInMilliseconds, formatISO, parseISO } from 'date-fns';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
-
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-import { EventAPI, Event } from '../../lib/api/event';
-
+import React from 'react';
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import { Event, EventAPI } from '../../lib/api/event';
 import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
-import { useRouter } from 'next/router';
-import { differenceInMilliseconds, formatISO, parseISO } from 'date-fns';
 import { useTimeout } from '../../lib/hooks';
 
 const EventPage = ({

@@ -1,11 +1,10 @@
-import React from 'react';
-
 import Markdown from 'markdown-to-jsx';
+import React from 'react';
+import bedriftspresentasjon from '../../public/static/for-bedrifter/bedriftspresentasjon.md';
+import forBedrifter from '../../public/static/for-bedrifter/for-bedrifter.md';
+import stillingsutlysninger from '../../public/static/for-bedrifter/stillingsutlysninger.md';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import forBedrifter from '../../public/static/for-bedrifter/for-bedrifter.md';
-import bedriftspresentasjon from '../../public/static/for-bedrifter/bedriftspresentasjon.md';
-import stillingsutlysninger from '../../public/static/for-bedrifter/stillingsutlysninger.md';
 import StaticInfo from '../components/static-info';
 import MapMarkdownChakra from '../markdown';
 

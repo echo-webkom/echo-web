@@ -3,10 +3,10 @@ import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
 import { Post } from '../lib/api/post';
-import Section from './section';
+import ButtonLink from './button-link';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
-import ButtonLink from './button-link';
+import Section from './section';
 
 interface Props {
     title?: string;

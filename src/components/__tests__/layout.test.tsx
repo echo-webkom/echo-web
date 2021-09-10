@@ -1,7 +1,7 @@
-import React from 'react';
 import { screen } from '@testing-library/react';
-import { render } from './testing-utils';
+import React from 'react';
 import Layout from '../layout';
+import { render } from './testing-utils';
 
 describe('Layout', () => {
     test('renders without crashing', () => {

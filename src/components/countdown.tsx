@@ -1,5 +1,5 @@
-import React from 'react';
 import { Center, Text } from '@chakra-ui/react';
+import React from 'react';
 import { useCountdown } from '../lib/hooks';
 
 const Countdown = ({ date }: { date: Date }): JSX.Element => {

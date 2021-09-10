@@ -1,5 +1,3 @@
-import React from 'react';
-import NextLink from 'next/link';
 import {
     Center,
     Flex,
@@ -14,22 +12,24 @@ import {
     Text,
     useColorModeValue,
 } from '@chakra-ui/react';
+import { format } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticProps } from 'next';
+import NextLink from 'next/link';
+import React from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { format } from 'date-fns';
-import Layout from '../components/layout';
+import bekk from '../../public/static/om-oss/bekk.md';
 import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
-import bekk from '../../public/static/om-oss/bekk.md';
-import MapMarkdownChakra from '../markdown';
-import { MinuteAPI, Minute } from '../lib/api/minute';
-import { StudentGroupAPI, StudentGroup } from '../lib/api/student-group';
+import ErrorBox from '../components/error-box';
+import Layout from '../components/layout';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
-import ErrorBox from '../components/error-box';
+import { Minute, MinuteAPI } from '../lib/api/minute';
+import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
+import MapMarkdownChakra from '../markdown';
 
 const bekkLogo = '/bekk.png';
 

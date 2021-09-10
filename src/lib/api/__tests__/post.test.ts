@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+import { Post, PostAPI } from '../post';
+import { GET_N_POSTS, GET_POST_BY_SLUG, GET_POST_PATHS } from '../schema';
 import mockResponses, { RawPost } from './mock-responses';
-import { PostAPI, Post } from '../post';
-import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from '../schema';
 
 interface QueryBody {
     query: string;

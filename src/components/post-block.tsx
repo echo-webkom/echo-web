@@ -1,9 +1,9 @@
+import { Center, Heading, Stack, StackDivider, Text } from '@chakra-ui/react';
 import React from 'react';
-import { Text, Stack, StackDivider, Center, Heading } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
+import ButtonLink from './button-link';
 import PostPreview from './post-preview';
 import Section from './section';
-import ButtonLink from './button-link';
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     return (

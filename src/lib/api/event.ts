@@ -1,8 +1,8 @@
-import { nil, union, Pojo, record, array, string, number, decodeType } from 'typescript-json-decoder';
+import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
-import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
 import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
+import { GET_EVENT_BY_SLUG, GET_EVENT_PATHS, GET_N_EVENTS } from './schema';
 
 // Automatically creates the Event type with the
 // fields we specify in our eventDecoder.
