@@ -1,6 +1,6 @@
-import React from 'react';
+import { Box, Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { Text, Box, Heading, useColorModeValue, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import React from 'react';
 import removeMD from 'remove-markdown';
 import { Post } from '../lib/api/post';
 

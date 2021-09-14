@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { differenceInMilliseconds } from 'date-fns';
+import { useEffect, useState } from 'react';
 
 interface CountdownObject {
     hours: number;

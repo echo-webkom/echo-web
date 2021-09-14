@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render } from '@testing-library/react';
 import AllTheProviders from './testing-wrapper';
 
@@ -10,6 +9,5 @@ const customRender = (ui, options) =>
 
 // re-export everything
 export * from '@testing-library/react';
-
 // override render method
 export { customRender as render };

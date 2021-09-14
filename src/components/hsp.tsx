@@ -1,8 +1,8 @@
 import { Center, Heading, LinkBox, LinkOverlay, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import React from 'react';
-import ContentBox from './content-box';
+import Section from './section';
 
 const bekkLogo = '/bekk.png';
 
@@ -16,7 +16,7 @@ const Hsp = (): JSX.Element => {
         'Hovedsamarbeidspartner',
     ]);
     return (
-        <ContentBox>
+        <Section>
             <Center minW="0" wordBreak="break-word">
                 <Heading mb=".5em" sizes={['xs', 'md']}>
                     {heading}
@@ -31,7 +31,7 @@ const Hsp = (): JSX.Element => {
                     </NextLink>
                 </LinkBox>
             </Center>
-        </ContentBox>
+        </Section>
     );
 };
 

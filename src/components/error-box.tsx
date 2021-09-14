@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Center, Text } from '@chakra-ui/react';
+import React from 'react';
 
 const ErrorBox = ({ error }: { error: string }): JSX.Element => {
     return (

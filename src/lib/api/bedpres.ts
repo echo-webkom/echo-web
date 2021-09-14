@@ -1,8 +1,8 @@
-import { union, nil, Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
+import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
-import { publishedAtDecoder, authorDecoder, questionDecoder } from './decoders';
+import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
-import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
+import { GET_BEDPRES_BY_SLUG, GET_N_BEDPRESES } from './schema';
 
 // Automatically creates the Bedpres type with the
 // fields we specify in our bedpresDecoder.

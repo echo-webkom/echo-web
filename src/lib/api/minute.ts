@@ -1,4 +1,4 @@
-import { array, record, Pojo, decodeType, string, boolean } from 'typescript-json-decoder';
+import { array, boolean, decodeType, Pojo, record, string } from 'typescript-json-decoder';
 import API from './api';
 import handleError from './errors';
 import { GET_N_MINUTES } from './schema';

@@ -1,28 +1,24 @@
-import React from 'react';
+import { differenceInMilliseconds, formatISO, parseISO } from 'date-fns';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
-
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-import { EventAPI, Event } from '../../lib/api/event';
-
+import React from 'react';
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
-import { HappeningType, Registration, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
-import { useRouter } from 'next/router';
-import { differenceInMilliseconds, formatISO, parseISO } from 'date-fns';
+import Layout from '../../components/layout';
+import SEO from '../../components/seo';
+import { Event, EventAPI } from '../../lib/api/event';
+import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
 import { useTimeout } from '../../lib/hooks';
 
 const EventPage = ({
     event,
-    registrations,
     backendUrl,
     regCount,
     date,
     error,
 }: {
     event: Event;
-    registrations: Array<Registration>;
     backendUrl: string;
     regCount: RegistrationCount;
     date: number;
@@ -45,14 +41,7 @@ const EventPage = ({
             {event && !error && (
                 <>
                     <SEO title={event.title} />
-                    <HappeningUI
-                        bedpres={null}
-                        event={event}
-                        registrations={registrations}
-                        backendUrl={backendUrl}
-                        regCount={regCount}
-                        date={date}
-                    />
+                    <HappeningUI bedpres={null} event={event} backendUrl={backendUrl} regCount={regCount} date={date} />
                 </>
             )}
         </Layout>
@@ -71,12 +60,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const bedkomKey = process.env.BEDKOM_KEY;
     if (!bedkomKey) throw Error('No BEDKOM_KEY defined.');
 
-    const showAdmin = context.query?.key === bedkomKey;
-
-    const { registrations } = showAdmin
-        ? await RegistrationAPI.getRegistrations(bedkomKey, slug, HappeningType.BEDPRES, backendUrl)
-        : { registrations: [] };
-
     const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.EVENT, backendUrl);
 
     const date = Date.now();
@@ -90,7 +73,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             event,
-            registrations,
             regCount,
             date,
             backendUrl,

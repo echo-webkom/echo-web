@@ -1,4 +1,4 @@
-import useTimeout from './use-timeout';
 import useCountdown from './use-countdown';
+import useTimeout from './use-timeout';
 
 export { useTimeout, useCountdown };

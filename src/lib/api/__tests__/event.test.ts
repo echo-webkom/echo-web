@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+import { Event, EventAPI } from '../event';
+import { GET_EVENT_BY_SLUG, GET_EVENT_PATHS, GET_N_EVENTS } from '../schema';
 import mockResponses, { RawEvent } from './mock-responses';
-import { EventAPI, Event } from '../event';
-import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from '../schema';
 
 interface QueryBody {
     query: string;

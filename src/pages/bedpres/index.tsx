@@ -1,9 +1,9 @@
-import React from 'react';
 import { GetStaticProps } from 'next';
-import { BedpresAPI, Bedpres } from '../../lib/api/bedpres';
+import React from 'react';
+import EntryOverview from '../../components/entry-overview';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import EntryOverview from '../../components/entry-overview';
+import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
 
 const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
     return (

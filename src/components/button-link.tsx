@@ -1,4 +1,4 @@
-import { Center, LinkBox, LinkOverlay, Button } from '@chakra-ui/react';
+import { Button, Center, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 interface Props {

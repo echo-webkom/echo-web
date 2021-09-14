@@ -1,8 +1,8 @@
-import { nil, record, string, union, decodeType, array, Pojo } from 'typescript-json-decoder';
+import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
-import { GET_POST_PATHS, GET_N_POSTS, GET_POST_BY_SLUG } from './schema';
-import { publishedAtDecoder, authorDecoder } from './decoders';
+import { authorDecoder, publishedAtDecoder } from './decoders';
 import handleError from './errors';
+import { GET_N_POSTS, GET_POST_BY_SLUG, GET_POST_PATHS } from './schema';
 
 // Automatically creates the Post type with the
 // fields we specify in our postDecoder.

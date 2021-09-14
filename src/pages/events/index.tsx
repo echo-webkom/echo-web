@@ -1,9 +1,9 @@
-import React from 'react';
 import { GetStaticProps } from 'next';
-import { Event, EventAPI } from '../../lib/api/event';
+import React from 'react';
+import EntryOverview from '../../components/entry-overview';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import EntryOverview from '../../components/entry-overview';
+import { Event, EventAPI } from '../../lib/api/event';
 
 const EventsCollectionPage = ({ events, error }: { events: Array<Event>; error: string }): JSX.Element => {
     return (

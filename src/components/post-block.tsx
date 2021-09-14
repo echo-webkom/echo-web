@@ -1,13 +1,13 @@
+import { Center, Heading, Stack, StackDivider, Text } from '@chakra-ui/react';
 import React from 'react';
-import { Text, Stack, StackDivider, Center, Heading } from '@chakra-ui/react';
 import { Post } from '../lib/api/post';
-import PostPreview from './post-preview';
-import ContentBox from './content-box';
 import ButtonLink from './button-link';
+import PostPreview from './post-preview';
+import Section from './section';
 
 const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
     return (
-        <ContentBox data-testid="post-block">
+        <Section data-testid="post-block">
             <Center>
                 <Heading p="1rem" mb=".5em" sizes={['xs', 'md']}>
                     Innlegg
@@ -27,7 +27,7 @@ const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string 
             )}
             {!posts && error && <Text>{error}</Text>}
             <ButtonLink text="Se mer" linkTo="/posts" />
-        </ContentBox>
+        </Section>
     );
 };
 

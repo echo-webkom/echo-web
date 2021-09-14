@@ -1,8 +1,8 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import mockResponses, { RawBedpres } from './mock-responses';
 import { Bedpres, BedpresAPI } from '../bedpres';
 import { GET_BEDPRES_BY_SLUG, GET_N_BEDPRESES } from '../schema';
+import mockResponses, { RawBedpres } from './mock-responses';
 
 interface QueryBody {
     query: string;

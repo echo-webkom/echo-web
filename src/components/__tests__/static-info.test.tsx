@@ -1,8 +1,8 @@
-import React from 'react';
 import Markdown from 'markdown-to-jsx';
-import { render } from './testing-utils';
-import StaticInfo from '../static-info';
+import React from 'react';
 import MapMarkdownChakra from '../../markdown';
+import StaticInfo from '../static-info';
+import { render } from './testing-utils';
 
 const tabNames = ['en fane', 'enda en fane', 'fane 100'];
 const markdownFiles = [

@@ -3,10 +3,10 @@ import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
 import { Post } from '../lib/api/post';
-import ContentBox from './content-box';
+import ButtonLink from './button-link';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
-import ButtonLink from './button-link';
+import Section from './section';
 
 interface Props {
     title?: string;
@@ -35,7 +35,7 @@ const EntryBox = ({
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
     return (
-        <ContentBox data-cy={`entry-box-${type}`}>
+        <Section data-cy={`entry-box-${type}`}>
             {heading && (
                 <Center minW="0">
                     <Heading mb="5">{heading}</Heading>
@@ -51,7 +51,7 @@ const EntryBox = ({
                 <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
             )}
             {linkTo && <ButtonLink data-cy="se-mer" text="Se mer" linkTo={linkTo} />}
-        </ContentBox>
+        </Section>
     );
 };
 

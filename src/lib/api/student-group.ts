@@ -1,4 +1,4 @@
-import { Pojo, decodeType, record, array, string, union, nil } from 'typescript-json-decoder';
+import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
 import handleError from './errors';
 import { GET_STUDENTGROUPS_BY_TYPE } from './schema';
