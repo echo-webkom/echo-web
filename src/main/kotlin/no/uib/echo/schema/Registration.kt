@@ -63,6 +63,11 @@ object EventRegistration : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(email, eventSlug)
 }
 
+// REMOVE THIS AFTER BEKK START
+const val BEKK_SPOTRANGE_MVP_12 = 15
+const val BEKK_SPOTRANGE_MVP_35 = 35
+// REMOVE THIS AFTER BEKK END
+
 fun selectRegistrations(
     emailParam: String?,
     slugParam: String?,
@@ -158,14 +163,39 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             return@transaction Triple(happening.registrationDate, null, RegistrationStatus.TOO_EARLY)
 
         val countRegs = when (reg.type) {
-            HAPPENINGTYPE.BEDPRES ->
-                BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug }.toList()
+            HAPPENINGTYPE.BEDPRES -> {
+                if (happening.slug == "bekk") {
+                    when (reg.degreeYear) {
+                        1,2 -> BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug and (BedpresRegistration.degreeYear inList 1..2) }
+                            .count()
+                        else ->
+                            BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug and (BedpresRegistration.degreeYear inList 3..5) }
+                            .count()
+                    }
+                }
+                else
+                    BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug }.count()
+            }
             HAPPENINGTYPE.EVENT ->
-                EventRegistration.select { EventRegistration.eventSlug eq reg.slug }.toList()
+                EventRegistration.select { EventRegistration.eventSlug eq reg.slug }.count()
         }
 
-        val waitList = countRegs.size >= happening.spots
-        val waitListSpot = countRegs.size - happening.spots + 1
+        var waitList = countRegs >= happening.spots
+        var waitListSpot = countRegs - happening.spots + 1
+
+        if (reg.slug == "bekk") {
+            when (reg.degreeYear) {
+                1, 2 -> {
+                    waitList = countRegs >= BEKK_SPOTRANGE_MVP_12
+                    waitListSpot = countRegs - BEKK_SPOTRANGE_MVP_12 + 1
+                }
+                else -> {
+                    waitList = countRegs >= BEKK_SPOTRANGE_MVP_35
+                    waitListSpot = countRegs - BEKK_SPOTRANGE_MVP_35 + 1
+                }
+            }
+        }
+
 
         val oldReg = when (reg.type) {
             HAPPENINGTYPE.BEDPRES ->
