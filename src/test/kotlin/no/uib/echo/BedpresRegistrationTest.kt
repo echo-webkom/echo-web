@@ -29,6 +29,10 @@ class BedpresRegistrationTest : StringSpec({
         HappeningJson("bedpres-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z", HAPPENINGTYPE.BEDPRES)
     val exampleBedpres5 =
         HappeningJson("bedpres-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z", HAPPENINGTYPE.BEDPRES)
+    // REMOVE THIS AFTER BEKK START
+    val exampleBedpres6MVP =
+        HappeningJson("bekk", 12, 1, 5, "2020-06-29T18:12:12Z", HAPPENINGTYPE.BEDPRES)
+    // REMOVE THIS AFTER BEKK END
     val exampleReg = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleBedpres1.slug, true, null, false,
         listOf(
@@ -56,6 +60,9 @@ class BedpresRegistrationTest : StringSpec({
             insertOrUpdateHappening(exampleBedpres3)
             insertOrUpdateHappening(exampleBedpres4)
             insertOrUpdateHappening(exampleBedpres5)
+            // REMOVE THIS AFTER BEKK START
+            insertOrUpdateHappening(exampleBedpres6MVP)
+            // REMOVE THIS AFTER BEKK END
         }
     }
 
@@ -616,4 +623,102 @@ class BedpresRegistrationTest : StringSpec({
             getCountRegCall.response.content shouldBe "Count parameter defined but no slug was given."
         }
     }
+
+    // REMOVE THIS AFTER BEKK START
+    "Wonky Bekk MVP should work" {
+        withTestApplication({
+            configureRouting(keys)
+        }) {
+            for (i in 1..BEKK_SPOTRANGE_MVP_12) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "ta123t${i}@test.com",
+                                    degree = Degree.DTEK,
+                                    degreeYear = (i % 2) + 1,
+                                    slug = "bekk"
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
+            }
+            for (i in 1..3) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "ta123t${i}@tbekkest.com",
+                                    degree = Degree.DTEK,
+                                    degreeYear = (i % 2) + 1,
+                                    slug = "bekk"
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.WaitList
+                res.title shouldBe "Alle plassene er dessverre fylt opp."
+                res.desc shouldBe "Du er på plass nr. $i på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+            }
+
+            for (i in 1..BEKK_SPOTRANGE_MVP_35) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "ta112jajbekk23t${i}@test.com",
+                                    degree = if (i % 2 == 0) Degree.DTEK else Degree.INF,
+                                    degreeYear = if (i % 2 == 0) 3 else 4,
+                                    slug = "bekk"
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe "Du har fått plass på bedriftspresentasjonen."
+            }
+            for (i in 1..3) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleReg.copy(
+                                    email = "hmm123ta112jajbekk23t${i}@test.com",
+                                    degree = if (i % 2 == 0) Degree.DTEK else Degree.INF,
+                                    degreeYear = if (i % 2 == 0) 3 else 4,
+                                    slug = "bekk"
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.WaitList
+                res.title shouldBe "Alle plassene er dessverre fylt opp."
+                res.desc shouldBe "Du er på plass nr. $i på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+            }
+        }
+    }
+    // REMOVE THIS AFTER BEKK END
 })

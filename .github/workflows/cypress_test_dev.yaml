@@ -17,26 +17,52 @@ jobs:
         path: frontend
         ref: develop
 
-    - name: Build frontend
-      run: docker build -t echo-web-frontend:latest frontend
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Set up environment
+    - name: Build backend with cache
       run: |
-        echo "CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID" >> .env
-        echo "CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN" >> .env
-        echo "CONTENTFUL_ENVIRONMENT_ID=$CONTENTFUL_ENVIRONMENT_ID" >> .env
-        echo "BEDKOM_KEY=$BEDKOM_KEY" >> .env
-        echo "WEBKOM_KEY=$WEBKOM_KEY" >> .env
-        # Remove build context pointing to Git URL, since building
-        # from Git URL in Docker Compose doesn't work with GitHub Actions.
-        sed -i '4d' $COMPOSE_FILE
+        docker build \
+          --cache-from "$USERNAME/$IMAGE_NAME:$TAG" \
+          -t "$USERNAME/$IMAGE_NAME:$TAG" \
+          -t "$USERNAME/$IMAGE_NAME:$COMMIT_SHA" \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          .
+        docker push "$USERNAME/$IMAGE_NAME" --all-tags
       env:
+        DOCKER_BUILDKIT: 1
+        USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        IMAGE_NAME: echo-web-backend
+        TAG: latest-dev
+        COMMIT_SHA: ${{ github.sha }}
+
+    - name: Build frontend with cache
+      run: |
+        docker build \
+          --cache-from "$USERNAME/$IMAGE_NAME:$TAG" \
+          -t "$USERNAME/$IMAGE_NAME:$TAG" \
+          -t "$USERNAME/$IMAGE_NAME:$COMMIT_SHA" \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          frontend
+        docker push "$USERNAME/$IMAGE_NAME" --all-tags
+      env:
+        DOCKER_BUILDKIT: 1
+        USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        IMAGE_NAME: echo-web-frontend
+        TAG: latest-dev
+        COMMIT_SHA: ${{ github.sha }}
+
+    - name: Run Cypress end-to-end tests against develop frontend
+      run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        TAG: ${{ github.sha }}
         CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID_TESTING }}
         CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN_TESTING }}
         CONTENTFUL_ENVIRONMENT_ID: testing
         BEDKOM_KEY: bedkom-passord
         WEBKOM_KEY: webkom-passord
-        COMPOSE_FILE: docker-compose.cypress.yaml
-
-    - name: Run Cypress end-to-end tests against develop frontend
-      run: ./scripts/test -b develop -t cypress
+        COMPOSE_FILE: docker-compose.ci.yaml

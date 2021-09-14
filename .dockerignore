@@ -1,7 +1,10 @@
-.git*
+.git/
+.github/
 .idea/
+.gradle/
 build/
 
+.gitignore
 *.iml
 Dockerfile
 docker-compose*
