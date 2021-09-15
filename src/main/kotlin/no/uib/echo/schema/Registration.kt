@@ -64,8 +64,8 @@ object EventRegistration : Table() {
 }
 
 // REMOVE THIS AFTER BEKK START
-const val BEKK_SPOTRANGE_MVP_12 = 15
-const val BEKK_SPOTRANGE_MVP_35 = 35
+const val BEKK_SPOTRANGE_MVP_12 = 14
+const val BEKK_SPOTRANGE_MVP_35 = 33
 // REMOVE THIS AFTER BEKK END
 
 fun selectRegistrations(
