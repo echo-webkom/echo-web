@@ -7894,10 +7894,10 @@ typescript-json-decoder@1.0.3:
   resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.3.tgz#82adb285bdc1b35dcb4e8b8c9c64646bb205ec1a"
   integrity sha512-qeH4NfMLV/BM0hvNylNQJ0GcpvCLkxQQaNb9wbTfOiUUgNzkDcRK+6uKM7W9jK9gvDzNqJpaupZuOw02SwsRmw==
 
-typescript@4.3.5:
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
-  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
+typescript@4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.3.tgz#bdc5407caa2b109efd4f82fe130656f977a29324"
+  integrity sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==
 
 unbox-primitive@^1.0.0, unbox-primitive@^1.0.1:
   version "1.0.1"
