@@ -80,8 +80,6 @@ const responseDecoder = record({
     date: optional(string),
 });
 
-const registrationListDecoder = array(registrationDecoder);
-
 export type RegistrationCount = decodeType<typeof registrationCountDecoder>;
 const registrationCountDecoder = record({
     regCount: number,
@@ -108,33 +106,6 @@ interface FormRegistration {
 }
 
 export const RegistrationAPI = {
-    getRegistrations: async (
-        auth: string,
-        slug: string,
-        type: HappeningType,
-        backendUrl: string,
-    ): Promise<{ registrations: Array<Registration> | null; errorReg: string | null }> => {
-        try {
-            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}&type=${type.toLowerCase}`, {
-                auth: {
-                    username: 'bedkom',
-                    password: auth,
-                },
-            });
-
-            return {
-                registrations: registrationListDecoder(data),
-                errorReg: null,
-            };
-        } catch (error) {
-            console.log(error); // eslint-disable-line
-            return {
-                registrations: null,
-                errorReg: error,
-            };
-        }
-    },
-
     submitRegistration: async (
         registration: FormRegistration,
         backendUrl: string,
@@ -153,17 +124,19 @@ export const RegistrationAPI = {
             };
         } catch (err) {
             console.log(err); // eslint-disable-line
-            if (err.response) {
-                return {
-                    response: { ...genericError, code: 'InternalServerError' },
-                    statusCode: err.reponse.status,
-                };
-            }
-            if (err.request) {
-                return {
-                    response: { ...genericError, code: 'NoResponseError' },
-                    statusCode: 500,
-                };
+            if (axios.isAxiosError(err)) {
+                if (err.response) {
+                    return {
+                        response: { ...genericError, code: 'InternalServerError' },
+                        statusCode: err.response.status,
+                    };
+                }
+                if (err.request) {
+                    return {
+                        response: { ...genericError, code: 'NoResponseError' },
+                        statusCode: 500,
+                    };
+                }
             }
 
             return {
@@ -195,7 +168,7 @@ export const RegistrationAPI = {
             console.log(err); // eslint-disable-line
             return {
                 regCount: null,
-                regCountErr: err,
+                regCountErr: JSON.stringify(err),
             };
         }
     },

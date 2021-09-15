@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
 import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
@@ -79,7 +80,7 @@ export const BedpresAPI = {
             console.log(error); // eslint-disable-line
             return {
                 bedpreses: null,
-                error: handleError(error.response?.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
@@ -107,16 +108,18 @@ export const BedpresAPI = {
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (!error.response) {
-                return {
-                    bedpres: null,
-                    error: '404',
-                };
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return {
+                        bedpres: null,
+                        error: '404',
+                    };
+                }
             }
 
             return {
                 bedpres: null,
-                error: handleError(error.response?.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
