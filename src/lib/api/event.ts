@@ -1,8 +1,9 @@
-import { nil, union, Pojo, record, array, string, number, decodeType } from 'typescript-json-decoder';
+import axios from 'axios';
+import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
-import { GET_EVENT_PATHS, GET_N_EVENTS, GET_EVENT_BY_SLUG } from './schema';
 import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
+import { GET_EVENT_BY_SLUG, GET_EVENT_PATHS, GET_N_EVENTS } from './schema';
 
 // Automatically creates the Event type with the
 // fields we specify in our eventDecoder.
@@ -108,7 +109,7 @@ export const EventAPI = {
             console.log(error); // eslint-disable-line
             return {
                 events: null,
-                error: handleError(error.response?.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
@@ -134,16 +135,22 @@ export const EventAPI = {
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (!error.response) {
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return {
+                        event: null,
+                        error: '404',
+                    };
+                }
                 return {
                     event: null,
-                    error: '404',
+                    error: handleError(error.response?.status),
                 };
             }
 
             return {
                 event: null,
-                error: handleError(error.response?.status),
+                error: handleError(500),
             };
         }
     },

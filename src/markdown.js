@@ -1,4 +1,4 @@
-import { Box, Link, Heading, Text, UnorderedList, OrderedList, Code, Img, useColorModeValue } from '@chakra-ui/react';
+import { Box, Code, Heading, Img, Link, OrderedList, Text, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 
 const getLinkColor = () => {
     return useColorModeValue('blue', 'blue.400');

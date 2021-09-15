@@ -1,19 +1,18 @@
-import React from 'react';
 import {
-    LinkBox,
-    LinkOverlay,
+    Avatar,
     Box,
     Center,
-    Text,
     Flex,
     Heading,
+    LinkBox,
+    LinkOverlay,
     Spacer,
+    Text,
     useColorModeValue,
-    Avatar,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { format } from 'date-fns';
-
+import NextLink from 'next/link';
+import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 
 const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {

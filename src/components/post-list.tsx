@@ -1,5 +1,5 @@
 import { Button, Center, Divider, Text, Wrap } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Post } from '../lib/api/post';
 import ErrorBox from './error-box';
 import PostPreview from './post-preview';

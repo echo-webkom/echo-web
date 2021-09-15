@@ -1,20 +1,16 @@
-import React from 'react';
-import { GetStaticProps } from 'next';
-import fs from 'fs';
-
-import { SimpleGrid, Stack, GridItem } from '@chakra-ui/react';
+import { GridItem, SimpleGrid, Stack, useBreakpointValue } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import getRssXML from '../lib/generate-rss-feed';
+import fs from 'fs';
+import { GetStaticProps } from 'next';
+import React from 'react';
+import EntryBox from '../components/entry-box';
+import Hsp from '../components/hsp';
 import Layout from '../components/layout';
-
 import SEO from '../components/seo';
 import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
-import { Post, PostAPI } from '../lib/api/post';
 import { Event, EventAPI } from '../lib/api/event';
-import PostBlock from '../components/post-block';
-import ErrorBox from '../components/error-box';
-import Hsp from '../components/hsp';
-import EntryBox from '../components/entry-box';
+import { Post, PostAPI } from '../lib/api/post';
+import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,
@@ -41,6 +37,7 @@ const IndexPage = ({
                         <EntryBox
                             title="Arrangementer"
                             entries={events}
+                            entryLimit={4}
                             error={eventsError}
                             altText="Ingen kommende arrangementer :("
                             linkTo="/events"
@@ -58,6 +55,7 @@ const IndexPage = ({
                             'Bedriftspresentasjoner',
                         ]}
                         entries={bedpreses}
+                        entryLimit={4}
                         error={bedpresError}
                         altText="Ingen kommende bedriftspresentasjoner :("
                         linkTo="/bedpres"
@@ -65,8 +63,16 @@ const IndexPage = ({
                     />
                 </GridItem>
                 <GridItem colSpan={[1, null, null, 2]}>
-                    {!posts && postsError && <ErrorBox error={postsError} />}
-                    {posts && !postsError && <PostBlock posts={posts} error={postsError} />}
+                    <EntryBox
+                        titles={['Innlegg']}
+                        entries={posts}
+                        entryLimit={useBreakpointValue([2, 2, 2, 2, 2, 3, 4])}
+                        error={postsError}
+                        altText="Ingen innlegg :("
+                        linkTo="/posts"
+                        type="post"
+                        direction={useBreakpointValue(['column', 'column', 'column', 'row'])}
+                    />
                 </GridItem>
             </SimpleGrid>
         </Layout>
@@ -89,11 +95,11 @@ export const getStaticProps: GetStaticProps = async () => {
                     ?.filter((bedpres: Bedpres) => {
                         return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
                     })
-                    .slice(0, 3) || null,
+                    .slice(0, 6) || null,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts?.slice(0, 3) || null,
+            posts: postsResponse.posts?.slice(0, 6) || null,
             postsError: postsResponse.error,
-            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 4) || null,
+            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 8) || null,
             eventsError: eventsResponse.error,
         },
     };

@@ -1,31 +1,31 @@
-import React, { useRef } from 'react';
 import {
-    Modal,
-    ModalOverlay,
-    ModalFooter,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalCloseButton,
-    useDisclosure,
+    Box,
     Button,
+    Checkbox,
     FormControl,
     FormLabel,
     Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     Radio,
-    Text,
     RadioGroup,
-    VStack,
     Select,
-    Box,
-    Checkbox,
+    Text,
+    useDisclosure,
     useToast,
+    VStack,
 } from '@chakra-ui/react';
+import React, { useRef } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { Degree, HappeningType, RegistrationAPI } from '../lib/api/registration';
 import { Bedpres } from '../lib/api/bedpres';
 import { Question } from '../lib/api/decoders';
 import { Event } from '../lib/api/event';
+import { Degree, HappeningType, RegistrationAPI } from '../lib/api/registration';
 
 const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
     const { register } = useFormContext();
@@ -101,7 +101,7 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const HappeningForm = ({
+const RegistrationForm = ({
     happening,
     type,
     backendUrl,
@@ -294,4 +294,4 @@ const HappeningForm = ({
     );
 };
 
-export default HappeningForm;
+export default RegistrationForm;

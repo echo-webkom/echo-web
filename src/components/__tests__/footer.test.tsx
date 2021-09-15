@@ -1,7 +1,7 @@
-import React from 'react';
 import { screen } from '@testing-library/react';
-import { render } from './testing-utils';
+import React from 'react';
 import Footer from '../footer';
+import { render } from './testing-utils';
 
 describe('Footer', () => {
     test('renders without crashing', () => {

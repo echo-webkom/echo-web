@@ -1,6 +1,6 @@
+import { Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import React from 'react';
-import { Tabs, Grid, GridItem, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
-import ContentBox from './content-box';
+import Section from './section';
 
 const StaticInfo = ({
     tabNames,
@@ -13,7 +13,7 @@ const StaticInfo = ({
         <Tabs isLazy orientation="vertical" data-testid="static-info">
             <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                 <GridItem minW="0" maxW="100%" colSpan={1}>
-                    <ContentBox>
+                    <Section>
                         <TabList>
                             {tabNames.map((tabName: string) => (
                                 <Tab
@@ -27,10 +27,10 @@ const StaticInfo = ({
                                 </Tab>
                             ))}
                         </TabList>
-                    </ContentBox>
+                    </Section>
                 </GridItem>
                 <GridItem minW="0" maxW="100%" colStart={[1, null, null, 2]} colSpan={[1, null, null, 3]} rowSpan={2}>
-                    <ContentBox>
+                    <Section>
                         <TabPanels>
                             {tabPanels.map((node: React.ReactNode, index: number) => (
                                 <TabPanel key={index.toString()} data-testid={`${index.toString()}-tabPanel`} p="0">
@@ -38,7 +38,7 @@ const StaticInfo = ({
                                 </TabPanel>
                             ))}
                         </TabPanels>
-                    </ContentBox>
+                    </Section>
                 </GridItem>
             </Grid>
         </Tabs>

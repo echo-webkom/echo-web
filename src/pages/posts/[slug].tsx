@@ -1,20 +1,18 @@
-import React from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { ParsedUrlQuery } from 'querystring';
-import { useRouter } from 'next/router';
-import { Box, Text, Grid, GridItem, Heading, Divider, Icon, Center, Spinner } from '@chakra-ui/react';
-import { CgProfile } from 'react-icons/cg';
-import { BiCalendar } from 'react-icons/bi';
-import Markdown from 'markdown-to-jsx';
+import { Box, Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
-
-import Layout from '../../components/layout';
-import SEO from '../../components/seo';
-import MapMarkdownChakra from '../../markdown';
-import { PostAPI, Post } from '../../lib/api/post';
-
-import ContentBox from '../../components/content-box';
+import Markdown from 'markdown-to-jsx';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+import { ParsedUrlQuery } from 'querystring';
+import React from 'react';
+import { BiCalendar } from 'react-icons/bi';
+import { CgProfile } from 'react-icons/cg';
 import ErrorBox from '../../components/error-box';
+import Layout from '../../components/layout';
+import Section from '../../components/section';
+import SEO from '../../components/seo';
+import { Post, PostAPI } from '../../lib/api/post';
+import MapMarkdownChakra from '../../markdown';
 
 const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element => {
     const router = useRouter();
@@ -32,7 +30,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     <SEO title={post.title} />
                     <Box>
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={ContentBox}>
+                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
                                 <Grid templateColumns="min-content auto" gap="3" alignItems="center">
                                     <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author}</Text>
@@ -47,13 +45,13 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                 rowSpan={[1, null, null, 2]}
                                 minW="0"
                             >
-                                <ContentBox>
+                                <Section>
                                     <Heading mb="0.2em" size="2xl">
                                         {post.title}
                                     </Heading>
                                     <Divider mb="1em" />
                                     <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
-                                </ContentBox>
+                                </Section>
                             </GridItem>
                         </Grid>
                     </Box>

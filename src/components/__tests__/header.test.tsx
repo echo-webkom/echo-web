@@ -1,7 +1,7 @@
-import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render } from './testing-utils';
+import React from 'react';
 import Header from '../header';
+import { render } from './testing-utils';
 
 describe('Header', () => {
     test('renders without crashing', () => {

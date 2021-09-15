@@ -1,19 +1,18 @@
-import React, { useRef } from 'react';
-import { IoIosMenu } from 'react-icons/io';
-import NextLink from 'next/link';
-import Image from 'next/image';
 import {
-    Text,
     Center,
     Flex,
+    Icon,
     IconButton,
+    LinkBox,
+    LinkOverlay,
+    Text,
     useColorModeValue,
     useDisclosure,
-    LinkOverlay,
-    LinkBox,
-    Icon,
 } from '@chakra-ui/react';
-
+import Image from 'next/image';
+import NextLink from 'next/link';
+import React, { useRef } from 'react';
+import { IoIosMenu } from 'react-icons/io';
 import NavBar from './navbar';
 
 const RandomHeaderMessage = (): string => {

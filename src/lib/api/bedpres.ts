@@ -1,8 +1,9 @@
-import { union, nil, Pojo, array, record, string, number, decodeType } from 'typescript-json-decoder';
+import axios from 'axios';
+import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
-import { publishedAtDecoder, authorDecoder, questionDecoder } from './decoders';
+import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
-import { GET_N_BEDPRESES, GET_BEDPRES_BY_SLUG } from './schema';
+import { GET_BEDPRES_BY_SLUG, GET_N_BEDPRESES } from './schema';
 
 // Automatically creates the Bedpres type with the
 // fields we specify in our bedpresDecoder.
@@ -79,7 +80,7 @@ export const BedpresAPI = {
             console.log(error); // eslint-disable-line
             return {
                 bedpreses: null,
-                error: handleError(error.response?.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
@@ -107,16 +108,22 @@ export const BedpresAPI = {
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (!error.response) {
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return {
+                        bedpres: null,
+                        error: '404',
+                    };
+                }
                 return {
                     bedpres: null,
-                    error: '404',
+                    error: handleError(error.response?.status),
                 };
             }
 
             return {
                 bedpres: null,
-                error: handleError(error.response?.status),
+                error: handleError(500),
             };
         }
     },

@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from './testing-utils';
 import NavBar from '../navbar';
+import { render } from './testing-utils';
 
 describe('NavBar', () => {
     test('renders without crashing', () => {

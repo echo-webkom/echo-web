@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import type { AppProps } from 'next/app';
-import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import NextNProgress from 'nextjs-progressbar';
+import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
+import NextNProgress from 'nextjs-progressbar';
+import React from 'react';
 import Fonts from '../styles/fonts';
 import theme from '../styles/theme';
 

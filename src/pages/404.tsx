@@ -1,6 +1,5 @@
+import { Box, Center, Heading, Text } from '@chakra-ui/react';
 import React from 'react';
-import { Center, Box, Heading, Text } from '@chakra-ui/react';
-
 import Layout from '../components/layout';
 import SEO from '../components/seo';
 

@@ -1,25 +1,25 @@
-import React, { RefObject } from 'react';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import { VscColorMode } from 'react-icons/vsc';
 import {
-    Center,
     Box,
-    Flex,
-    IconButton,
+    Center,
     Drawer,
     DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
     DrawerHeader,
     DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-    useColorMode,
+    Flex,
+    Heading,
+    Icon,
+    IconButton,
     Link,
     LinkBox,
     LinkOverlay,
-    Heading,
-    Icon,
+    useColorMode,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import React, { RefObject } from 'react';
+import { VscColorMode } from 'react-icons/vsc';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
     const router = useRouter();

@@ -1,10 +1,9 @@
-import React from 'react';
-
 import { GetStaticProps } from 'next';
-import { PostAPI, Post } from '../../lib/api/post';
+import React from 'react';
 import Layout from '../../components/layout';
 import PostList from '../../components/post-list';
 import SEO from '../../components/seo';
+import { Post, PostAPI } from '../../lib/api/post';
 
 const PostCollectionPage = ({ posts, error }: { posts: Array<Post>; error: string }): JSX.Element => {
     return (

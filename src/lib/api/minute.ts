@@ -1,4 +1,5 @@
-import { array, record, Pojo, decodeType, string, boolean } from 'typescript-json-decoder';
+import axios from 'axios';
+import { array, boolean, decodeType, Pojo, record, string } from 'typescript-json-decoder';
 import API from './api';
 import handleError from './errors';
 import { GET_N_MINUTES } from './schema';
@@ -64,7 +65,7 @@ export const MinuteAPI = {
             console.log(error); // eslint-disable-line
             return {
                 minutes: null,
-                error: handleError(error.response.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
