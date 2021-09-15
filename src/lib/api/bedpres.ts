@@ -115,11 +115,15 @@ export const BedpresAPI = {
                         error: '404',
                     };
                 }
+                return {
+                    bedpres: null,
+                    error: handleError(error.response?.status),
+                };
             }
 
             return {
                 bedpres: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(500),
             };
         }
     },

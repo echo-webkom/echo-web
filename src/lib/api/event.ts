@@ -142,11 +142,15 @@ export const EventAPI = {
                         error: '404',
                     };
                 }
+                return {
+                    event: null,
+                    error: handleError(error.response?.status),
+                };
             }
 
             return {
                 event: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(500),
             };
         }
     },
