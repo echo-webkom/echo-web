@@ -1,5 +1,4 @@
 import { Button, Center, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
-import { act } from '@testing-library/react';
 import NextLink from 'next/link';
 
 interface Props {
