@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
 import handleError from './errors';
@@ -82,7 +83,7 @@ export const StudentGroupAPI = {
             console.log(error); // eslint-disable-line
             return {
                 studentGroups: [],
-                error: handleError(error.response.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },

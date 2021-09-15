@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
 import API from './api';
 import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
@@ -108,7 +109,7 @@ export const EventAPI = {
             console.log(error); // eslint-disable-line
             return {
                 events: null,
-                error: handleError(error.response?.status),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
             };
         }
     },
@@ -134,16 +135,22 @@ export const EventAPI = {
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (!error.response) {
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return {
+                        event: null,
+                        error: '404',
+                    };
+                }
                 return {
                     event: null,
-                    error: '404',
+                    error: handleError(error.response?.status),
                 };
             }
 
             return {
                 event: null,
-                error: handleError(error.response?.status),
+                error: handleError(500),
             };
         }
     },
