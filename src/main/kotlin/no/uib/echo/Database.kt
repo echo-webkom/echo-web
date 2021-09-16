@@ -30,7 +30,7 @@ object Db {
             password = dbPassword
             driverClassName = "org.postgresql.Driver"
             connectionTimeout = 1000
-            maximumPoolSize = if (dev) 10 else 90
+            maximumPoolSize = if (dev || System.getenv("LOWER_MAX_CONN") != null) 10 else 90
         })
     }
 
