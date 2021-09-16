@@ -16,6 +16,7 @@ import java.net.URI
 
 object Db {
     val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
+    val dev = System.getenv("DEV") != null
 
     val dbPort = if (dbUri.port == -1) 5432 else dbUri.port
     val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbPort}${dbUri.path}"
@@ -29,7 +30,7 @@ object Db {
             password = dbPassword
             driverClassName = "org.postgresql.Driver"
             connectionTimeout = 1000
-            maximumPoolSize = 10
+            maximumPoolSize = if (dev || System.getenv("LOWER_MAX_CONN") != null) 10 else 90
         })
     }
 
@@ -43,7 +44,7 @@ object Db {
 
     fun init() {
         // Don't migrate if running on local machine
-        if (System.getenv("DEV") == null)
+        if (!dev)
             migrate()
 
         transaction(conn) {
