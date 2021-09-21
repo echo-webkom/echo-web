@@ -8,19 +8,19 @@ import HappeningUI from '../../components/happening';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { Event, EventAPI } from '../../lib/api/event';
-import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
+import { HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api/registration';
 import { useTimeout } from '../../lib/hooks';
 
 const EventPage = ({
     event,
     backendUrl,
-    regCount,
+    spotRangeCounts,
     date,
     error,
 }: {
     event: Event;
     backendUrl: string;
-    regCount: RegistrationCount;
+    spotRangeCounts: Array<SpotRangeCount>;
     date: number;
     error: string;
 }): JSX.Element => {
@@ -41,7 +41,13 @@ const EventPage = ({
             {event && !error && (
                 <>
                     <SEO title={event.title} />
-                    <HappeningUI bedpres={null} event={event} backendUrl={backendUrl} regCount={regCount} date={date} />
+                    <HappeningUI
+                        bedpres={null}
+                        event={event}
+                        backendUrl={backendUrl}
+                        spotRangeCounts={spotRangeCounts}
+                        date={date}
+                    />
                 </>
             )}
         </Layout>
@@ -60,7 +66,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw Error('No ADMIN_KEY defined.');
 
-    const { regCount } = await RegistrationAPI.getRegistrationCount(adminKey, slug, HappeningType.BEDPRES, backendUrl);
+    const { spotRangeCounts } = await RegistrationAPI.getSpotRangeCounts(
+        adminKey,
+        slug,
+        HappeningType.EVENT,
+        backendUrl,
+    );
 
     const date = Date.now();
 
@@ -73,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             event,
-            regCount,
+            spotRangeCounts,
             date,
             backendUrl,
             error,

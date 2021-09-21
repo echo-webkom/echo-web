@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 import { Event } from '../lib/api/event';
-import { HappeningType, RegistrationCount } from '../lib/api/registration';
+import { HappeningType, SpotRangeCount } from '../lib/api/registration';
 import Article from './article';
 import Countdown from './countdown';
 import HappeningMetaInfo from './happening-meta-info';
@@ -16,20 +16,17 @@ const HappeningUI = ({
     bedpres,
     event,
     backendUrl,
-    regCount,
+    spotRangeCounts,
     date,
 }: {
     bedpres: Bedpres | null;
     event: Event | null;
     backendUrl: string;
-    regCount: RegistrationCount;
+    spotRangeCounts: Array<SpotRangeCount>;
     date: number;
 }): JSX.Element => {
     const happening = bedpres || event;
     const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
-    const spotsTotal = happening?.spots;
-    const spotsTaken = regCount?.regCount;
-    const spotsWaitlist = regCount?.waitListCount;
 
     const regDate = happening?.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
     const eventDate = happening?.date ? parseISO(happening.date) : new Date(date);
@@ -60,11 +57,7 @@ const HappeningUI = ({
                                 date={parseISO(happening.date)}
                                 location={happening.location}
                                 companyLink={bedpres ? bedpres.companyLink : undefined}
-                                spotsTotal={spotsTotal || undefined}
-                                spotsTaken={spotsTaken || undefined}
-                                spotsWaitlist={spotsWaitlist || undefined}
-                                minDegreeYear={happening.minDegreeYear || undefined}
-                                maxDegreeYear={happening.maxDegreeYear || undefined}
+                                spotRangeCounts={spotRangeCounts}
                             />
                             {happening.registrationTime && (
                                 <>
