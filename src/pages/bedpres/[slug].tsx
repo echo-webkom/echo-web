@@ -9,18 +9,18 @@ import HappeningUI from '../../components/happening';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
-import { HappeningType, RegistrationAPI, RegistrationCount } from '../../lib/api/registration';
+import { HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api/registration';
 
 const BedpresPage = ({
     bedpres,
     backendUrl,
-    regCount,
+    spotRangeCounts,
     date,
     error,
 }: {
     bedpres: Bedpres;
     backendUrl: string;
-    regCount: RegistrationCount;
+    spotRangeCounts: Array<SpotRangeCount>;
     date: number;
     error: string;
 }): JSX.Element => {
@@ -45,7 +45,7 @@ const BedpresPage = ({
                         bedpres={bedpres}
                         event={null}
                         backendUrl={backendUrl}
-                        regCount={regCount}
+                        spotRangeCounts={spotRangeCounts}
                         date={date}
                     />
                 </>
@@ -66,7 +66,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw Error('No ADMIN_KEY defined.');
 
-    const { regCount } = await RegistrationAPI.getRegistrationCount(adminKey, slug, HappeningType.BEDPRES, backendUrl);
+    const { spotRangeCounts } = await RegistrationAPI.getSpotRangeCounts(
+        adminKey,
+        slug,
+        HappeningType.BEDPRES,
+        backendUrl,
+    );
 
     const date = Date.now();
 
@@ -79,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             bedpres,
-            regCount,
+            spotRangeCounts,
             date,
             backendUrl,
             error,

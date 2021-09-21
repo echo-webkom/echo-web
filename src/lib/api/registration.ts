@@ -80,8 +80,11 @@ const responseDecoder = record({
     date: optional(string),
 });
 
-export type RegistrationCount = decodeType<typeof registrationCountDecoder>;
-const registrationCountDecoder = record({
+export type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
+const spotRangeCountDecoder = record({
+    spots: number,
+    minDegreeYear: number,
+    maxDegreeYear: number,
     regCount: number,
     waitListCount: number,
 });
@@ -146,14 +149,14 @@ export const RegistrationAPI = {
         }
     },
 
-    getRegistrationCount: async (
+    getSpotRangeCounts: async (
         auth: string,
         slug: string,
         type: HappeningType,
         backendUrl: string,
-    ): Promise<{ regCount: RegistrationCount | null; regCountErr: string | null }> => {
+    ): Promise<{ spotRangeCounts: Array<SpotRangeCount> | null; spotRangeCountsErr: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}&type=${type}`, {
+            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}&type=${type}`, {
                 auth: {
                     username: 'admin',
                     password: auth,
@@ -161,14 +164,14 @@ export const RegistrationAPI = {
             });
 
             return {
-                regCount: registrationCountDecoder(data),
-                regCountErr: null,
+                spotRangeCounts: array(spotRangeCountDecoder)(data),
+                spotRangeCountsErr: null,
             };
         } catch (err) {
             console.log(err); // eslint-disable-line
             return {
-                regCount: null,
-                regCountErr: JSON.stringify(err),
+                spotRangeCounts: null,
+                spotRangeCountsErr: JSON.stringify(err),
             };
         }
     },
