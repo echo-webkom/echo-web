@@ -5,9 +5,9 @@ import removeMD from 'remove-markdown';
 import { Post } from '../lib/api/post';
 
 const PostPreview = ({ post }: { post: Post }): JSX.Element => {
-    const authorBg = useColorModeValue('yellow.400', 'yellow.200');
-    const hoverColor = useColorModeValue('gray.200', 'gray.700');
-    const bgColor = useColorModeValue('gray.50', 'gray.800');
+    const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
+    const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
+    const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     return (
         <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
             <NextLink href={`/posts/${post.slug}`} passHref>
@@ -18,9 +18,11 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
                         px="2em"
                         pb="10em"
                         bg={bgColor}
+                        border="2px"
+                        borderColor="transparent"
                         position="relative"
                         overflow="hidden"
-                        _hover={{ backgroundColor: hoverColor }}
+                        _hover={{ borderColor: borderColor }}
                     >
                         <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
                             {post.title}

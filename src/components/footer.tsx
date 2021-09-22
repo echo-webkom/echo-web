@@ -1,4 +1,4 @@
-import { Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text } from '@chakra-ui/react';
+import { Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
@@ -8,12 +8,12 @@ import { FiMail } from 'react-icons/fi';
 const echoLogoWhite = '/echo-logo-text-only-white.png';
 
 const Footer = (): JSX.Element => {
-    const color = 'teal.400';
+    const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
 
     return (
         <SimpleGrid
             columns={[1, 2, 3]}
-            bg="bg2Dark"
+            bg="bg.dark.secondary"
             justifyItems="center"
             alignItems="center"
             spacingX="3em"

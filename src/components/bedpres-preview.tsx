@@ -16,11 +16,17 @@ import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
 
 const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
-    const hoverColor = useColorModeValue('gray.100', 'gray.700');
+    const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
 
     return (
         <LinkBox data-testid={bedpres.slug}>
-            <Box display="block" p={[0, null, null, null, 5]} _hover={{ backgroundColor: hoverColor }}>
+            <Box
+                display="block"
+                border="2px"
+                borderColor="transparent"
+                p={[0, null, null, null, 5]}
+                _hover={{ bg: hoverColor }}
+            >
                 <Flex verticalAlign="middle">
                     <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
                     <Center ml="2em">
