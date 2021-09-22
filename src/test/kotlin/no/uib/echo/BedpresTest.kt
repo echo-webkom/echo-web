@@ -19,7 +19,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
 class BedpresTest : StringSpec({
-    val exampleBedpres = HappeningJson("bedpres-med-noen", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENINGTYPE.BEDPRES)
+    val exampleBedpres = HappeningJson("bedpres-med-noen", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENING_TYPE.BEDPRES)
     val exampleBedpresSlug = HappeningSlugJson(exampleBedpres.slug, exampleBedpres.type)
     val gson = Gson()
 

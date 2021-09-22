@@ -9,7 +9,7 @@ enum class RegistrationStatus {
     ACCEPTED,
     ALREADY_EXISTS,
     HAPPENING_DOESNT_EXIST,
-    WAITLIST,
+    WAIT_LIST,
     TOO_EARLY,
     NOT_IN_RANGE
 }
@@ -25,7 +25,7 @@ data class RegistrationJson(
     val submitDate: String?,
     val waitList: Boolean,
     val answers: List<AnswerJson>,
-    val type: HAPPENINGTYPE
+    val type: HAPPENING_TYPE
 )
 
 data class RegistrationCountJson(
@@ -33,7 +33,7 @@ data class RegistrationCountJson(
     val waitListCount: Long
 )
 
-data class ShortRegistrationJson(val slug: String, val email: String, val type: HAPPENINGTYPE)
+data class ShortRegistrationJson(val slug: String, val email: String, val type: HAPPENING_TYPE)
 
 object BedpresRegistration : Table() {
     val email: Column<String> = text("email")
@@ -66,7 +66,7 @@ object EventRegistration : Table() {
 fun selectRegistrations(
     emailParam: String?,
     slugParam: String?,
-    type: HAPPENINGTYPE
+    type: HAPPENING_TYPE
 ): List<RegistrationJson>? {
     val result = transaction {
         addLogger(StdOutSqlLogger)
@@ -74,23 +74,23 @@ fun selectRegistrations(
         val query = when {
             emailParam != null && slugParam != null ->
                 when (type) {
-                    HAPPENINGTYPE.BEDPRES ->
+                    HAPPENING_TYPE.BEDPRES ->
                         BedpresRegistration.select { BedpresRegistration.email eq emailParam and (BedpresRegistration.bedpresSlug eq slugParam) }
-                    HAPPENINGTYPE.EVENT ->
+                    HAPPENING_TYPE.EVENT ->
                         EventRegistration.select { EventRegistration.email eq emailParam and (EventRegistration.eventSlug eq slugParam) }
                 }
             slugParam != null ->
                 when (type) {
-                    HAPPENINGTYPE.BEDPRES ->
+                    HAPPENING_TYPE.BEDPRES ->
                         BedpresRegistration.select { BedpresRegistration.bedpresSlug eq slugParam }
-                    HAPPENINGTYPE.EVENT ->
+                    HAPPENING_TYPE.EVENT ->
                         EventRegistration.select { EventRegistration.eventSlug eq slugParam }
                 }
             emailParam != null ->
                 when (type) {
-                    HAPPENINGTYPE.BEDPRES ->
+                    HAPPENING_TYPE.BEDPRES ->
                         BedpresRegistration.select { BedpresRegistration.email eq emailParam }
-                    HAPPENINGTYPE.EVENT ->
+                    HAPPENING_TYPE.EVENT ->
                         EventRegistration.select { EventRegistration.email eq emailParam }
                 }
             else -> null
@@ -100,7 +100,7 @@ fun selectRegistrations(
     }
 
     return when (type) {
-        HAPPENINGTYPE.BEDPRES ->
+        HAPPENING_TYPE.BEDPRES ->
             (result?.map { reg ->
                 RegistrationJson(
                     reg[BedpresRegistration.email],
@@ -120,7 +120,7 @@ fun selectRegistrations(
                     type
                 )
             })
-        HAPPENINGTYPE.EVENT ->
+        HAPPENING_TYPE.EVENT ->
             (result?.map { reg ->
                 RegistrationJson(
                     reg[EventRegistration.email],
@@ -158,9 +158,9 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             return@transaction Triple(happening.registrationDate, null, RegistrationStatus.TOO_EARLY)
 
         val countRegs = when (reg.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug }.count()
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 EventRegistration.select { EventRegistration.eventSlug eq reg.slug }.count()
         }
 
@@ -168,10 +168,10 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
         val waitListSpot = countRegs - happening.spots + 1
 
         val oldReg = when (reg.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.select { BedpresRegistration.email eq reg.email and (BedpresRegistration.bedpresSlug eq happening.slug) }
                     .firstOrNull()
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 EventRegistration.select { EventRegistration.email eq reg.email and (EventRegistration.eventSlug eq happening.slug) }
                     .firstOrNull()
         }
@@ -186,7 +186,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             )
 
         when (reg.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.insert {
                     it[email] = reg.email
                     it[firstName] = reg.firstName
@@ -197,7 +197,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
                     it[terms] = reg.terms
                     it[BedpresRegistration.waitList] = waitList
                 }
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 EventRegistration.insert {
                     it[email] = reg.email
                     it[firstName] = reg.firstName
@@ -212,14 +212,14 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
 
         if (reg.answers.isNotEmpty()) {
             when (reg.type) {
-                HAPPENINGTYPE.BEDPRES ->
+                HAPPENING_TYPE.BEDPRES ->
                     BedpresAnswer.batchInsert(reg.answers) { a ->
                         this[BedpresAnswer.registrationEmail] = reg.email
                         this[BedpresAnswer.bedpresSlug] = reg.slug
                         this[BedpresAnswer.question] = a.question
                         this[BedpresAnswer.answer] = a.answer
                     }
-                HAPPENINGTYPE.EVENT ->
+                HAPPENING_TYPE.EVENT ->
                     EventAnswer.batchInsert(reg.answers) { a ->
                         this[EventAnswer.registrationEmail] = reg.email
                         this[EventAnswer.eventSlug] = reg.slug
@@ -230,22 +230,22 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
         }
 
         if (waitList)
-            return@transaction Triple(waitListSpot.toString(), null, RegistrationStatus.WAITLIST)
+            return@transaction Triple(waitListSpot.toString(), null, RegistrationStatus.WAIT_LIST)
         else
             return@transaction Triple(null, null, RegistrationStatus.ACCEPTED)
     }
 }
 
-fun countRegistrations(slug: String, type: HAPPENINGTYPE): RegistrationCountJson {
+fun countRegistrations(slug: String, type: HAPPENING_TYPE): RegistrationCountJson {
     val regCount = transaction {
         addLogger(StdOutSqlLogger)
 
         when (type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.select {
                     BedpresRegistration.waitList eq false and (BedpresRegistration.bedpresSlug eq slug)
                 }.count()
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 EventRegistration.select {
                     EventRegistration.waitList eq false and (EventRegistration.eventSlug eq slug)
                 }.count()
@@ -256,11 +256,11 @@ fun countRegistrations(slug: String, type: HAPPENINGTYPE): RegistrationCountJson
         addLogger(StdOutSqlLogger)
 
         when (type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.select {
                     BedpresRegistration.waitList eq true and (BedpresRegistration.bedpresSlug eq slug)
                 }.count()
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 EventRegistration.select {
                     EventRegistration.waitList eq true and (EventRegistration.eventSlug eq slug)
                 }.count()
@@ -275,9 +275,9 @@ fun deleteRegistration(shortReg: ShortRegistrationJson) {
         addLogger(StdOutSqlLogger)
 
         when (shortReg.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.deleteWhere { BedpresRegistration.bedpresSlug eq shortReg.slug and (BedpresRegistration.email eq shortReg.email) }
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 BedpresRegistration.deleteWhere { EventRegistration.eventSlug eq shortReg.slug and (EventRegistration.email eq shortReg.email) }
         }
     }

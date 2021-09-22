@@ -20,21 +20,21 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
 class EventRegistrationTest : StringSpec({
-    val exampleEvent1 = HappeningJson("event-med-noen", 50, 1, 5, "2020-04-29T20:43:29Z", HAPPENINGTYPE.EVENT)
+    val exampleEvent1 = HappeningJson("event-med-noen", 50, 1, 5, "2020-04-29T20:43:29Z", HAPPENING_TYPE.EVENT)
     val exampleEvent2 =
-        HappeningJson("event-med-noen-andre", 40, 1, 5, "2019-07-29T20:10:11Z", HAPPENINGTYPE.EVENT)
+        HappeningJson("event-med-noen-andre", 40, 1, 5, "2019-07-29T20:10:11Z", HAPPENING_TYPE.EVENT)
     val exampleEvent3 =
-        HappeningJson("event-dritlang-i-fremtiden", 40, 1, 5, "2037-07-29T20:10:11Z", HAPPENINGTYPE.EVENT)
+        HappeningJson("event-dritlang-i-fremtiden", 40, 1, 5, "2037-07-29T20:10:11Z", HAPPENING_TYPE.EVENT)
     val exampleEvent4 =
-        HappeningJson("event-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z", HAPPENINGTYPE.EVENT)
+        HappeningJson("event-for-bare-3-til-5", 40, 3, 5, "2020-05-29T20:00:11Z", HAPPENING_TYPE.EVENT)
     val exampleEvent5 =
-        HappeningJson("event-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z", HAPPENINGTYPE.EVENT)
+        HappeningJson("event-for-bare-1-til-2", 40, 1, 2, "2020-06-29T18:07:31Z", HAPPENING_TYPE.EVENT)
     val exampleReg = RegistrationJson(
         "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleEvent1.slug, true, null, false,
         listOf(
             AnswerJson("Skal du ha mat?", "Nei"),
             AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
-        ), HAPPENINGTYPE.EVENT
+        ), HAPPENING_TYPE.EVENT
     )
 
     val gson = Gson()

@@ -19,7 +19,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
 class EventTest : StringSpec({
-    val exampleEvent = HappeningJson("fest-med-tilde", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENINGTYPE.EVENT)
+    val exampleEvent = HappeningJson("fest-med-tilde", 420, 1, 5, "2021-04-29T20:43:29Z", HAPPENING_TYPE.EVENT)
     val exampleEventSlug = HappeningSlugJson(exampleEvent.slug, exampleEvent.type)
     val gson = Gson()
 

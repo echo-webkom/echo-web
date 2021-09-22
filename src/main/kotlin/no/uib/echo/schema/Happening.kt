@@ -1,6 +1,5 @@
 package no.uib.echo.schema
 
-import com.google.gson.annotations.SerializedName
 import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -14,11 +13,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
-enum class HAPPENINGTYPE {
-    @SerializedName("BEDPRES")
+enum class HAPPENING_TYPE {
     BEDPRES,
-
-    @SerializedName("EVENT")
     EVENT
 }
 
@@ -28,10 +24,10 @@ data class HappeningJson(
     val minDegreeYear: Int?,
     val maxDegreeYear: Int?,
     val registrationDate: String,
-    val type: HAPPENINGTYPE
+    val type: HAPPENING_TYPE
 )
 
-data class HappeningSlugJson(val slug: String, val type: HAPPENINGTYPE)
+data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
 object Bedpres : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
@@ -53,21 +49,21 @@ object Event : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
 
-fun selectHappeningBySlug(slug: String, type: HAPPENINGTYPE): HappeningJson? {
+fun selectHappeningBySlug(slug: String, type: HAPPENING_TYPE): HappeningJson? {
     val result = transaction {
         addLogger(StdOutSqlLogger)
 
         when (type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 Bedpres.select { Bedpres.slug eq slug }.firstOrNull()
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 Event.select { Event.slug eq slug }.firstOrNull()
         }
     }
 
     return result?.let {
         when (type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 HappeningJson(
                     it[Bedpres.slug],
                     it[Bedpres.spots],
@@ -76,7 +72,7 @@ fun selectHappeningBySlug(slug: String, type: HAPPENINGTYPE): HappeningJson? {
                     it[Bedpres.registrationDate].toString(),
                     type
                 )
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 HappeningJson(
                     it[Event.slug],
                     it[Event.spots],
@@ -97,7 +93,7 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
             addLogger(StdOutSqlLogger)
 
             when (newHappening.type) {
-                HAPPENINGTYPE.BEDPRES ->
+                HAPPENING_TYPE.BEDPRES ->
                     Bedpres.insert {
                         it[slug] = newHappening.slug
                         it[spots] = newHappening.spots
@@ -105,7 +101,7 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
                         it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
                         it[registrationDate] = DateTime(newHappening.registrationDate)
                     }
-                HAPPENINGTYPE.EVENT ->
+                HAPPENING_TYPE.EVENT ->
                     Event.insert {
                         it[slug] = newHappening.slug
                         it[spots] = newHappening.spots
@@ -136,14 +132,14 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
         addLogger(StdOutSqlLogger)
 
         when (newHappening.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 Bedpres.update({ Bedpres.slug eq newHappening.slug }) {
                     it[spots] = newHappening.spots
                     it[minDegreeYear] = newHappening.minDegreeYear ?: 1
                     it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
                     it[registrationDate] = DateTime(newHappening.registrationDate)
                 }
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 Event.update({ Event.slug eq newHappening.slug }) {
                     it[spots] = newHappening.spots
                     it[minDegreeYear] = newHappening.minDegreeYear ?: 1
@@ -164,9 +160,9 @@ fun deleteHappeningBySlug(happ: HappeningSlugJson) {
         addLogger(StdOutSqlLogger)
 
         when (happ.type) {
-            HAPPENINGTYPE.BEDPRES ->
+            HAPPENING_TYPE.BEDPRES ->
                 Bedpres.deleteWhere { Bedpres.slug eq happ.slug }
-            HAPPENINGTYPE.EVENT ->
+            HAPPENING_TYPE.EVENT ->
                 Event.deleteWhere { Event.slug eq happ.slug }
         }
     }

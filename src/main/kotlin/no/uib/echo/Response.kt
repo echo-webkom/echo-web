@@ -1,6 +1,6 @@
 package no.uib.echo
 
-import no.uib.echo.schema.HAPPENINGTYPE
+import no.uib.echo.schema.HAPPENING_TYPE
 
 data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
 
@@ -20,7 +20,7 @@ enum class Response {
     OK,
 }
 
-fun resToJson(res: Response, regType: HAPPENINGTYPE, regDate: String? = null, degreeYearRange: IntRange? = null, waitListCount: String? = null): ResponseJson {
+fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, degreeYearRange: IntRange? = null, waitListCount: String? = null): ResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -31,7 +31,7 @@ fun resToJson(res: Response, regType: HAPPENINGTYPE, regDate: String? = null, de
         Response.InvalidTerms ->
             return ResponseJson(
                 res,
-                if (regType == HAPPENINGTYPE.BEDPRES) "Du må godkjenne Bedkom sine retningslinjer." else "Du må godkjenne vilkårene.",
+                if (regType == HAPPENING_TYPE.BEDPRES) "Du må godkjenne Bedkom sine retningslinjer." else "Du må godkjenne vilkårene.",
                 defaultDesc,
                 regDate
             )
@@ -51,15 +51,15 @@ fun resToJson(res: Response, regType: HAPPENINGTYPE, regDate: String? = null, de
         Response.HappeningDoesntExist ->
             return ResponseJson(
                 res,
-                if (regType == HAPPENINGTYPE.BEDPRES) "Denne bedriftspresentasjonen finnes ikke." else "Dette arrangementet finnes ikke.",
+                if (regType == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen finnes ikke." else "Dette arrangementet finnes ikke.",
                 "Om du mener dette ikke stemmer, ta kontakt med Webkom.",
                 regDate
             )
         Response.NotInRange -> {
             val str = when (regType) {
-                HAPPENINGTYPE.BEDPRES ->
+                HAPPENING_TYPE.BEDPRES ->
                     "Denne bedriftspresentasjonen er kun åpen"
-                HAPPENINGTYPE.EVENT ->
+                HAPPENING_TYPE.EVENT ->
                     "Dette arrangementet er kun åpent"
             }
 
@@ -74,7 +74,7 @@ fun resToJson(res: Response, regType: HAPPENINGTYPE, regDate: String? = null, de
             return ResponseJson(
                 res,
             "Påmeldingen din er registrert!",
-                if (regType == HAPPENINGTYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet.",
+                if (regType == HAPPENING_TYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet.",
             regDate
             )
     }

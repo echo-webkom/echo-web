@@ -22,7 +22,7 @@ import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.schema.Degree
-import no.uib.echo.schema.HAPPENINGTYPE
+import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.RegistrationJson
@@ -101,11 +101,11 @@ object Routing {
         get("/$registrationRoute") {
             val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
-            val regType: HAPPENINGTYPE = when (call.request.queryParameters["type"]) {
+            val regType: HAPPENING_TYPE = when (call.request.queryParameters["type"]) {
                 "bedpres", "BEDPRES" ->
-                    HAPPENINGTYPE.BEDPRES
+                    HAPPENING_TYPE.BEDPRES
                 "event", "EVENT" ->
-                    HAPPENINGTYPE.EVENT
+                    HAPPENING_TYPE.EVENT
                 else -> {
                     call.respond(HttpStatusCode.BadRequest, "No registration type specified.")
                     return@get
@@ -189,7 +189,7 @@ object Routing {
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
                         call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
-                    RegistrationStatus.WAITLIST ->
+                    RegistrationStatus.WAIT_LIST ->
                         call.respond(
                             HttpStatusCode.Accepted,
                             resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
