@@ -9,6 +9,7 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
+import { isFriday, isThursday, getHours, isMonday } from 'date-fns';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React, { useRef } from 'react';
@@ -16,9 +17,21 @@ import { IoIosMenu } from 'react-icons/io';
 import NavBar from './navbar';
 
 const RandomHeaderMessage = (): string => {
-    const messageArray = ['Husk å søk undergruppeverv!', 'New semester, new me?'];
+    const stdMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
+    const now = new Date();
 
-    return messageArray[Math.floor(Math.random() * messageArray.length)];
+    if (isMonday(now)) {
+        return 'New week, new me?';
+    } else if (isThursday(now)) {
+        if (getHours(now) < 12) {
+            return 'Husk bedpres kl. 12:00!';
+        }
+        return 'Vaffeltorsdag 🧇';
+    } else if (isFriday(now)) {
+        return 'Tacofredag 🌯';
+    }
+
+    return stdMessages[Math.floor(Math.random() * stdMessages.length)];
 };
 
 const HeaderLogo = ({ message }: { message?: string }) => {
