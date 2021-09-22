@@ -102,7 +102,7 @@ testlogger {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         useIR = true
-        jvmTarget = "1.8"
+        jvmTarget = "13"
     }
 }
 
