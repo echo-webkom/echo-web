@@ -39,7 +39,10 @@ const HappeningMetaInfo = ({
                     link={companyLink}
                 />
             )}
-            {spotsTaken && spotsTotal && spotsTotal !== 0 && (
+            {spotsTotal && (!spotsTaken || spotsTaken === 0) && (
+                <IconText icon={MdEventSeat} text={`${spotsTotal} plasser`} />
+            )}
+            {spotsTotal && spotsTaken && spotsTaken !== 0 && (
                 <IconText icon={MdEventSeat} text={`${Math.min(spotsTaken, spotsTotal)}/${spotsTotal} påmeldt`} />
             )}
             {spotsWaitlist && <IconText icon={IoMdListBox} text={`${spotsWaitlist} på venteliste`} />}

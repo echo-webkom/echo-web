@@ -55,7 +55,7 @@ const IndexPage = ({
                             'Bedriftspresentasjoner',
                         ]}
                         entries={bedpreses}
-                        entryLimit={4}
+                        entryLimit={3}
                         error={bedpresError}
                         altText="Ingen kommende bedriftspresentasjoner :("
                         linkTo="/bedpres"
