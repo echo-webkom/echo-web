@@ -23,11 +23,11 @@ class BedpresTest : StringSpec({
     val exampleBedpresSlug = HappeningSlugJson(exampleBedpres.slug, exampleBedpres.type)
     val gson = Gson()
 
-    val webkom = "webkom"
+    val admin = "admin"
     val keys = mapOf(
-        webkom to "webkom-passord"
+        admin to "admin-passord"
     )
-    val auth = "$webkom:${keys[webkom]}"
+    val auth = "$admin:${keys[admin]}"
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -140,7 +140,7 @@ class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting(keys)
         }) {
-            val wrongAuth = "$webkom:damn-feil-passord-100"
+            val wrongAuth = "$admin:damn-feil-passord-100"
 
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
@@ -160,7 +160,7 @@ class BedpresTest : StringSpec({
         withTestApplication({
             configureRouting(keys)
         }) {
-            val wrongAuth = "$webkom:damn-feil-passord-100"
+            val wrongAuth = "$admin:damn-feil-passord-100"
 
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.happeningRoute}") {

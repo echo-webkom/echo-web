@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Default values
-host="http://localhost"
-port="8080"
+host=http://localhost
+port=8080
 testing=false
-user="webkom"
+user=admin
 mindeg=1
 maxdeg=5
 

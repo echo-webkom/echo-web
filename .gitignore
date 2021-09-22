@@ -1,6 +1,6 @@
 kt/
-.env
-.envrc
+.env*
+!.env.example
 .graphqlconfig
 schema.graphql
 
@@ -210,10 +210,6 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
-
-# dotenv environment variables file
-.env.test
-.env*.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

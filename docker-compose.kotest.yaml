@@ -19,8 +19,7 @@ services:
       # Value of DEV doesn't matter, only that it's defined.
       DEV: "yes"
       # Values from .env file
-      BEDKOM_KEY: ${BEDKOM_KEY}
-      WEBKOM_KEY: ${WEBKOM_KEY}
+      ADMIN_KEY: ${ADMIN_KEY}
 
   database:
     # Postgres 13.4 is the version Heroku uses.

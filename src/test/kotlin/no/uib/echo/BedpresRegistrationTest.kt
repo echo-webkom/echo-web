@@ -39,9 +39,9 @@ class BedpresRegistrationTest : StringSpec({
 
     val gson = Gson()
 
-    val bedkom = "bedkom"
+    val admin = "admin"
     val keys = mapOf(
-        bedkom to "bedkom-passord"
+        admin to "admin-passord"
     )
 
     beforeSpec { Db.init() }
@@ -63,7 +63,7 @@ class BedpresRegistrationTest : StringSpec({
         withTestApplication({
             configureRouting(keys)
         }) {
-            val wrongAuth = "$bedkom:damn-feil-passord-100"
+            val wrongAuth = "$admin:damn-feil-passord-100"
 
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}?type=BEDPRES") {
@@ -397,7 +397,7 @@ class BedpresRegistrationTest : StringSpec({
         withTestApplication({
             configureRouting(keys)
         }) {
-            val wrongAuth = "$bedkom:feil-passord-100-bruh"
+            val wrongAuth = "$admin:feil-passord-100-bruh"
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
                     addHeader(HttpHeaders.ContentType, "application/json")
@@ -586,7 +586,7 @@ class BedpresRegistrationTest : StringSpec({
                 ) {
                     addHeader(
                         HttpHeaders.Authorization,
-                        "Basic ${Base64.getEncoder().encodeToString("$bedkom:${keys[bedkom]}".toByteArray())}"
+                        "Basic ${Base64.getEncoder().encodeToString("$admin:${keys[admin]}".toByteArray())}"
                     )
                 }
 
@@ -608,7 +608,7 @@ class BedpresRegistrationTest : StringSpec({
                 ) {
                     addHeader(
                         HttpHeaders.Authorization,
-                        "Basic ${Base64.getEncoder().encodeToString("$bedkom:${keys[bedkom]}".toByteArray())}"
+                        "Basic ${Base64.getEncoder().encodeToString("$admin:${keys[admin]}".toByteArray())}"
                     )
                 }
 

@@ -36,8 +36,7 @@ import no.uib.echo.schema.insertRegistration
 import no.uib.echo.schema.selectRegistrations
 
 fun Application.configureRouting(keys: Map<String, String>) {
-    val bedkom = "bedkom"
-    val webkom = "webkom"
+    val admin = "admin"
 
     install(ContentNegotiation) {
         gson()
@@ -48,20 +47,10 @@ fun Application.configureRouting(keys: Map<String, String>) {
     }
 
     install(Authentication) {
-        basic("auth-${bedkom}") {
-            realm = "Access to registrations."
+        basic("auth-$admin") {
+            realm = "Access to registrations and events."
             validate { credentials ->
-                if (credentials.name == bedkom && credentials.password == keys[bedkom])
-                    UserIdPrincipal(credentials.name)
-                else
-                    null
-            }
-        }
-
-        basic("auth-${webkom}") {
-            realm = "Access to bedpreses."
-            validate { credentials ->
-                if (credentials.name == webkom && credentials.password == keys[webkom])
+                if (credentials.name == admin && credentials.password == keys[admin])
                     UserIdPrincipal(credentials.name)
                 else
                     null
@@ -73,16 +62,14 @@ fun Application.configureRouting(keys: Map<String, String>) {
         rateLimited {
             getStatus()
 
-            authenticate("auth-${bedkom}") {
+            authenticate("auth-$admin") {
                 getRegistration()
                 deleteRegistration()
-            }
-            postRegistration()
-
-            authenticate("auth-${webkom}") {
                 putHappening()
                 deleteHappening()
             }
+
+            postRegistration()
         }
     }
 }
