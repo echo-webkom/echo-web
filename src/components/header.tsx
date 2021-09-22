@@ -43,10 +43,10 @@ const HeaderLogo = ({ message }: { message?: string }) => {
     const bigLogo = useColorModeValue('/echo-logo.png', '/echo-logo-white.png');
 
     // Background of logo image, depending on light/dark mode.
-    const bg = useColorModeValue('bg2Light', 'bg2Dark');
+    const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
 
     // Color and background of message-box
-    const textBg = useColorModeValue('teal.500', 'teal.300');
+    const textBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const textColor = useColorModeValue('white', 'black');
 
     const msg = message || RandomHeaderMessage();
@@ -89,7 +89,7 @@ HeaderLogo.defaultProps = {
 const Header = (): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer
     const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
-    const borderBg = useColorModeValue('gray.300', 'gray.800');
+    const borderBg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
     return (
         <Center
