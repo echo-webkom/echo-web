@@ -1,4 +1,4 @@
-import { Button, Center, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { Button, Center, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 interface Props {
@@ -7,12 +7,23 @@ interface Props {
 }
 
 const ButtonLink = ({ text, linkTo }: Props): JSX.Element => {
+    const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
+    const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
+    const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');
+    const textColor = useColorModeValue('white', 'black');
     return (
         <Center>
             <LinkBox data-cy="button-link">
                 <NextLink href={linkTo} passHref>
                     <LinkOverlay>
-                        <Button colorScheme="teal" mt="1.5rem" fontSize="xl">
+                        <Button
+                            bg={bg}
+                            color={textColor}
+                            _hover={{ bg: hover }}
+                            _active={{ borderColor: active }}
+                            mt="1.5rem"
+                            fontSize="xl"
+                        >
                             {text}
                         </Button>
                     </LinkOverlay>
