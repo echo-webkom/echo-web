@@ -63,10 +63,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
 
-    const bedkomKey = process.env.BEDKOM_KEY;
-    if (!bedkomKey) throw Error('No BEDKOM_KEY defined.');
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) throw Error('No ADMIN_KEY defined.');
 
-    const { regCount } = await RegistrationAPI.getRegistrationCount(bedkomKey, slug, HappeningType.BEDPRES, backendUrl);
+    const { regCount } = await RegistrationAPI.getRegistrationCount(adminKey, slug, HappeningType.BEDPRES, backendUrl);
 
     const date = Date.now();
 
