@@ -17,7 +17,7 @@ services:
       CONTENTFUL_ACCESS_TOKEN: ${CONTENTFUL_ACCESS_TOKEN}
       CONTENTFUL_ENVIRONMENT_ID: ${CONTENTFUL_ENVIRONMENT_ID}
       BACKEND_URL: http://backend:8080
-      BEDKOM_KEY: ${BEDKOM_KEY}
+      ADMIN_KEY: ${ADMIN_KEY}
 
   backend:
     build: backend
@@ -32,7 +32,7 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./scripts/submit_happening -t -x $$WEBKOM_KEY || exit 1" ]
+      test: ["CMD-SHELL", "./scripts/submit_happening -t -x $$ADMIN_KEY || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -41,8 +41,7 @@ services:
       # The value of DEV doesn't matter, only that it's defined.
       DEV: "yes"
       # Values from .env file.
-      BEDKOM_KEY: ${BEDKOM_KEY}
-      WEBKOM_KEY: ${WEBKOM_KEY}
+      ADMIN_KEY: ${ADMIN_KEY}
 
   database:
     # Postgres 13.4 is the version Heroku uses.

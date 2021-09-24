@@ -155,7 +155,7 @@ export const RegistrationAPI = {
         try {
             const { data } = await axios.get(`${backendUrl}/registration?count=y&slug=${slug}&type=${type}`, {
                 auth: {
-                    username: 'bedkom',
+                    username: 'admin',
                     password: auth,
                 },
             });
