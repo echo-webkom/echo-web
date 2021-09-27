@@ -1,16 +1,10 @@
 package no.uib.echo.schema
 
 import io.ktor.http.HttpStatusCode
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import no.uib.echo.schema.Happening.registrationDate
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.jodatime.datetime
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 enum class HAPPENING_TYPE {
@@ -20,95 +14,60 @@ enum class HAPPENING_TYPE {
 
 data class HappeningJson(
     val slug: String,
-    val spots: Int,
-    val minDegreeYear: Int?,
-    val maxDegreeYear: Int?,
     val registrationDate: String,
+    val spotRanges: List<SpotRangeJson>,
     val type: HAPPENING_TYPE
 )
 
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
-object Bedpres : Table() {
-    val slug: Column<String> = text("slug").uniqueIndex()
-    val spots: Column<Int> = integer("spots")
-    val minDegreeYear: Column<Int> = integer("min_degree_year")
-    val maxDegreeYear: Column<Int> = integer("max_degree_year")
+object Happening : Table() {
+    val slug: Column<String> = text("slug")
+    val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
 
-    override val primaryKey: PrimaryKey = PrimaryKey(slug)
+    override val primaryKey: PrimaryKey = PrimaryKey(slug, happeningType)
 }
 
-object Event : Table() {
-    val slug: Column<String> = text("slug").uniqueIndex()
-    val spots: Column<Int> = integer("spots")
-    val minDegreeYear: Column<Int> = integer("min_degree_year")
-    val maxDegreeYear: Column<Int> = integer("max_degree_year")
-    val registrationDate: Column<DateTime> = datetime("registration_date")
-
-    override val primaryKey: PrimaryKey = PrimaryKey(slug)
-}
-
-fun selectHappeningBySlug(slug: String, type: HAPPENING_TYPE): HappeningJson? {
+fun selectHappening(slug: String, type: HAPPENING_TYPE): HappeningJson? {
     val result = transaction {
         addLogger(StdOutSqlLogger)
 
-        when (type) {
-            HAPPENING_TYPE.BEDPRES ->
-                Bedpres.select { Bedpres.slug eq slug }.firstOrNull()
-            HAPPENING_TYPE.EVENT ->
-                Event.select { Event.slug eq slug }.firstOrNull()
-        }
+        Happening.select { Happening.slug eq slug and (Happening.happeningType eq type.toString() ) }.firstOrNull()
     }
 
+    val spotRanges = selectSpotRanges(slug, type)
+
     return result?.let {
-        when (type) {
-            HAPPENING_TYPE.BEDPRES ->
-                HappeningJson(
-                    it[Bedpres.slug],
-                    it[Bedpres.spots],
-                    it[Bedpres.minDegreeYear],
-                    it[Bedpres.maxDegreeYear],
-                    it[Bedpres.registrationDate].toString(),
-                    type
-                )
-            HAPPENING_TYPE.EVENT ->
-                HappeningJson(
-                    it[Event.slug],
-                    it[Event.spots],
-                    it[Event.minDegreeYear],
-                    it[Event.maxDegreeYear],
-                    it[Event.registrationDate].toString(),
-                    type
-                )
-        }
+        HappeningJson(
+            it[Happening.slug],
+            it[registrationDate].toString(),
+            spotRanges,
+            type
+        )
     }
 }
 
 fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, String> {
-    val happening = selectHappeningBySlug(newHappening.slug, newHappening.type)
+    val happening = selectHappening(newHappening.slug, newHappening.type)
 
     if (happening == null) {
         transaction {
             addLogger(StdOutSqlLogger)
 
-            when (newHappening.type) {
-                HAPPENING_TYPE.BEDPRES ->
-                    Bedpres.insert {
-                        it[slug] = newHappening.slug
-                        it[spots] = newHappening.spots
-                        it[minDegreeYear] = newHappening.minDegreeYear ?: 1
-                        it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
-                        it[registrationDate] = DateTime(newHappening.registrationDate)
-                    }
-                HAPPENING_TYPE.EVENT ->
-                    Event.insert {
-                        it[slug] = newHappening.slug
-                        it[spots] = newHappening.spots
-                        it[minDegreeYear] = newHappening.minDegreeYear ?: 1
-                        it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
-                        it[registrationDate] = DateTime(newHappening.registrationDate)
-                    }
+            Happening.insert {
+                it[slug] = newHappening.slug
+                it[happeningType] = newHappening.type.toString()
+                it[registrationDate] = DateTime(newHappening.registrationDate)
+            }
+            newHappening.spotRanges.map { range ->
+                SpotRange.insert{
+                    it[spots] = range.spots
+                    it[minDegreeYear] = range.minDegreeYear
+                    it[maxDegreeYear] = range.maxDegreeYear
+                    it[happeningSlug] = newHappening.slug
+                    it[happeningType] = newHappening.type.toString()
+                }
             }
         }
 
@@ -116,42 +75,38 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
     }
 
     if (happening.slug == newHappening.slug &&
-        happening.spots == newHappening.spots &&
-        happening.minDegreeYear == newHappening.minDegreeYear &&
-        happening.maxDegreeYear == newHappening.maxDegreeYear &&
         DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
-        happening.type == newHappening.type
+        happening.type == newHappening.type &&
+        happening.spotRanges == newHappening.spotRanges
     ) {
         return Pair(
             HttpStatusCode.Accepted,
-            "Happening (${newHappening.type}) with slug = ${newHappening.slug} and registrationDate = ${newHappening.registrationDate} has already been submitted."
+            "Happening (${newHappening.type}) with slug = ${newHappening.slug}, " +
+                    "registrationDate = ${newHappening.registrationDate}, " +
+                    "and spotRanges = ${spotRangeToString(newHappening.spotRanges)} has already been submitted."
         )
     }
 
     transaction {
         addLogger(StdOutSqlLogger)
 
-        when (newHappening.type) {
-            HAPPENING_TYPE.BEDPRES ->
-                Bedpres.update({ Bedpres.slug eq newHappening.slug }) {
-                    it[spots] = newHappening.spots
-                    it[minDegreeYear] = newHappening.minDegreeYear ?: 1
-                    it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
-                    it[registrationDate] = DateTime(newHappening.registrationDate)
-                }
-            HAPPENING_TYPE.EVENT ->
-                Event.update({ Event.slug eq newHappening.slug }) {
-                    it[spots] = newHappening.spots
-                    it[minDegreeYear] = newHappening.minDegreeYear ?: 1
-                    it[maxDegreeYear] = newHappening.maxDegreeYear ?: 5
-                    it[registrationDate] = DateTime(newHappening.registrationDate)
-                }
+        Happening.update({ Happening.slug eq newHappening.slug and (Happening.happeningType eq newHappening.type.toString())}) {
+            it[registrationDate] = DateTime(newHappening.registrationDate)
+        }
+        newHappening.spotRanges.map { range ->
+            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.happeningSlug eq newHappening.type.toString() )}) {
+                it[spots] = range.spots
+                it[minDegreeYear] = range.spots
+                it[maxDegreeYear] = range.spots
+            }
         }
     }
 
     return Pair(
         HttpStatusCode.OK,
-        "Updated happening (${newHappening.type}) with slug = ${newHappening.slug} to spots = ${newHappening.spots}, minDegreeYear = ${newHappening.minDegreeYear}, maxDegreeYear = ${newHappening.maxDegreeYear} and registrationDate = ${newHappening.registrationDate}."
+        "Updated happening (${newHappening.type}) with slug = ${newHappening.slug} " +
+                "to registrationDate = ${newHappening.registrationDate} " +
+                "and spotRanges = ${spotRangeToString(newHappening.spotRanges)}."
     )
 }
 
@@ -159,11 +114,12 @@ fun deleteHappeningBySlug(happ: HappeningSlugJson) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        when (happ.type) {
-            HAPPENING_TYPE.BEDPRES ->
-                Bedpres.deleteWhere { Bedpres.slug eq happ.slug }
-            HAPPENING_TYPE.EVENT ->
-                Event.deleteWhere { Event.slug eq happ.slug }
-        }
+        Happening.deleteWhere { Happening.slug eq happ.slug and (Happening.happeningType eq happ.type.toString()) }
     }
+}
+
+fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
+    return "[ ${spotRanges.map {
+        "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
+    }} ]"
 }

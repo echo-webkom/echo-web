@@ -8,40 +8,27 @@ data class AnswerJson(
     val answer: String
 )
 
-object BedpresAnswer : Table() {
+object Answer : Table() {
+    val id: Column<Int> = integer("id").uniqueIndex().autoIncrement()
+    val registrationEmail: Column<String> = text("registration_email")
     val question: Column<String> = text("question")
     val answer: Column<String> = text("answer")
-    val bedpresSlug: Column<String> = text("bedpres_slug") references Bedpres.slug
-    val registrationEmail: Column<String> = text("registration_email")
+    val happeningSlug: Column<String> = text("happening_slug")
+    val happeningType: Column<String> = text("happening_type")
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
-object EventAnswer : Table() {
-    val question: Column<String> = text("question")
-    val answer: Column<String> = text("answer")
-    val eventSlug: Column<String> = text("event_slug") references Event.slug
-    val registrationEmail: Column<String> = text("registration_email")
-}
-
-fun selectHappeningQuestionsByEmailAndSlug(email: String, slug: String, type: HAPPENING_TYPE): List<AnswerJson> {
+fun selectHappeningQuestions(email: String, slug: String, type: HAPPENING_TYPE): List<AnswerJson> {
     val result = transaction {
         addLogger(StdOutSqlLogger)
 
-        when (type) {
-            HAPPENING_TYPE.BEDPRES ->
-                BedpresAnswer.select { BedpresAnswer.registrationEmail eq email and (BedpresAnswer.bedpresSlug eq slug) }
-                    .toList()
-            HAPPENING_TYPE.EVENT ->
-                EventAnswer.select { EventAnswer.registrationEmail eq email and (EventAnswer.eventSlug eq slug) }
-                    .toList()
-        }
+        Answer.select {
+            Answer.registrationEmail eq email and
+                    (Answer.happeningType eq slug) and
+                    (Answer.happeningType eq type.toString())
+        }.toList()
     }
 
-    return when (type) {
-        HAPPENING_TYPE.BEDPRES ->
-            result.map { q -> AnswerJson(q[BedpresAnswer.question], q[BedpresAnswer.answer]) }
-        HAPPENING_TYPE.EVENT ->
-            result.map { q ->
-                AnswerJson(q[EventAnswer.question], q[EventAnswer.answer])
-            }
-    }
+    return result.map { q -> AnswerJson(q[Answer.question], q[Answer.answer]) }
 }

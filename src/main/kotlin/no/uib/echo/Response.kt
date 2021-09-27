@@ -1,6 +1,7 @@
 package no.uib.echo
 
 import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.SpotRangeJson
 
 data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
 
@@ -20,7 +21,7 @@ enum class Response {
     OK,
 }
 
-fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, degreeYearRange: IntRange? = null, waitListCount: String? = null): ResponseJson {
+fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, spotRanges: List<SpotRangeJson>? = null, waitListCount: String? = null): ResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -58,24 +59,41 @@ fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, d
         Response.NotInRange -> {
             val str = when (regType) {
                 HAPPENING_TYPE.BEDPRES ->
-                    "Denne bedriftspresentasjonen er kun åpen"
+                    "Denne bedriftspresentasjonen er kun åpen for "
                 HAPPENING_TYPE.EVENT ->
-                    "Dette arrangementet er kun åpent"
+                    "Dette arrangementet er kun åpent for "
+            }
+
+            var desc = str
+            if (spotRanges != null) {
+                when (spotRanges.size) {
+                    1 ->
+                        desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn."
+                    2 ->
+                        desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn, " +
+                                "og ${spotRanges[1].minDegreeYear}. til ${spotRanges[1].maxDegreeYear}. trinn. "
+                    3 ->
+                        desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn, " +
+                            "${spotRanges[1].minDegreeYear}. til ${spotRanges[1].maxDegreeYear}. trinn, " +
+                            "og ${spotRanges[2].minDegreeYear}. - til ${spotRanges[2].maxDegreeYear}. trinn."
+                    else ->
+                        desc = ""
+                }
             }
 
             return ResponseJson(
                 res,
                 "Du kan dessverre ikke melde deg på.",
-                "$str for ${degreeYearRange?.first}- til ${degreeYearRange?.last}-trinn.",
+                desc,
                 regDate
             )
         }
         Response.OK ->
             return ResponseJson(
                 res,
-            "Påmeldingen din er registrert!",
+                "Påmeldingen din er registrert!",
                 if (regType == HAPPENING_TYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet.",
-            regDate
+                regDate
             )
     }
 }

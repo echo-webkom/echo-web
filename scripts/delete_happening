@@ -5,13 +5,12 @@ host=http://localhost
 port=8080
 user=admin
 
-while getopts zps:x:u:h: flag; do
+while getopts zps:x:h: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   s) slug=${OPTARG} ;;
   x) secret=${OPTARG} ;;
-  u) user=${OPTARG} ;;
   h) happening=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac

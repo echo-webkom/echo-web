@@ -5,22 +5,18 @@ host=http://localhost
 port=8080
 testing=false
 user=admin
-mindeg=1
-maxdeg=5
+spotranges="[]"
 
-while getopts zpts:o:r:x:u:h:ia flag; do
+while getopts zpts:r:x:h: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
   t) testing=true ;;
   s) slug=${OPTARG} ;;
-  o) spots=${OPTARG} ;;
   r) regdate=${OPTARG} ;;
   x) secret=${OPTARG} ;;
-  u) user=${OPTARG} ;;
   h) happening=${OPTARG} ;;
-  i) mindeg=${OPTARG} ;;
-  a) maxdeg=${OPTARG} ;;
+  o) spotranges=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -37,10 +33,20 @@ if [ "$testing" = true ]; then
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "slug": "bedriftspresentasjon-med-bekk", 
-          "spots": 50,
           "registrationDate": "2021-05-06T16:46+01:00",
-          "minDegreeYear": 1,
-          "maxDegreeYear": 5,
+          "spotRanges":
+              [
+                { 
+                   "spots": 30,
+                   "minDegreeYear": 1,
+                   "maxDegreeYear": 2
+                },
+                { 
+                   "spots": 30,
+                   "minDegreeYear": 3,
+                   "maxDegreeYear": 5
+                }
+              ],
           "type": "BEDPRES" }' \
     "$host":"$port"/happening
   curl --verbose \
@@ -49,10 +55,15 @@ if [ "$testing" = true ]; then
     -H "Connection: close" \
     -H "Content-Type: application/json" \
     -d '{ "slug": "fest-med-tilde", 
-          "spots": 50,
           "registrationDate": "2021-05-06T16:46+01:00",
-          "minDegreeYear": 1,
-          "maxDegreeYear": 5,
+          "spotRanges":
+              [
+                { 
+                   "spots": 50,
+                   "minDegreeYear": 1,
+                   "maxDegreeYear": 5
+                }
+              ],
           "type": "EVENT" }' \
     "$host":"$port"/happening
   exit 0
@@ -63,23 +74,8 @@ if [ -z ${slug+x} ]; then
   exit 1
 fi
 
-if [ -z ${spots+x} ]; then
-  echo "Spots not defined (use -o)"
-  exit 1
-fi
-
 if [ -z ${regdate+x} ]; then
   echo "Registration date not defined (use -r)"
-  exit 1
-fi
-
-if [ -z ${mindeg+x} ]; then
-  echo "Min degree year not defined (use -i)"
-  exit 1
-fi
-
-if [ -z ${maxdeg+x} ]; then
-  echo "Min degree year not defined (use -i)"
   exit 1
 fi
 
@@ -88,18 +84,13 @@ if [ -z ${happening+x} ]; then
   exit 1
 fi
 
-echo "bruh"
-echo $happening
-
 curl --verbose \
   -X PUT \
   -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
   -d '{ "slug": "'"${slug}"'",
-        "spots": '"${spots}"',
         "registrationDate": "'"${regdate}"'",
-        "minDegreeYear": "'"${mindeg}"'",
-        "maxDegreeYear": "'"${maxdeg}"'",
+        "spotRanges": "'"${spotranges}"'",
         "type": "'"${happening}"'" }' \
   "$host":"$port"/happening

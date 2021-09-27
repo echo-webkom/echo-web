@@ -16,24 +16,12 @@ import io.ktor.response.*
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
+import no.uib.echo.plugins.Routing.getRegistrationCount
 import no.uib.echo.resToJson
-import no.uib.echo.plugins.Routing.getRegistration
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.HappeningJson
-import no.uib.echo.schema.HappeningSlugJson
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.RegistrationStatus
-import no.uib.echo.schema.ShortRegistrationJson
-import no.uib.echo.schema.countRegistrations
-import no.uib.echo.schema.deleteHappeningBySlug
-import no.uib.echo.schema.deleteRegistration
-import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.schema.insertRegistration
-import no.uib.echo.schema.selectRegistrations
+import no.uib.echo.schema.*
 
 fun Application.configureRouting(keys: Map<String, String>) {
     val admin = "admin"
@@ -48,7 +36,7 @@ fun Application.configureRouting(keys: Map<String, String>) {
 
     install(Authentication) {
         basic("auth-$admin") {
-            realm = "Access to registrations and events."
+            realm = "Access to registrations and happenings."
             validate { credentials ->
                 if (credentials.name == admin && credentials.password == keys[admin])
                     UserIdPrincipal(credentials.name)
@@ -63,10 +51,10 @@ fun Application.configureRouting(keys: Map<String, String>) {
             getStatus()
 
             authenticate("auth-$admin") {
-                getRegistration()
                 deleteRegistration()
                 putHappening()
                 deleteHappening()
+                getRegistrationCount()
             }
 
             postRegistration()
@@ -84,9 +72,8 @@ object Routing {
         }
     }
 
-    fun Route.getRegistration() {
+    fun Route.getRegistrationCount() {
         get("/$registrationRoute") {
-            val emailParam: String? = call.request.queryParameters["email"]
             val slugParam: String? = call.request.queryParameters["slug"]
             val regType: HAPPENING_TYPE = when (call.request.queryParameters["type"]) {
                 "bedpres", "BEDPRES" ->
@@ -99,20 +86,13 @@ object Routing {
                 }
             }
 
-            when (call.request.queryParameters["count"]) {
-                "y", "Y" ->
-                    if (slugParam != null)
-                        call.respond(countRegistrations(slugParam, regType))
-                    else
-                        call.respond(HttpStatusCode.BadRequest, "Count parameter defined but no slug was given.")
-                else -> {
-                    val result = selectRegistrations(emailParam, slugParam, regType)
-
-                    if (result == null)
-                        call.respond(HttpStatusCode.BadRequest, "No email or slug given.")
-                    else
-                        call.respond(result)
-                }
+            if (slugParam != null) {
+                call.respond(HttpStatusCode.OK, countRegistrations(slugParam, regType))
+                return@get
+            }
+            else {
+                call.respond(HttpStatusCode.BadRequest, "No slug specified.")
+                return@get
             }
         }
     }
@@ -133,13 +113,13 @@ object Routing {
                 }
 
                 if ((registration.degree == Degree.DTEK ||
-                        registration.degree == Degree.DSIK ||
-                        registration.degree == Degree.DVIT ||
-                        registration.degree == Degree.BINF ||
-                        registration.degree == Degree.IMO ||
-                        registration.degree == Degree.IKT ||
-                        registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                            registration.degree == Degree.DSIK ||
+                            registration.degree == Degree.DVIT ||
+                            registration.degree == Degree.BINF ||
+                            registration.degree == Degree.IMO ||
+                            registration.degree == Degree.IKT ||
+                            registration.degree == Degree.KOGNI ||
+                            registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(
                         HttpStatusCode.BadRequest,
@@ -171,7 +151,7 @@ object Routing {
                     return@post
                 }
 
-                val (regDateOrWaitListCount, degreeYearRange, regStatus) = insertRegistration(registration)
+                val (regDateOrWaitListCount, spotRanges, regStatus) = insertRegistration(registration)
 
                 when (regStatus) {
                     RegistrationStatus.ACCEPTED ->
@@ -199,7 +179,7 @@ object Routing {
                     RegistrationStatus.NOT_IN_RANGE ->
                         call.respond(
                             HttpStatusCode.Forbidden,
-                            resToJson(Response.NotInRange, registration.type, degreeYearRange = degreeYearRange)
+                            resToJson(Response.NotInRange, registration.type, spotRanges = spotRanges)
                         )
                 }
             } catch (e: Exception) {
