@@ -161,6 +161,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, IntRange?, Regist
             HAPPENING_TYPE.BEDPRES ->
                 BedpresRegistration.select { BedpresRegistration.bedpresSlug eq reg.slug }.count()
             HAPPENING_TYPE.EVENT ->
+                EventRegistration.select { EventRegistration.eventSlug eq reg.slug }.count()
         }
 
         val waitList = countRegs >= happening.spots
