@@ -19,8 +19,8 @@ interface Props {
 }
 
 const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts }: Props): JSX.Element => {
-    const absMaxDegreeYear = Math.max(...spotRangeCounts.map((sr: SpotRangeCount) => sr.maxDegreeYear));
-    const absMinDegreeYear = Math.min(...spotRangeCounts.map((sr: SpotRangeCount) => sr.minDegreeYear));
+    const absMaxDegreeYear = Math.max(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr.maxDegreeYear) || [1]));
+    const absMinDegreeYear = Math.min(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr.minDegreeYear) || [5]));
     const openForAll = absMinDegreeYear === 1 && absMaxDegreeYear === 5;
 
     return (
@@ -47,7 +47,9 @@ const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts }: Pro
                                 key={`mdeventseat2-${sr.spots}`}
                                 icon={MdEventSeat}
                                 text={`${Math.min(sr.regCount, sr.spots)}/${sr.spots} påmeldt`.concat(
-                                    openForAll ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                    openForAll && spotRangeCounts.length === 1
+                                        ? ''
+                                        : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                                 )}
                             />
                         )}
@@ -56,7 +58,9 @@ const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts }: Pro
                                 key={`iomdlistbox-${sr.waitListCount}`}
                                 icon={IoMdListBox}
                                 text={`${sr.waitListCount} på venteliste`.concat(
-                                    openForAll ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                    openForAll && spotRangeCounts.length === 1
+                                        ? ''
+                                        : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                                 )}
                             />
                         )}
