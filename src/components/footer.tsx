@@ -1,4 +1,14 @@
-import { Center, Flex, Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+    Center,
+    Flex,
+    Icon,
+    LinkBox,
+    LinkOverlay,
+    SimpleGrid,
+    Text,
+    useColorModeValue,
+    VStack,
+} from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
@@ -60,8 +70,20 @@ const Footer = (): JSX.Element => {
             <Flex display={['none', null, 'block']}>
                 <Image alt="echo" width={300} height={146} src={echoLogoWhite} />
             </Flex>
-            <SimpleGrid>
-                <SimpleGrid columns={2} spacing="2" maxWidth="400px" textAlign="center">
+            <SimpleGrid columns={[1, null, null, null, 2]} spacing="10" alignItems="center">
+                <VStack>
+                    <Text color="white">POWERED BY</Text>
+                    <LinkBox>
+                        <NextLink href="https://sanity.io" passHref>
+                            <LinkOverlay isExternal>
+                                <Center>
+                                    <Image alt="sanity" width={200} height={60} src={sanityLogo} />
+                                </Center>
+                            </LinkOverlay>
+                        </NextLink>
+                    </LinkBox>
+                </VStack>
+                <SimpleGrid columns={1} spacing="2" maxWidth="400px" textAlign="center">
                     <LinkBox>
                         <NextLink href="mailto:echo@uib.no" passHref>
                             <LinkOverlay isExternal>
@@ -73,15 +95,6 @@ const Footer = (): JSX.Element => {
                     <Text color={color}>5006 Bergen</Text>
                     <Text color={color}>Org nr: 998 995 035</Text>
                 </SimpleGrid>
-                <LinkBox>
-                    <NextLink href="https://sanity.io" passHref>
-                        <LinkOverlay isExternal>
-                            <Center>
-                                <Image alt="sanity" width={200} height={120} src={sanityLogo} />
-                            </Center>
-                        </LinkOverlay>
-                    </NextLink>
-                </LinkBox>
             </SimpleGrid>
         </SimpleGrid>
     );
