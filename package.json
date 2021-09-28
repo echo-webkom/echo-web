@@ -13,6 +13,21 @@
   "keywords": [
     "sanity"
   ],
+  "renovate": {
+    "extends": [
+      "config:base"
+    ],
+    "labels": [
+      "dependencies :handshake:"
+    ],
+    "prHourlyLimit": 0,
+    "stabilityDays": 3,
+    "prCreation": "not-pending",
+    "ignoreDeps": [
+      "postgres",
+      "node"
+    ]
+  },
   "dependencies": {
     "@sanity/base": "^2.20.0",
     "@sanity/core": "^2.20.0",
