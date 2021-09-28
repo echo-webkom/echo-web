@@ -16,12 +16,20 @@ FROM openjdk:13-jdk-slim AS build
 
 WORKDIR /opt/build
 
+# Copy Gradle wrapper and dependencies.
 COPY --from=deps /root/.gradle /root/.gradle/
-COPY . .
+
+# Copy config, and all code except tests.
+COPY *.kts gradle.properties gradlew* ./
+COPY gradle gradle
+COPY src/main src/main
 
 # Build with Shadow.
 # Add or remove '--info' as needed.
 RUN ./gradlew shadowJar --build-cache --no-rebuild --no-daemon
+
+# Copy tests after build, so Docker does not rebuild when tests change.
+COPY src/test src/test
 
 
 # Run the server

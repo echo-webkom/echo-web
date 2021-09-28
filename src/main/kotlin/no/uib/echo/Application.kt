@@ -52,12 +52,10 @@ fun Application.module() {
         }
     }
 
-    val bedkomKey = System.getenv("BEDKOM_KEY") ?: throw Exception("BEDKOM_KEY not defined.")
-    val webkomKey = System.getenv("WEBKOM_KEY") ?: throw Exception("WEBKOM_KEY not defined.")
+    val adminKey = System.getenv("ADMIN_KEY") ?: throw Exception("ADMIN_KEY not defined.")
 
     val keys: Map<String, String> = mapOf(
-        "bedkom" to bedkomKey,
-        "webkom" to webkomKey
+        "admin" to adminKey
     )
 
     Db.init()
