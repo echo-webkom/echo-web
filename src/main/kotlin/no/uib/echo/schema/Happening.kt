@@ -94,10 +94,10 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
             it[registrationDate] = DateTime(newHappening.registrationDate)
         }
         newHappening.spotRanges.map { range ->
-            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.happeningSlug eq newHappening.type.toString() )}) {
+            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.happeningType eq newHappening.type.toString() )}) {
                 it[spots] = range.spots
-                it[minDegreeYear] = range.spots
-                it[maxDegreeYear] = range.spots
+                it[minDegreeYear] = range.minDegreeYear
+                it[maxDegreeYear] = range.maxDegreeYear
             }
         }
     }
