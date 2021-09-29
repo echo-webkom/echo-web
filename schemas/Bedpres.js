@@ -1,114 +1,114 @@
 export default {
-  name: 'bedpres',
-  title: 'Bedpres',
-  description: 'Bedriftspresentasjoner',
-  type: 'document',
+  name: "bedpres",
+  title: "Bedpres",
+  description: "Bedriftspresentasjoner",
+  type: "document",
   preview: {
     select: {
-      title: 'title'
-    }
+      title: "title",
+    },
   },
   fields: [
     {
-      name: 'title',
-      title: 'Title',
-      validation: Rule => Rule.required(),
-      type: 'string'
+      name: "title",
+      title: "Title",
+      validation: (Rule) => Rule.required(),
+      type: "string",
     },
     {
-      name: 'slug',
-      title: 'Slug',
-      validation: Rule => Rule.required(),
-      type: 'slug',
+      name: "slug",
+      title: "Slug",
+      validation: (Rule) => Rule.required(),
+      type: "slug",
       options: {
-        source: 'title'
-      }
+        source: "title",
+      },
     },
     {
-      name: 'date',
-      title: 'Date',
-      validation: Rule => Rule.required(),
-      type: 'datetime'
+      name: "date",
+      title: "Date",
+      validation: (Rule) => Rule.required(),
+      type: "datetime",
     },
     {
-      name: 'spots',
-      title: 'Spots',
-      validation: Rule => Rule.required(),
-      type: 'number'
+      name: "spots",
+      title: "Spots",
+      validation: (Rule) => Rule.required(),
+      type: "number",
     },
     {
-      name: 'body',
-      title: 'Body',
-      validation: Rule => Rule.required(),
-      type: 'array',
+      name: "body",
+      title: "Body",
+      validation: (Rule) => Rule.required(),
+      type: "array",
       of: [
         {
-          type: 'block'
+          type: "block",
         },
         {
-          type: 'image'
-        }
-      ]
+          type: "image",
+        },
+      ],
     },
     {
-      name: 'logo',
-      title: 'Logo',
-      validation: Rule => Rule.required(),
-      type: 'file'
+      name: "logo",
+      title: "Logo",
+      validation: (Rule) => Rule.required(),
+      type: "image",
     },
     {
-      name: 'location',
-      title: 'Location',
-      validation: Rule => Rule.required(),
-      type: 'string'
+      name: "location",
+      title: "Location",
+      validation: (Rule) => Rule.required(),
+      type: "string",
     },
     {
-      name: 'author',
-      title: 'Author',
-      validation: Rule => Rule.required(),
-      type: 'reference',
+      name: "author",
+      title: "Author",
+      validation: (Rule) => Rule.required(),
+      type: "reference",
       to: [
         {
-          type: 'author'
-        }
-      ]
+          type: "author",
+        },
+      ],
     },
     {
-      name: 'companyLink',
-      title: 'Company Link',
-      validation: Rule => Rule.required(),
-      type: 'url'
+      name: "companyLink",
+      title: "Company Link",
+      validation: (Rule) => Rule.required(),
+      type: "url",
     },
     {
-      name: 'registrationTime',
-      title: 'Registration Time',
-      validation: Rule => Rule.required(),
-      type: 'datetime'
+      name: "registrationTime",
+      title: "Registration Time",
+      validation: (Rule) => Rule.required(),
+      type: "datetime",
     },
     {
-      name: 'additionalQuestions',
-      title: 'Additional Questions',
-      type: 'array',
+      name: "additionalQuestions",
+      title: "Additional Questions",
+      type: "array",
       of: [
         {
-          type: 'reference',
+          type: "reference",
           to: [
             {
-              type: 'additionalQuestion'
-            }
-          ]
-        }
-      ]
+              type: "additionalQuestion",
+            },
+          ],
+        },
+      ],
     },
     {
-      name: 'minDegreeYear',
-      title: 'Min Degree Year',
-      type: 'number'
+      name: "minDegreeYear",
+      title: "Min Degree Year",
+      type: "number",
     },
     {
-      name: 'maxDegreeYear',
-      title: 'Max Degree Year',
-      type: 'number'
-    }
-  ]
-}
+      name: "maxDegreeYear",
+      title: "Max Degree Year",
+      type: "number",
+    },
+  ],
+};
