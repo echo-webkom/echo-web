@@ -1,45 +1,45 @@
 export default {
-  name: 'role',
-  title: 'Role',
-  description: 'En rolle som knytter en undergruppe og et medlem',
-  type: 'document',
-  preview: {
-    select: {
-      title: 'name'
-    }
-  },
-  fields: [
-    {
-      name: 'name',
-      title: 'Name',
-      validation: Rule => Rule.required(),
-      type: 'string'
+    name: 'role',
+    title: 'Role',
+    description: 'En rolle som knytter en undergruppe og et medlem',
+    type: 'document',
+    preview: {
+        select: {
+            title: 'name',
+        },
     },
-    {
-      name: 'studentGroup',
-      title: 'Student Group',
-      validation: Rule => Rule.required(),
-      type: 'reference',
-      to: [
+    fields: [
         {
-          type: 'studentGroup'
-        }
-      ]
-    },
-    {
-      name: 'members',
-      title: 'Members',
-      type: 'array',
-      of: [
+            name: 'name',
+            title: 'Name',
+            validation: (Rule) => Rule.required(),
+            type: 'string',
+        },
         {
-          type: 'reference',
-          to: [
-            {
-              type: 'profile'
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+            name: 'studentGroup',
+            title: 'Student Group',
+            validation: (Rule) => Rule.required(),
+            type: 'reference',
+            to: [
+                {
+                    type: 'studentGroup',
+                },
+            ],
+        },
+        {
+            name: 'members',
+            title: 'Members',
+            type: 'array',
+            of: [
+                {
+                    type: 'reference',
+                    to: [
+                        {
+                            type: 'profile',
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
