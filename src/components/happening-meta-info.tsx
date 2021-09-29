@@ -48,7 +48,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                             key={`mdeventseat2-${sr.spots}`}
                             icon={MdEventSeat}
                             text={`${Math.min(sr.regCount, sr.spots)}/${sr.spots} påmeldt`.concat(
-                                openForAll || spotRangeCounts?.length === 1
+                                (openForAll && spotRangeCounts?.length === 1) || spotRangeCounts?.length === 1
                                     ? ''
                                     : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
@@ -59,7 +59,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                             key={`iomdlistbox-${sr.waitListCount}`}
                             icon={IoMdListBox}
                             text={`${sr.waitListCount} på venteliste`.concat(
-                                openForAll || spotRangeCounts?.length === 1
+                                (openForAll && spotRangeCounts?.length === 1) || spotRangeCounts?.length === 1
                                     ? ''
                                     : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
