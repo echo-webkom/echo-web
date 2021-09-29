@@ -57,6 +57,7 @@ const HappeningUI = ({
                                 date={parseISO(happening.date)}
                                 location={happening.location}
                                 companyLink={bedpres ? bedpres.companyLink : undefined}
+                                bedpres={bedpres}
                                 spotRangeCounts={spotRangeCounts}
                             />
                             {happening.registrationTime && (
