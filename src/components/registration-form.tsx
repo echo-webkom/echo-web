@@ -5,6 +5,7 @@ import {
     FormControl,
     FormLabel,
     Input,
+    Link,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -16,11 +17,14 @@ import {
     RadioGroup,
     Select,
     Text,
+    useColorModeValue,
     useDisclosure,
     useToast,
     VStack,
+    Wrap,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
+import NextLink from 'next/link';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { Bedpres } from '../lib/api/bedpres';
 import { Question } from '../lib/api/decoders';
@@ -111,6 +115,7 @@ const RegistrationForm = ({
     backendUrl: string;
 }): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm();
     const { register, handleSubmit } = methods;
 
@@ -269,12 +274,28 @@ const RegistrationForm = ({
                                         <FormLabel>Bekreft</FormLabel>
                                         <Checkbox {...register('terms3')}>
                                             <Text ml="0.5rem" fontWeight="bold">
-                                                {`Jeg er klar over at jeg må melde meg av innen 48 timer før
-                                                ${
-                                                    type === HappeningType.BEDPRES
-                                                        ? 'bedriftspresentasjonen'
-                                                        : 'arrangementet'
-                                                } starter dersom jeg ikke har mulighet til å delta.`}
+                                                {type === HappeningType.BEDPRES ? (
+                                                    <Wrap spacing={0}>
+                                                        <Text ml="0.5rem" fontWeight="bold">
+                                                            Jeg har lest gjennom og forstått
+                                                        </Text>
+                                                        <NextLink href="https://bit.ly/bedkom-faq" passHref>
+                                                            <Link href="https://bit.ly/bedkom-faq" isExternal>
+                                                                <Text color={linkColor} ml="0.5rem" fontWeight="bold">
+                                                                    Bedkom sine retningslinjer
+                                                                </Text>
+                                                            </Link>
+                                                        </NextLink>
+                                                        <Text ml="0.5rem" fontWeight="bold">
+                                                            .
+                                                        </Text>
+                                                    </Wrap>
+                                                ) : (
+                                                    <Text ml="0.5rem" fontWeight="bold">
+                                                        Jeg er klar over at jeg må melde meg av innen 24 timer før
+                                                        arrangementet, dersom jeg ikke kan møte opp.
+                                                    </Text>
+                                                )}
                                             </Text>
                                         </Checkbox>
                                     </FormControl>
