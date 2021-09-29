@@ -1,19 +1,21 @@
 name: Create & tag new release
 on:
   pull_request:
-    branches: master
-    types: closed
+    branches: [master]
+    types: [closed]
 
 jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
+        if: ${{ github.event.pull_request.merged == true }}
         uses: actions/checkout@v2
         with:
           ref: master
       
       - name: Install GitHub CLI
+        if: ${{ github.event.pull_request.merged == true }}
         run: |
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
@@ -21,6 +23,7 @@ jobs:
           sudo apt install -yq --no-install-recommends gh
           
       - name: Create & tag release
+        if: ${{ github.event.pull_request.merged == true }}
         run: |
           git fetch --tags
           gh config set prompt disabled
