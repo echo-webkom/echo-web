@@ -23,7 +23,9 @@ interface Props {
 const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCounts }: Props): JSX.Element => {
     const absMinDegreeYear = Math.min(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.minDegreeYear || 1) || [1]));
     const absMaxDegreeYear = Math.max(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.maxDegreeYear || 5) || [5]));
-    const openForAll = absMinDegreeYear === 1 && absMaxDegreeYear === 5;
+    const dontShowDegreeYear =
+        (absMinDegreeYear === 1 && absMaxDegreeYear === 5 && spotRangeCounts?.length === 1) ||
+        spotRangeCounts?.length === 1;
 
     return (
         <VStack alignItems="left" spacing={3}>
@@ -40,7 +42,9 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                         <IconText
                             key={`mdeventseat1-${sr.spots}`}
                             icon={MdEventSeat}
-                            text={`${sr.spots} plasser for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`}
+                            text={`${sr.spots} plasser`.concat(
+                                dontShowDegreeYear ? '' : `for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                            )}
                         />
                     )}
                     {sr.regCount !== 0 && (
@@ -48,9 +52,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                             key={`mdeventseat2-${sr.spots}`}
                             icon={MdEventSeat}
                             text={`${Math.min(sr.regCount, sr.spots)}/${sr.spots} påmeldt`.concat(
-                                (openForAll && spotRangeCounts?.length === 1) || spotRangeCounts?.length === 1
-                                    ? ''
-                                    : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
                     )}
@@ -59,9 +61,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                             key={`iomdlistbox-${sr.waitListCount}`}
                             icon={IoMdListBox}
                             text={`${sr.waitListCount} på venteliste`.concat(
-                                (openForAll && spotRangeCounts?.length === 1) || spotRangeCounts?.length === 1
-                                    ? ''
-                                    : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
                     )}
