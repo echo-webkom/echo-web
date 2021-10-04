@@ -40,15 +40,7 @@ export default {
             name: 'body',
             title: 'Body',
             validation: (Rule) => Rule.required(),
-            type: 'array',
-            of: [
-                {
-                    type: 'block',
-                },
-                {
-                    type: 'image',
-                },
-            ],
+            type: 'markdown',
         },
         {
             name: 'logo',

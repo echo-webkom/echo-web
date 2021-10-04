@@ -25,7 +25,7 @@ export default {
             name: 'info',
             title: 'Info',
             validation: (Rule) => Rule.required(),
-            type: 'text',
+            type: 'markdown',
         },
         {
             name: 'roles',
