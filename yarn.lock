@@ -5030,7 +5030,7 @@ humanize-ms@^1.2.1:
   dependencies:
     ms "^2.0.0"
 
-husky@^7.0.2:
+husky@7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/husky/-/husky-7.0.2.tgz#21900da0f30199acca43a46c043c4ad84ae88dff"
   integrity sha512-8yKEWNX4z2YsofXAMT7KvA1g8p+GxtB1ffV8XtpAEGuXNAbCV5wdNKH+qTpw8SM9fh4aMPDR+yQuKfgnreyZlg==
@@ -8706,9 +8706,9 @@ sanity-diff-patch@^1.0.9:
   dependencies:
     diff-match-patch "^1.0.5"
 
-sanity-plugin-markdown@^2.0.2:
+sanity-plugin-markdown@2.0.2:
   version "2.0.2"
-  resolved "https://registry.npmjs.org/sanity-plugin-markdown/-/sanity-plugin-markdown-2.0.2.tgz#164451215412ae3f21ca4032087e979b01de6ad0"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-markdown/-/sanity-plugin-markdown-2.0.2.tgz#164451215412ae3f21ca4032087e979b01de6ad0"
   integrity sha512-otQ2zGd7barS+KHTRzOAaISgN8N+hPiL/BTZMIp8EBLOuOjJQcT6nFMYR/+nW+vxy5gwt3iOSwy2UifJ8KyCTA==
   dependencies:
     react-markdown "^5.0.3"
