@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    Checkbox,
     FormControl,
     FormLabel,
     Input,
@@ -25,45 +24,13 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
+import FormTerm from './form-term';
+import FormQuestion from './form-question';
 import { Bedpres } from '../lib/api/bedpres';
 import { Question } from '../lib/api/decoders';
 import { Event } from '../lib/api/event';
 import { Degree, HappeningType, RegistrationAPI } from '../lib/api/registration';
-
-const QuestionComponent = ({ q, index }: { q: Question; index: number }): JSX.Element => {
-    const { register } = useFormContext();
-
-    if (q.inputType === 'radio') {
-        return (
-            <FormControl as="fieldset" isRequired>
-                <FormLabel>{q.questionText}</FormLabel>
-                <RadioGroup defaultValue={q?.alternatives?.[0] || ''}>
-                    <VStack align="left">
-                        {q.alternatives &&
-                            q.alternatives.map((alt: string) => {
-                                return (
-                                    <Radio key={`radio-key-${alt}`} value={alt} {...register(`answers.${index}`)}>
-                                        {alt}
-                                    </Radio>
-                                );
-                            })}
-                    </VStack>
-                </RadioGroup>
-            </FormControl>
-        );
-    }
-    if (q.inputType === 'textbox') {
-        return (
-            <FormControl isRequired>
-                <FormLabel>{q.questionText}</FormLabel>
-                <Input {...register(`answers.${index}`)} />
-            </FormControl>
-        );
-    }
-
-    return <></>;
-};
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -105,15 +72,13 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     }
 };
 
-const RegistrationForm = ({
-    happening,
-    type,
-    backendUrl,
-}: {
+interface Props {
     happening: Bedpres | Event;
     type: HappeningType;
     backendUrl: string;
-}): JSX.Element => {
+}
+
+const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm();
@@ -238,67 +203,53 @@ const RegistrationForm = ({
                                             </VStack>
                                         </RadioGroup>
                                     </FormControl>
-                                    {happening.additionalQuestions &&
-                                        happening.additionalQuestions.map((q: Question, index: number) => {
-                                            return (
-                                                <QuestionComponent
-                                                    key={`q.questionText-${q.inputType}`}
-                                                    q={q}
-                                                    index={index}
-                                                />
-                                            );
-                                        })}
-                                    <FormControl id="terms1" isRequired>
-                                        <FormLabel>Bekreft</FormLabel>
-                                        <Checkbox {...register('terms1')}>
-                                            <Text ml="0.5rem" fontWeight="bold">
-                                                Jeg bekrefter at jeg har fylt inn riktig informasjon.
-                                            </Text>
-                                        </Checkbox>
-                                    </FormControl>
-                                    <FormControl id="terms2" isRequired>
-                                        <FormLabel>Bekreft</FormLabel>
-                                        <Checkbox {...register('terms2')}>
-                                            <Text ml="0.5rem" fontWeight="bold">
-                                                {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
+                                    {happening.additionalQuestions?.map((q: Question, index: number) => {
+                                        return (
+                                            <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
+                                        );
+                                    })}
+                                    <FormTerm id="terms1" register={register}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            Jeg bekrefter at jeg har fylt inn riktig informasjon.
+                                        </Text>
+                                    </FormTerm>
+                                    <FormTerm id="terms2" register={register}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
                                                 utestengt fra fremtidige 
                                                 ${
                                                     type === HappeningType.BEDPRES
                                                         ? 'bedriftspresentasjoner'
                                                         : 'arrangementer'
                                                 }.`}
-                                            </Text>
-                                        </Checkbox>
-                                    </FormControl>
-                                    <FormControl id="terms3" isRequired>
-                                        <FormLabel>Bekreft</FormLabel>
-                                        <Checkbox {...register('terms3')}>
-                                            <Text ml="0.5rem" fontWeight="bold">
-                                                {type === HappeningType.BEDPRES ? (
-                                                    <Wrap spacing={0}>
-                                                        <Text ml="0.5rem" fontWeight="bold">
-                                                            Jeg har lest gjennom og forstått
-                                                        </Text>
-                                                        <NextLink href="https://bit.ly/bedkom-faq" passHref>
-                                                            <Link href="https://bit.ly/bedkom-faq" isExternal>
-                                                                <Text color={linkColor} ml="0.5rem" fontWeight="bold">
-                                                                    Bedkom sine retningslinjer
-                                                                </Text>
-                                                            </Link>
-                                                        </NextLink>
-                                                        <Text ml="0.5rem" fontWeight="bold">
-                                                            .
-                                                        </Text>
-                                                    </Wrap>
-                                                ) : (
+                                        </Text>
+                                    </FormTerm>
+                                    <FormTerm id="terms3" register={register}>
+                                        <Text ml="0.5rem" fontWeight="bold">
+                                            {type === HappeningType.BEDPRES ? (
+                                                <Wrap spacing={0}>
                                                     <Text ml="0.5rem" fontWeight="bold">
-                                                        Jeg er klar over at jeg må melde meg av innen 24 timer før
-                                                        arrangementet, dersom jeg ikke kan møte opp.
+                                                        Jeg har lest gjennom og forstått
                                                     </Text>
-                                                )}
-                                            </Text>
-                                        </Checkbox>
-                                    </FormControl>
+                                                    <NextLink href="https://bit.ly/bedkom-faq" passHref>
+                                                        <Link href="https://bit.ly/bedkom-faq" isExternal>
+                                                            <Text color={linkColor} ml="0.5rem" fontWeight="bold">
+                                                                Bedkom sine retningslinjer
+                                                            </Text>
+                                                        </Link>
+                                                    </NextLink>
+                                                    <Text ml="0.5rem" fontWeight="bold">
+                                                        .
+                                                    </Text>
+                                                </Wrap>
+                                            ) : (
+                                                <Text ml="0.5rem" fontWeight="bold">
+                                                    Jeg er klar over at jeg må melde meg av innen 24 timer før
+                                                    arrangementet, dersom jeg ikke kan møte opp.
+                                                </Text>
+                                            )}
+                                        </Text>
+                                    </FormTerm>
                                 </VStack>
                             </ModalBody>
                             <ModalFooter>
