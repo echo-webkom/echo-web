@@ -1,5 +1,6 @@
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { differenceInHours, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
@@ -67,7 +68,7 @@ const HappeningUI = ({
                                         (differenceInHours(regDate, date) > 23 ? (
                                             <Center>
                                                 <Text fontSize="2xl">
-                                                    Åpner {format(regDate, 'dd. MMM yyyy, HH:mm')}
+                                                    Åpner {format(regDate, 'dd. MMM yyyy, HH:mm', { locale: nb })}
                                                 </Text>
                                             </Center>
                                         ) : (

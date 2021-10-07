@@ -13,6 +13,7 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
@@ -47,7 +48,7 @@ const Minutes = ({ minutes, error }: { minutes: Array<Minute> | null; error: str
                             <Flex align="center">
                                 <NextLink href={minute.documentUrl} passHref>
                                     <Link href={minute.documentUrl} color={color} isExternal mr=".5em">
-                                        {format(new Date(minute.date), 'dd. MMM yyyy')}
+                                        {format(new Date(minute.date), 'dd. MMM yyyy', { locale: nb })}
                                     </Link>
                                 </NextLink>
                                 <Icon as={FaExternalLinkAlt} />

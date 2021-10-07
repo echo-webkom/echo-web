@@ -1,5 +1,6 @@
 import { Box, Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -35,7 +36,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                     <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author}</Text>
                                     <Icon as={BiCalendar} boxSize={10} />
-                                    <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy')}</Text>
+                                    <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy', { locale: nb })}</Text>
                                 </Grid>
                             </GridItem>
                             <GridItem

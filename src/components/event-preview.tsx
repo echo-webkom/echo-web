@@ -1,5 +1,6 @@
 import { Flex, Icon, LinkBox, LinkOverlay, Spacer, Text, useColorModeValue } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
 import React from 'react';
 import { VscTriangleRight } from 'react-icons/vsc';
@@ -17,7 +18,7 @@ const EventPreview = ({ event }: { event: Event }): JSX.Element => {
                     </LinkOverlay>
                 </NextLink>
                 <Spacer mx="1" />
-                <Text>{format(new Date(event.date), 'dd. MMM yyyy')}</Text>
+                <Text>{format(new Date(event.date), 'dd. MMM yyyy', { locale: nb })}</Text>
             </Flex>
         </LinkBox>
     );

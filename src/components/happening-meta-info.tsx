@@ -1,5 +1,6 @@
 import { VStack } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import { CgOrganisation } from 'react-icons/cg';
@@ -67,7 +68,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
                     )}
                 </>
             ))}
-            <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy')} />
+            <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             <IconText icon={ImLocation} text={location} />
             {absMinDegreeYear === 1 && absMaxDegreeYear === 5 && bedpres?.minDegreeYear && bedpres?.maxDegreeYear && (

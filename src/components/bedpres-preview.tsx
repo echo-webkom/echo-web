@@ -11,6 +11,7 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
 import React from 'react';
 import { Bedpres } from '../lib/api/bedpres';
@@ -40,7 +41,7 @@ const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
                     </Center>
                     <Spacer />
                     <Center>
-                        <Text>{format(new Date(bedpres.date), 'dd. MMM yyyy')}</Text>
+                        <Text>{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
                     </Center>
                 </Flex>
             </Box>
