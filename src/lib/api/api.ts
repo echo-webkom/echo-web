@@ -1,12 +1,9 @@
-import axios from 'axios';
+import sanityClient from '@sanity/client';
 
-const API = axios.create({
-    baseURL: `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${process.env.CONTENTFUL_ENVIRONMENT_ID}`,
-    timeout: 1000,
-    headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
-    },
+export const SanityAPI = sanityClient({
+    projectId: 'pgq2pd26',
+    dataset: 'production',
+    apiVersion: '2021-04-10',
+    token: process.env.SANITY_TOKEN,
+    useCdn: true,
 });
-
-export default API;

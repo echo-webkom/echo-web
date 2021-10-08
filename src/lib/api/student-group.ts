@@ -1,27 +1,17 @@
 import axios from 'axios';
 import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
-import API from './api';
+import { SanityAPI } from './api';
 import handleError from './errors';
-import { GET_STUDENTGROUPS_BY_TYPE } from './schema';
 
 export type Profile = decodeType<typeof profileDecoder>;
 const profileDecoder = (value: Pojo) => {
     const baseDecoder = record({
         name: string,
-    });
-
-    const pictureUrlDecoder = record({
-        picture: union(
-            record({
-                url: string,
-            }),
-            nil,
-        ),
+        imageUrl: union(string, nil),
     });
 
     return {
         ...baseDecoder(value),
-        pictureUrl: pictureUrlDecoder(value).picture?.url || null,
     };
 };
 
@@ -32,14 +22,12 @@ const roleDecoder = (value: Pojo) => {
     });
 
     const profileListDecoder = record({
-        membersCollection: record({
-            items: array(profileDecoder),
-        }),
+        members: union(array(profileDecoder), nil),
     });
 
     return {
         ...baseDecoder(value),
-        members: profileListDecoder(value).membersCollection.items || [],
+        members: profileListDecoder(value).members || [],
     };
 };
 
@@ -51,13 +39,12 @@ const studentGroupDecoder = (value: Pojo) => {
     });
 
     const roleListDecoder = record({
-        rolesCollection: record({
-            items: array(roleDecoder),
-        }),
+        roles: array(roleDecoder),
     });
+
     return {
         ...baseDecoder(value),
-        roles: roleListDecoder(value).rolesCollection.items,
+        roles: roleListDecoder(value).roles,
     };
 };
 
@@ -65,18 +52,26 @@ const studentGroupListDecoder = array(studentGroupDecoder);
 
 export const StudentGroupAPI = {
     getStudentGroupsByType: async (
-        type: string,
+        type: 'board' | 'suborg' | 'subgroup',
     ): Promise<{ studentGroups: Array<StudentGroup> | null; error: string | null }> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_STUDENTGROUPS_BY_TYPE,
-                variables: {
-                    type,
-                },
-            });
+            const query = `
+                *[_type == "studentGroup" && groupType == "${type}"] {
+                    name,
+                    info,
+                    "roles": roles[] -> {
+                        name,
+                        "members": members[] -> {
+                            name,
+                            "imageUrl": picture.asset -> url
+                        }
+                    }
+                }
+            `;
+            const result = await SanityAPI.fetch(query);
 
             return {
-                studentGroups: studentGroupListDecoder(data.data.studentGroupCollection.items),
+                studentGroups: studentGroupListDecoder(result),
                 error: null,
             };
         } catch (error) {

@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
-import API from './api';
-import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
+import { SanityAPI } from './api';
+import { questionDecoder } from './decoders';
 import handleError from './errors';
-import { GET_BEDPRES_BY_SLUG, GET_N_BEDPRESES } from './schema';
 
 // Automatically creates the Bedpres type with the
 // fields we specify in our bedpresDecoder.
@@ -19,6 +18,8 @@ const bedpresDecoder = (value: Pojo) => {
     // We need to define additional decoders
     // for these nested fields.
     const baseDecoder = record({
+        _createdAt: string,
+        author: string,
         title: string,
         slug: string,
         date: string,
@@ -27,20 +28,13 @@ const bedpresDecoder = (value: Pojo) => {
         location: string,
         companyLink: string,
         registrationTime: string,
+        logoUrl: string,
         minDegreeYear: union(number, nil),
         maxDegreeYear: union(number, nil),
     });
 
-    const logoUrlDecoder = record({
-        logo: record({
-            url: string,
-        }),
-    });
-
     const additionalQuestionsDecoder = record({
-        additionalQuestionsCollection: record({
-            items: array(questionDecoder),
-        }),
+        additionalQuestions: union(array(questionDecoder), nil),
     });
 
     // We combine the base decoder with the decoders
@@ -48,10 +42,7 @@ const bedpresDecoder = (value: Pojo) => {
     // This object is of type Bedpres.
     return {
         ...baseDecoder(value),
-        logoUrl: logoUrlDecoder(value).logo.url,
-        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestionsCollection.items,
-        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
-        author: authorDecoder(value).author.authorName,
+        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestions || [],
     };
 };
 
@@ -65,15 +56,33 @@ export const BedpresAPI = {
      */
     getBedpreses: async (n: number): Promise<{ bedpreses: Array<Bedpres> | null; error: string | null }> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_N_BEDPRESES,
-                variables: {
-                    n,
-                },
-            });
+            const limit = n === 0 ? `` : `[0...${n}]`;
+            const query = `
+                *[_type == "bedpres"] | order(date asc){
+                    title,
+                    "slug": slug.current,
+                    date,
+                    spots,
+                    body,
+                    location,
+                    companyLink,
+                    registrationTime,
+                    minDegreeYear,
+                    maxDegreeYear,
+                    additionalQuestions[] -> {
+                        questionText,
+                        inputType,
+                        alternatives
+                    },
+                    "logoUrl": logo.asset -> url,
+                    "author": author -> name,
+                    _createdAt,
+                }${limit}
+            `;
+            const data = await SanityAPI.fetch(query);
 
             return {
-                bedpreses: bedpresListDecoder(data.data.bedpresCollection.items),
+                bedpreses: bedpresListDecoder(data),
                 error: null,
             };
         } catch (error) {
@@ -91,19 +100,36 @@ export const BedpresAPI = {
      */
     getBedpresBySlug: async (slug: string): Promise<{ bedpres: Bedpres | null; error: string | null }> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_BEDPRES_BY_SLUG,
-                variables: {
-                    slug,
-                },
-            });
+            const query = `
+                *[_type == "bedpres" && slug.current == "${slug}"]{
+                    title,
+                    "slug": slug.current,
+                    date,
+                    spots,
+                    body,
+                    location,
+                    companyLink,
+                    registrationTime,
+                    minDegreeYear,
+                    maxDegreeYear,
+                    additionalQuestions[]->{
+                        questionText,
+                        inputType,
+                        alternatives
+                    },
+                    "logoUrl": logo.asset -> url,
+                    "author": author -> name,
+                    _createdAt,
+                }
+            `;
+            const data = await SanityAPI.fetch(query);
 
-            if (data.data.bedpresCollection.items.length === 0) throw new Error();
+            if (data.length === 0) throw new Error();
 
             return {
-                // Contentful returns a list with a single element,
+                // Sanity returns a list with a single element,
                 // therefore we need [0] to get the element out of the list.
-                bedpres: bedpresListDecoder(data.data.bedpresCollection.items)[0] || null,
+                bedpres: bedpresListDecoder(data)[0] || null,
                 error: null,
             };
         } catch (error) {

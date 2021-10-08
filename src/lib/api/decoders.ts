@@ -4,13 +4,19 @@ import { array, decodeType, literal, nil, record, string, union } from 'typescri
 
 const authorDecoder = record({
     author: record({
-        authorName: string,
+        name: string,
     }),
 });
 
 const publishedAtDecoder = record({
     sys: record({
         firstPublishedAt: string,
+    }),
+});
+
+const slugDecoder = record({
+    slug: record({
+        current: string,
     }),
 });
 
@@ -21,5 +27,5 @@ const questionDecoder = record({
     alternatives: union(nil, array(string)),
 });
 
-export { authorDecoder, publishedAtDecoder, questionDecoder };
+export { authorDecoder, publishedAtDecoder, slugDecoder, questionDecoder };
 export type { Question };

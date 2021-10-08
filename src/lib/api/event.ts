@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
-import API from './api';
-import { authorDecoder, publishedAtDecoder, questionDecoder } from './decoders';
+import { SanityAPI } from './api';
+import { questionDecoder } from './decoders';
 import handleError from './errors';
-import { GET_EVENT_BY_SLUG, GET_EVENT_PATHS, GET_N_EVENTS } from './schema';
 
 // Automatically creates the Event type with the
 // fields we specify in our eventDecoder.
@@ -20,31 +19,22 @@ const eventDecoder = (value: Pojo) => {
     // We need to define additional decoders
     // for these nested fields.
     const baseDecoder = record({
+        _createdAt: string,
+        author: string,
         title: string,
         slug: string,
         date: string,
         spots: union(number, nil),
         body: string,
         location: string,
+        imageUrl: union(string, nil),
         registrationTime: union(string, nil),
         minDegreeYear: union(number, nil),
         maxDegreeYear: union(number, nil),
     });
 
-    // Decoders for nested fields.
-    const imageUrlDecoder = record({
-        image: union(
-            record({
-                url: string,
-            }),
-            nil,
-        ),
-    });
-
     const additionalQuestionsDecoder = record({
-        additionalQuestionsCollection: record({
-            items: array(questionDecoder),
-        }),
+        additionalQuestions: union(array(questionDecoder), nil),
     });
 
     // We combine the base decoder with the decoders
@@ -52,10 +42,7 @@ const eventDecoder = (value: Pojo) => {
     // This object is of type Event.
     return {
         ...baseDecoder(value),
-        imageUrl: imageUrlDecoder(value).image?.url || null,
-        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestionsCollection.items,
-        publishedAt: publishedAtDecoder(value).sys.firstPublishedAt,
-        author: authorDecoder(value).author.authorName,
+        additionalQuestions: additionalQuestionsDecoder(value).additionalQuestions || [],
     };
 };
 
@@ -77,11 +64,10 @@ export const EventAPI = {
      */
     getPaths: async (): Promise<Array<string>> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_EVENT_PATHS,
-            });
+            const query = `*[_type == "event"]{slug}`;
+            const data = await SanityAPI.fetch(query);
 
-            return eventSlugListDecoder(data.data.eventCollection.items).map((eventSlug) => eventSlug.slug);
+            return eventSlugListDecoder(data).map((eventSlug) => eventSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -94,15 +80,32 @@ export const EventAPI = {
      */
     getEvents: async (n: number): Promise<{ events: Array<Event> | null; error: string | null }> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_N_EVENTS,
-                variables: {
-                    n,
-                },
-            });
+            const limit = n === 0 ? `` : `[0...${n}]`;
+            const query = `
+                *[_type == "event"]{
+                    title,
+                    "slug": slug.current,
+                    date,
+                    spots,
+                    body,
+                    location,
+                    registrationTime,
+                    minDegreeYear,
+                    maxDegreeYear,
+                    "additionalQuestions": additionalQuestions[]->{
+                        questionText,
+                    inputType,
+                    alternatives
+                    },
+                    "imageUrl": logo.asset -> url,
+                    "author": author -> name,
+                    _createdAt,
+                }${limit}
+            `;
+            const data = await SanityAPI.fetch(query);
 
             return {
-                events: eventListDecoder(data.data.eventCollection.items),
+                events: eventListDecoder(data),
                 error: null,
             };
         } catch (error) {
@@ -120,17 +123,33 @@ export const EventAPI = {
      */
     getEventBySlug: async (slug: string): Promise<{ event: Event | null; error: string | null }> => {
         try {
-            const { data } = await API.post('', {
-                query: GET_EVENT_BY_SLUG,
-                variables: {
-                    slug,
-                },
-            });
+            const query = `
+                *[_type == "event" && slug.current == "${slug}"]{
+                    title,
+                    "slug": slug.current,
+                    date,
+                    spots,
+                    body,
+                    location,
+                    registrationTime,
+                    minDegreeYear,
+                    maxDegreeYear,
+                    "additionalQuestions": additionalQuestions[]->{
+                        questionText,
+                    inputType,
+                    alternatives
+                    },
+                    "imageUrl": logo.asset -> url,
+                    "author": author -> name,
+                    _createdAt,
+                }
+            `;
+            const data = await SanityAPI.fetch(query);
 
-            if (data.data.eventCollection.items.length === 0) throw new Error();
+            if (data.length === 0) throw new Error();
 
             return {
-                event: eventListDecoder(data.data.eventCollection.items)[0],
+                event: eventListDecoder(data)[0],
                 error: null,
             };
         } catch (error) {
