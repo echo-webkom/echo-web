@@ -54,7 +54,7 @@ const getRssXML = (
               return {
                   slug: post.slug,
                   title: post.title,
-                  publishedAt: post.publishedAt,
+                  publishedAt: post._createdAt,
                   author: post.author,
                   body: post.body,
                   route: 'posts',
@@ -67,7 +67,7 @@ const getRssXML = (
               return {
                   slug: event.slug,
                   title: event.title,
-                  publishedAt: event.publishedAt,
+                  publishedAt: event._createdAt,
                   author: event.author,
                   body: event.body,
                   route: 'events',
