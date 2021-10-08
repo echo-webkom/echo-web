@@ -18,6 +18,7 @@ services:
       CONTENTFUL_ENVIRONMENT_ID: ${CONTENTFUL_ENVIRONMENT_ID}
       BACKEND_URL: http://backend:8080
       ADMIN_KEY: ${ADMIN_KEY}
+      SANITY_TOKEN: ${SANITY_TOKEN}
 
   backend:
     build: backend
