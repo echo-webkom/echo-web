@@ -19,6 +19,7 @@ services:
       BACKEND_URL: http://backend:8080
       ADMIN_KEY: ${ADMIN_KEY}
       SANITY_TOKEN: ${SANITY_TOKEN}
+      SANITY_DATASET: ${SANITY_DATASET}
 
   backend:
     build: https://github.com/echo-webkom/echo-web-backend.git#${BRANCH}
