@@ -126,7 +126,7 @@ const OmOssPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { minutes, error } = await MinuteAPI.getMinutes(0);
+    const { minutes, error } = await MinuteAPI.getMinutes();
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {

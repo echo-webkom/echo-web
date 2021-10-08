@@ -36,7 +36,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                                     <Icon as={CgProfile} boxSize={10} />
                                     <Text>{post.author}</Text>
                                     <Icon as={BiCalendar} boxSize={10} />
-                                    <Text>{format(parseISO(post.publishedAt), 'dd. MMM yyyy', { locale: nb })}</Text>
+                                    <Text>{format(parseISO(post._createdAt), 'dd. MMM yyyy', { locale: nb })}</Text>
                                 </Grid>
                             </GridItem>
                             <GridItem

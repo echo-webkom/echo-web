@@ -25,11 +25,11 @@ const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): J
             fontSize={['.7em', null, '1em']}
         >
             <Center>
-                {profile.pictureUrl && (
+                {profile.imageUrl && (
                     <MemberImage
                         width={128}
                         height={128}
-                        src={profile.pictureUrl}
+                        src={profile.imageUrl}
                         alt={profile.name}
                         quality={100}
                         w={memberImageSize}
@@ -37,12 +37,12 @@ const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): J
                         borderRadius="100%"
                     />
                 )}
-                {!profile.pictureUrl && (
+                {!profile.imageUrl && (
                     <Avatar
                         getInitials={getInitials}
                         size="2xl"
                         name={profile.name}
-                        src={profile.pictureUrl || undefined}
+                        src={profile.imageUrl || undefined}
                         alt="bilde"
                     />
                 )}
