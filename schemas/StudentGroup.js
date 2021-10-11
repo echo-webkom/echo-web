@@ -18,7 +18,14 @@ export default {
         {
             name: 'groupType',
             title: 'Type',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) =>
+                Rule.required()
+                    .custom((type) =>
+                        type === 'subgroup' || type === 'suborg' || type === 'board'
+                            ? true
+                            : 'Må være "subgroup", "suborg" eller "board"',
+                    )
+                    .error(),
             type: 'string',
         },
         {
