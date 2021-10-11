@@ -91,7 +91,13 @@ const Footer = (): JSX.Element => {
                             </LinkOverlay>
                         </NextLink>
                     </LinkBox>
-                    <Text color={color}>Thormøhlensgate 55</Text>
+                    <LinkBox>
+                        <NextLink href="https://goo.gl/maps/adUsBsoZh3QqNvA36" passHref>
+                            <LinkOverlay isExternal>
+                                <Text color={color}>Thormøhlensgate 55</Text>
+                            </LinkOverlay>
+                        </NextLink>
+                    </LinkBox>
                     <Text color={color}>5006 Bergen</Text>
                     <Text color={color}>Org nr: 998 995 035</Text>
                 </SimpleGrid>
