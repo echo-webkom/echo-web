@@ -116,7 +116,7 @@
         "prop-types": "15.7.2",
         "react": "17.0.2",
         "react-dom": "17.0.2",
-        "react-hook-form": "7.17.0",
+        "react-hook-form": "7.17.2",
         "react-icons": "4.3.1",
         "remove-markdown": "0.3.0",
         "typescript-json-decoder": "1.0.3"
