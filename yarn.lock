@@ -2013,7 +2013,7 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.0.6.tgz#023d72a5c4531b4ce204528971700a78a85a0c50"
   integrity sha512-Myxw//kzromB9yWgS8qYGuGVf91oBUUJpNvy5eM50sqvmKLbKjwLxohJnkWGTeeI9v9IBMtPLxz5Gc60FIfvCA==
 
-"@sanity/client@^2.19.0":
+"@sanity/client@2.19.0":
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-2.19.0.tgz#9d69514dff33f95a06fb96748c22be0f144788d7"
   integrity sha512-y3VCTXx0z9n9tIroJUBT70rfCZuyJCNmRVZcMjRSjaLCK7vFJHvACX61OkbfbFo9t8r098g8jXP2XttBUiglLQ==
@@ -6637,11 +6637,6 @@ outvariant@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/outvariant/-/outvariant-1.2.0.tgz#c904d30dc36d70d93902b13641aa1fda69ae8c0c"
   integrity sha512-OKEOPXtvIeSohFl9avZwm1BL/awT49PV/HQHyc0RHcdICkvj5XP+j+IHhsSoV7nT5gDtMJTlWXqVpA/F8yoi2A==
-
-p-each-series@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/p-each-series/-/p-each-series-2.2.0.tgz#105ab0357ce72b202a8a8b94933672657b5e2a9a"
-  integrity sha512-ycIL2+1V32th+8scbpTvyHNaHe02z0sjgh91XXjAk+ZeXoPN4Z46DVUnzdso0aX4KckKw0FNNFHdjZ2UsZvxiA==
 
 p-is-promise@^1.1.0:
   version "1.1.0"
