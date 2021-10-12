@@ -100,7 +100,7 @@ const Footer = (): JSX.Element => {
                         </NextLink>
                     </LinkBox>
                     <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                        <NextLink href="tel:+47998995035" passHref>
+                        <NextLink href="https://w2.brreg.no/enhet/sok/detalj.jsp?orgnr=998995035" passHref>
                             <LinkOverlay isExternal>
                                 <Text color={color}>Org nr: 998 995 035</Text>
                             </LinkOverlay>
