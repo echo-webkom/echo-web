@@ -84,14 +84,14 @@ const Footer = (): JSX.Element => {
                     </LinkBox>
                 </VStack>
                 <SimpleGrid columns={1} spacing="2" maxWidth="400px" textAlign="center">
-                    <LinkBox>
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="mailto:echo@uib.no" passHref>
                             <LinkOverlay isExternal>
                                 <Text color={color}>echo(at)uib.no</Text>
                             </LinkOverlay>
                         </NextLink>
                     </LinkBox>
-                    <LinkBox>
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="https://goo.gl/maps/adUsBsoZh3QqNvA36" passHref>
                             <LinkOverlay isExternal>
                                 <Text color={color}>Thormøhlensgate 55</Text>
@@ -99,7 +99,7 @@ const Footer = (): JSX.Element => {
                             </LinkOverlay>
                         </NextLink>
                     </LinkBox>
-                    <LinkBox>
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="tel:+47998995035" passHref>
                             <LinkOverlay isExternal>
                                 <Text color={color}>Org nr: 998 995 035</Text>
