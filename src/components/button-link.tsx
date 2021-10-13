@@ -23,6 +23,7 @@ const ButtonLink = ({ text, linkTo }: Props): JSX.Element => {
                             _active={{ borderColor: active }}
                             mt="1.5rem"
                             fontSize="xl"
+                            borderRadius="0.5rem"
                         >
                             {text}
                         </Button>

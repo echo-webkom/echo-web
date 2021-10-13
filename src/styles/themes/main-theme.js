@@ -6,7 +6,7 @@ const mainPallette = {
     white: '#ffffff',
     bg: {
         light: {
-            primary: '#dfdfdf',
+            primary: '#e6e6e6',
             secondary: '#ffffff',
             tertiary: '#F5F5F5',
             hover: '#F5F5F5',

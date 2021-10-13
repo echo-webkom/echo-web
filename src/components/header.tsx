@@ -52,7 +52,14 @@ const HeaderLogo = ({ message }: { message?: string }) => {
     const msg = message || RandomHeaderMessage();
 
     return (
-        <LinkBox p="1rem" bg={bg} shadow="lg" data-testid="header-logo">
+        <LinkBox
+            p="1.05rem"
+            bg={bg}
+            shadow="lg"
+            data-testid="header-logo"
+            borderRadius="0.5rem"
+            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
+        >
             <Flex display={{ base: 'none', md: 'block' }}>
                 <Image src={bigLogo} alt="logo" width={260} height={77} />
             </Flex>
@@ -72,6 +79,8 @@ const HeaderLogo = ({ message }: { message?: string }) => {
                             fontSize="md"
                             noOfLines={1}
                             suppressHydrationWarning
+                            borderRadius="0.25rem"
+                            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
                         >
                             {msg}
                         </Text>
