@@ -30,21 +30,21 @@ class HappeningRegistrationTest : StringSpec({
     )
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-med-noen-andre","2019-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen-andre","2019-07-29T20:10:11Z", everyoneSpotRange, type) }
     val exampleHappening3: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-dritlang-i-fremtiden","2037-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-dritlang-i-fremtiden","2037-07-29T20:10:11Z", everyoneSpotRange, type) }
     val exampleHappening4: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-for-bare-1-til-2","2020-05-29T20:00:11Z", oneTwoSpotRange, type) }
+        { type -> HappeningJson("${type}-for-bare-1-til-2","2020-05-29T20:00:11Z", oneTwoSpotRange, type) }
     val exampleHappening5: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-for-bare-3-til-5", "2020-06-29T18:07:31Z", threeFiveSpotRange, type) }
+        { type -> HappeningJson("${type}-for-bare-3-til-5", "2020-06-29T18:07:31Z", threeFiveSpotRange, type) }
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-som-er-splitta-ty-bedkom", "2020-06-29T18:07:31Z", everyoneSplitSpotRange, type) }
+        { type -> HappeningJson("${type}-som-er-splitta-ty-bedkom", "2020-06-29T18:07:31Z", everyoneSplitSpotRange, type) }
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
-                "test1@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleHappening1(type).slug, true, null, false,
+                "test1${type}@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleHappening1(type).slug, true, null, false,
                 listOf(
                     AnswerJson("Skal du ha mat?", "Nei"),
                     AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
@@ -547,7 +547,7 @@ class HappeningRegistrationTest : StringSpec({
                     res.code shouldBe Response.NotInRange
                     res.title shouldBe "Du kan dessverre ikke melde deg på."
                     val descStart = if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
-                    res.desc shouldBe "${descStart} for ${exampleHappening4(t).spotRanges[0].minDegreeYear}. til ${exampleHappening4(t).spotRanges[0].maxDegreeYear}. trinn."
+                    res.desc shouldBe "$descStart for ${exampleHappening4(t).spotRanges[0].minDegreeYear}. til ${exampleHappening4(t).spotRanges[0].maxDegreeYear}. trinn."
                 }
             }
         }

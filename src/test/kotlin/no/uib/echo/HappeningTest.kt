@@ -21,7 +21,7 @@ import java.util.Base64
 class HappeningTest : StringSpec({
     val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
     val exampleHappening: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("happening-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type)}
 

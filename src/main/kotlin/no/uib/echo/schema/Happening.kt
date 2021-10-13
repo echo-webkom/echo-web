@@ -22,34 +22,34 @@ data class HappeningJson(
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
 object Happening : Table() {
-    val slug: Column<String> = text("slug")
+    val slug: Column<String> = text("slug").uniqueIndex()
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
 
-    override val primaryKey: PrimaryKey = PrimaryKey(slug, happeningType)
+    override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
 
-fun selectHappening(slug: String, type: HAPPENING_TYPE): HappeningJson? {
+fun selectHappening(slug: String): HappeningJson? {
     val result = transaction {
         addLogger(StdOutSqlLogger)
 
-        Happening.select { Happening.slug eq slug and (Happening.happeningType eq type.toString() ) }.firstOrNull()
+        Happening.select { Happening.slug eq slug }.firstOrNull()
     }
 
-    val spotRanges = selectSpotRanges(slug, type)
+    val spotRanges = selectSpotRanges(slug)
 
     return result?.let {
         HappeningJson(
             it[Happening.slug],
             it[registrationDate].toString(),
             spotRanges,
-            type
+            HAPPENING_TYPE.valueOf(it[Happening.happeningType])
         )
     }
 }
 
 fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, String> {
-    val happening = selectHappening(newHappening.slug, newHappening.type)
+    val happening = selectHappening(newHappening.slug)
 
     if (happening == null) {
         transaction {
@@ -66,22 +66,20 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
                     it[minDegreeYear] = range.minDegreeYear
                     it[maxDegreeYear] = range.maxDegreeYear
                     it[happeningSlug] = newHappening.slug
-                    it[happeningType] = newHappening.type.toString()
                 }
             }
         }
 
-        return Pair(HttpStatusCode.OK, "Happening submitted (type = ${newHappening.type}).")
+        return Pair(HttpStatusCode.OK, "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}.")
     }
 
     if (happening.slug == newHappening.slug &&
         DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
-        happening.type == newHappening.type &&
         happening.spotRanges == newHappening.spotRanges
     ) {
         return Pair(
             HttpStatusCode.Accepted,
-            "Happening (${newHappening.type}) with slug = ${newHappening.slug}, " +
+            "Happening with slug = ${newHappening.slug}, " +
                     "registrationDate = ${newHappening.registrationDate}, " +
                     "and spotRanges = ${spotRangeToString(newHappening.spotRanges)} has already been submitted."
         )
@@ -90,11 +88,11 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
     transaction {
         addLogger(StdOutSqlLogger)
 
-        Happening.update({ Happening.slug eq newHappening.slug and (Happening.happeningType eq newHappening.type.toString())}) {
+        Happening.update({ Happening.slug eq newHappening.slug }) {
             it[registrationDate] = DateTime(newHappening.registrationDate)
         }
         newHappening.spotRanges.map { range ->
-            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.happeningType eq newHappening.type.toString() )}) {
+            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug }) {
                 it[spots] = range.spots
                 it[minDegreeYear] = range.minDegreeYear
                 it[maxDegreeYear] = range.maxDegreeYear
@@ -104,18 +102,25 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
 
     return Pair(
         HttpStatusCode.OK,
-        "Updated happening (${newHappening.type}) with slug = ${newHappening.slug} " +
+        "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
                 "to registrationDate = ${newHappening.registrationDate} " +
                 "and spotRanges = ${spotRangeToString(newHappening.spotRanges)}."
     )
 }
 
-fun deleteHappeningBySlug(happ: HappeningSlugJson) {
+fun deleteHappeningBySlug(slug: String): Boolean {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        Happening.deleteWhere { Happening.slug eq happ.slug and (Happening.happeningType eq happ.type.toString()) }
+        deleteSpotRanges(slug)
+        val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
+        if (!happeningExists)
+            return@transaction false
+
+        Happening.deleteWhere { Happening.slug eq slug }
     }
+
+    return true
 }
 
 fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {

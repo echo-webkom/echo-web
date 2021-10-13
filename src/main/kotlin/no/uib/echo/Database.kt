@@ -11,13 +11,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
 object Db {
-    val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
-    val dev = System.getenv("DEV") != null
+    private val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
+    private val dev = System.getenv("DEV") != null
 
-    val dbPort = if (dbUri.port == -1) 5432 else dbUri.port
-    val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbPort}${dbUri.path}"
-    val dbUsername = dbUri.userInfo.split(":")[0]
-    val dbPassword = dbUri.userInfo.split(":")[1]
+    private val dbPort = if (dbUri.port == -1) 5432 else dbUri.port
+    private val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbPort}${dbUri.path}"
+    private val dbUsername = dbUri.userInfo.split(":")[0]
+    private val dbPassword = dbUri.userInfo.split(":")[1]
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(HikariConfig().apply {
@@ -55,42 +55,6 @@ object Db {
             println("Assuming all tables already exists, and continuing anyway.")
         }
 
-        // For SpotRange FK's
-        try {
-            transaction {
-                val t1 = TransactionManager.current()
-                val fk1 = t1.foreignKeyCompositeConstraint(
-                    mapOf(
-                        SpotRange.happeningSlug to Happening.slug,
-                        SpotRange.happeningType to Happening.happeningType
-                    ),
-                    ReferenceOption.RESTRICT,
-                    ReferenceOption.RESTRICT
-                )
-                t1.exec(fk1.createStatement().first())
-            }
-        } catch (e: Exception) {
-            println("Could not create foreign keys for SpotRange. Assuming they already exist, and continuing anyway.")
-        }
-
-        // For Registration FK's
-        try {
-            transaction {
-                val t2 = TransactionManager.current()
-                val fk2 = t2.foreignKeyCompositeConstraint(
-                    mapOf(
-                        Registration.happeningSlug to Happening.slug,
-                        Registration.happeningType to Happening.happeningType
-                    ),
-                    ReferenceOption.RESTRICT,
-                    ReferenceOption.RESTRICT
-                )
-                t2.exec(fk2.createStatement().first())
-            }
-        } catch (e: Exception) {
-            println("Could not create foreign keys for Registration. Assuming they already exist, and continuing anyway.")
-        }
-
         // For Answer FK's
         try {
             transaction {
@@ -98,7 +62,6 @@ object Db {
                 val fk3 = t3.foreignKeyCompositeConstraint(
                     mapOf(
                         Answer.happeningSlug to Registration.happeningSlug,
-                        Answer.happeningType to Registration.happeningType,
                         Answer.registrationEmail to Registration.email
                     ),
                     ReferenceOption.RESTRICT,
