@@ -22,6 +22,6 @@ jobs:
       - name: Deploy to Sanity
         run: yarn sanity deploy
         env:
-          SANITY_AUTH_TOKEN: ${{ github.secrets.SANITY_AUTH_TOKEN }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_API_DATASET: production
 
