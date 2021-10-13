@@ -4,9 +4,9 @@ import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
 import React from 'react';
 import { VscTriangleRight } from 'react-icons/vsc';
-import { Event } from '../lib/api/event';
+import { Happening } from '../lib/api';
 
-const EventPreview = ({ event }: { event: Event }): JSX.Element => {
+const EventPreview = ({ event }: { event: Happening }): JSX.Element => {
     const iconBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     return (
         <LinkBox data-testid={event.slug}>

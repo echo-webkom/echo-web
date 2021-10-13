@@ -8,26 +8,25 @@ import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
-import { HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api/registration';
+import { Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
 
 const BedpresPage = ({
-    bedpres,
+    happening,
     backendUrl,
     spotRangeCounts,
     date,
     error,
 }: {
-    bedpres: Bedpres;
+    happening: Happening;
     backendUrl: string;
     spotRangeCounts: Array<SpotRangeCount>;
     date: number;
     error: string;
 }): JSX.Element => {
     const router = useRouter();
-    const regDate = parseISO(bedpres?.registrationTime);
+    const regDate = happening.registrationDate ? parseISO(happening.registrationDate) : new Date();
     const time =
-        !bedpres || differenceInMilliseconds(regDate, date) < 0 || differenceInMilliseconds(regDate, date) > 172800000
+        !happening || differenceInMilliseconds(regDate, date) < 0 || differenceInMilliseconds(regDate, date) > 172800000
             ? null
             : differenceInMilliseconds(regDate, date);
 
@@ -37,13 +36,12 @@ const BedpresPage = ({
 
     return (
         <Layout>
-            {error && !bedpres && <ErrorBox error={error} />}
-            {bedpres && !error && (
+            {error && !happening && <ErrorBox error={error} />}
+            {happening && !error && (
                 <>
-                    <SEO title={bedpres.title} />
+                    <SEO title={happening.title} />
                     <HappeningUI
-                        bedpres={bedpres}
-                        event={null}
+                        happening={happening}
                         backendUrl={backendUrl}
                         spotRangeCounts={spotRangeCounts}
                         date={date}
@@ -60,7 +58,7 @@ interface Params extends ParsedUrlQuery {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
-    const { bedpres, error } = await BedpresAPI.getBedpresBySlug(slug);
+    const { happening, error } = await HappeningAPI.getHappeningBySlug(slug);
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
@@ -83,7 +81,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
         props: {
-            bedpres,
+            happening,
             spotRangeCounts,
             date,
             backendUrl,

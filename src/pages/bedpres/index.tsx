@@ -3,9 +3,9 @@ import React from 'react';
 import EntryOverview from '../../components/entry-overview';
 import Layout from '../../components/layout';
 import SEO from '../../components/seo';
-import { Bedpres, BedpresAPI } from '../../lib/api/bedpres';
+import { Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
-const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>; error: string }): JSX.Element => {
+const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Happening>; error: string }): JSX.Element => {
     return (
         <Layout>
             <SEO title="Bedriftspresentasjoner" />
@@ -15,12 +15,12 @@ const BedpresCollectionPage = ({ bedpreses, error }: { bedpreses: Array<Bedpres>
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { bedpreses, error } = await BedpresAPI.getBedpreses(0);
+    const { happenings, error } = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
 
-    if (bedpreses) {
+    if (happenings) {
         return {
             props: {
-                bedpreses,
+                bedpreses: happenings,
                 error,
             },
         };

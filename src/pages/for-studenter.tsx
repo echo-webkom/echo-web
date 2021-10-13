@@ -9,7 +9,7 @@ import Layout from '../components/layout';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
-import { StudentGroup, StudentGroupAPI } from '../lib/api/student-group';
+import { StudentGroup, StudentGroupAPI } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 
 const ForStudenterPage = ({

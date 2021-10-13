@@ -1,6 +1,6 @@
 import { Button, Center, Divider, Text, Wrap } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { Post } from '../lib/api/post';
+import { Post } from '../lib/api';
 import ErrorBox from './error-box';
 import PostPreview from './post-preview';
 

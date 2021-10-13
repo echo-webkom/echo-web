@@ -1,7 +1,7 @@
 import { Avatar, Box, Center, chakra, Text, useBreakpointValue } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
-import { Profile } from '../lib/api/student-group';
+import { Profile } from '../lib/api';
 
 const MemberImage = chakra(Image, {
     baseStyle: { maxH: 128, maxW: 128 },
