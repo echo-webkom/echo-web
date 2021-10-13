@@ -36,6 +36,6 @@ curl --verbose \
   -u "$user":"$secret" \
   -H "Connection: close" \
   -H "Content-Type: application/json" \
-  -d '{ "slug": "'"$slug"'"
-        "type": "'"$happening"'"}' \
+  -d '{ "slug": "'"$slug"'",
+        "type": "'"$happening"'" }' \
   "$host":"$port"/happening

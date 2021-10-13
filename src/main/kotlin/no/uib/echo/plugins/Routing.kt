@@ -75,19 +75,9 @@ object Routing {
     fun Route.getRegistrationCount() {
         get("/$registrationRoute") {
             val slugParam: String? = call.request.queryParameters["slug"]
-            val regType: HAPPENING_TYPE = when (call.request.queryParameters["type"]) {
-                "bedpres", "BEDPRES" ->
-                    HAPPENING_TYPE.BEDPRES
-                "event", "EVENT" ->
-                    HAPPENING_TYPE.EVENT
-                else -> {
-                    call.respond(HttpStatusCode.BadRequest, "No registration type specified.")
-                    return@get
-                }
-            }
 
             if (slugParam != null) {
-                call.respond(HttpStatusCode.OK, countRegistrations(slugParam, regType))
+                call.respond(HttpStatusCode.OK, countRegistrations(slugParam))
                 return@get
             }
             else {
@@ -226,11 +216,13 @@ object Routing {
             try {
                 val happ = call.receive<HappeningSlugJson>()
 
-                deleteHappeningBySlug(happ)
-
-                call.respond(HttpStatusCode.OK, "Happening (${happ.type}) with slug = ${happ.slug} deleted.")
+                if (deleteHappeningBySlug(happ.slug))
+                    call.respond(HttpStatusCode.OK, "${happ.type.toString().lowercase()} with slug = ${happ.slug} deleted.")
+                else
+                    call.respond(HttpStatusCode.NotFound, "${happ.type.toString().lowercase()} with slug = ${happ.slug} does not exist.")
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
+                e.printStackTrace()
             }
         }
     }

@@ -21,20 +21,21 @@ data class SpotRangeWithCountJson(
 )
 
 object SpotRange : Table() {
+    val id: Column<Int> = integer("id").uniqueIndex().autoIncrement()
     val spots: Column<Int> = integer("spots")
     val minDegreeYear: Column<Int> = integer("min_degree_year")
     val maxDegreeYear: Column<Int> = integer("max_degree_year")
-    val happeningSlug: Column<String> = text("happening_slug")
-    val happeningType: Column<String> = text("happening_type")
+    val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
-fun selectSpotRanges(slug: String, type: HAPPENING_TYPE): List<SpotRangeJson> {
+fun selectSpotRanges(slug: String): List<SpotRangeJson> {
     return transaction {
         addLogger(StdOutSqlLogger)
 
         SpotRange.select {
-            SpotRange.happeningSlug eq slug and
-                    (SpotRange.happeningType eq type.toString())
+            SpotRange.happeningSlug eq slug
         }.toList()
     }.map {
         SpotRangeJson(
@@ -42,6 +43,16 @@ fun selectSpotRanges(slug: String, type: HAPPENING_TYPE): List<SpotRangeJson> {
             it[minDegreeYear],
             it[maxDegreeYear]
         )
+    }
+}
+
+fun deleteSpotRanges(slug: String) {
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        SpotRange.deleteWhere {
+            SpotRange.happeningSlug eq slug
+        }
     }
 }
 

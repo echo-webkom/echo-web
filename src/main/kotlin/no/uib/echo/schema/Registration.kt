@@ -42,13 +42,12 @@ object Registration : Table() {
     val lastName: Column<String> = text("last_name")
     val degree: Column<String> = text("degree")
     val degreeYear: Column<Int> = integer("degree_year")
-    val happeningSlug: Column<String> = text("happening_slug")
-    val happeningType: Column<String> = text("happening_type")
+    val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
     val terms: Column<Boolean> = bool("terms")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime())
     val waitList: Column<Boolean> = bool("wait_list")
 
-    override val primaryKey: PrimaryKey = PrimaryKey(email, happeningSlug, happeningType)
+    override val primaryKey: PrimaryKey = PrimaryKey(email, happeningSlug)
 }
 
 fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJson>?, RegistrationStatus> {
@@ -56,7 +55,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         addLogger(StdOutSqlLogger)
 
         val happening =
-            selectHappening(reg.slug, reg.type) ?: return@transaction Triple(
+            selectHappening(reg.slug) ?: return@transaction Triple(
                 null,
                 null,
                 RegistrationStatus.HAPPENING_DOESNT_EXIST
@@ -68,14 +67,13 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val oldReg =
             Registration.select {
                 Registration.email eq reg.email and
-                (Registration.happeningSlug eq happening.slug) and
-                (Registration.happeningType eq happening.type.toString())
+                (Registration.happeningSlug eq happening.slug)
             }.firstOrNull()
 
         if (oldReg != null)
             return@transaction Triple(null, null, RegistrationStatus.ALREADY_EXISTS)
 
-        val spotRanges = selectSpotRanges(reg.slug, reg.type)
+        val spotRanges = selectSpotRanges(reg.slug)
         val correctRange = whichSpotRange(spotRanges, reg.degreeYear) ?: return@transaction Triple(
             null,
             spotRanges,
@@ -85,8 +83,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val countRegs =
             Registration.select {
                 Registration.happeningSlug eq reg.slug and
-                (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear) and
-                (Registration.happeningType eq reg.type.toString())
+                (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
             }.count()
 
         val waitList = countRegs >= correctRange.spots
@@ -99,7 +96,6 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
             it[degree] = reg.degree.toString()
             it[degreeYear] = reg.degreeYear
             it[happeningSlug] = reg.slug
-            it[happeningType] = reg.type.toString()
             it[terms] = reg.terms
             it[Registration.waitList] = waitList
         }
@@ -108,7 +104,6 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
             Answer.batchInsert(reg.answers) { a ->
                 this[registrationEmail] = reg.email
                 this[Answer.happeningSlug] = reg.slug
-                this[Answer.happeningType] = reg.type.toString()
                 this[question] = a.question
                 this[answer] = a.answer
             }
@@ -121,33 +116,31 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
     }
 }
 
-fun countRegistrationsDegreeYear(slug: String, type: HAPPENING_TYPE, range: IntRange, waitList: Boolean): Int {
+fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolean): Int {
     return transaction {
         addLogger(StdOutSqlLogger)
 
         Registration.select {
             Registration.happeningSlug eq slug and
-            (Registration.happeningType eq type.toString()) and
             (Registration.degreeYear inList range) and
             (Registration.waitList eq waitList)
         }.count()
     }.toInt()
 }
 
-fun countRegistrations(slug: String, type: HAPPENING_TYPE): List<SpotRangeWithCountJson> {
+fun countRegistrations(slug: String): List<SpotRangeWithCountJson> {
     return transaction {
         addLogger(StdOutSqlLogger)
 
         SpotRange.select {
-            SpotRange.happeningSlug eq slug and
-            (SpotRange.happeningType eq type.toString())
+            SpotRange.happeningSlug eq slug
         }.toList().map {
             SpotRangeWithCountJson(
                 it[spots],
                 it[minDegreeYear],
                 it[maxDegreeYear],
-                countRegistrationsDegreeYear(slug, type, it[minDegreeYear]..it[maxDegreeYear], false),
-                countRegistrationsDegreeYear(slug, type, it[minDegreeYear]..it[maxDegreeYear], true)
+                countRegistrationsDegreeYear(slug, it[minDegreeYear]..it[maxDegreeYear], false),
+                countRegistrationsDegreeYear(slug, it[minDegreeYear]..it[maxDegreeYear], true)
             )
         }
     }
@@ -159,8 +152,7 @@ fun deleteRegistration(shortReg: ShortRegistrationJson) {
 
         Registration.deleteWhere {
             Registration.happeningSlug eq shortReg.slug and
-                    (Registration.email eq shortReg.email) and
-                    (Registration.happeningType eq shortReg.type.toString())
+                    (Registration.email eq shortReg.email)
         }
     }
 }
