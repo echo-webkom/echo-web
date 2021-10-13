@@ -11,6 +11,8 @@ import Profile from './Profile';
 import Role from './Role';
 import StudentGroup from './StudentGroup';
 import AdditionalQuestion from './AdditionalQuestion';
+import SpotRange from './SpotRange';
+import Happening from './Happening';
 
 export default createSchema({
     name: 'default',
@@ -26,5 +28,7 @@ export default createSchema({
         Role,
         StudentGroup,
         AdditionalQuestion,
+        SpotRange,
+        Happening,
     ]),
 });

@@ -1,7 +1,7 @@
 export default {
-    name: 'bedpres',
-    title: 'Bedpres',
-    description: 'Bedriftspresentasjoner',
+    name: 'happening',
+    title: 'Happening',
+    description: 'Event eller Bedpres',
     type: 'document',
     preview: {
         select: {
@@ -25,16 +25,20 @@ export default {
             },
         },
         {
+            name: 'happeningType',
+            title: 'Happening Type',
+            validation: (Rule) => Rule.required(),
+            type: 'string',
+            options: {
+                list: ['EVENT', 'BEDPRES'],
+                layout: 'dropdown',
+            },
+        },
+        {
             name: 'date',
             title: 'Date',
             validation: (Rule) => Rule.required(),
             type: 'datetime',
-        },
-        {
-            name: 'spots',
-            title: 'Spots',
-            validation: (Rule) => Rule.required(),
-            type: 'number',
         },
         {
             name: 'body',
@@ -45,14 +49,11 @@ export default {
         {
             name: 'logo',
             title: 'Logo',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) =>
+                Rule.custom((logo, context) =>
+                    context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined' ? 'Må ha logo' : true,
+                ),
             type: 'image',
-        },
-        {
-            name: 'location',
-            title: 'Location',
-            validation: (Rule) => Rule.required(),
-            type: 'string',
         },
         {
             name: 'author',
@@ -68,13 +69,17 @@ export default {
         {
             name: 'companyLink',
             title: 'Company Link',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) =>
+                Rule.custom((logo, context) =>
+                    context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined'
+                        ? 'Må ha link til bedriften'
+                        : true,
+                ),
             type: 'url',
         },
         {
-            name: 'registrationTime',
-            title: 'Registration Time',
-            validation: (Rule) => Rule.required(),
+            name: 'registrationDate',
+            title: 'Registration Date',
             type: 'datetime',
         },
         {
@@ -91,18 +96,6 @@ export default {
                     ],
                 },
             ],
-        },
-        {
-            name: 'minDegreeYear',
-            title: 'Min Degree Year',
-            type: 'number',
-            validation: (Rule) => Rule.required().min(1).max(5),
-        },
-        {
-            name: 'maxDegreeYear',
-            title: 'Max Degree Year',
-            type: 'number',
-            validation: (Rule) => Rule.required().min(Rule.valueOfField('minDegreeYear')).max(5),
         },
         {
             name: 'spotRange',
