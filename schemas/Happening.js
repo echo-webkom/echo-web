@@ -8,6 +8,16 @@ export default {
             title: 'title',
         },
     },
+    validation: (Rule) =>
+        Rule.custom((fields) => {
+            if (
+                !(typeof fields.registrationDate === 'undefined') &&
+                (!fields.spotRanges || fields.spotRanges.length < 1)
+            ) {
+                return 'Må ha en spotrange når det er påmelding';
+            }
+            return true;
+        }),
     fields: [
         {
             name: 'title',
@@ -56,6 +66,12 @@ export default {
             type: 'image',
         },
         {
+            name: 'location',
+            title: 'Location',
+            validation: (Rule) => Rule.required(),
+            type: 'string',
+        },
+        {
             name: 'author',
             title: 'Author',
             validation: (Rule) => Rule.required(),
@@ -98,8 +114,8 @@ export default {
             ],
         },
         {
-            name: 'spotRange',
-            title: 'Spot Range',
+            name: 'spotRanges',
+            title: 'Spot Ranges',
             type: 'array',
             of: [
                 {
@@ -111,7 +127,6 @@ export default {
                     ],
                 },
             ],
-            validation: (Rule) => Rule.required().min(1),
         },
     ],
 };
