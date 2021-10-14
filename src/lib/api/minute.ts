@@ -52,7 +52,7 @@ export const MinuteAPI = {
      */
     getMinutes: async (): Promise<{ minutes: Array<Minute> | null; error: string | null }> => {
         try {
-            const query = `*[_type == "meetingMinute"]{allmote,date,title,document{asset->{url}}}`;
+            const query = `*[_type == "meetingMinute" && !(_id in path('drafts.**'))]{allmote,date,title,document{asset->{url}}}`;
             const data = await SanityAPI.fetch(query);
 
             return {

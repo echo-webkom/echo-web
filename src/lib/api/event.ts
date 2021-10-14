@@ -84,7 +84,7 @@ export const EventAPI = {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
-                *[_type == "happening" && happeningType == "EVENT"]{
+                *[_type == "happening" && happeningType == "EVENT" && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,
                     happeningType,
@@ -129,7 +129,7 @@ export const EventAPI = {
     getEventBySlug: async (slug: string): Promise<{ event: Event | null; error: string | null }> => {
         try {
             const query = `
-                *[_type == "happening" && happeningType == "EVENT" && slug.current == "${slug}"]{
+                *[_type == "happening" && happeningType == "EVENT" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,
                     happeningType,
