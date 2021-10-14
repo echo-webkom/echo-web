@@ -29,7 +29,7 @@ const IndexPage = ({
 }): JSX.Element => {
     return (
         <Layout>
-            <SEO title="Hjem" />
+            <SEO title="echo - Fagutvalget for informatikk" />
             <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
                 <GridItem rowStart={[2, null, null, 1]}>
                     <Stack minW="0" spacing="5">

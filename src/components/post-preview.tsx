@@ -9,7 +9,7 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     return (
-        <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
+        <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug} borderRadius="0.5rem">
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Box
@@ -38,6 +38,7 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
                             bg={authorBg}
                             py="0.5rem"
                             px="1rem"
+                            borderRadius="0.5rem"
                         >
                             {post.author}
                         </Text>
