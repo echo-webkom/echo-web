@@ -17,13 +17,7 @@ const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): J
     };
 
     return (
-        <Box
-            p={['0', null, '.5em']}
-            w={['120px', null, '200px']}
-            overflow="visible"
-            textAlign="center"
-            fontSize={['.7em', null, '1em']}
-        >
+        <Box p={['0', null, '.5em']} w={['120px', null, '200px']} overflow="visible" textAlign="center">
             <Center>
                 {profile.imageUrl && (
                     <MemberImage
