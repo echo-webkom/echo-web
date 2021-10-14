@@ -13,6 +13,16 @@ import HappeningMetaInfo from './happening-meta-info';
 import RegistrationForm from './registration-form';
 import Section from './section';
 
+const getMinDegreeYear = (happening: Event | Bedpres) => {
+    if (!happening.spotRanges || happening.spotRanges.length < 1) return undefined;
+    return happening.spotRanges.reduce((prev, curr) => (prev.minDegreeYear < curr.minDegreeYear ? prev : curr));
+};
+
+const getMaxDegreeYear = (happening: Event | Bedpres) => {
+    if (!happening.spotRanges || happening.spotRanges.length < 1) return undefined;
+    return happening.spotRanges.reduce((prev, curr) => (prev.minDegreeYear > curr.minDegreeYear ? prev : curr));
+};
+
 const HappeningUI = ({
     bedpres,
     event,
@@ -31,6 +41,18 @@ const HappeningUI = ({
 
     const regDate = happening?.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
     const eventDate = happening?.date ? parseISO(happening.date) : new Date(date);
+
+    const minDegreeYear = event
+        ? getMinDegreeYear(event)?.minDegreeYear
+        : bedpres
+        ? getMinDegreeYear(bedpres)?.minDegreeYear
+        : undefined;
+
+    const maxDegreeYear = event
+        ? getMaxDegreeYear(event)?.maxDegreeYear
+        : bedpres
+        ? getMaxDegreeYear(bedpres)?.maxDegreeYear
+        : undefined;
 
     return (
         <>
@@ -58,8 +80,9 @@ const HappeningUI = ({
                                 date={parseISO(happening.date)}
                                 location={happening.location}
                                 companyLink={bedpres ? bedpres.companyLink : undefined}
-                                bedpres={bedpres}
                                 spotRangeCounts={spotRangeCounts}
+                                minDegreeYear={minDegreeYear}
+                                maxDegreeYear={maxDegreeYear}
                             />
                             {happening.registrationTime && (
                                 <>

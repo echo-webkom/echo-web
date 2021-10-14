@@ -11,17 +11,24 @@ import { RiTimeLine } from 'react-icons/ri';
 import IconText from './icon-text';
 
 import { SpotRangeCount } from '../lib/api/registration';
-import { Bedpres } from '../lib/api/bedpres';
 
 interface Props {
     date: Date;
     location: string;
     companyLink?: string;
-    bedpres: Bedpres | null;
     spotRangeCounts: Array<SpotRangeCount>;
+    minDegreeYear?: number;
+    maxDegreeYear?: number;
 }
 
-const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCounts }: Props): JSX.Element => {
+const HappeningMetaInfo = ({
+    date,
+    location,
+    companyLink,
+    spotRangeCounts,
+    minDegreeYear,
+    maxDegreeYear,
+}: Props): JSX.Element => {
     const absMinDegreeYear = Math.min(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.minDegreeYear || 1) || [1]));
     const absMaxDegreeYear = Math.max(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.maxDegreeYear || 5) || [5]));
     const dontShowDegreeYear =
@@ -71,16 +78,14 @@ const HappeningMetaInfo = ({ date, location, companyLink, bedpres, spotRangeCoun
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             <IconText icon={ImLocation} text={location} />
-            {absMinDegreeYear === 1 && absMaxDegreeYear === 5 && bedpres?.minDegreeYear && bedpres?.maxDegreeYear && (
+            {minDegreeYear && maxDegreeYear && minDegreeYear === 1 && maxDegreeYear === 5 && (
                 <IconText icon={MdLockOpen} text="Åpen for alle trinn" />
             )}
-            {(absMinDegreeYear > 1 || absMaxDegreeYear < 5) && (
+            {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
                 <IconText
                     icon={MdLockOutline}
                     text={`Bare for ${
-                        absMinDegreeYear === absMaxDegreeYear
-                            ? `${absMinDegreeYear}`
-                            : `${absMinDegreeYear}. - ${absMaxDegreeYear}`
+                        minDegreeYear === maxDegreeYear ? `${minDegreeYear}` : `${minDegreeYear}. - ${maxDegreeYear}`
                     }. trinn`}
                 />
             )}
