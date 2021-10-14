@@ -104,21 +104,5 @@ export default {
             type: 'number',
             validation: (Rule) => Rule.required().min(Rule.valueOfField('minDegreeYear')).max(5),
         },
-        {
-            name: 'spotRange',
-            title: 'Spot Range',
-            type: 'array',
-            of: [
-                {
-                    type: 'reference',
-                    to: [
-                        {
-                            type: 'spotRange',
-                        },
-                    ],
-                },
-            ],
-            validation: (Rule) => Rule.required().min(1),
-        },
     ],
 };

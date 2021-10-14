@@ -8,16 +8,6 @@ export default {
             title: 'title',
         },
     },
-    validation: (Rule) =>
-        Rule.custom((fields) => {
-            if (
-                !(typeof fields.registrationDate === 'undefined') &&
-                (!fields.spotRanges || fields.spotRanges.length < 1)
-            ) {
-                return 'Må ha en spotrange når det er påmelding';
-            }
-            return true;
-        }),
     fields: [
         {
             name: 'title',

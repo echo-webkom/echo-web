@@ -83,5 +83,17 @@ export default {
                 },
             ],
         },
+        {
+            name: 'minDegreeYear',
+            title: 'Min Degree Year',
+            type: 'number',
+            validation: (Rule) => Rule.required().min(1).max(5),
+        },
+        {
+            name: 'maxDegreeYear',
+            title: 'Max Degree Year',
+            type: 'number',
+            validation: (Rule) => Rule.required().min(Rule.valueOfField('minDegreeYear')).max(5),
+        },
     ],
 };
