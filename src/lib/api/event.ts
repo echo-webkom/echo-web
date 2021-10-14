@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { array, decodeType, nil, number, Pojo, record, string, union } from 'typescript-json-decoder';
+import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
 import { SanityAPI } from './api';
-import { questionDecoder } from './decoders';
+import { questionDecoder, spotRangeDecoder } from './decoders';
 import handleError from './errors';
 
 // Automatically creates the Event type with the
@@ -24,17 +24,18 @@ const eventDecoder = (value: Pojo) => {
         title: string,
         slug: string,
         date: string,
-        spots: union(number, nil),
         body: string,
         location: string,
         imageUrl: union(string, nil),
         registrationTime: union(string, nil),
-        minDegreeYear: union(number, nil),
-        maxDegreeYear: union(number, nil),
     });
 
     const additionalQuestionsDecoder = record({
         additionalQuestions: union(array(questionDecoder), nil),
+    });
+
+    const spotRangesDecoder = record({
+        spotRanges: union(array(spotRangeDecoder), nil),
     });
 
     // We combine the base decoder with the decoders
@@ -43,6 +44,7 @@ const eventDecoder = (value: Pojo) => {
     return {
         ...baseDecoder(value),
         additionalQuestions: additionalQuestionsDecoder(value).additionalQuestions || [],
+        spotRanges: spotRangesDecoder(value).spotRanges || [],
     };
 };
 
@@ -82,24 +84,27 @@ export const EventAPI = {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
-                *[_type == "event"]{
+                *[_type == "happening" && happeningType == "EVENT"]{
                     title,
                     "slug": slug.current,
+                    happeningType,
                     date,
-                    spots,
                     body,
                     location,
-                    registrationTime,
-                    minDegreeYear,
-                    maxDegreeYear,
+                    "registrationTime": registrationDate,
                     "additionalQuestions": additionalQuestions[]->{
                         questionText,
-                    inputType,
-                    alternatives
+                        inputType,
+                        alternatives
                     },
                     "imageUrl": logo.asset -> url,
                     "author": author -> name,
                     _createdAt,
+                    spotRanges[] -> {
+                        minDegreeYear,
+                        maxDegreeYear,
+                        spots
+                    }
                 }${limit}
             `;
             const data = await SanityAPI.fetch(query);
@@ -124,24 +129,27 @@ export const EventAPI = {
     getEventBySlug: async (slug: string): Promise<{ event: Event | null; error: string | null }> => {
         try {
             const query = `
-                *[_type == "event" && slug.current == "${slug}"]{
+                *[_type == "happening" && happeningType == "EVENT" && slug.current == "${slug}"]{
                     title,
                     "slug": slug.current,
+                    happeningType,
                     date,
-                    spots,
                     body,
                     location,
-                    registrationTime,
-                    minDegreeYear,
-                    maxDegreeYear,
+                    "registrationTime": registrationDate,
                     "additionalQuestions": additionalQuestions[]->{
                         questionText,
-                    inputType,
-                    alternatives
+                        inputType,
+                        alternatives
                     },
                     "imageUrl": logo.asset -> url,
                     "author": author -> name,
                     _createdAt,
+                    spotRanges[] -> {
+                        minDegreeYear,
+                        maxDegreeYear,
+                        spots
+                    }
                 }
             `;
             const data = await SanityAPI.fetch(query);

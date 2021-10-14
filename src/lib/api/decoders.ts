@@ -1,4 +1,4 @@
-import { array, decodeType, literal, nil, record, string, union } from 'typescript-json-decoder';
+import { array, decodeType, literal, nil, record, string, union, number } from 'typescript-json-decoder';
 
 // Common decoders that are used with multiple content types.
 
@@ -20,6 +20,12 @@ const slugDecoder = record({
     }),
 });
 
+const spotRangeDecoder = record({
+    minDegreeYear: number,
+    maxDegreeYear: number,
+    spots: number,
+});
+
 type Question = decodeType<typeof questionDecoder>;
 const questionDecoder = record({
     questionText: string,
@@ -27,5 +33,5 @@ const questionDecoder = record({
     alternatives: union(nil, array(string)),
 });
 
-export { authorDecoder, publishedAtDecoder, slugDecoder, questionDecoder };
+export { authorDecoder, publishedAtDecoder, slugDecoder, spotRangeDecoder, questionDecoder };
 export type { Question };
