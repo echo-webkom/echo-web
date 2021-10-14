@@ -83,7 +83,7 @@ const OmOssPage = ({
                 tabPanels={[
                     <>
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
-                        <StudentGroupSection studentGroups={boards.reverse()} error={boardsError} groupType="styrer" />
+                        <StudentGroupSection studentGroups={boards} error={boardsError} groupType="styrer" />
                     </>,
                     <Markdown key="instituttraadet" options={{ overrides: MapMarkdownChakra }}>
                         {instituttraadet}
@@ -130,7 +130,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
     return {
-        props: { boards: boards.studentGroups, boardsError: boards.error, minutes, error },
+        props: { boards: boards.studentGroups?.reverse(), boardsError: boards.error, minutes, error },
     };
 };
 
