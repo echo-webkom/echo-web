@@ -56,7 +56,7 @@ export const StudentGroupAPI = {
     ): Promise<{ studentGroups: Array<StudentGroup> | null; error: string | null }> => {
         try {
             const query = `
-                *[_type == "studentGroup" && groupType == "${type}"] | order(name) {
+                *[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))] | order(name) {
                     name,
                     info,
                     "roles": roles[] -> {

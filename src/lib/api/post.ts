@@ -72,7 +72,7 @@ export const PostAPI = {
     getPosts: async (n: number): Promise<{ posts: Array<Post> | null; error: string | null }> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
-            const query = `*[_type == "post"] | order(_createdAt desc) {title, slug, body, author->{name}, _createdAt, thumbnail}${limit}`;
+            const query = `*[_type == "post" && !(_id in path('drafts.**'))] | order(_createdAt desc) {title, slug, body, author->{name}, _createdAt, thumbnail}${limit}`;
             const data = await SanityAPI.fetch(query);
 
             return {
@@ -94,7 +94,7 @@ export const PostAPI = {
      */
     getPostBySlug: async (slug: string): Promise<{ post: Post | null; error: string | null }> => {
         try {
-            const query = `*[_type == "post" && slug.current == "${slug}"]{title, slug, body, author->{name}, _createdAt, thumbnail}`;
+            const query = `*[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{title, slug, body, author->{name}, _createdAt, thumbnail}`;
             const result = await SanityAPI.fetch(query);
 
             if (result.length === 0) throw new Error();

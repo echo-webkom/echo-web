@@ -60,7 +60,7 @@ export const BedpresAPI = {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
-                *[_type == "happening" && happeningType == "BEDPRES"] | order(date asc){
+                *[_type == "happening" && happeningType == "BEDPRES" && !(_id in path('drafts.**'))] | order(date asc){
                     title,
                     "slug": slug.current,
                     date,
@@ -105,7 +105,7 @@ export const BedpresAPI = {
     getBedpresBySlug: async (slug: string): Promise<{ bedpres: Bedpres | null; error: string | null }> => {
         try {
             const query = `
-                *[_type == "happening" && happeningType == "BEDPRES" && slug.current == "${slug}"]{
+                *[_type == "happening" && happeningType == "BEDPRES" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,
                     date,
