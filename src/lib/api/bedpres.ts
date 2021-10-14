@@ -130,7 +130,12 @@ export const BedpresAPI = {
             `;
             const data = await SanityAPI.fetch(query);
 
-            if (data.length === 0) throw new Error();
+            if (data.length === 0) {
+                return {
+                    bedpres: null,
+                    error: '404',
+                };
+            }
 
             return {
                 // Sanity returns a list with a single element,
