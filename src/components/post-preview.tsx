@@ -39,6 +39,7 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
                             py="0.5rem"
                             px="1rem"
                             borderRadius="0.5rem"
+                            marginBottom="0.25rem"
                         >
                             {post.author}
                         </Text>
