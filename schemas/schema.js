@@ -1,11 +1,7 @@
 import createSchema from 'part:@sanity/base/schema-creator';
 import schemaTypes from 'all:part:@sanity/base/schema-type';
-import Break from './Break';
-import PortableText from './PortableText';
 import Author from './Author';
 import Post from './Post';
-import Event from './Event';
-import Bedpres from './Bedpres';
 import MeetingMinute from './MeetingMinute';
 import Profile from './Profile';
 import Role from './Role';
@@ -17,18 +13,14 @@ import Happening from './Happening';
 export default createSchema({
     name: 'default',
     types: schemaTypes.concat([
-        Break,
-        PortableText,
-        Author,
+        Happening,
         Post,
-        Event,
-        Bedpres,
+        AdditionalQuestion,
+        SpotRange,
         MeetingMinute,
+        Author,
         Profile,
         Role,
         StudentGroup,
-        AdditionalQuestion,
-        SpotRange,
-        Happening,
     ]),
 });
