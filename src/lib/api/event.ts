@@ -84,7 +84,7 @@ export const EventAPI = {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
-                *[_type == "happening" && happeningType == "EVENT" && !(_id in path('drafts.**'))]{
+                *[_type == "happening" && happeningType == "EVENT" && !(_id in path('drafts.**'))] | order(date asc){
                     title,
                     "slug": slug.current,
                     happeningType,
