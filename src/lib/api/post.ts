@@ -97,7 +97,12 @@ export const PostAPI = {
             const query = `*[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{title, slug, body, author->{name}, _createdAt, thumbnail}`;
             const result = await SanityAPI.fetch(query);
 
-            if (result.length === 0) throw new Error();
+            if (result.length === 0) {
+                return {
+                    post: null,
+                    error: '404',
+                };
+            }
 
             return {
                 post: postListDecoder(result)[0],
