@@ -41,7 +41,7 @@ const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
                     </Center>
                     <Spacer />
                     <Center>
-                        <Text>{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
+                        <Text fontSize="1.25rem">{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
                     </Center>
                 </Flex>
             </Box>
