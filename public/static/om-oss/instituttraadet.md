@@ -3,19 +3,19 @@ Instituttrådet
 
 Instituttrådet er instituttets høyeste styringsorgan, og har vedtaksmyndighet i saker som omgår instituttet som helhet. Hvert år velges tre studenter som skal sitte i rådet og representere studentenes meninger. I tillegg velges to studenter som skal representere studentene i programstyret, hvor saker som angår studieprogrammene tas opp.
 
-### Representanter for studieåret 2020/21
+### Representanter for studieåret 2021/2022
 #### Instituttrådet
 ##### Medlemmer:
 
 - Brigt Arve Toppe Håvardstun
-- Tonje Hellestøl
+- Sofia Hestenes Eika
 
 ##### Varaer:
 
-- Martin Øines Eide
-- Christian Scheie Hein
-- Tuva Ulveseth Kvalsøren
-- Hjalmar Svenstrup Andersen
+- Elias Ivarssønn Djupesland
+- Sandra Lekve
+- Bo Victor Isak Aanes
+- Pål Henrik Hannus
 
 #### Programstyret
 - Jørn Lode

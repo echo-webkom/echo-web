@@ -154,7 +154,12 @@ export const EventAPI = {
             `;
             const data = await SanityAPI.fetch(query);
 
-            if (data.length === 0) throw new Error();
+            if (data.length === 0) {
+                return {
+                    event: null,
+                    error: '404',
+                };
+            }
 
             return {
                 event: eventListDecoder(data)[0],

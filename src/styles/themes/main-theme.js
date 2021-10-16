@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import { useBreakpointValue } from '@chakra-ui/react';
 
 const mainPallette = {
     transparent: 'transparent',
@@ -99,7 +100,7 @@ const mainTheme = extendTheme({
                 color: colorMode === 'light' ? 'black' : 'white',
                 bg: colorMode === 'light' ? 'bg.light.primary' : 'bg.dark.primary',
                 lineHeight: 'base',
-                fontSize: '1.25rem',
+                fontSize: useBreakpointValue(['1rem', null, '1.25rem']),
             },
         }),
     },
