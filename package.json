@@ -104,7 +104,7 @@
         ]
     },
     "dependencies": {
-        "@chakra-ui/react": "1.6.9",
+        "@chakra-ui/react": "1.6.10",
         "@emotion/react": "11.4.1",
         "@emotion/styled": "11.3.0",
         "@sanity/client": "2.21.3",
