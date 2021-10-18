@@ -96,12 +96,9 @@ testlogger {
     logLevel = LogLevel.LIFECYCLE
 }
 
-// Use new JVM IR backend (yolo).
-// https://blog.jetbrains.com/kotlin/2021/02/the-jvm-backend-is-in-beta-let-s-make-it-stable-together
-// Also set JVM target.
+// Set JVM target.
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
-        useIR = true
         jvmTarget = "13"
     }
 }
