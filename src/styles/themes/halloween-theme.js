@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import { useBreakpointValue } from '@chakra-ui/react';
 
-const mainPallette = {
+const halloweenPallette = {
     transparent: 'transparent',
     black: '#000000',
     white: '#ffffff',
@@ -23,31 +23,55 @@ const mainPallette = {
     },
     button: {
         light: {
-            primary: '#19A0B3',
+            primary: '#FC9E31',
             secondary: '',
-            primaryHover: '#48D1E5',
+            primaryHover: '#FDB35E',
             secondaryHover: '',
-            primaryActive: '#049fb2',
+            primaryActive: '#FDB35E',
             secondaryActive: '',
         },
         dark: {
-            primary: '#98E5F0',
+            primary: '#FDB35E',
             secondary: '',
-            primaryHover: '#C0EFF6',
+            primaryHover: '#FDC98B',
             secondaryHover: '',
-            primaryActive: '#52afbe',
+            primaryActive: '#FDC98B',
             secondaryActive: '',
         },
     },
     highlight: {
         light: {
-            primary: '#19A0B3',
-            secondary: '#FDC42F',
+            primary: '#FC9E31',
+            secondary: '#A998C3',
         },
         dark: {
-            primary: '#98E5F0',
-            secondary: '#FEDE8B',
+            primary: '#FDB35E',
+            secondary: '#A998C3',
         },
+    },
+    orange: {
+        50: '#FFF3E6',
+        100: '#FEDEB9',
+        200: '#FDC98B',
+        300: '#FDB35E',
+        400: '#FC9E31',
+        500: '#FB8904',
+        600: '#C96D03',
+        700: '#975202',
+        800: '#653701',
+        900: '#321B01',
+    },
+    purple: {
+        50: '#F2EFF6',
+        100: '#D9D2E5',
+        200: '#C1B5D4',
+        300: '#A998C3',
+        400: '#917BB2',
+        500: '#785EA1',
+        600: '#604B81',
+        700: '#483861',
+        800: '#302640',
+        900: '#181320',
     },
     gray: {
         50: '#F5F5F5',
@@ -63,7 +87,7 @@ const mainPallette = {
     },
 };
 
-const mainTheme = extendTheme({
+const halloweenTheme = extendTheme({
     fonts: {
         heading: 'IBM Plex Serif',
         body: 'Raleway',
@@ -78,7 +102,7 @@ const mainTheme = extendTheme({
             },
         }),
     },
-    colors: mainPallette,
+    colors: halloweenPallette,
 });
 
-export default mainTheme;
+export default halloweenTheme;

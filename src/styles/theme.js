@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import mainTheme from './themes/main-theme';
+import halloweenTheme from './themes/halloween-theme';
 
 // global config
 const config = {
@@ -9,7 +10,7 @@ const config = {
 
 // theme
 const theme = extendTheme({
-    ...mainTheme,
+    ...halloweenTheme,
     config,
 });
 

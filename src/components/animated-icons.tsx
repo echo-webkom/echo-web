@@ -10,22 +10,23 @@ interface Props {
 const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
     const keys = Array.from(Array(n).keys());
     const folder = '/halloween-icons/';
-    const icons = ['bat.svg', 'ghost.svg', 'pumpkin.svg', 'skull.svg'];
+    const icons = ['ghost.svg', 'pumpkin.svg', 'skull.svg'];
 
     return (
         <Box w="100%" h="100%">
-            <Box position="relative" zIndex={10}>
+            <Box position="relative" zIndex={10} w="100%" minHeight="100vh">
                 {children}
             </Box>
             <Box position="absolute" w="100%" h="100%" left={0} top={0} overflow="hidden">
                 {keys.map((key) => {
                     const x_offset = Math.floor(Math.random() * 95); //between 10% and 90%
                     const y_offset = Math.floor(Math.random() * 95);
+
                     const icon = icons[Math.floor(Math.random() * icons.length)];
                     return (
                         <AnimatedIcon
-                            delay={key}
-                            repeat_delay={10}
+                            delay={key * 0.5}
+                            repeat_delay={15}
                             x_offset={`${x_offset}%`}
                             y_offset={`${y_offset}%`}
                             key={key}
