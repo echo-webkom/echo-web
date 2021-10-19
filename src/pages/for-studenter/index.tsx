@@ -36,6 +36,7 @@ const ForStudenterPage = ({
                     'Undergrupper',
                     'Underorganisasjoner',
                     'Interessegrupper',
+                    'Stillingsannonser',
                     'Masterinfo',
                     'Økonomisk støtte',
                     'Anonyme tilbakemeldinger',

@@ -1,5 +1,6 @@
 export { default as SanityAPI } from './api';
 export { HappeningAPI, HappeningType, type Happening } from './happening';
+export { type JobAdvert, JobAdvertAPI } from './job-advert';
 export { MinuteAPI, type Minute } from './minute';
 export { PostAPI, type Post } from './post';
 export {
