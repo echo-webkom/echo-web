@@ -9,6 +9,7 @@ import StudentGroup from './StudentGroup';
 import AdditionalQuestion from './AdditionalQuestion';
 import SpotRange from './SpotRange';
 import Happening from './Happening';
+import JobAdvert from './JobAdvert';
 
 export default createSchema({
     name: 'default',
@@ -22,5 +23,6 @@ export default createSchema({
         Profile,
         Role,
         StudentGroup,
+        JobAdvert,
     ]),
 });
