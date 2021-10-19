@@ -5,15 +5,24 @@ export default {
     type: 'document',
     preview: {
         select: {
-            title: 'title',
+            title: 'companyName',
         },
     },
     fields: [
         {
-            name: 'title',
-            title: 'Title',
+            name: 'companyName',
+            title: 'Company Name',
             validation: (Rule) => Rule.required(),
             type: 'string',
+        },
+        {
+            name: 'slug',
+            title: 'Slug',
+            validation: (Rule) => Rule.required(),
+            type: 'slug',
+            options: {
+                source: 'companyName',
+            },
         },
         {
             name: 'body',
@@ -22,21 +31,32 @@ export default {
             type: 'markdown',
         },
         {
-            name: 'companyName',
-            title: 'Company Name',
+            name: 'logo',
+            title: 'Logo',
+            validation: (Rule) => Rule.required(),
+            type: 'image',
+        },
+        {
+            name: 'deadline',
+            title: 'Application Deadline',
+            validation: (Rule) => Rule.required(),
+            type: 'datetime',
+        },
+        {
+            name: 'city',
+            title: 'City',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
-            name: 'logo',
-            title: 'Logo',
-            type: 'image',
-        },
-        {
-            name: 'applyByDate',
-            title: 'Apply-by Date',
+            name: 'jobType',
+            title: 'Job Type',
             validation: (Rule) => Rule.required(),
-            type: 'datetime',
+            type: 'string',
+            options: {
+                list: ['Fulltid', 'Deltid', 'Sommerjobb'],
+                layout: 'dropdown',
+            },
         },
         {
             name: 'advertLink',
