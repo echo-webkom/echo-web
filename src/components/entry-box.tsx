@@ -1,8 +1,6 @@
 import { Center, Heading, Text, useBreakpointValue } from '@chakra-ui/react';
 import React from 'react';
-import { Bedpres } from '../lib/api/bedpres';
-import { Event } from '../lib/api/event';
-import { Post } from '../lib/api/post';
+import { Happening, Post } from '../lib/api';
 import ButtonLink from './button-link';
 import EntryList from './entry-list';
 import ErrorBox from './error-box';
@@ -11,7 +9,7 @@ import Section from './section';
 interface Props {
     title?: string;
     titles?: Array<string>;
-    entries: Array<Event | Bedpres | Post> | null;
+    entries: Array<Happening | Post> | null;
     entryLimit: number;
     error: string | null;
     altText?: string;

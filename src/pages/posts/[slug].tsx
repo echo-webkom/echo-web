@@ -12,7 +12,7 @@ import ErrorBox from '../../components/error-box';
 import Layout from '../../components/layout';
 import Section from '../../components/section';
 import SEO from '../../components/seo';
-import { Post, PostAPI } from '../../lib/api/post';
+import { Post, PostAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
 const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element => {

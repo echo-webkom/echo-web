@@ -7,7 +7,7 @@ module.exports = {
         return config;
     },
     images: {
-        domains: ['images.ctfassets.net', 'cdn.sanity.io'],
+        domains: ['cdn.sanity.io'],
     },
 
     reactStrictMode: true,

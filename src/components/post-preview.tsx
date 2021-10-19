@@ -2,7 +2,7 @@ import { Box, Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@ch
 import NextLink from 'next/link';
 import React from 'react';
 import removeMD from 'remove-markdown';
-import { Post } from '../lib/api/post';
+import { Post } from '../lib/api';
 
 const PostPreview = ({ post }: { post: Post }): JSX.Element => {
     const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
