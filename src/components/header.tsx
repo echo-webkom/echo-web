@@ -10,7 +10,7 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import { isFriday, isThursday, getHours, isMonday } from 'date-fns';
+import { isFriday, isThursday, getHours, getMonth, isMonday } from 'date-fns';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React, { useRef } from 'react';
@@ -19,21 +19,27 @@ import NavBar from './navbar';
 import { motion } from 'framer-motion';
 
 const RandomHeaderMessage = (): string => {
-    const stdMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
     const now = new Date();
+
+    const stdMessages = () => {
+        let baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
+
+        if (getMonth(now) === 9) baseMessages = baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
+
+        if (isThursday(now)) baseMessages = baseMessages.concat(['Vaffeltorsdag 🧇']);
+
+        if (isFriday(now)) baseMessages = baseMessages.concat(['Tacofredag 🌯']);
+
+        return baseMessages;
+    };
 
     if (isMonday(now)) {
         return 'New week, new me?';
-    } else if (isThursday(now)) {
-        if (getHours(now) < 12) {
-            return 'Husk bedpres kl. 12:00!';
-        }
-        return 'Vaffeltorsdag 🧇';
-    } else if (isFriday(now)) {
-        return 'Tacofredag 🌯';
+    } else if (isThursday(now) && getHours(now) < 12) {
+        return 'Husk bedpres kl. 12:00!';
     }
 
-    return stdMessages[Math.floor(Math.random() * stdMessages.length)];
+    return stdMessages()[Math.floor(Math.random() * stdMessages().length)];
 };
 
 const HeaderLogo = ({ message }: { message?: string }) => {
