@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { array, boolean, decodeType, number, optional, Pojo, record, string } from 'typescript-json-decoder';
+import { HappeningType } from './';
 
 export enum Degree {
     DTEK = 'DTEK',
@@ -14,11 +15,6 @@ export enum Degree {
     ARMNINF = 'ARMNINF',
     POST = 'POST',
     MISC = 'MISC',
-}
-
-export enum HappeningType {
-    BEDPRES = 'BEDPRES',
-    EVENT = 'EVENT',
 }
 
 const degreeDecoder = (value: Pojo): Degree => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudentGroup } from '../../lib/api/student-group';
+import { StudentGroup } from '../../lib/api';
 import StudentGroupSection from '../student-group-section';
 import { render } from './testing-utils';
 
@@ -13,7 +13,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Mr. Leder McLeder',
-                        pictureUrl: 'https://images.ctfassets.net/lederman69',
+                        imageUrl: 'https://cdn.sanity.io/lederman69',
                     },
                 ],
             },
@@ -22,11 +22,11 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Ola Nordmann',
-                        pictureUrl: 'https://images.ctfassets.net/ola',
+                        imageUrl: 'https://cdn.sanity.io/ola',
                     },
                     {
                         name: 'Test McTest',
-                        pictureUrl: null,
+                        imageUrl: null,
                     },
                 ],
             },
@@ -41,7 +41,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Mr. CEO',
-                        pictureUrl: 'https://images.ctfassets.net/lederman420',
+                        imageUrl: 'https://cdn.sanity.io/lederman420',
                     },
                 ],
             },
@@ -50,7 +50,7 @@ const studentGroups: Array<StudentGroup> = [
                 members: [
                     {
                         name: 'Ola Nordmann',
-                        pictureUrl: 'https://images.ctfassets.net/ola',
+                        imageUrl: 'https://cdn.sanity.io/ola',
                     },
                 ],
             },

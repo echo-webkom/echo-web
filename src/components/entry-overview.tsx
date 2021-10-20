@@ -1,12 +1,11 @@
 import { GridItem, SimpleGrid } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import React from 'react';
-import { Bedpres } from '../lib/api/bedpres';
-import { Event } from '../lib/api/event';
+import { Happening } from '../lib/api';
 import EntryBox from './entry-box';
 
 interface Props {
-    entries: Array<Event | Bedpres>;
+    entries: Array<Happening>;
     error: string | null;
     type: 'event' | 'bedpres';
 }
@@ -14,11 +13,11 @@ interface Props {
 const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
     const alt = type === 'event' ? 'arrangementer' : 'bedriftspresentasjoner';
 
-    const upcoming = entries?.filter((entry: Event | Bedpres) => {
+    const upcoming = entries?.filter((entry: Happening) => {
         return isFuture(new Date(entry.date));
     });
     const past = entries
-        ?.filter((entry: Event | Bedpres) => {
+        ?.filter((entry: Happening) => {
             return isPast(new Date(entry.date));
         })
         ?.reverse();

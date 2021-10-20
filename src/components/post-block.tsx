@@ -1,6 +1,6 @@
 import { Center, Heading, Stack, StackDivider, Text } from '@chakra-ui/react';
 import React from 'react';
-import { Post } from '../lib/api/post';
+import { Post } from '../lib/api';
 import ButtonLink from './button-link';
 import PostPreview from './post-preview';
 import Section from './section';

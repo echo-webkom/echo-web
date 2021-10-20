@@ -1,6 +1,6 @@
 import { Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text, Wrap } from '@chakra-ui/react';
 import React from 'react';
-import { StudentGroup } from '../lib/api/student-group';
+import { StudentGroup } from '../lib/api';
 import ErrorBox from './error-box';
 import StudentGroupView from './student-group-view';
 

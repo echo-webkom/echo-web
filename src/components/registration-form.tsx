@@ -27,10 +27,7 @@ import NextLink from 'next/link';
 import { FormProvider, useForm } from 'react-hook-form';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
-import { Bedpres } from '../lib/api/bedpres';
-import { Question } from '../lib/api/decoders';
-import { Event } from '../lib/api/event';
-import { Degree, HappeningType, RegistrationAPI } from '../lib/api/registration';
+import { Degree, Happening, HappeningType, RegistrationAPI, Question } from '../lib/api';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -73,7 +70,7 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
 };
 
 interface Props {
-    happening: Bedpres | Event;
+    happening: Happening;
     type: HappeningType;
     backendUrl: string;
 }

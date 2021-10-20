@@ -1,29 +1,21 @@
-import { array, decodeType, literal, nil, record, string, union, number } from 'typescript-json-decoder';
+import {
+    array,
+    decodeType,
+    DecoderFunction,
+    literal,
+    nil,
+    number,
+    Pojo,
+    record,
+    string,
+    union,
+} from 'typescript-json-decoder';
 
-// Common decoders that are used with multiple content types.
-
-const authorDecoder = record({
-    author: record({
-        name: string,
-    }),
-});
-
-const publishedAtDecoder = record({
-    sys: record({
-        firstPublishedAt: string,
-    }),
-});
-
-const slugDecoder = record({
-    slug: record({
-        current: string,
-    }),
-});
-
+type SpotRange = decodeType<typeof spotRangeDecoder>;
 const spotRangeDecoder = record({
+    spots: number,
     minDegreeYear: number,
     maxDegreeYear: number,
-    spots: number,
 });
 
 type Question = decodeType<typeof questionDecoder>;
@@ -33,5 +25,8 @@ const questionDecoder = record({
     alternatives: union(nil, array(string)),
 });
 
-export { authorDecoder, publishedAtDecoder, slugDecoder, spotRangeDecoder, questionDecoder };
-export type { Question };
+const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
+    union(array(decoder), nil)(value) || [];
+
+export { emptyArrayOnNilDecoder, spotRangeDecoder, questionDecoder };
+export type { SpotRange, Question };

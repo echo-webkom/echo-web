@@ -1,6 +1,7 @@
 import {
     Center,
     Flex,
+    Box,
     Icon,
     IconButton,
     LinkBox,
@@ -9,29 +10,36 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import { isFriday, isThursday, getHours, isMonday } from 'date-fns';
+import { isFriday, isThursday, getHours, getMonth, isMonday } from 'date-fns';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React, { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
 import NavBar from './navbar';
+import { motion } from 'framer-motion';
 
 const RandomHeaderMessage = (): string => {
-    const stdMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
     const now = new Date();
+
+    const stdMessages = () => {
+        let baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
+
+        if (getMonth(now) === 9) baseMessages = baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
+
+        if (isThursday(now)) baseMessages = baseMessages.concat(['Vaffeltorsdag 🧇']);
+
+        if (isFriday(now)) baseMessages = baseMessages.concat(['Tacofredag 🌯']);
+
+        return baseMessages;
+    };
 
     if (isMonday(now)) {
         return 'New week, new me?';
-    } else if (isThursday(now)) {
-        if (getHours(now) < 12) {
-            return 'Husk bedpres kl. 12:00!';
-        }
-        return 'Vaffeltorsdag 🧇';
-    } else if (isFriday(now)) {
-        return 'Tacofredag 🌯';
+    } else if (isThursday(now) && getHours(now) < 12) {
+        return 'Husk bedpres kl. 12:00!';
     }
 
-    return stdMessages[Math.floor(Math.random() * stdMessages.length)];
+    return stdMessages()[Math.floor(Math.random() * stdMessages().length)];
 };
 
 const HeaderLogo = ({ message }: { message?: string }) => {
@@ -66,6 +74,7 @@ const HeaderLogo = ({ message }: { message?: string }) => {
             <Flex display={{ base: 'block', md: 'none' }}>
                 <Image src={smallLogo} alt="logo" width={90} height={90} />
             </Flex>
+            <LogoHat icon_src={'/halloween-icons/hat.svg'} h={40} w={40} />
             <NextLink href="/" passHref>
                 <LinkOverlay>
                     <Flex position="absolute" bottom="-1rem" left="5%" w="20rem">
@@ -93,6 +102,23 @@ const HeaderLogo = ({ message }: { message?: string }) => {
 
 HeaderLogo.defaultProps = {
     message: '',
+};
+
+const LogoHat = ({ icon_src, h, w }: { icon_src: string; h: number; w: number }): JSX.Element => {
+    return (
+        <Box display={{ base: 'none', md: 'block' }}>
+            <motion.div
+                style={{
+                    position: 'absolute',
+                    left: 114,
+                    top: 7,
+                    transform: 'rotate(-20deg)',
+                }}
+            >
+                <Image src={icon_src} alt="" width={w} height={h} />
+            </motion.div>
+        </Box>
+    );
 };
 
 const Header = (): JSX.Element => {

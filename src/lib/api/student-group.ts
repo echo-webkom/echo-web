@@ -1,54 +1,27 @@
 import axios from 'axios';
-import { array, decodeType, nil, Pojo, record, string, union } from 'typescript-json-decoder';
+import { array, decodeType, nil, record, string, union } from 'typescript-json-decoder';
 import { SanityAPI } from './api';
+import { emptyArrayOnNilDecoder } from './decoders';
 import handleError from './errors';
 
 export type Profile = decodeType<typeof profileDecoder>;
-const profileDecoder = (value: Pojo) => {
-    const baseDecoder = record({
-        name: string,
-        imageUrl: union(string, nil),
-    });
-
-    return {
-        ...baseDecoder(value),
-    };
-};
+const profileDecoder = record({
+    name: string,
+    imageUrl: union(string, nil),
+});
 
 export type Role = decodeType<typeof roleDecoder>;
-const roleDecoder = (value: Pojo) => {
-    const baseDecoder = record({
-        name: string,
-    });
-
-    const profileListDecoder = record({
-        members: union(array(profileDecoder), nil),
-    });
-
-    return {
-        ...baseDecoder(value),
-        members: profileListDecoder(value).members || [],
-    };
-};
+const roleDecoder = record({
+    name: string,
+    members: (value) => emptyArrayOnNilDecoder(profileDecoder, value),
+});
 
 export type StudentGroup = decodeType<typeof studentGroupDecoder>;
-const studentGroupDecoder = (value: Pojo) => {
-    const baseDecoder = record({
-        name: string,
-        info: string,
-    });
-
-    const roleListDecoder = record({
-        roles: array(roleDecoder),
-    });
-
-    return {
-        ...baseDecoder(value),
-        roles: roleListDecoder(value).roles,
-    };
-};
-
-const studentGroupListDecoder = array(studentGroupDecoder);
+const studentGroupDecoder = record({
+    name: string,
+    info: string,
+    roles: array(roleDecoder),
+});
 
 export const StudentGroupAPI = {
     getStudentGroupsByType: async (
@@ -71,7 +44,7 @@ export const StudentGroupAPI = {
             const result = await SanityAPI.fetch(query);
 
             return {
-                studentGroups: studentGroupListDecoder(result),
+                studentGroups: array(studentGroupDecoder)(result),
                 error: null,
             };
         } catch (error) {

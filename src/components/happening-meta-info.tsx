@@ -6,34 +6,42 @@ import { BiCalendar } from 'react-icons/bi';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
-import { MdEventSeat, MdLockOpen, MdLockOutline } from 'react-icons/md';
+import { MdEventSeat, MdLockOutline } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import IconText from './icon-text';
-
-import { SpotRangeCount } from '../lib/api/registration';
+import { SpotRange, SpotRangeCount } from '../lib/api';
 
 interface Props {
     date: Date;
     location: string;
-    companyLink?: string;
-    spotRangeCounts: Array<SpotRangeCount>;
-    minDegreeYear?: number;
-    maxDegreeYear?: number;
+    companyLink: string | null;
+    spotRangeCounts: Array<SpotRangeCount> | null;
+    spotRangesFromCms: Array<SpotRange> | null;
 }
 
-const HappeningMetaInfo = ({
-    date,
-    location,
-    companyLink,
-    spotRangeCounts,
-    minDegreeYear,
-    maxDegreeYear,
-}: Props): JSX.Element => {
-    const absMinDegreeYear = Math.min(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.minDegreeYear || 1) || [1]));
-    const absMaxDegreeYear = Math.max(...(spotRangeCounts?.map((sr: SpotRangeCount) => sr?.maxDegreeYear || 5) || [5]));
+const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts, spotRangesFromCms }: Props): JSX.Element => {
+    // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
+    // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
+    // This means spots from CMS will be displayed if backend does not respond.
+    const trueSpotRanges: Array<SpotRangeCount> = spotRangeCounts
+        ? spotRangeCounts
+        : spotRangesFromCms?.map((sr: SpotRange) => {
+              return {
+                  spots: sr.spots,
+                  minDegreeYear: sr.minDegreeYear,
+                  maxDegreeYear: sr.maxDegreeYear,
+                  regCount: 0,
+                  waitListCount: 0,
+              };
+          }) || [];
+
+    const minDegreeYear =
+        trueSpotRanges.length === 0 ? 1 : Math.min(...trueSpotRanges.map((sr: SpotRange) => sr.minDegreeYear));
+    const maxDegreeYear =
+        trueSpotRanges.length === 0 ? 5 : Math.max(...trueSpotRanges.map((sr: SpotRange) => sr.maxDegreeYear));
+
     const dontShowDegreeYear =
-        (absMinDegreeYear === 1 && absMaxDegreeYear === 5 && spotRangeCounts?.length === 1) ||
-        spotRangeCounts?.length === 1;
+        (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
     return (
         <VStack alignItems="left" spacing={3}>
@@ -44,7 +52,7 @@ const HappeningMetaInfo = ({
                     link={companyLink}
                 />
             )}
-            {spotRangeCounts?.map((sr: SpotRangeCount) => (
+            {trueSpotRanges.map((sr: SpotRangeCount) => (
                 <>
                     {sr.regCount === 0 && sr.spots !== 0 && (
                         <IconText
@@ -78,9 +86,6 @@ const HappeningMetaInfo = ({
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             <IconText icon={ImLocation} text={location} />
-            {minDegreeYear && maxDegreeYear && minDegreeYear === 1 && maxDegreeYear === 5 && (
-                <IconText icon={MdLockOpen} text="Åpen for alle trinn" />
-            )}
             {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
                 <IconText
                     icon={MdLockOutline}

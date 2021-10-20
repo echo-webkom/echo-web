@@ -14,9 +14,9 @@ import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
 import React from 'react';
-import { Bedpres } from '../lib/api/bedpres';
+import { Happening } from '../lib/api';
 
-const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
+const BedpresPreview = ({ bedpres }: { bedpres: Happening }): JSX.Element => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
 
     return (
@@ -29,7 +29,7 @@ const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
                 _hover={{ bg: hoverColor }}
             >
                 <Flex verticalAlign="middle">
-                    <Avatar size="xl" src={bedpres.logoUrl} alt="firmalogo" />
+                    <Avatar size="xl" src={bedpres?.logoUrl || ''} alt="firmalogo" />
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>
@@ -41,7 +41,7 @@ const BedpresPreview = ({ bedpres }: { bedpres: Bedpres }): JSX.Element => {
                     </Center>
                     <Spacer />
                     <Center>
-                        <Text>{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
+                        <Text fontSize="1.25rem">{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
                     </Center>
                 </Flex>
             </Box>

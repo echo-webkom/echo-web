@@ -7,9 +7,7 @@ import EntryBox from '../components/entry-box';
 import Hsp from '../components/hsp';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
-import { Bedpres, BedpresAPI } from '../lib/api/bedpres';
-import { Event, EventAPI } from '../lib/api/event';
-import { Post, PostAPI } from '../lib/api/post';
+import { HappeningAPI, Happening, HappeningType, Post, PostAPI } from '../lib/api';
 import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
@@ -20,11 +18,11 @@ const IndexPage = ({
     events,
     eventsError,
 }: {
-    bedpreses: Array<Bedpres>;
+    bedpreses: Array<Happening>;
     bedpresError: string;
     posts: Array<Post>;
     postsError: string;
-    events: Array<Event>;
+    events: Array<Happening>;
     eventsError: string;
 }): JSX.Element => {
     return (
@@ -80,26 +78,31 @@ const IndexPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const bedpresesResponse = await BedpresAPI.getBedpreses(0);
+    const bedpresesResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
+    const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
     const postsResponse = await PostAPI.getPosts(0);
-    const eventsResponse = await EventAPI.getEvents(0);
 
-    const rss = getRssXML(postsResponse.posts, eventsResponse.events, bedpresesResponse.bedpreses);
+    const rss = getRssXML(
+        postsResponse.posts,
+        (eventsResponse.happenings || []).concat(bedpresesResponse.happenings || []),
+    );
 
     fs.writeFileSync('./public/rss.xml', rss);
 
     return {
         props: {
             bedpreses:
-                bedpresesResponse.bedpreses
-                    ?.filter((bedpres: Bedpres) => {
+                bedpresesResponse.happenings
+                    ?.filter((bedpres: Happening) => {
                         return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
                     })
                     .slice(0, 6) || null,
             bedpresError: bedpresesResponse.error,
             posts: postsResponse.posts?.slice(0, 6) || null,
             postsError: postsResponse.error,
-            events: eventsResponse.events?.filter((event: Event) => isFuture(new Date(event.date))).slice(0, 8) || null,
+            events:
+                eventsResponse.happenings?.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8) ||
+                null,
             eventsError: eventsResponse.error,
         },
     };

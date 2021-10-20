@@ -4,129 +4,100 @@ import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
-import { Bedpres } from '../lib/api/bedpres';
-import { Event } from '../lib/api/event';
-import { HappeningType, SpotRangeCount } from '../lib/api/registration';
+import { Happening, HappeningType, SpotRangeCount } from '../lib/api';
 import Article from './article';
 import Countdown from './countdown';
 import HappeningMetaInfo from './happening-meta-info';
 import RegistrationForm from './registration-form';
 import Section from './section';
 
-const getMinDegreeYear = (happening: Event | Bedpres) => {
-    if (!happening.spotRanges || happening.spotRanges.length < 1) return undefined;
-    return happening.spotRanges.reduce((prev, curr) => (prev.minDegreeYear < curr.minDegreeYear ? prev : curr));
-};
-
-const getMaxDegreeYear = (happening: Event | Bedpres) => {
-    if (!happening.spotRanges || happening.spotRanges.length < 1) return undefined;
-    return happening.spotRanges.reduce((prev, curr) => (prev.minDegreeYear > curr.minDegreeYear ? prev : curr));
-};
-
 const HappeningUI = ({
-    bedpres,
-    event,
+    happening,
     backendUrl,
     spotRangeCounts,
     date,
 }: {
-    bedpres: Bedpres | null;
-    event: Event | null;
+    happening: Happening | null;
     backendUrl: string;
-    spotRangeCounts: Array<SpotRangeCount>;
+    spotRangeCounts: Array<SpotRangeCount> | null;
     date: number;
 }): JSX.Element => {
-    const happening = bedpres || event;
-    const type = bedpres ? HappeningType.BEDPRES : HappeningType.EVENT;
+    if (happening == null) return <></>;
 
-    const regDate = happening?.registrationTime ? parseISO(happening.registrationTime) : new Date(date);
-    const eventDate = happening?.date ? parseISO(happening.date) : new Date(date);
-
-    const minDegreeYear = event
-        ? getMinDegreeYear(event)?.minDegreeYear
-        : bedpres
-        ? getMinDegreeYear(bedpres)?.minDegreeYear
-        : undefined;
-
-    const maxDegreeYear = event
-        ? getMaxDegreeYear(event)?.maxDegreeYear
-        : bedpres
-        ? getMaxDegreeYear(bedpres)?.maxDegreeYear
-        : undefined;
+    const regDate = happening.registrationDate ? parseISO(happening.registrationDate) : new Date(date);
+    const happeningDate = parseISO(happening.date);
 
     return (
-        <>
-            <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                <GridItem colSpan={1} as={Section}>
-                    {happening && (
+        <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
+            <GridItem colSpan={1} as={Section}>
+                <>
+                    {happening.happeningType === HappeningType.BEDPRES && happening.companyLink && happening.logoUrl && (
+                        <LinkBox mb="1em">
+                            <NextLink href={happening.companyLink} passHref>
+                                <LinkOverlay href={happening.companyLink} isExternal>
+                                    <Center>
+                                        <Image src={happening.logoUrl} alt="Bedriftslogo" width={300} height={300} />
+                                    </Center>
+                                </LinkOverlay>
+                            </NextLink>
+                        </LinkBox>
+                    )}
+                    <HappeningMetaInfo
+                        date={parseISO(happening.date)}
+                        location={happening.location}
+                        companyLink={happening.companyLink}
+                        spotRangeCounts={spotRangeCounts?.length === 0 ? null : spotRangeCounts}
+                        spotRangesFromCms={
+                            !spotRangeCounts || spotRangeCounts.length === 0 ? happening.spotRanges : null
+                        }
+                    />
+                    {happening.registrationDate && (
                         <>
-                            {bedpres && (
-                                <LinkBox mb="1em">
-                                    <NextLink href={bedpres.companyLink} passHref>
-                                        <LinkOverlay href={bedpres.companyLink} isExternal>
-                                            <Center>
-                                                <Image
-                                                    src={bedpres.logoUrl}
-                                                    alt="Bedriftslogo"
-                                                    width={300}
-                                                    height={300}
-                                                />
-                                            </Center>
-                                        </LinkOverlay>
-                                    </NextLink>
-                                </LinkBox>
-                            )}
-                            <HappeningMetaInfo
-                                date={parseISO(happening.date)}
-                                location={happening.location}
-                                companyLink={bedpres ? bedpres.companyLink : undefined}
-                                spotRangeCounts={spotRangeCounts}
-                                minDegreeYear={minDegreeYear}
-                                maxDegreeYear={maxDegreeYear}
-                            />
-                            {happening.registrationTime && (
-                                <>
-                                    <Divider my="1em" />
-                                    {isBefore(date, regDate) &&
-                                        (differenceInHours(regDate, date) > 23 ? (
-                                            <Center>
-                                                <Text fontSize="2xl">
-                                                    Åpner {format(regDate, 'dd. MMM yyyy, HH:mm', { locale: nb })}
-                                                </Text>
-                                            </Center>
-                                        ) : (
-                                            <Countdown date={regDate} />
-                                        ))}
-                                    {isBefore(date, eventDate) && isAfter(date, regDate) && (
-                                        <RegistrationForm happening={happening} type={type} backendUrl={backendUrl} />
-                                    )}
-                                    {isAfter(date, eventDate) && (
-                                        <Center my="3" data-testid="bedpres-has-been">
-                                            <Text>Påmeldingen er stengt.</Text>
-                                        </Center>
-                                    )}
-                                </>
-                            )}
                             <Divider my="1em" />
-                            <Center>
-                                <Heading size="lg">@{happening.author}</Heading>
-                            </Center>
+                            {isBefore(date, regDate) &&
+                                (differenceInHours(regDate, date) > 23 ? (
+                                    <Center>
+                                        <Text fontSize="2xl">
+                                            Åpner {format(regDate, 'dd. MMM yyyy, HH:mm', { locale: nb })}
+                                        </Text>
+                                    </Center>
+                                ) : (
+                                    <Countdown date={regDate} />
+                                ))}
+                            {isBefore(date, happeningDate) && isAfter(date, regDate) && (
+                                <RegistrationForm
+                                    happening={happening}
+                                    type={happening.happeningType}
+                                    backendUrl={backendUrl}
+                                />
+                            )}
+                            {isAfter(date, happeningDate) && (
+                                <Center my="3" data-testid="bedpres-has-been">
+                                    <Text>Påmeldingen er stengt.</Text>
+                                </Center>
+                            )}
                         </>
                     )}
-                </GridItem>
-                <GridItem
-                    colStart={[1, null, null, 2]}
-                    rowStart={[2, null, null, 1]}
-                    colSpan={[1, null, null, 3]}
-                    rowSpan={2}
-                    minW="0"
-                >
+                    <Divider my="1em" />
+                    <Center>
+                        <Heading size="lg">@{happening.author}</Heading>
+                    </Center>
+                </>
+            </GridItem>
+            <GridItem
+                colStart={[1, null, null, 2]}
+                rowStart={[2, null, null, 1]}
+                colSpan={[1, null, null, 3]}
+                rowSpan={2}
+                minW="0"
+            >
+                {happening && (
                     <Section>
-                        <Article heading={happening?.title || ''} body={happening?.body || ''} />
+                        <Article heading={happening.title} body={happening.body} />
                     </Section>
-                </GridItem>
-            </Grid>
-        </>
+                )}
+            </GridItem>
+        </Grid>
     );
 };
 

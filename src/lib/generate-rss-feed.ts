@@ -1,7 +1,5 @@
 import { formatISO, isPast, parseISO, sub } from 'date-fns';
-import { Bedpres } from './api/bedpres';
-import { Event } from './api/event';
-import { Post } from './api/post';
+import { Happening, Post } from './api';
 
 type GenericEntry = {
     slug: string;
@@ -44,11 +42,7 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
     };
 };
 
-const getRssXML = (
-    posts: Array<Post> | null,
-    events: Array<Event> | null,
-    bedpreses: Array<Bedpres> | null,
-): string => {
+const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | null): string => {
     const genericPosts = posts
         ? posts.map((post) => {
               return {
@@ -62,35 +56,27 @@ const getRssXML = (
           })
         : [];
 
-    const genericEvents = events
-        ? events.map((event) => {
+    const happeningIsPast = (happening: Happening) => {
+        if (!happening?.registrationDate) return false;
+        return isPast(sub(parseISO(happening.registrationDate), { hours: 12 }));
+    };
+
+    const genericHappenings = happenings
+        ? happenings.filter(happeningIsPast).map((happening) => {
               return {
-                  slug: event.slug,
-                  title: event.title,
-                  publishedAt: event._createdAt,
-                  author: event.author,
-                  body: event.body,
-                  route: 'events',
+                  slug: happening.slug,
+                  title: happening.title,
+                  publishedAt: formatISO(
+                      sub(parseISO(happening?.registrationDate || new Date().toString()), { hours: 12 }),
+                  ),
+                  author: happening.author,
+                  body: happening.body,
+                  route: 'happening',
               };
           })
         : [];
 
-    const genericBedpreses = bedpreses
-        ? bedpreses
-              .filter((bedpres) => isPast(sub(parseISO(bedpres.registrationTime), { hours: 12 })))
-              .map((bedpres) => {
-                  return {
-                      slug: bedpres.slug,
-                      title: bedpres.title,
-                      publishedAt: formatISO(sub(parseISO(bedpres.registrationTime), { hours: 12 })),
-                      author: bedpres.author,
-                      body: bedpres.body,
-                      route: 'bedpres',
-                  };
-              })
-        : [];
-
-    const all = genericPosts.concat(genericEvents).concat(genericBedpreses);
+    const all = genericPosts.concat(genericHappenings);
     all.sort((a, b) => {
         if (new Date(a.publishedAt) < new Date(b.publishedAt)) return 1;
         if (new Date(b.publishedAt) < new Date(a.publishedAt)) return -1;
