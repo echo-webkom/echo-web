@@ -1,0 +1,24 @@
+name: Build project
+on:
+  pull_request:
+    branches: [production, develop]
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }} 
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Build with yarn
+        run: yarn build
