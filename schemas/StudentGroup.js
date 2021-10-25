@@ -1,6 +1,6 @@
 export default {
     name: 'studentGroup',
-    title: 'Student Group',
+    title: 'Studengruppe',
     description: 'Undergruppe, underorganisasjon eller et echo-styre',
     type: 'document',
     preview: {
@@ -11,7 +11,7 @@ export default {
     fields: [
         {
             name: 'name',
-            title: 'Name',
+            title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
@@ -27,16 +27,24 @@ export default {
                     )
                     .error(),
             type: 'string',
+            options: {
+                list: [
+                    { title: 'Undergruppe', value: 'subgroup' },
+                    { title: 'Underorganisasjon', value: 'suborg' },
+                    { title: 'Hovedstyre', value: 'board' },
+                ],
+                layout: 'dropdown',
+            },
         },
         {
             name: 'info',
-            title: 'Info',
+            title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
         },
         {
             name: 'roles',
-            title: 'Roles',
+            title: 'Roller',
             type: 'array',
             of: [
                 {

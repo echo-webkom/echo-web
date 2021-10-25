@@ -1,7 +1,6 @@
 export default {
     name: 'meetingMinute',
-    title: 'Meeting Minute',
-    description: 'Møtereferat',
+    title: 'Møtereferat',
     type: 'document',
     preview: {
         select: {
@@ -11,25 +10,25 @@ export default {
     fields: [
         {
             name: 'title',
-            title: 'Title',
+            title: 'Tittel',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'document',
-            title: 'Document',
+            title: 'Dokument',
             validation: (Rule) => Rule.required(),
             type: 'file',
         },
         {
             name: 'date',
-            title: 'Date',
+            title: 'Dato for møte',
             validation: (Rule) => Rule.required(),
             type: 'datetime',
         },
         {
             name: 'allmote',
-            title: 'Allmøte',
+            title: 'Er møtet ett allmøte?',
             validation: (Rule) => Rule.required(),
             type: 'boolean',
         },

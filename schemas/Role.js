@@ -1,6 +1,6 @@
 export default {
     name: 'role',
-    title: 'Role',
+    title: 'Rolle',
     description: 'En rolle som knytter en undergruppe og et medlem',
     type: 'document',
     preview: {
@@ -11,13 +11,13 @@ export default {
     fields: [
         {
             name: 'name',
-            title: 'Name',
+            title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'studentGroup',
-            title: 'Student Group',
+            title: 'Studentgruppe',
             validation: (Rule) => Rule.required(),
             type: 'reference',
             to: [
@@ -28,7 +28,7 @@ export default {
         },
         {
             name: 'members',
-            title: 'Members',
+            title: 'Medlemmer',
             type: 'array',
             of: [
                 {

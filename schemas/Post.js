@@ -1,7 +1,6 @@
 export default {
     name: 'post',
-    title: 'Post',
-    description: 'Generelle innlegg på nettsiden',
+    title: 'Innlegg',
     type: 'document',
     preview: {
         select: {
@@ -11,13 +10,13 @@ export default {
     fields: [
         {
             name: 'title',
-            title: 'Title',
+            title: 'Tittel',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'slug',
-            title: 'Slug',
+            title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
@@ -26,13 +25,13 @@ export default {
         },
         {
             name: 'body',
-            title: 'Body',
+            title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
         },
         {
             name: 'author',
-            title: 'Author',
+            title: 'Forfatter',
             validation: (Rule) => Rule.required(),
             type: 'reference',
             to: [
@@ -43,7 +42,7 @@ export default {
         },
         {
             name: 'thumbnail',
-            title: 'Thumbnail',
+            title: 'Miniatyrbilde',
             type: 'image',
         },
     ],

@@ -1,7 +1,7 @@
 export default {
     name: 'additionalQuestion',
-    title: 'Additional Question',
-    description: 'Ekstra spørsmål til brukeren på en bedpres (f.eks. hvilken mat, allergier osv...)',
+    title: 'Tilleggsspørsmål',
+    description: 'Ekstra spørsmål til brukeren på en Happening (f.eks. hvilken mat, allergier osv...)',
     type: 'document',
     preview: {
         select: {
@@ -11,13 +11,13 @@ export default {
     fields: [
         {
             name: 'questionText',
-            title: 'Question Text',
+            title: 'Spørsmålstekst',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'inputType',
-            title: 'InputType',
+            title: 'Input-type',
             validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
@@ -27,7 +27,7 @@ export default {
         },
         {
             name: 'alternatives',
-            title: 'Alternatives',
+            title: 'Alternativer',
             type: 'array',
             of: [
                 {

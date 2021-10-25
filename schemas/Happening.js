@@ -1,7 +1,7 @@
 export default {
     name: 'happening',
-    title: 'Happening',
-    description: 'Event eller Bedpres',
+    title: 'Arrangement',
+    description: 'Et arrangement (fest, workshop, bedpres, osv...).',
     type: 'document',
     preview: {
         select: {
@@ -11,13 +11,13 @@ export default {
     fields: [
         {
             name: 'title',
-            title: 'Title',
+            title: 'Tittel',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'slug',
-            title: 'Slug',
+            title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
@@ -26,44 +26,49 @@ export default {
         },
         {
             name: 'happeningType',
-            title: 'Happening Type',
+            title: 'Er arrangementet en bedriftspresentasjon?',
             validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
-                list: ['EVENT', 'BEDPRES'],
+                list: [
+                    { title: 'Ja', value: 'BEDPRES' },
+                    { title: 'Nei', value: 'event' },
+                ],
                 layout: 'dropdown',
             },
         },
         {
             name: 'date',
-            title: 'Date',
+            title: 'Dato for arrangementet',
             validation: (Rule) => Rule.required(),
             type: 'datetime',
         },
         {
             name: 'body',
-            title: 'Body',
+            title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
         },
         {
             name: 'logo',
-            title: 'Logo',
+            title: 'Logo til bedrift',
             validation: (Rule) =>
                 Rule.custom((logo, context) =>
-                    context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined' ? 'Må ha logo' : true,
+                    context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined'
+                        ? 'Må ha logo om det er en bedpres.'
+                        : true,
                 ),
             type: 'image',
         },
         {
             name: 'location',
-            title: 'Location',
+            title: 'Sted',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'author',
-            title: 'Author',
+            title: 'Forfatter',
             validation: (Rule) => Rule.required(),
             type: 'reference',
             to: [
@@ -74,23 +79,23 @@ export default {
         },
         {
             name: 'companyLink',
-            title: 'Company Link',
+            title: 'Lenke til bedrift',
             validation: (Rule) =>
                 Rule.custom((logo, context) =>
                     context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined'
-                        ? 'Må ha link til bedriften'
+                        ? 'Må ha link til bedriften om det er en bedpres.'
                         : true,
                 ),
             type: 'url',
         },
         {
             name: 'registrationDate',
-            title: 'Registration Date',
+            title: 'Dato for påmelding',
             type: 'datetime',
         },
         {
             name: 'additionalQuestions',
-            title: 'Additional Questions',
+            title: 'Tilleggsspørsmål',
             type: 'array',
             of: [
                 {

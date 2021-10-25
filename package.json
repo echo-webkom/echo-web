@@ -4,7 +4,8 @@
     "private": true,
     "version": "1.0.0",
     "author": "echo Webkom",
-    "scripts": { "start": "sanity start",
+    "scripts": {
+        "start": "sanity start",
         "build": "sanity build",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
         "prepare": "husky install"

@@ -1,7 +1,7 @@
 export default {
     name: 'author',
-    title: 'Author',
-    description: 'Den som har publisert innholder (bedpres, post, event, osv...). Navn på undergruppe er foretrukket.',
+    title: 'Forfatter',
+    description: 'Den som har publisert innholdet (happening, post, osv...). Navn på undergruppe er foretrukket.',
     type: 'document',
     preview: {
         select: {
@@ -11,7 +11,7 @@ export default {
     fields: [
         {
             name: 'name',
-            title: 'Author Name',
+            title: 'Forfatter',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },

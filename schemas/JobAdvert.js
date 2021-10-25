@@ -1,7 +1,6 @@
 export default {
     name: 'jobAdvert',
-    title: 'Job Advert',
-    description: 'Stillingsannonse',
+    title: 'Stillingsannonse',
     type: 'document',
     preview: {
         select: {
@@ -11,13 +10,13 @@ export default {
     fields: [
         {
             name: 'companyName',
-            title: 'Company Name',
+            title: 'Navn på bedrift',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'slug',
-            title: 'Slug',
+            title: 'Slug (link)',
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
@@ -26,47 +25,51 @@ export default {
         },
         {
             name: 'body',
-            title: 'Body',
+            title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
         },
         {
             name: 'logo',
-            title: 'Logo',
+            title: 'Logo til bedrift',
             validation: (Rule) => Rule.required(),
             type: 'image',
         },
         {
             name: 'deadline',
-            title: 'Application Deadline',
+            title: 'Søknadsfrist',
             validation: (Rule) => Rule.required(),
             type: 'datetime',
         },
         {
             name: 'location',
-            title: 'Location/city',
+            title: 'Sted',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
         {
             name: 'jobType',
-            title: 'Job Type',
+            title: 'Type stilling',
             validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
-                list: ['Fulltid', 'Deltid', 'Sommerjobb'],
+                list: [
+                    { title: 'Fulltid', value: 'fulltime' },
+                    { title: 'Deltid', value: 'parttime' },
+                    { title: 'Sommerjobb', value: 'internship' },
+                ],
                 layout: 'dropdown',
             },
         },
         {
             name: 'advertLink',
-            title: 'Advert Link',
+            title: 'Lenke til søknad',
             validation: (Rule) => Rule.required(),
             type: 'url',
         },
         {
             name: 'degreeYears',
-            title: 'Degree Years',
+            title: 'Aktuelle årstrinn',
             validation: (Rule) => Rule.required(),
             type: 'array',
             of: [{ type: 'number' }],
