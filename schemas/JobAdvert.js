@@ -43,8 +43,8 @@ export default {
             type: 'datetime',
         },
         {
-            name: 'city',
-            title: 'City',
+            name: 'location',
+            title: 'Location/city',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
