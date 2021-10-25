@@ -13,6 +13,8 @@ services:
       - '3000:3000'
     environment:
       BACKEND_URL: http://backend:8080
+      # Value of DEV doesn't matter, only that it's defined.
+      DEV: "yes"
       # Values from .env file
       SANITY_TOKEN: ${SANITY_TOKEN}
       SANITY_DATASET: ${SANITY_DATASET}

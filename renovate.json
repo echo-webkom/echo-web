@@ -10,8 +10,8 @@
   "stabilityDays": 3,
   "prCreation": "not-pending",
   "ignoreDeps": [
-      "openjdk",
-      "postgres"
+    "openjdk",
+    "postgres"
   ],
   "packageRules": [
     {

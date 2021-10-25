@@ -32,34 +32,45 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
         { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen-andre","2019-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen-andre", "2019-07-29T20:10:11Z", everyoneSpotRange, type) }
     val exampleHappening3: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-dritlang-i-fremtiden","2037-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-dritlang-i-fremtiden", "2037-07-29T20:10:11Z", everyoneSpotRange, type) }
     val exampleHappening4: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-for-bare-1-til-2","2020-05-29T20:00:11Z", oneTwoSpotRange, type) }
+        { type -> HappeningJson("${type}-for-bare-1-til-2", "2020-05-29T20:00:11Z", oneTwoSpotRange, type) }
     val exampleHappening5: (type: HAPPENING_TYPE) -> HappeningJson =
         { type -> HappeningJson("${type}-for-bare-3-til-5", "2020-06-29T18:07:31Z", threeFiveSpotRange, type) }
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-som-er-splitta-ty-bedkom", "2020-06-29T18:07:31Z", everyoneSplitSpotRange, type) }
+        { type ->
+            HappeningJson(
+                "${type}-som-er-splitta-ty-bedkom",
+                "2020-06-29T18:07:31Z",
+                everyoneSplitSpotRange,
+                type
+            )
+        }
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
-                "test1${type}@test.com", "Én", "Navnesen", Degree.DTEK, 3, exampleHappening1(type).slug, true, null, false,
+                "test1${type}@test.com",
+                "Én",
+                "Navnesen",
+                Degree.DTEK,
+                3,
+                exampleHappening1(type).slug,
+                true,
+                null,
+                false,
                 listOf(
                     AnswerJson("Skal du ha mat?", "Nei"),
                     AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
-                ), type
+                ),
+                type
             )
         }
 
     val gson = Gson()
-
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
-
-    val admin = "admin"
-    val keys = mapOf(
-        admin to "admin-passord"
-    )
+    val adminKey = "admin-passord"
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -92,7 +103,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Registrations with valid data should submit correctly." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             fun submitReg(degree: Degree, degreeYear: Int, type: HAPPENING_TYPE) {
                 val submitRegCall: TestApplicationCall =
@@ -137,7 +148,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "The same user should be able to sign up for two different happenings." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 for (b in listOf(exampleHappening1(t), exampleHappening2(t))) {
@@ -159,7 +170,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Registration with valid data and empty question list should submit correctly." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -179,7 +190,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening more than once." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -211,7 +222,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening before the registration date." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -231,7 +242,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening that doesn't exist." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -256,7 +267,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Email should contain @-sign." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -277,7 +288,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Degree year should not be smaller than one." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -298,7 +309,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Degree year should not be bigger than five." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -320,7 +331,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If the degree year is either four or five, the degree should not correspond to a bachelors degree." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             listOf(
                 Degree.DTEK,
@@ -351,7 +362,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If the degree year is between one and three, the degree should not correspond to a masters degree." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             listOf(Degree.INF, Degree.PROG).map { deg ->
                 for (t in be) {
@@ -376,7 +387,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If degree is KOGNI, degree year should be equal to three." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -397,7 +408,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If degree is ARMNINF, degree year should be equal to one." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -418,7 +429,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Terms should be accepted." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -444,9 +455,9 @@ class HappeningRegistrationTest : StringSpec({
 
     "Trying to delete a registration with wrong Authorization header should not work." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
-            val wrongAuth = "$admin:feil-passord-100-bruh"
+            val wrongAuth = "admin:feil-passord-100-bruh"
             for (t in be) {
                 val testCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Delete, uri = "/${Routing.registrationRoute}") {
@@ -465,7 +476,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If a happening has filled up every spot, a registration should be put on the wait list." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 for (i in 1..(exampleHappening1(t).spotRanges[0].spots)) {
@@ -501,7 +512,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening if you are not inside the degree year range." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 for (i in 1..2) {
@@ -522,8 +533,13 @@ class HappeningRegistrationTest : StringSpec({
                     submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                     res.code shouldBe Response.NotInRange
-                    val descStart = if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
-                    res.desc shouldBe "$descStart for ${exampleHappening5(t).spotRanges[0].minDegreeYear}. til ${exampleHappening5(t).spotRanges[0].maxDegreeYear}. trinn."
+                    val descStart =
+                        if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
+                    res.desc shouldBe "$descStart for ${exampleHappening5(t).spotRanges[0].minDegreeYear}. til ${
+                        exampleHappening5(
+                            t
+                        ).spotRanges[0].maxDegreeYear
+                    }. trinn."
                 }
 
                 for (i in 3..5) {
@@ -546,8 +562,13 @@ class HappeningRegistrationTest : StringSpec({
                     val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
                     res.code shouldBe Response.NotInRange
                     res.title shouldBe "Du kan dessverre ikke melde deg på."
-                    val descStart = if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
-                    res.desc shouldBe "$descStart for ${exampleHappening4(t).spotRanges[0].minDegreeYear}. til ${exampleHappening4(t).spotRanges[0].maxDegreeYear}. trinn."
+                    val descStart =
+                        if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
+                    res.desc shouldBe "$descStart for ${exampleHappening4(t).spotRanges[0].minDegreeYear}. til ${
+                        exampleHappening4(
+                            t
+                        ).spotRanges[0].maxDegreeYear
+                    }. trinn."
                 }
             }
         }
@@ -555,7 +576,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Rate limit should work as expected." {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (i in 1..200) {
                 val submitRegCall: TestApplicationCall =
@@ -601,7 +622,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Should get correct count of registrations and wait list registrations" {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             val waitListCount = 10
 
@@ -635,7 +656,7 @@ class HappeningRegistrationTest : StringSpec({
                             res.code shouldBe Response.OK
                             res.title shouldBe "Påmeldingen din er registrert!"
                             res.desc shouldBe successfulRegMsg(t)
-                       }
+                        }
                     }
                 }
 
@@ -646,13 +667,16 @@ class HappeningRegistrationTest : StringSpec({
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
-                            "Basic ${Base64.getEncoder().encodeToString("$admin:${keys[admin]}".toByteArray())}"
+                            "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
                         )
                     }
 
                 getCountRegCall.response.status() shouldBe HttpStatusCode.OK
                 val spotRangeWithCountType = object : TypeToken<List<SpotRangeWithCountJson>>() {}.type
-                val spotRangeCounts = gson.fromJson<List<SpotRangeWithCountJson>>(getCountRegCall.response.content, spotRangeWithCountType)
+                val spotRangeCounts = gson.fromJson<List<SpotRangeWithCountJson>>(
+                    getCountRegCall.response.content,
+                    spotRangeWithCountType
+                )
 
                 for (i in spotRangeCounts.indices) {
                     spotRangeCounts[i].regCount shouldBe exampleHappening6(t).spotRanges[i].spots
@@ -664,7 +688,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Should respond properly when not given slug of happening when count of registrations are requested" {
         withTestApplication({
-            configureRouting(keys)
+            configureRouting(adminKey, null)
         }) {
             for (t in be) {
                 val getCountRegCall: TestApplicationCall =
@@ -674,7 +698,7 @@ class HappeningRegistrationTest : StringSpec({
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
-                            "Basic ${Base64.getEncoder().encodeToString("$admin:${keys[admin]}".toByteArray())}"
+                            "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
                         )
                     }
 
@@ -685,7 +709,7 @@ class HappeningRegistrationTest : StringSpec({
     }
 })
 
-fun successfulRegMsg (type: HAPPENING_TYPE): String {
+fun successfulRegMsg(type: HAPPENING_TYPE): String {
     return when (type) {
         HAPPENING_TYPE.BEDPRES ->
             "Du har fått plass på bedriftspresentasjonen."

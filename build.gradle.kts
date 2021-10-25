@@ -9,6 +9,7 @@ val hikari_version: String by project
 val kotest_version: String by project
 val ktor_rate_limit_version: String by project
 val flyway_version: String by project
+val sendgrid_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
@@ -54,6 +55,8 @@ dependencies {
 
     implementation("org.flywaydb:flyway-core:$flyway_version")
 
+    implementation("com.sendgrid:sendgrid-java:$sendgrid_version")
+
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 
     testImplementation("io.kotest:kotest-framework-engine:$kotest_version")
@@ -96,7 +99,12 @@ testlogger {
     logLevel = LogLevel.LIFECYCLE
 }
 
-// Set JVM target.
+// Set JVM target for Java.
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(13))
+}
+
+// Set JVM target for Kotlin.
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "13"
