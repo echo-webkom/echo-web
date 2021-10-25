@@ -1,7 +1,7 @@
 name: Build project
 on:
   pull_request:
-    branches: [production, develop]
+    branches: [production]
     
 
 jobs:
