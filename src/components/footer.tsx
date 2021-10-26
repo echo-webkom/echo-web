@@ -1,21 +1,11 @@
-import {
-    Center,
-    Flex,
-    Icon,
-    LinkBox,
-    LinkOverlay,
-    SimpleGrid,
-    Text,
-    useColorModeValue,
-    VStack,
-} from '@chakra-ui/react';
+import { Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { FiMail } from 'react-icons/fi';
 
-const echoLogoWhite = '/echo-logo-text-only-white.png';
+const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
 
 const Footer = (): JSX.Element => {
@@ -67,24 +57,21 @@ const Footer = (): JSX.Element => {
                     </NextLink>
                 </LinkBox>
             </SimpleGrid>
-            <Flex display={['none', 'block', 'block']}>
-                <Image alt="echo" width={175} height={85} src={echoLogoWhite} />
-            </Flex>
+            <SimpleGrid columns={1} alignItems="center" display={['none', 'block', 'block']}>
+                <Image alt="echo" width={145.15} height={65} src={echoLogoWhite} />
+            </SimpleGrid>
+
             <SimpleGrid columns={1} alignItems="center">
-                <VStack spacing="0">
-                    <Text fontSize="sm" color="white">
-                        POWERED BY
-                    </Text>
-                    <LinkBox>
-                        <NextLink href="https://sanity.io" passHref>
-                            <LinkOverlay isExternal>
-                                <Center>
-                                    <Image alt="sanity" width={175} height={52.5} src={sanityLogo} />
-                                </Center>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                </VStack>
+                <Text fontSize="sm" color="white" m={0} textAlign="center">
+                    POWERED BY
+                </Text>
+                <LinkBox m={0}>
+                    <NextLink href="https://sanity.io" passHref>
+                        <LinkOverlay isExternal>
+                            <Image alt="sanity" width={175} height={52.5} src={sanityLogo} />
+                        </LinkOverlay>
+                    </NextLink>
+                </LinkBox>
             </SimpleGrid>
             <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
                 <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
