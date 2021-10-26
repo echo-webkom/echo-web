@@ -109,18 +109,31 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
 }
 
 fun deleteHappeningBySlug(slug: String): Boolean {
-    transaction {
+    return transaction {
         addLogger(StdOutSqlLogger)
 
-        deleteSpotRanges(slug)
         val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
         if (!happeningExists)
             return@transaction false
 
-        Happening.deleteWhere { Happening.slug eq slug }
-    }
+        SpotRange.deleteWhere {
+            SpotRange.happeningSlug eq slug
+        }
 
-    return true
+        Answer.deleteWhere {
+            Answer.happeningSlug eq slug
+        }
+
+        Registration.deleteWhere {
+            Registration.happeningSlug eq slug
+        }
+
+        Happening.deleteWhere {
+            Happening.slug eq slug
+        }
+
+        return@transaction true
+    }
 }
 
 fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
