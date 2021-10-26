@@ -1,6 +1,6 @@
 export default {
     name: 'studentGroup',
-    title: 'Studengruppe',
+    title: 'Studentgruppe',
     description: 'Undergruppe, underorganisasjon eller et echo-styre',
     type: 'document',
     preview: {

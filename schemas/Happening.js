@@ -32,7 +32,7 @@ export default {
             options: {
                 list: [
                     { title: 'Ja', value: 'BEDPRES' },
-                    { title: 'Nei', value: 'event' },
+                    { title: 'Nei', value: 'EVENT' },
                 ],
                 layout: 'dropdown',
             },

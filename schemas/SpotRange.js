@@ -1,6 +1,6 @@
 export default {
     name: 'spotRange',
-    title: 'Arrangementsplaser',
+    title: 'Arrangementsplasser',
     description: 'Hvor mange plasser som er tildelt hvert trinn på et arrangement.',
     type: 'document',
     preview: {

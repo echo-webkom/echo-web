@@ -49,7 +49,7 @@ export default {
         },
         {
             name: 'jobType',
-            title: 'Type stilling',
+            title: 'Stillingstype',
             validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
