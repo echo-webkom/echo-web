@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
@@ -6,6 +5,7 @@ import NextNProgress from 'nextjs-progressbar';
 import React from 'react';
 import Fonts from '../styles/fonts';
 import theme from '../styles/theme';
+import Layout from '../components/layout';
 
 const App = ({ Component, pageProps }: AppProps): JSX.Element => {
     const router = useRouter();
@@ -20,7 +20,9 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
                 options={{ showSpinner: false }}
             />
             <Fonts />
-            <Component {...pageProps} key={router} />
+            <Layout>
+                <Component {...pageProps} key={router} />
+            </Layout>
         </ChakraProvider>
     );
 };

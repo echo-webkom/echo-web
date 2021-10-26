@@ -1,10 +1,9 @@
 import { Box, Center, Heading, Text } from '@chakra-ui/react';
 import React from 'react';
-import Layout from '../components/layout';
 import SEO from '../components/seo';
 
 const NotFoundPage = (): JSX.Element => (
-    <Layout>
+    <>
         <SEO title="Fant ikke siden" />
         <Center>
             <Box textAlign="center">
@@ -14,7 +13,7 @@ const NotFoundPage = (): JSX.Element => (
                 <Text fontSize="2rem">Siden eksisterer ikke.</Text>
             </Box>
         </Center>
-    </Layout>
+    </>
 );
 
 export default NotFoundPage;

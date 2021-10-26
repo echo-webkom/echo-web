@@ -58,7 +58,8 @@
         "rules": {
             "no-console": 1,
             "react/jsx-props-no-spreading": "off",
-            "linebreak-style": "off"
+            "linebreak-style": "off",
+            "camelcase": "error"
         }
     },
     "prettier": {

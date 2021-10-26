@@ -6,7 +6,6 @@ import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';
-import Layout from '../../components/layout';
 import SEO from '../../components/seo';
 import { Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
 
@@ -35,7 +34,7 @@ const EventPage = ({
     }, time);
 
     return (
-        <Layout>
+        <>
             {error && !happening && <ErrorBox error={error} />}
             {happening && !error && (
                 <>
@@ -48,7 +47,7 @@ const EventPage = ({
                     />
                 </>
             )}
-        </Layout>
+        </>
     );
 };
 
