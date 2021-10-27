@@ -36,7 +36,7 @@ jobs:
         DOCKER_BUILDKIT: 1
         USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
         IMAGE_NAME: echo-web-frontend
-        TAG: latest-prod
+        TAG: latest
         COMMIT_SHA: ${{ github.sha }}
 
     - name: Build backend with cache
