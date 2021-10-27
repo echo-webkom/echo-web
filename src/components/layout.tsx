@@ -14,7 +14,7 @@ const Layout = ({ children }: Props): JSX.Element => {
         <Box pos="relative" minHeight="100vh" data-testid="layout">
             <AnimatedIcons n={50}>
                 <Header />
-                <Box px={['5%', '10%']} pb={['600px', '400px', null, null, '280px']}>
+                <Box px={['5%', '10%']} pb={['360px', '300px', '200px', '160px', '160px']}>
                     {children}
                 </Box>
                 <Footer />
