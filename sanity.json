@@ -7,7 +7,14 @@
         "projectId": "pgq2pd26",
         "dataset": "production"
     },
-    "plugins": ["@sanity/base", "@sanity/default-layout", "@sanity/default-login", "@sanity/desk-tool", "markdown"],
+    "plugins": [
+        "@sanity/base",
+        "@sanity/default-layout",
+        "@sanity/default-login",
+        "@sanity/desk-tool",
+        "markdown",
+        "media"
+    ],
     "env": {
         "development": {
             "plugins": ["@sanity/vision"]
