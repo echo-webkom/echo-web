@@ -91,6 +91,6 @@ curl --verbose \
   -H "Content-Type: application/json" \
   -d '{ "slug": "'"${slug}"'",
         "registrationDate": "'"${regdate}"'",
-        "spotRanges": "'"${spotranges}"'",
+        "spotRanges": '"${spotranges}"',
         "type": "'"${happening}"'" }' \
   "$host":"$port"/happening

@@ -40,37 +40,42 @@ object Db {
 
     fun init() {
         // Don't migrate if running on local machine
-        if (!dev)
+        if (!dev) {
             migrate()
-        try {
-            transaction(conn) {
-                SchemaUtils.create(
-                    Happening,
-                    Registration,
-                    Answer,
-                    SpotRange
-                )
-            }
-        } catch (e : Exception) {
-            println("Assuming all tables already exists, and continuing anyway.")
+            // Need to use connection once to open.
+            transaction(conn) {}
         }
-
-        // For Answer FK's
-        try {
-            transaction {
-                val t3 = TransactionManager.current()
-                val fk3 = t3.foreignKeyCompositeConstraint(
-                    mapOf(
-                        Answer.happeningSlug to Registration.happeningSlug,
-                        Answer.registrationEmail to Registration.email
-                    ),
-                    ReferenceOption.RESTRICT,
-                    ReferenceOption.RESTRICT
-                )
-                t3.exec(fk3.createStatement().first())
+        else {
+            try {
+                transaction(conn) {
+                    SchemaUtils.create(
+                        Happening,
+                        Registration,
+                        Answer,
+                        SpotRange
+                    )
+                }
+            } catch (e: Exception) {
+                println("Assuming all tables already exists, and continuing anyway.")
             }
-        } catch (e: Exception) {
-            println("Could not create foreign keys for Answer. Assuming they already exist, and continuing anyway.")
+
+            // For Answer FK's
+            try {
+                transaction {
+                    val t3 = TransactionManager.current()
+                    val fk3 = t3.foreignKeyCompositeConstraint(
+                        mapOf(
+                            Answer.happeningSlug to Registration.happeningSlug,
+                            Answer.registrationEmail to Registration.email
+                        ),
+                        ReferenceOption.RESTRICT,
+                        ReferenceOption.RESTRICT
+                    )
+                    t3.exec(fk3.createStatement().first())
+                }
+            } catch (e: Exception) {
+                println("Could not create foreign keys for Answer. Assuming they already exist, and continuing anyway.")
+            }
         }
     }
 
