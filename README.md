@@ -1,8 +1,7 @@
 # echo web frontend
 
 [![Jest](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/jest_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/jest_test.yaml)
-[![Cypress develop](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test_dev.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test_dev.yaml)
-[![Cypress production](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test_prod.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test_prod.yaml)
+[![Cypress](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test.yaml)
 
 Frontend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
 
