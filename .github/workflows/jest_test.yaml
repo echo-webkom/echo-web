@@ -1,7 +1,7 @@
 name: Jest
 on: 
   pull_request:
-    branches: [develop, master]
+    branches: [master]
 
 jobs:
   jest_tests:

@@ -1,10 +1,10 @@
-name: Cypress production
+name: Cypress
 on:
   pull_request:
-    branches: master
+    branches: [master]
 
 jobs:
-  cypress_tests_prod:
+  cypress_tests:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout frontend repository
@@ -36,7 +36,7 @@ jobs:
         DOCKER_BUILDKIT: 1
         USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
         IMAGE_NAME: echo-web-frontend
-        TAG: latest-prod
+        TAG: latest
         COMMIT_SHA: ${{ github.sha }}
 
     - name: Build backend with cache
@@ -55,7 +55,7 @@ jobs:
         TAG: latest-prod
         COMMIT_SHA: ${{ github.sha }}
 
-    - name: Run Cypress end-to-end tests against production backend
+    - name: Run Cypress end-to-end tests against backend
       run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
       env:
         DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}

@@ -19,18 +19,18 @@ const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
             </Box>
             <Box position="absolute" w="100%" h="100%" left={0} top={0} overflow="hidden">
                 {keys.map((key) => {
-                    const x_offset = Math.floor(Math.random() * 95); //between 10% and 90%
-                    const y_offset = Math.floor(Math.random() * 95);
+                    const xOffset = Math.floor(Math.random() * 95); //between 10% and 90%
+                    const yOffset = Math.floor(Math.random() * 95);
 
                     const icon = icons[Math.floor(Math.random() * icons.length)];
                     return (
                         <AnimatedIcon
                             delay={key * 0.5}
-                            repeat_delay={15}
-                            x_offset={`${x_offset}%`}
-                            y_offset={`${y_offset}%`}
+                            repeatDelay={15}
+                            xOffset={`${xOffset}%`}
+                            yOffset={`${yOffset}%`}
                             key={key}
-                            icon_src={`${folder}${icon}`}
+                            iconSrc={`${folder}${icon}`}
                         />
                     );
                 })}
@@ -40,23 +40,23 @@ const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
 };
 
 const AnimatedIcon = ({
-    x_offset,
-    y_offset,
+    xOffset,
+    yOffset,
     delay,
-    repeat_delay,
-    icon_src,
+    repeatDelay,
+    iconSrc,
 }: {
-    x_offset: string;
-    y_offset: string;
+    xOffset: string;
+    yOffset: string;
     delay: number;
-    repeat_delay: number;
-    icon_src: string;
+    repeatDelay: number;
+    iconSrc: string;
 }): JSX.Element => (
     <motion.div
         style={{
             position: 'absolute',
-            top: x_offset,
-            left: y_offset,
+            top: xOffset,
+            left: yOffset,
             zIndex: 0,
         }}
         initial={{ opacity: 0 }}
@@ -66,9 +66,9 @@ const AnimatedIcon = ({
             opacity: [null, 1, 1, 1, 1, 0],
             rotate: [null, -10, 2, -5],
         }}
-        transition={{ delay: delay, repeatDelay: repeat_delay, duration: 5, repeat: Infinity }}
+        transition={{ delay: delay, repeatDelay: repeatDelay, duration: 5, repeat: Infinity }}
     >
-        <Image src={icon_src} alt="" height={50} width={50} />
+        <Image src={iconSrc} alt="" height={50} width={50} />
     </motion.div>
 );
 

@@ -5,7 +5,6 @@ import anononymeTilbakemeldinger from '../../public/static/for-studenter/anonyme
 import masterinfo from '../../public/static/for-studenter/masterinfo.md';
 import okonomiskStotte from '../../public/static/for-studenter/okonomiskStotte.md';
 import utleggsskjema from '../../public/static/for-studenter/utleggsskjema.md';
-import Layout from '../components/layout';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
@@ -24,7 +23,7 @@ const ForStudenterPage = ({
     subOrgsError: string;
 }): JSX.Element => {
     return (
-        <Layout>
+        <>
             <SEO title="For studenter" />
             <StaticInfo
                 tabNames={[
@@ -62,7 +61,7 @@ const ForStudenterPage = ({
                     </Markdown>,
                 ]}
             />
-        </Layout>
+        </>
     );
 };
 
