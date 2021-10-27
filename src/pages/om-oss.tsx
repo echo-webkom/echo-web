@@ -7,7 +7,6 @@ import bekk from '../../public/static/om-oss/bekk.md';
 import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
-import Layout from '../components/layout';
 import MinuteList from '../components/minute-list';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
@@ -33,7 +32,7 @@ const OmOssPage = ({
     const linkColor = useColorModeValue('blue', 'blue.400');
 
     return (
-        <Layout>
+        <>
             <SEO title="Om oss" />
             <StaticInfo
                 tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
@@ -78,7 +77,7 @@ const OmOssPage = ({
                     </>,
                 ]}
             />
-        </Layout>
+        </>
     );
 };
 

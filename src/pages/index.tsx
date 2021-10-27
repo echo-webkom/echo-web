@@ -5,7 +5,6 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import EntryBox from '../components/entry-box';
 import Hsp from '../components/hsp';
-import Layout from '../components/layout';
 import SEO from '../components/seo';
 import { HappeningAPI, Happening, HappeningType, Post, PostAPI } from '../lib/api';
 import getRssXML from '../lib/generate-rss-feed';
@@ -26,7 +25,7 @@ const IndexPage = ({
     eventsError: string;
 }): JSX.Element => {
     return (
-        <Layout>
+        <>
             <SEO title="echo – Fagutvalget for informatikk" />
             <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
                 <GridItem rowStart={[2, null, null, 1]}>
@@ -73,7 +72,7 @@ const IndexPage = ({
                     />
                 </GridItem>
             </SimpleGrid>
-        </Layout>
+        </>
     );
 };
 

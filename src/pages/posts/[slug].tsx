@@ -9,7 +9,6 @@ import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
 import ErrorBox from '../../components/error-box';
-import Layout from '../../components/layout';
 import Section from '../../components/section';
 import SEO from '../../components/seo';
 import { Post, PostAPI } from '../../lib/api';
@@ -19,7 +18,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
     const router = useRouter();
 
     return (
-        <Layout>
+        <>
             {router.isFallback && (
                 <Center>
                     <Spinner />
@@ -58,7 +57,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     </Box>
                 </>
             )}
-        </Layout>
+        </>
     );
 };
 
