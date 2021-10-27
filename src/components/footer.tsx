@@ -20,7 +20,7 @@ const Footer = (): JSX.Element => {
             spacingX="3em"
             spacingY="3em"
             w="100%"
-            py="0.75em"
+            py="1.25rem"
             px="1em"
             mt="5em"
             bottom="0"
