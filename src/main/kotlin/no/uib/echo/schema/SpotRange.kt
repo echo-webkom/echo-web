@@ -46,16 +46,6 @@ fun selectSpotRanges(slug: String): List<SpotRangeJson> {
     }
 }
 
-fun deleteSpotRanges(slug: String) {
-    transaction {
-        addLogger(StdOutSqlLogger)
-
-        SpotRange.deleteWhere {
-            SpotRange.happeningSlug eq slug
-        }
-    }
-}
-
 fun whichSpotRange(ranges: List<SpotRangeJson>, degreeYear: Int): SpotRangeJson? {
     for (r in ranges)
         if (degreeYear in r.minDegreeYear..r.maxDegreeYear)
