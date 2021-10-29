@@ -108,7 +108,7 @@
         "@chakra-ui/react": "1.6.10",
         "@emotion/react": "11.5.0",
         "@emotion/styled": "11.3.0",
-        "@sanity/client": "2.21.3",
+        "@sanity/client": "2.21.7",
         "axios": "0.24.0",
         "date-fns": "2.25.0",
         "framer-motion": "4.1.17",
