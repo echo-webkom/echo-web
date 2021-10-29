@@ -6,7 +6,7 @@ import { BiCalendar } from 'react-icons/bi';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
-import { MdEventSeat, MdLockOutline } from 'react-icons/md';
+import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import IconText from './icon-text';
 import { SpotRange, SpotRangeCount } from '../lib/api';
@@ -14,12 +14,20 @@ import { SpotRange, SpotRangeCount } from '../lib/api';
 interface Props {
     date: Date;
     location: string;
+    contactEmail: string | null;
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
     spotRangesFromCms: Array<SpotRange> | null;
 }
 
-const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts, spotRangesFromCms }: Props): JSX.Element => {
+const HappeningMetaInfo = ({
+    date,
+    location,
+    contactEmail,
+    companyLink,
+    spotRangeCounts,
+    spotRangesFromCms,
+}: Props): JSX.Element => {
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
     // This means spots from CMS will be displayed if backend does not respond.
@@ -86,6 +94,7 @@ const HappeningMetaInfo = ({ date, location, companyLink, spotRangeCounts, spotR
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             <IconText icon={ImLocation} text={location} />
+            {contactEmail && <IconText icon={MdLogout} text={contactEmail} link={`mailto:${contactEmail}`} />}
             {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
                 <IconText
                     icon={MdLockOutline}

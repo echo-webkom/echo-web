@@ -18,6 +18,7 @@ const happeningDecoder = record({
     companyLink: union(string, nil),
     registrationDate: union(string, nil),
     logoUrl: union(string, nil),
+    contactEmail: union(string, nil),
     additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),
     spotRanges: (value) => emptyArrayOnNilDecoder(spotRangeDecoder, value),
     happeningType: (value) => {
@@ -53,6 +54,7 @@ export const HappeningAPI = {
                     companyLink,
                     happeningType,
                     registrationDate,
+                    contactEmail,
                     additionalQuestions[] -> {
                         questionText,
                         inputType,
@@ -100,6 +102,7 @@ export const HappeningAPI = {
                     companyLink,
                     happeningType,
                     registrationDate,
+                    contactEmail,
                     additionalQuestions[] -> {
                         questionText,
                         inputType,
