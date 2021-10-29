@@ -94,6 +94,17 @@ export default {
             type: 'datetime',
         },
         {
+            name: 'contactEmail',
+            title: 'Hvilken email kan man kontakte for f.eks. avmelding?',
+            validation: (Rule) =>
+                Rule.custom((contactEmail, context) =>
+                    context.document.registrationDate && !(contactEmail?.includes('@') ?? false)
+                        ? 'Må ha en (gyldig) kontaktemail om det skal være påmelding.'
+                        : true,
+                ),
+            type: 'string',
+        },
+        {
             name: 'additionalQuestions',
             title: 'Tilleggsspørsmål',
             type: 'array',
