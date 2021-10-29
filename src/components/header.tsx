@@ -22,7 +22,7 @@ const randomHeaderMessage = (): string => {
     const now = new Date();
 
     const stdMessages = () => {
-        let baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!'];
+        let baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!', 'Spruuutnice'];
 
         if (getMonth(now) === 9) baseMessages = baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
 
