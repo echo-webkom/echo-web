@@ -1,6 +1,5 @@
 import {
     Box,
-    Center,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -9,8 +8,6 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
-    Icon,
-    IconButton,
     Link,
     LinkBox,
     LinkOverlay,
@@ -19,7 +16,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { RefObject } from 'react';
-import { VscColorMode } from 'react-icons/vsc';
+import ColorModeButton from './color-mode-button';
 
 const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
     const router = useRouter();
@@ -57,17 +54,7 @@ const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
         <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
         <NavLink text="For Bedrifter" href="/for-bedrifter" testid="for-bedrifter" />
         <NavLink text="Om echo" href="/om-oss" testid="om-oss" />
-        <IconButton // button for toggling color mode
-            variant="unstyled"
-            icon={
-                <Center>
-                    <Icon as={VscColorMode} boxSize={8} />
-                </Center>
-            }
-            aria-label="toggle color mode"
-            onClick={toggleColorMode}
-            data-testid="button-colormode"
-        />
+        <ColorModeButton />
     </Flex>
 );
 
