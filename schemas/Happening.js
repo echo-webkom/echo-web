@@ -81,8 +81,8 @@ export default {
             name: 'companyLink',
             title: 'Lenke til bedrift',
             validation: (Rule) =>
-                Rule.custom((logo, context) =>
-                    context.document.happeningType === 'BEDPRES' && typeof logo === 'undefined'
+                Rule.custom((companyLink, context) =>
+                    context.document.happeningType === 'BEDPRES' && typeof companyLink === 'undefined'
                         ? 'Må ha link til bedriften om det er en bedpres.'
                         : true,
                 ),
