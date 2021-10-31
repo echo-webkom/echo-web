@@ -11,7 +11,6 @@ import {
     Link,
     LinkBox,
     LinkOverlay,
-    useColorMode,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -37,11 +36,7 @@ NavLink.defaultProps = {
     testid: null,
 };
 
-interface NavProps {
-    toggleColorMode: () => void;
-}
-
-const Nav = ({ toggleColorMode }: NavProps): JSX.Element => (
+const Nav = (): JSX.Element => (
     <Flex
         flexDirection={['column', null, null, 'row']}
         w="100%"
@@ -65,8 +60,6 @@ interface Props {
 }
 
 const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
-    const { toggleColorMode } = useColorMode(); // hook for toggling and using color mode
-
     return (
         <>
             <Box
@@ -82,7 +75,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                     w="full"
                     direction="column"
                 >
-                    <Nav toggleColorMode={toggleColorMode} />
+                    <Nav />
                 </Flex>
             </Box>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
@@ -93,7 +86,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                             Navigasjon
                         </DrawerHeader>
                         <DrawerBody>
-                            <Nav toggleColorMode={toggleColorMode} />
+                            <Nav />
                         </DrawerBody>
                     </DrawerContent>
                 </DrawerOverlay>

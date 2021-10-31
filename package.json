@@ -59,7 +59,8 @@
             "no-console": 1,
             "react/jsx-props-no-spreading": "off",
             "linebreak-style": "off",
-            "camelcase": "error"
+            "camelcase": "error",
+            "@typescript-eslint/no-unused-vars": "error"
         }
     },
     "prettier": {
