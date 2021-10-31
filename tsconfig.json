@@ -14,7 +14,8 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "strictNullChecks": true,
-        "alwaysStrict": true
+        "alwaysStrict": true,
+        "incremental": true
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/__tests__/testing-utils.js", "jest.setup.js"],
     "exclude": ["node_modules"]
