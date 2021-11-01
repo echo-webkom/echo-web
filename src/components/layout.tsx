@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
 import React from 'react';
 import Footer from './footer';
 import Header from './header';
@@ -18,10 +17,6 @@ const Layout = ({ children }: Props): JSX.Element => {
             <Footer />
         </Box>
     );
-};
-
-Layout.propTypes = {
-    children: PropTypes.node.isRequired,
 };
 
 export default Layout;
