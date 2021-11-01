@@ -1,0 +1,26 @@
+name: Lint & format
+on: 
+  pull_request:
+    branches: [master]
+
+jobs:
+  lint_format:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies
+      run: yarn --frozen-lockfile --ignore-scripts
+
+    - name: Run linter
+      run: yarn next lint
+
+    - name: Run prettier check
+      run: yarn prettier -c "**/*.{js,jsx,ts,tsx,json,md}"
