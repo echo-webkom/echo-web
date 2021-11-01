@@ -53,6 +53,9 @@ const HeaderLogo = () => {
     // Background of logo image, depending on light/dark mode.
     const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
 
+    // Logo accesory
+    const logoAcc = '';
+
     // Color and background of message-box
     const textBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const textColor = useColorModeValue('white', 'black');
@@ -72,7 +75,7 @@ const HeaderLogo = () => {
             <Flex display={{ base: 'block', md: 'none' }}>
                 <Image src={smallLogo} alt="logo" width={90} height={90} />
             </Flex>
-            <LogoHat iconSrc={'/halloween-icons/hat.svg'} h={40} w={40} />
+            {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
             <NextLink href="/" passHref>
                 <LinkOverlay>
                     <Flex position="absolute" bottom="-1rem" left="5%" w="20rem">
@@ -98,7 +101,7 @@ const HeaderLogo = () => {
     );
 };
 
-const LogoHat = ({ iconSrc, h, w }: { iconSrc: string; h: number; w: number }): JSX.Element => {
+const LogoAccesory = ({ iconSrc, h, w }: { iconSrc: string; h: number; w: number }): JSX.Element => {
     return (
         <Box display={{ base: 'none', md: 'block' }}>
             <motion.div
