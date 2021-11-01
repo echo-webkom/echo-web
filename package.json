@@ -15,15 +15,6 @@
         "e2e": "docker-compose down && docker-compose up --build --exit-code-from=frontend",
         "prepare": "husky install"
     },
-    "lint-staged": {
-        "*.{js,jsx,ts,tsx}": [
-            "eslint --fix",
-            "prettier --write"
-        ],
-        "*.{json,md}": [
-            "prettier --write"
-        ]
-    },
     "eslintConfig": {
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
