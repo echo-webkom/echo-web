@@ -23,4 +23,6 @@ jobs:
         run: yarn lint
 
       - name: Run prettier check
-        run: yarn prettier -c "**/*.{js,jsx,json,md}"
+        run: |
+          yarn prettier -c "**/*.{js,jsx,json,md}"
+          yarn prettier -c --tab-width=2 "**/*.{yaml,yml}"

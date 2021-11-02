@@ -8,7 +8,7 @@
         "start": "sanity start",
         "build": "sanity build",
         "lint": "eslint \"**/*.{js,jsx}\"",
-        "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+        "format": "prettier --write \"**/*.{js,jsx,json,md}\" && prettier --write --tab-width=2 \"**/*.{yaml,yml}\"",
         "prepare": "husky install"
     },
     "lint-staged": {
@@ -17,6 +17,9 @@
         ],
         "*.{json,md}": [
             "prettier --write"
+        ],
+        "*.{yaml,yml}": [
+            "prettier --write --tab-width=2"
         ]
     },
     "eslintConfig": {
