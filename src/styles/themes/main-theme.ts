@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import { useBreakpointValue } from '@chakra-ui/react';
 
-const halloweenPallette = {
+const mainPallette = {
     transparent: 'transparent',
     black: '#000000',
     white: '#ffffff',
@@ -23,55 +23,57 @@ const halloweenPallette = {
     },
     button: {
         light: {
-            primary: '#FC9E31',
+            primary: '#19A0B3',
             secondary: '',
-            primaryHover: '#FDB35E',
+            primaryHover: '#48D1E5',
             secondaryHover: '',
-            primaryActive: '#FDB35E',
+            primaryActive: '#049fb2',
             secondaryActive: '',
         },
         dark: {
-            primary: '#FDB35E',
+            primary: '#98E5F0',
             secondary: '',
-            primaryHover: '#FDC98B',
+            primaryHover: '#C0EFF6',
             secondaryHover: '',
-            primaryActive: '#FDC98B',
+            primaryActive: '#52afbe',
             secondaryActive: '',
         },
     },
     highlight: {
         light: {
-            primary: '#FC9E31',
-            secondary: '#A998C3',
+            primary: '#19A0B3',
+            secondary: '#FDC42F',
         },
         dark: {
-            primary: '#FDB35E',
-            secondary: '#A998C3',
+            primary: '#98E5F0',
+            secondary: '#FEDE8B',
         },
     },
-    orange: {
-        50: '#FFF3E6',
-        100: '#FEDEB9',
-        200: '#FDC98B',
-        300: '#FDB35E',
-        400: '#FC9E31',
-        500: '#FB8904',
-        600: '#C96D03',
-        700: '#975202',
-        800: '#653701',
-        900: '#321B01',
+    vermillion: '#333a56',
+    fresh: '#52658f',
+    yellow: {
+        50: '#FFF8E6',
+        100: '#FEEBB8',
+        200: '#FEDE8B',
+        300: '#FED15D',
+        400: '#FDC42F',
+        500: '#FDB702',
+        600: '#CA9202',
+        700: '#986E01',
+        800: '#654901',
+        900: '#332500',
     },
-    purple: {
-        50: '#F2EFF6',
-        100: '#D9D2E5',
-        200: '#C1B5D4',
-        300: '#A998C3',
-        400: '#917BB2',
-        500: '#785EA1',
-        600: '#604B81',
-        700: '#483861',
-        800: '#302640',
-        900: '#181320',
+    cyan: {
+        50: '#E9F9FC',
+        100: '#C0EFF6',
+        200: '#98E5F0',
+        300: '#70DBEB',
+        400: '#48D1E5',
+        500: '#20C8DF',
+        600: '#19A0B3',
+        700: '#137886',
+        800: '#0D5059',
+        900: '#06282D',
     },
     gray: {
         50: '#F5F5F5',
@@ -87,22 +89,23 @@ const halloweenPallette = {
     },
 };
 
-const halloweenTheme = extendTheme({
+const mainTheme = extendTheme({
     fonts: {
         heading: 'IBM Plex Serif',
         body: 'Raleway',
     },
     styles: {
-        global: ({ colorMode }) => ({
+        global: ({ colorMode }: { colorMode: string }) => ({
             body: {
                 color: colorMode === 'light' ? 'black' : 'white',
                 bg: colorMode === 'light' ? 'bg.light.primary' : 'bg.dark.primary',
                 lineHeight: 'base',
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 fontSize: useBreakpointValue(['1rem', null, '1.25rem']),
             },
         }),
     },
-    colors: halloweenPallette,
+    colors: mainPallette,
 });
 
-export default halloweenTheme;
+export default mainTheme;

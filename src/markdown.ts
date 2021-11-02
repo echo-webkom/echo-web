@@ -1,6 +1,7 @@
 import { Box, Code, Heading, Img, Link, OrderedList, Text, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 
 const getLinkColor = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     return useColorModeValue('blue', 'blue.400');
 };
 
