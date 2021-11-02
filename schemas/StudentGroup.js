@@ -21,9 +21,9 @@ export default {
             validation: (Rule) =>
                 Rule.required()
                     .custom((type) =>
-                        type === 'subgroup' || type === 'suborg' || type === 'board'
+                        type === 'subgroup' || type === 'suborg' || type === 'board' || type === 'intgroup'
                             ? true
-                            : 'Må være "subgroup", "suborg" eller "board"',
+                            : 'Må være "subgroup", "suborg", "intgroup" eller "board"',
                     )
                     .error(),
             type: 'string',
@@ -32,6 +32,7 @@ export default {
                     { title: 'Undergruppe', value: 'subgroup' },
                     { title: 'Underorganisasjon', value: 'suborg' },
                     { title: 'Hovedstyre', value: 'board' },
+                    { title: 'Interessegruppe', value: 'intgroup' },
                 ],
                 layout: 'dropdown',
             },
@@ -43,17 +44,34 @@ export default {
             type: 'markdown',
         },
         {
-            name: 'roles',
-            title: 'Roller',
+            name: 'members',
+            title: 'Medlemmer',
             type: 'array',
             of: [
                 {
-                    type: 'reference',
-                    to: [
+                    name: 'member',
+                    title: 'Medlem',
+                    type: 'object',
+                    fields: [
                         {
-                            type: 'role',
+                            name: 'role',
+                            title: 'Rolle',
+                            type: 'string',
+                        },
+                        {
+                            name: 'profile',
+                            title: 'Profil',
+                            type: 'reference',
+                            to: [{ type: 'profile' }],
                         },
                     ],
+                    preview: {
+                        select: {
+                            media: 'profile.picture',
+                            title: 'profile.name',
+                            subtitle: 'title',
+                        },
+                    },
                 },
             ],
         },
