@@ -7,52 +7,47 @@ const studentGroups: Array<StudentGroup> = [
     {
         name: 'echo Schmilde',
         info: 'Sick undergruppe ass bruh',
-        roles: [
+        members: [
             {
-                name: 'Leder',
-                members: [
-                    {
-                        name: 'Mr. Leder McLeder',
-                        imageUrl: 'https://cdn.sanity.io/lederman69',
-                    },
-                ],
+                role: 'Leder',
+                profile: {
+                    name: 'Mr. Leder McLeder',
+                    imageUrl: 'https://cdn.sanity.io/lederman69',
+                },
             },
             {
-                name: 'Styremedlem',
-                members: [
-                    {
-                        name: 'Ola Nordmann',
-                        imageUrl: 'https://cdn.sanity.io/ola',
-                    },
-                    {
-                        name: 'Test McTest',
-                        imageUrl: null,
-                    },
-                ],
+                role: 'Styremedlem',
+                profile: {
+                    name: 'Ola Nordmann',
+                    imageUrl: 'https://cdn.sanity.io/ola',
+                },
+            },
+            {
+                role: 'Styremedlem',
+                profile: {
+                    name: 'Test McTest',
+                    imageUrl: null,
+                },
             },
         ],
     },
     {
         name: 'echo Scwebschkom',
         info: 'Undegruppe McUndergruppeface',
-        roles: [
+        members: [
             {
-                name: 'Leder',
-                members: [
-                    {
-                        name: 'Mr. CEO',
-                        imageUrl: 'https://cdn.sanity.io/lederman420',
-                    },
-                ],
+                role: 'Leder',
+                profile: {
+                    name: 'Mr. CEO',
+                    imageUrl: 'https://cdn.sanity.io/lederman420',
+                },
             },
             {
-                name: 'Styremedlem',
-                members: [
-                    {
-                        name: 'Ola Nordmann',
-                        imageUrl: 'https://cdn.sanity.io/ola',
-                    },
-                ],
+                role: 'Styremedlem',
+                profile: {
+                    name: 'Ola Nordmann',
+                    imageUrl: 'https://cdn.sanity.io/ola',
+                },
             },
         ],
     },
