@@ -2,7 +2,7 @@ version: '3.9'
 services:
   frontend:
     build: .
-    image: "${DOCKER_HUB_USERNAME}/echo-web-frontend:${TAG}"
+    image: '${DOCKER_HUB_USERNAME}/echo-web-frontend:${TAG}'
     command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
@@ -20,7 +20,7 @@ services:
 
   backend:
     build: backend
-    image: "${DOCKER_HUB_USERNAME}/echo-web-backend:${TAG}"
+    image: '${DOCKER_HUB_USERNAME}/echo-web-backend:${TAG}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -31,14 +31,14 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ["CMD-SHELL", "./scripts/submit_happening -t -x $$ADMIN_KEY || exit 1" ]
+      test: ['CMD-SHELL', './scripts/submit_happening -t -x $$ADMIN_KEY || exit 1']
       interval: 5s
       timeout: 5s
       retries: 5
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
       # The value of DEV doesn't matter, only that it's defined.
-      DEV: "yes"
+      DEV: 'yes'
       # Values from .env file.
       ADMIN_KEY: ${ADMIN_KEY}
 
@@ -50,7 +50,7 @@ services:
       - '5432:5432'
     # Check if database is ready.
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5

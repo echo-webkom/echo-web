@@ -1,5 +1,5 @@
 name: Jest
-on: 
+on:
   pull_request:
     branches: [master]
 
@@ -7,17 +7,17 @@ jobs:
   jest_tests:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install dependencies
-      run: yarn --frozen-lockfile --ignore-scripts
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --ignore-scripts
 
-    - name: Run API & component tests
-      run: yarn test
+      - name: Run API & component tests
+        run: yarn test

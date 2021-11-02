@@ -9,7 +9,7 @@
         "build": "next build",
         "dev": "next dev",
         "start": "next start",
-        "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+        "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" && prettier --write --tab-width=2 \"**/*.{yaml,yml}\"",
         "lint": "next lint",
         "test": "jest",
         "e2e": "docker-compose down && docker-compose up --build --exit-code-from=frontend",
@@ -41,7 +41,6 @@
             "SharedArrayBuffer": "readonly"
         },
         "ignorePatterns": [
-            "*.js",
             "node_modules/",
             "public/",
             ".next/"
