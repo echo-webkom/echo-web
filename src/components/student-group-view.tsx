@@ -1,7 +1,7 @@
 import { Divider, Wrap, WrapItem } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
-import { Profile, Role, StudentGroup } from '../lib/api';
+import { Member, StudentGroup } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 import MemberProfile from './member-profile';
 
@@ -11,13 +11,11 @@ const StudentGroupView = ({ group }: { group: StudentGroup }): JSX.Element => {
             <Markdown options={{ overrides: MapMarkdownChakra }}>{group.info}</Markdown>
             <Divider my="5" />
             <Wrap spacing={['1em', null, '2.5em']} justify="center">
-                {group.roles.map((role: Role) =>
-                    role.members.map((profile: Profile) => (
-                        <WrapItem key={profile.name}>
-                            <MemberProfile profile={profile} role={role.name} />
-                        </WrapItem>
-                    )),
-                )}
+                {group.members.map((member: Member) => (
+                    <WrapItem key={member.profile.name}>
+                        <MemberProfile profile={member.profile} role={member.role} />
+                    </WrapItem>
+                ))}
             </Wrap>
         </>
     );

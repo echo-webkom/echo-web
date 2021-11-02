@@ -16,11 +16,15 @@ const ForStudenterPage = ({
     subGroupsError,
     subOrgs,
     subOrgsError,
+    intGroups,
+    intGroupsError,
 }: {
     subGroups: Array<StudentGroup>;
     subGroupsError: string;
     subOrgs: Array<StudentGroup>;
     subOrgsError: string;
+    intGroups: Array<StudentGroup>;
+    intGroupsError: string;
 }): JSX.Element => {
     return (
         <>
@@ -29,6 +33,7 @@ const ForStudenterPage = ({
                 tabNames={[
                     'Undergrupper',
                     'Underorganisasjoner',
+                    'Interessegrupper',
                     'Masterinfo',
                     'Økonomisk støtte',
                     'Anonyme tilbakemeldinger',
@@ -46,6 +51,12 @@ const ForStudenterPage = ({
                         studentGroups={subOrgs}
                         error={subOrgsError}
                         groupType="underorganisasjoner"
+                    />,
+                    <StudentGroupSection
+                        key="interessegrupper"
+                        studentGroups={intGroups}
+                        error={intGroupsError}
+                        groupType="interessegrupper"
                     />,
                     <Markdown key="masterinfo" options={{ overrides: MapMarkdownChakra }}>
                         {masterinfo}
@@ -68,9 +79,12 @@ const ForStudenterPage = ({
 export const getStaticProps: GetStaticProps = async () => {
     const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
     const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
+    const intGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
 
     return {
         props: {
+            intGroups: intGroups.studentGroups,
+            intGroupsError: intGroups.error,
             subGroups: subGroups.studentGroups,
             subGroupsError: subGroups.error,
             subOrgs: subOrgs.studentGroups,

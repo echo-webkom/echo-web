@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { array, decodeType, nil, record, string, union } from 'typescript-json-decoder';
 import { SanityAPI } from './api';
-import { emptyArrayOnNilDecoder } from './decoders';
 import handleError from './errors';
+import { emptyArrayOnNilDecoder } from './decoders';
 
 export type Profile = decodeType<typeof profileDecoder>;
 const profileDecoder = record({
@@ -10,31 +10,31 @@ const profileDecoder = record({
     imageUrl: union(string, nil),
 });
 
-export type Role = decodeType<typeof roleDecoder>;
-const roleDecoder = record({
-    name: string,
-    members: (value) => emptyArrayOnNilDecoder(profileDecoder, value),
+export type Member = decodeType<typeof memberDecoder>;
+const memberDecoder = record({
+    role: string,
+    profile: profileDecoder,
 });
 
 export type StudentGroup = decodeType<typeof studentGroupDecoder>;
 const studentGroupDecoder = record({
     name: string,
     info: string,
-    roles: array(roleDecoder),
+    members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
 });
 
 export const StudentGroupAPI = {
     getStudentGroupsByType: async (
-        type: 'board' | 'suborg' | 'subgroup',
+        type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
     ): Promise<{ studentGroups: Array<StudentGroup> | null; error: string | null }> => {
         try {
             const query = `
                 *[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))] | order(name) {
                     name,
                     info,
-                    "roles": roles[] -> {
-                        name,
-                        "members": members[] -> {
+                    "members": members[] {
+                        role,
+                        "profile": profile -> {
                             name,
                             "imageUrl": picture.asset -> url
                         }
