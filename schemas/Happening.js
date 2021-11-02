@@ -107,6 +107,7 @@ export default {
         {
             name: 'additionalQuestions',
             title: 'Tilleggsspørsmål',
+            description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
             type: 'array',
             of: [
                 {
@@ -121,7 +122,8 @@ export default {
         },
         {
             name: 'spotRanges',
-            title: 'Spot Ranges',
+            title: 'Arrangementsplasser',
+            description: 'Hvor mange plasser som er tildelt hvert trinn på et arrangement.',
             type: 'array',
             of: [
                 {

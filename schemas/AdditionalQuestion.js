@@ -1,7 +1,7 @@
 export default {
     name: 'additionalQuestion',
     title: 'Tilleggsspørsmål',
-    description: 'Ekstra spørsmål til brukeren på en Happening (f.eks. hvilken mat, allergier osv...)',
+    description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
     type: 'document',
     preview: {
         select: {
