@@ -17,6 +17,15 @@ export default {
             type: 'string',
         },
         {
+            name: 'slug',
+            title: 'Slug (lenke)',
+            validation: (Rule) => Rule.required(),
+            type: 'slug',
+            options: {
+                source: 'name',
+            },
+        },
+        {
             name: 'groupType',
             title: 'Type',
             validation: (Rule) =>
