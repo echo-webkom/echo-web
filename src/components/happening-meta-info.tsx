@@ -14,6 +14,7 @@ import { SpotRange, SpotRangeCount } from '../lib/api';
 interface Props {
     date: Date;
     location: string;
+    title: string;
     contactEmail: string | null;
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
@@ -23,6 +24,7 @@ interface Props {
 const HappeningMetaInfo = ({
     date,
     location,
+    title,
     contactEmail,
     companyLink,
     spotRangeCounts,
@@ -94,7 +96,13 @@ const HappeningMetaInfo = ({
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             <IconText icon={ImLocation} text={location} />
-            {contactEmail && <IconText icon={MdLogout} text={contactEmail} link={`mailto:${contactEmail}`} />}
+            {contactEmail && (
+                <IconText
+                    icon={MdLogout}
+                    text="Avmelding"
+                    link={`mailto:${contactEmail}?subject=Avmelding '${title}'`}
+                />
+            )}
             {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
                 <IconText
                     icon={MdLockOutline}

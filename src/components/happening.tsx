@@ -45,6 +45,7 @@ const HappeningUI = ({
                     <HappeningMetaInfo
                         date={parseISO(happening.date)}
                         location={happening.location}
+                        title={happening.title}
                         contactEmail={happening.contactEmail}
                         companyLink={happening.companyLink}
                         spotRangeCounts={spotRangeCounts?.length === 0 ? null : spotRangeCounts}
