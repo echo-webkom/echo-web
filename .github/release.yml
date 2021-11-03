@@ -4,16 +4,16 @@ changelog:
       - "release :label:"
       - "ignore :stop_sign:"
   categories:
-  - title: Breaking Changes 💥
+  - title: Breaking changes 💥
     labels:
       - "major :arrow_double_up:"
-  - title: New Features ✨
+  - title: New features ✨
     labels:
       - "minor :arrow_up_small:"
   - title: Patches and bugfixes 🐛
     labels:
       - "patch :mag:"
       - "bug :bug:"
-  - title: Other Changes 🤙
+  - title: Other changes 🤙
     labels:
        - "*"
