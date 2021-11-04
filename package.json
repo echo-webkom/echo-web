@@ -46,7 +46,7 @@
             ".next/"
         ],
         "rules": {
-            "no-console": 1,
+            "no-console": "error",
             "react/jsx-props-no-spreading": "off",
             "linebreak-style": "off",
             "camelcase": "error",
