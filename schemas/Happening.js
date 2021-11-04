@@ -5,7 +5,9 @@ export default {
     type: 'document',
     preview: {
         select: {
+            media: 'logo',
             title: 'title',
+            subtitle: 'author.name',
         },
     },
     fields: [

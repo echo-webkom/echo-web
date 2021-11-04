@@ -4,7 +4,9 @@ export default {
     type: 'document',
     preview: {
         select: {
+            media: 'logo',
             title: 'companyName',
+            subtitle: 'jobType',
         },
     },
     fields: [

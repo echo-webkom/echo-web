@@ -5,6 +5,7 @@ export default {
     type: 'document',
     preview: {
         select: {
+            media: 'picture',
             title: 'name',
         },
     },
