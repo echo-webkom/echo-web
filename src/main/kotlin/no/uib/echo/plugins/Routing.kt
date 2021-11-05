@@ -1,5 +1,6 @@
 package no.uib.echo.plugins
 
+import com.sendgrid.*
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.routing.*
@@ -13,6 +14,8 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
@@ -22,8 +25,9 @@ import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.schema.*
+import no.uib.echo.sendEmail
 
-fun Application.configureRouting(keys: Map<String, String>) {
+fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?) {
     val admin = "admin"
 
     install(ContentNegotiation) {
@@ -38,7 +42,7 @@ fun Application.configureRouting(keys: Map<String, String>) {
         basic("auth-$admin") {
             realm = "Access to registrations and happenings."
             validate { credentials ->
-                if (credentials.name == admin && credentials.password == keys[admin])
+                if (credentials.name == admin && credentials.password == adminKey)
                     UserIdPrincipal(credentials.name)
                 else
                     null
@@ -57,7 +61,7 @@ fun Application.configureRouting(keys: Map<String, String>) {
                 getRegistrationCount()
             }
 
-            postRegistration()
+            postRegistration(sendGrid)
         }
     }
 }
@@ -79,15 +83,14 @@ object Routing {
             if (slugParam != null) {
                 call.respond(HttpStatusCode.OK, countRegistrations(slugParam))
                 return@get
-            }
-            else {
+            } else {
                 call.respond(HttpStatusCode.BadRequest, "No slug specified.")
                 return@get
             }
         }
     }
 
-    fun Route.postRegistration() {
+    fun Route.postRegistration(sendGrid: SendGrid?) {
         post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
@@ -103,13 +106,13 @@ object Routing {
                 }
 
                 if ((registration.degree == Degree.DTEK ||
-                            registration.degree == Degree.DSIK ||
-                            registration.degree == Degree.DVIT ||
-                            registration.degree == Degree.BINF ||
-                            registration.degree == Degree.IMO ||
-                            registration.degree == Degree.IKT ||
-                            registration.degree == Degree.KOGNI ||
-                            registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                        registration.degree == Degree.DSIK ||
+                        registration.degree == Degree.DVIT ||
+                        registration.degree == Degree.BINF ||
+                        registration.degree == Degree.IMO ||
+                        registration.degree == Degree.IKT ||
+                        registration.degree == Degree.KOGNI ||
+                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(
                         HttpStatusCode.BadRequest,
@@ -144,13 +147,45 @@ object Routing {
                 val (regDateOrWaitListCount, spotRanges, regStatus) = insertRegistration(registration)
 
                 when (regStatus) {
-                    RegistrationStatus.ACCEPTED ->
+                    RegistrationStatus.ACCEPTED -> {
                         call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
-                    RegistrationStatus.WAIT_LIST ->
+
+                        if (sendGrid == null)
+                            return@post
+
+                        if (!withContext(Dispatchers.IO) {
+                                sendEmail(
+                                    "webkom@echo.uib.no",
+                                    registration.email,
+                                    "Bekreftelse påmelding",
+                                    "Du har fått plass på '${registration.slug}'!",
+                                    sendGrid
+                                )
+                            }) {
+                            System.err.println("ERROR: could not send confirmation email.")
+                        }
+                    }
+                    RegistrationStatus.WAIT_LIST -> {
                         call.respond(
                             HttpStatusCode.Accepted,
                             resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
                         )
+
+                        if (sendGrid == null)
+                            return@post
+
+                        if (!withContext(Dispatchers.IO) {
+                                sendEmail(
+                                    "webkom@echo.uib.no",
+                                    registration.email,
+                                    "Bekreftelse påmelding (venteliste)",
+                                    "Du har plass nr. $regDateOrWaitListCount på ventelisten til '${registration.slug}'.",
+                                    sendGrid
+                                )
+                            }) {
+                            System.err.println("ERROR: could not send confirmation email.")
+                        }
+                    }
                     RegistrationStatus.TOO_EARLY ->
                         call.respond(
                             HttpStatusCode.Forbidden,
@@ -217,9 +252,15 @@ object Routing {
                 val happ = call.receive<HappeningSlugJson>()
 
                 if (deleteHappeningBySlug(happ.slug))
-                    call.respond(HttpStatusCode.OK, "${happ.type.toString().lowercase()} with slug = ${happ.slug} deleted.")
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "${happ.type.toString().lowercase()} with slug = ${happ.slug} deleted."
+                    )
                 else
-                    call.respond(HttpStatusCode.NotFound, "${happ.type.toString().lowercase()} with slug = ${happ.slug} does not exist.")
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        "${happ.type.toString().lowercase()} with slug = ${happ.slug} does not exist."
+                    )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()

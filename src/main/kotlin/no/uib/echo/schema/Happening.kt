@@ -61,7 +61,7 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
                 it[registrationDate] = DateTime(newHappening.registrationDate)
             }
             newHappening.spotRanges.map { range ->
-                SpotRange.insert{
+                SpotRange.insert {
                     it[spots] = range.spots
                     it[minDegreeYear] = range.minDegreeYear
                     it[maxDegreeYear] = range.maxDegreeYear
@@ -70,7 +70,10 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
             }
         }
 
-        return Pair(HttpStatusCode.OK, "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}.")
+        return Pair(
+            HttpStatusCode.OK,
+            "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
+        )
     }
 
     if (happening.slug == newHappening.slug &&
@@ -80,8 +83,8 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
         return Pair(
             HttpStatusCode.Accepted,
             "Happening with slug = ${newHappening.slug}, " +
-                    "registrationDate = ${newHappening.registrationDate}, " +
-                    "and spotRanges = ${spotRangeToString(newHappening.spotRanges)} has already been submitted."
+                "registrationDate = ${newHappening.registrationDate}, " +
+                "and spotRanges = ${spotRangeToString(newHappening.spotRanges)} has already been submitted."
         )
     }
 
@@ -103,8 +106,8 @@ fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, S
     return Pair(
         HttpStatusCode.OK,
         "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
-                "to registrationDate = ${newHappening.registrationDate} " +
-                "and spotRanges = ${spotRangeToString(newHappening.spotRanges)}."
+            "to registrationDate = ${newHappening.registrationDate} " +
+            "and spotRanges = ${spotRangeToString(newHappening.spotRanges)}."
     )
 }
 
@@ -137,7 +140,9 @@ fun deleteHappeningBySlug(slug: String): Boolean {
 }
 
 fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
-    return "[ ${spotRanges.map {
-        "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
-    }} ]"
+    return "[ ${
+        spotRanges.map {
+            "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
+        }
+    } ]"
 }

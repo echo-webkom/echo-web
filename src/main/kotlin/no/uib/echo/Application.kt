@@ -1,12 +1,13 @@
 package no.uib.echo
 
+import com.sendgrid.SendGrid
 import io.ktor.application.*
 import io.ktor.features.CORS
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
-import java.lang.Exception
+import kotlin.Exception
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -53,11 +54,13 @@ fun Application.module() {
     }
 
     val adminKey = System.getenv("ADMIN_KEY") ?: throw Exception("ADMIN_KEY not defined.")
+    val sendGridApiKey = System.getenv("SENDGRID_API_KEY")
 
-    val keys: Map<String, String> = mapOf(
-        "admin" to adminKey
-    )
+    if (sendGridApiKey == null && System.getenv("DEV") == null)
+        throw Exception("SENDGRID_API_KEY not defined in non-dev environment.")
+
+    val sendGrid = if (sendGridApiKey == null) null else SendGrid(sendGridApiKey)
 
     Db.init()
-    configureRouting(keys)
+    configureRouting(adminKey, sendGrid)
 }

@@ -67,7 +67,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val oldReg =
             Registration.select {
                 Registration.email eq reg.email and
-                (Registration.happeningSlug eq happening.slug)
+                    (Registration.happeningSlug eq happening.slug)
             }.firstOrNull()
 
         if (oldReg != null)
@@ -83,7 +83,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val countRegs =
             Registration.select {
                 Registration.happeningSlug eq reg.slug and
-                (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
+                    (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
             }.count()
 
         val waitList = countRegs >= correctRange.spots
@@ -122,8 +122,8 @@ fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolea
 
         Registration.select {
             Registration.happeningSlug eq slug and
-            (Registration.degreeYear inList range) and
-            (Registration.waitList eq waitList)
+                (Registration.degreeYear inList range) and
+                (Registration.waitList eq waitList)
         }.count()
     }.toInt()
 }
@@ -152,7 +152,7 @@ fun deleteRegistration(shortReg: ShortRegistrationJson) {
 
         Registration.deleteWhere {
             Registration.happeningSlug eq shortReg.slug and
-                    (Registration.email eq shortReg.email)
+                (Registration.email eq shortReg.email)
         }
     }
 }
