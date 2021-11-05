@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { array, decodeType, record, string } from 'typescript-json-decoder';
-import { SanityAPI } from './api';
 import handleError from './errors';
+import { SanityAPI } from '.';
 
 // Automatically creates the Post type with the
 // fields we specify in our postDecoder.
-export type Post = decodeType<typeof postDecoder>;
+type Post = decodeType<typeof postDecoder>;
 const postDecoder = record({
     title: string,
     body: string,
@@ -19,7 +19,7 @@ const postSlugDecoder = record({
     slug: string,
 });
 
-export const PostAPI = {
+const PostAPI = {
     /**
      * Get the slugs of the 10 lasts posts.
      * This data is used to statically generate the pages of the 10 last published posts.
@@ -114,3 +114,6 @@ export const PostAPI = {
         }
     },
 };
+
+export { PostAPI };
+export type { Post };

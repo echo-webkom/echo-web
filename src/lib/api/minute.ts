@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { array, boolean, decodeType, record, string } from 'typescript-json-decoder';
-import { SanityAPI } from './api';
 import handleError from './errors';
+import { SanityAPI } from '.';
 
 // Automatically creates the Minute type with the
 // fields we specify in our minuteDecoder.
-export type Minute = decodeType<typeof minuteDecoder>;
+type Minute = decodeType<typeof minuteDecoder>;
 const minuteDecoder = record({
     date: string,
     allmote: boolean,
@@ -13,7 +13,7 @@ const minuteDecoder = record({
     document: (value) => record({ asset: record({ url: string }) })(value).asset.url,
 });
 
-export const MinuteAPI = {
+const MinuteAPI = {
     /**
      * Get the n last meeting minutes.
      * @param n how many meeting minutes to retrieve
@@ -47,3 +47,6 @@ export const MinuteAPI = {
         }
     },
 };
+
+export { MinuteAPI };
+export type { Minute };

@@ -1,10 +1,10 @@
+import { ParsedUrlQuery } from 'querystring';
 import { Box, Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
@@ -61,7 +61,7 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
     );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+const getStaticPaths: GetStaticPaths = async () => {
     const paths = await PostAPI.getPaths();
     return {
         paths: paths.map((slug: string) => ({
@@ -77,7 +77,7 @@ interface Params extends ParsedUrlQuery {
     slug: string;
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
     const { post, error } = await PostAPI.getPostBySlug(slug);
 
@@ -96,3 +96,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default PostPage;
+export { getStaticProps, getStaticPaths };

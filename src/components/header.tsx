@@ -15,8 +15,8 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import React, { memo, useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
-import NavBar from './navbar';
 import { motion } from 'framer-motion';
+import NavBar from './navbar';
 
 const randomHeaderMessage = (): string => {
     const now = new Date();

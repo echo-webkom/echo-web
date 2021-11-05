@@ -1,6 +1,6 @@
+import fs from 'fs';
 import { GridItem, SimpleGrid, Stack, useBreakpointValue } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import fs from 'fs';
 import { GetStaticProps } from 'next';
 import React from 'react';
 import EntryBox from '../components/entry-box';

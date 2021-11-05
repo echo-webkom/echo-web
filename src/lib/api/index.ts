@@ -1,4 +1,4 @@
-import { SanityAPI } from './api';
+import SanityAPI from './api';
 import { HappeningAPI, HappeningType, Happening } from './happening';
 import { MinuteAPI, Minute } from './minute';
 import { PostAPI, Post } from './post';

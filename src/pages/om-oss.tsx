@@ -11,8 +11,7 @@ import MinuteList from '../components/minute-list';
 import SEO from '../components/seo';
 import StaticInfo from '../components/static-info';
 import StudentGroupSection from '../components/student-group-section';
-import { Minute, MinuteAPI } from '../lib/api';
-import { StudentGroup, StudentGroupAPI } from '../lib/api';
+import { Minute, MinuteAPI, StudentGroup, StudentGroupAPI } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 
 const bekkLogo = '/bekk.png';

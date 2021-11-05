@@ -1,8 +1,8 @@
+import { ParsedUrlQuery } from 'querystring';
 import { useTimeout } from '@chakra-ui/react';
 import { differenceInMilliseconds, parseISO } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 import ErrorBox from '../../components/error-box';
 import HappeningUI from '../../components/happening';

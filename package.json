@@ -30,6 +30,8 @@
             "plugin:@typescript-eslint/eslint-recommended",
             "plugin:@typescript-eslint/recommended",
             "plugin:prettier/recommended",
+            "plugin:import/recommended",
+            "plugin:import/typescript",
             "next/core-web-vitals"
         ],
         "env": {
@@ -50,7 +52,12 @@
             "react/jsx-props-no-spreading": "off",
             "linebreak-style": "off",
             "camelcase": "error",
-            "@typescript-eslint/no-unused-vars": "error"
+            "@typescript-eslint/no-unused-vars": "error",
+            "import/no-useless-path-segments": "error",
+            "import/order": "error",
+            "import/exports-last": "error",
+            "import/group-exports": "error",
+            "import/prefer-default-export": "error"
         }
     },
     "prettier": {

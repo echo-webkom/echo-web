@@ -8,8 +8,8 @@ import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
-import IconText from './icon-text';
 import { SpotRange, SpotRangeCount } from '../lib/api';
+import IconText from './icon-text';
 
 interface Props {
     date: Date;

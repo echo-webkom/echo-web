@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { array, decodeType, record, string, union, nil } from 'typescript-json-decoder';
-import { SanityAPI } from './api';
 import { emptyArrayOnNilDecoder, spotRangeDecoder, questionDecoder } from './decoders';
 import handleError from './errors';
+import { SanityAPI } from '.';
 
 // Automatically creates the Happening type with the
 // fields we specify in our happeningDecoder.
-export type Happening = decodeType<typeof happeningDecoder>;
+type Happening = decodeType<typeof happeningDecoder>;
 const happeningDecoder = record({
     _createdAt: string,
     author: string,
@@ -28,12 +28,12 @@ const happeningDecoder = record({
     },
 });
 
-export enum HappeningType {
+enum HappeningType {
     BEDPRES = 'BEDPRES',
     EVENT = 'EVENT',
 }
 
-export const HappeningAPI = {
+const HappeningAPI = {
     /**
      * Get the n last happeninges.
      * @param n how many happeninges to retrieve
@@ -156,3 +156,6 @@ export const HappeningAPI = {
         }
     },
 };
+
+export { HappeningType, HappeningAPI };
+export type { Happening };

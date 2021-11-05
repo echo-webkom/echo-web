@@ -4,8 +4,8 @@ import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
 import React from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import ErrorBox from '../components/error-box';
 import { Minute } from '../lib/api';
+import ErrorBox from './error-box';
 
 const MinuteList = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
     const color = useColorModeValue('blue', 'blue.400');

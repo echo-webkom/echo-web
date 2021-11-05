@@ -25,9 +25,9 @@ import {
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
 import { FormProvider, useForm } from 'react-hook-form';
+import { Degree, Happening, HappeningType, RegistrationAPI, Question } from '../lib/api';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
-import { Degree, Happening, HappeningType, RegistrationAPI, Question } from '../lib/api';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {

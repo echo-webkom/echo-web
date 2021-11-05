@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { array, boolean, decodeType, number, optional, Pojo, record, string } from 'typescript-json-decoder';
-import { HappeningType } from './';
+import { HappeningType } from '.';
 
-export enum Degree {
+enum Degree {
     DTEK = 'DTEK',
     DSIK = 'DSIK',
     DVIT = 'DVIT',
@@ -48,13 +48,13 @@ const degreeDecoder = (value: Pojo): Degree => {
     }
 };
 
-export type Answer = decodeType<typeof answerDecoder>;
+type Answer = decodeType<typeof answerDecoder>;
 const answerDecoder = record({
     question: string,
     answer: string,
 });
 
-export type Registration = decodeType<typeof registrationDecoder>;
+type Registration = decodeType<typeof registrationDecoder>;
 const registrationDecoder = record({
     email: string,
     firstName: string,
@@ -68,7 +68,7 @@ const registrationDecoder = record({
     answers: array(answerDecoder),
 });
 
-export type Response = decodeType<typeof responseDecoder>;
+type Response = decodeType<typeof responseDecoder>;
 const responseDecoder = record({
     code: string,
     title: string,
@@ -76,7 +76,7 @@ const responseDecoder = record({
     date: optional(string),
 });
 
-export type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
+type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
 const spotRangeCountDecoder = record({
     spots: number,
     minDegreeYear: number,
@@ -104,7 +104,7 @@ interface FormRegistration {
     answers: Array<Answer>;
 }
 
-export const RegistrationAPI = {
+const RegistrationAPI = {
     submitRegistration: async (
         registration: FormRegistration,
         backendUrl: string,
@@ -172,3 +172,6 @@ export const RegistrationAPI = {
         }
     },
 };
+
+export { Degree, RegistrationAPI };
+export type { Answer, Registration, Response, SpotRangeCount };
