@@ -1,7 +1,11 @@
 package no.uib.echo
 
-import com.sendgrid.*
-import com.sendgrid.Email
+import com.sendgrid.Method
+import com.sendgrid.Request
+import com.sendgrid.SendGrid
+import com.sendgrid.helpers.mail.Mail
+import com.sendgrid.helpers.mail.objects.Content
+import com.sendgrid.helpers.mail.objects.Email
 import java.io.IOException
 
 fun sendEmail(from: String, to: String, subject: String, body: String, sendGrid: SendGrid): Boolean {
