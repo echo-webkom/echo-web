@@ -15,8 +15,6 @@ import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.*
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
@@ -30,22 +28,55 @@ class HappeningRegistrationTest : StringSpec({
     )
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen-andre", "2019-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type ->
+            HappeningJson(
+                "${type}-med-noen-andre",
+                "2019-07-29T20:10:11Z",
+                everyoneSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappening3: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-dritlang-i-fremtiden", "2037-07-29T20:10:11Z", everyoneSpotRange, type) }
+        { type ->
+            HappeningJson(
+                "${type}-dritlang-i-fremtiden",
+                "2037-07-29T20:10:11Z",
+                everyoneSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappening4: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-for-bare-1-til-2", "2020-05-29T20:00:11Z", oneTwoSpotRange, type) }
+        { type ->
+            HappeningJson(
+                "${type}-for-bare-1-til-2",
+                "2020-05-29T20:00:11Z",
+                oneTwoSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappening5: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-for-bare-3-til-5", "2020-06-29T18:07:31Z", threeFiveSpotRange, type) }
+        { type ->
+            HappeningJson(
+                "${type}-for-bare-3-til-5",
+                "2020-06-29T18:07:31Z",
+                threeFiveSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
                 "${type}-som-er-splitta-ty-bedkom",
                 "2020-06-29T18:07:31Z",
                 everyoneSplitSpotRange,
-                type
+                type,
+                "test@test.com"
             )
         }
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
@@ -75,8 +106,6 @@ class HappeningRegistrationTest : StringSpec({
     beforeSpec { Db.init() }
     beforeTest {
         transaction {
-            addLogger(StdOutSqlLogger)
-
             SchemaUtils.drop(
                 Happening,
                 Registration,
@@ -91,12 +120,12 @@ class HappeningRegistrationTest : StringSpec({
             )
 
             for (t in be) {
-                insertOrUpdateHappening(exampleHappening1(t))
-                insertOrUpdateHappening(exampleHappening2(t))
-                insertOrUpdateHappening(exampleHappening3(t))
-                insertOrUpdateHappening(exampleHappening4(t))
-                insertOrUpdateHappening(exampleHappening5(t))
-                insertOrUpdateHappening(exampleHappening6(t))
+                insertOrUpdateHappening(exampleHappening1(t), null)
+                insertOrUpdateHappening(exampleHappening2(t), null)
+                insertOrUpdateHappening(exampleHappening3(t), null)
+                insertOrUpdateHappening(exampleHappening4(t), null)
+                insertOrUpdateHappening(exampleHappening5(t), null)
+                insertOrUpdateHappening(exampleHappening6(t), null)
             }
         }
     }
@@ -620,28 +649,54 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-    "Should get correct count of registrations and wait list registrations" {
+    "Should get correct count of registrations and wait list registrations, and produce correct CSV list" {
         withTestApplication({
             configureRouting(adminKey, null)
         }) {
             val waitListCount = 10
 
             for (t in be) {
+                val newSlug = "auto-link-test-100-$t"
+
+                val submitHappeningCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        addHeader(
+                            HttpHeaders.Authorization,
+                            "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
+                        )
+                        setBody(
+                            gson.toJson(
+                                exampleHappening6(t).copy(
+                                    slug = newSlug
+                                )
+                            )
+                        )
+                    }
+
+                submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
+                val regsLink = gson.fromJson(
+                    submitHappeningCall.response.content,
+                    HappeningResponseJson::class.java
+                ).registrationsLink
+
+                val regsList = mutableListOf<RegistrationJson>()
+
                 for (sr in exampleHappening6(t).spotRanges) {
                     for (i in 1..(sr.spots + waitListCount)) {
                         val submitRegCall: TestApplicationCall =
                             handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                                 addHeader(HttpHeaders.ContentType, "application/json")
-                                setBody(
-                                    gson.toJson(
-                                        exampleHappeningReg(t).copy(
-                                            email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}hi69ta123t${i}@test.com",
-                                            degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
-                                            degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
-                                            slug = exampleHappening6(t).slug
-                                        )
+                                val newReg =
+                                    exampleHappeningReg(t).copy(
+                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}hi69ta123t${i}@test.com",
+                                        degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
+                                        degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
+                                        slug = newSlug,
+                                        waitList = i > sr.spots
                                     )
-                                )
+                                regsList.add(newReg)
+                                setBody(gson.toJson(newReg))
                             }
 
                         if (i > sr.spots) {
@@ -663,7 +718,7 @@ class HappeningRegistrationTest : StringSpec({
                 val getCountRegCall: TestApplicationCall =
                     handleRequest(
                         method = HttpMethod.Get,
-                        uri = "/${Routing.registrationRoute}?slug=${exampleHappening6(t).slug}&type=$t"
+                        uri = "/${Routing.registrationRoute}?slug=$newSlug&type=$t"
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
@@ -682,6 +737,14 @@ class HappeningRegistrationTest : StringSpec({
                     spotRangeCounts[i].regCount shouldBe exampleHappening6(t).spotRanges[i].spots
                     spotRangeCounts[i].waitListCount shouldBe waitListCount
                 }
+
+                val getRegistrationsListCall = handleRequest(
+                    method = HttpMethod.Get,
+                    uri = "/${Routing.registrationRoute}/$regsLink?download=y&testing=y"
+                )
+
+                getRegistrationsListCall.response.status() shouldBe HttpStatusCode.OK
+                getRegistrationsListCall.response.content shouldBe toCsv(regsList, testing = true)
             }
         }
     }

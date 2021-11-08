@@ -13,7 +13,7 @@ fun sendEmail(from: String, to: String, subject: String, body: String, sendGrid:
         Email(from),
         subject,
         Email(to),
-        Content("text/plain", "$body\n\n(SVAR PÅ DENNE MAILEN VIL IKKE BLI BESVART. TA HELLER KONTAKT MED ANSVARLIGE FOR ARRANGEMENTET.)")
+        Content("text/plain", body)
     )
     val req = Request()
     try {

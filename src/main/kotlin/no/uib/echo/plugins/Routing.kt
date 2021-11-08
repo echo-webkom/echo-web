@@ -11,6 +11,7 @@ import io.ktor.auth.authenticate
 import io.ktor.auth.basic
 import io.ktor.gson.*
 import io.ktor.features.*
+import io.ktor.freemarker.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -18,14 +19,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
-import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistrationCount
+import no.uib.echo.plugins.Routing.getRegistrations
+import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.schema.*
+import no.uib.echo.schema.Happening.slug
 import no.uib.echo.sendEmail
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?) {
     val admin = "admin"
@@ -56,11 +63,12 @@ fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?) {
 
             authenticate("auth-$admin") {
                 deleteRegistration()
-                putHappening()
+                putHappening(sendGrid)
                 deleteHappening()
                 getRegistrationCount()
             }
 
+            getRegistrations()
             postRegistration(sendGrid)
         }
     }
@@ -90,8 +98,69 @@ object Routing {
         }
     }
 
+    fun Route.getRegistrations() {
+        get("/$registrationRoute/{link}") {
+            val link = call.parameters["link"]
+            val download = call.request.queryParameters["download"] != null
+            val testing = call.request.queryParameters["testing"] != null
+
+            if ((link == null) || (link.length < 128)) {
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
+
+            val hap = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select {
+                    Happening.registrationsLink eq link
+                }.firstOrNull()
+            }
+
+            if (hap == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
+
+            val regs = selectRegistrationsBySlug(hap[slug])
+            val ans = (regs.maxByOrNull { it.answers.size })?.answers ?: emptyList()
+
+            if (download) {
+                val fileName = "pameldte-${hap[slug]}.csv"
+
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(
+                        ContentDisposition.Parameters.FileName,
+                        fileName
+                    ).toString()
+                )
+                call.respondBytes(
+                    contentType = ContentType.parse("text/csv"),
+                    provider = { toCsv(regs, testing = testing).toByteArray() }
+                )
+            } else {
+                call.respond(
+                    FreeMarkerContent(
+                        "registrations_link.ftl",
+                        mapOf(
+                            "answers" to ans,
+                            "regs" to regs,
+                            "registrationRoute" to registrationRoute,
+                            "regsLink" to link,
+                            "slug" to hap[slug]
+                        )
+                    )
+                )
+            }
+        }
+    }
+
     fun Route.postRegistration(sendGrid: SendGrid?) {
         post("/$registrationRoute") {
+            val emailInfo =
+                "\n\n\nSVAR PÅ TIL DENNE MAILADDRESSEN VIL IKKE BLI BESVART. TA HELLER KONTAKT MED ANSVARLIGE FOR ARRANGEMENTET."
+
             try {
                 val registration = call.receive<RegistrationJson>()
 
@@ -106,13 +175,13 @@ object Routing {
                 }
 
                 if ((registration.degree == Degree.DTEK ||
-                        registration.degree == Degree.DSIK ||
-                        registration.degree == Degree.DVIT ||
-                        registration.degree == Degree.BINF ||
-                        registration.degree == Degree.IMO ||
-                        registration.degree == Degree.IKT ||
-                        registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                            registration.degree == Degree.DSIK ||
+                            registration.degree == Degree.DVIT ||
+                            registration.degree == Degree.BINF ||
+                            registration.degree == Degree.IMO ||
+                            registration.degree == Degree.IKT ||
+                            registration.degree == Degree.KOGNI ||
+                            registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(
                         HttpStatusCode.BadRequest,
@@ -158,7 +227,7 @@ object Routing {
                                     "webkom@echo.uib.no",
                                     registration.email,
                                     "Bekreftelse påmelding",
-                                    "Du har fått plass på '${registration.slug}'!",
+                                    "Du har fått plass på '${registration.slug}'!$emailInfo",
                                     sendGrid
                                 )
                             }) {
@@ -179,7 +248,7 @@ object Routing {
                                     "webkom@echo.uib.no",
                                     registration.email,
                                     "Bekreftelse påmelding (venteliste)",
-                                    "Du har plass nr. $regDateOrWaitListCount på ventelisten til '${registration.slug}'.",
+                                    "Du har plass nr. $regDateOrWaitListCount på ventelisten til '${registration.slug}'.$emailInfo",
                                     sendGrid
                                 )
                             }) {
@@ -232,11 +301,11 @@ object Routing {
         }
     }
 
-    fun Route.putHappening() {
+    fun Route.putHappening(sendGrid: SendGrid?) {
         put("/$happeningRoute") {
             try {
                 val happ = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(happ)
+                val result = insertOrUpdateHappening(happ, sendGrid)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
