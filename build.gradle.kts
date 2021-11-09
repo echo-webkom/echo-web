@@ -39,6 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-gson:$ktor_version")
     implementation("io.ktor:ktor-auth:$ktor_version")
+    implementation("io.ktor:ktor-freemarker:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -84,7 +85,7 @@ testlogger {
     theme = ThemeType.STANDARD
     showExceptions = true
     showStackTraces = true
-    showFullStackTraces = false
+    showFullStackTraces = true
     showCauses = true
     slowThreshold = 2000
     showSummary = true

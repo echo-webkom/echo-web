@@ -9,19 +9,16 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import no.uib.echo.plugins.Routing
-
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.schema.*
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
 
 class HappeningTest : StringSpec({
     val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
     val exampleHappening: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type) }
+        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type) }
 
@@ -33,8 +30,6 @@ class HappeningTest : StringSpec({
     beforeSpec { Db.init() }
     beforeTest {
         transaction {
-            addLogger(StdOutSqlLogger)
-
             SchemaUtils.drop(
                 Happening,
                 Registration,
@@ -49,7 +44,6 @@ class HappeningTest : StringSpec({
             )
         }
     }
-
 
     "When trying to submit a happening, server should respond with OK." {
         withTestApplication({

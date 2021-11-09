@@ -17,3 +17,21 @@ object Answer : Table() {
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
+
+fun getAnswers(email: String, slug: String): List<AnswerJson> {
+    val answers = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Answer.select {
+            Answer.registrationEmail eq email and
+                    (Answer.happeningSlug eq slug)
+        }.toList()
+    }
+
+    return answers.map {
+        AnswerJson(
+            it[Answer.question],
+            it[Answer.answer]
+        )
+    }
+}

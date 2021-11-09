@@ -1,8 +1,10 @@
 package no.uib.echo
 
 import com.sendgrid.SendGrid
+import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.*
 import io.ktor.features.CORS
+import io.ktor.freemarker.*
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.netty.EngineMain
@@ -51,6 +53,11 @@ fun Application.module() {
             anyHost()
             allowNonSimpleContentTypes = true
         }
+    }
+
+    install(FreeMarker) {
+        // Set template directory
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
 
     val adminKey = System.getenv("ADMIN_KEY") ?: throw Exception("ADMIN_KEY not defined.")
