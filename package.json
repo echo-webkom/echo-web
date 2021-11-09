@@ -72,7 +72,7 @@
     },
     "devDependencies": {
         "@sanity/cli": "2.21.7",
-        "eslint": "8.1.0",
+        "eslint": "8.2.0",
         "eslint-config-prettier": "8.3.0",
         "eslint-plugin-prettier": "4.0.0",
         "husky": "7.0.4",
