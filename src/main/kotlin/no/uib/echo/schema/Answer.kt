@@ -1,7 +1,6 @@
 package no.uib.echo.schema
 
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 data class AnswerJson(
     val question: String,
