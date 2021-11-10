@@ -17,6 +17,7 @@ services:
       DEV: "yes"
       # Values from .env file
       ADMIN_KEY: ${ADMIN_KEY}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
 
   database:
     # Postgres 13.4 is the version Heroku uses.

@@ -3,6 +3,9 @@ package no.uib.echo.schema
 import no.uib.echo.schema.Answer.answer
 import no.uib.echo.schema.Answer.question
 import no.uib.echo.schema.Answer.registrationEmail
+import no.uib.echo.schema.Registration.happeningSlug
+import no.uib.echo.schema.Registration.submitDate
+import no.uib.echo.schema.Registration.waitList
 import no.uib.echo.schema.SpotRange.maxDegreeYear
 import no.uib.echo.schema.SpotRange.minDegreeYear
 import no.uib.echo.schema.SpotRange.spots
@@ -67,7 +70,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val oldReg =
             Registration.select {
                 Registration.email eq reg.email and
-                (Registration.happeningSlug eq happening.slug)
+                        (happeningSlug eq happening.slug)
             }.firstOrNull()
 
         if (oldReg != null)
@@ -82,8 +85,8 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
 
         val countRegs =
             Registration.select {
-                Registration.happeningSlug eq reg.slug and
-                (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
+                happeningSlug eq reg.slug and
+                        (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
             }.count()
 
         val waitList = countRegs >= correctRange.spots
@@ -116,14 +119,41 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
     }
 }
 
+fun selectRegistrationsBySlug(slug: String): List<RegistrationJson> {
+    val regs = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Registration.select {
+            happeningSlug eq slug
+        }.orderBy(submitDate to SortOrder.ASC).toList()
+    }
+
+    return regs.map {
+        RegistrationJson(
+            it[Registration.email],
+            it[Registration.firstName],
+            it[Registration.lastName],
+            Degree.valueOf(it[Registration.degree]),
+            it[Registration.degreeYear],
+            it[happeningSlug],
+            it[Registration.terms],
+            it[Registration.submitDate].toString(),
+            it[waitList],
+            getAnswers(it[Registration.email], slug),
+            // Ignore this
+            HAPPENING_TYPE.BEDPRES
+        )
+    }
+}
+
 fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolean): Int {
     return transaction {
         addLogger(StdOutSqlLogger)
 
         Registration.select {
-            Registration.happeningSlug eq slug and
-            (Registration.degreeYear inList range) and
-            (Registration.waitList eq waitList)
+            happeningSlug eq slug and
+                    (Registration.degreeYear inList range) and
+                    (Registration.waitList eq waitList)
         }.count()
     }.toInt()
 }
@@ -151,8 +181,41 @@ fun deleteRegistration(shortReg: ShortRegistrationJson) {
         addLogger(StdOutSqlLogger)
 
         Registration.deleteWhere {
-            Registration.happeningSlug eq shortReg.slug and
+            happeningSlug eq shortReg.slug and
                     (Registration.email eq shortReg.email)
         }
     }
+}
+
+
+fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
+    if (regs.isEmpty())
+        return ""
+
+    val answersHeading =
+        when (regs[0].answers.isEmpty()) {
+            true ->
+                ""
+            false ->
+                regs[0].answers.fold("") { acc, answerJson ->
+                    acc + "," + answerJson.question.replace(",", " ")
+                }
+        }
+
+    val predOrEmpty: (pred: Boolean, str: String) -> String = { p, s ->
+        if (p) "" else s
+    }
+
+    return "email,firstName,lastName,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading" +
+            regs.joinToString("") { reg ->
+                "\n" +
+                        reg.email + "," +
+                        reg.firstName + "," +
+                        reg.lastName + "," +
+                        reg.degree.toString() + "," +
+                        reg.degreeYear.toString() + "," +
+                        predOrEmpty(testing, reg.submitDate.toString() + ",") +
+                        reg.waitList.toString() +
+                        predOrEmpty(reg.answers.isEmpty(), reg.answers.joinToString("") { "," + it.answer })
+            }
 }

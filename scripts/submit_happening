@@ -7,7 +7,7 @@ testing=false
 user=admin
 spotranges="[]"
 
-while getopts zpts:r:x:h: flag; do
+while getopts zpts:r:x:h:c: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -17,6 +17,7 @@ while getopts zpts:r:x:h: flag; do
   x) secret=${OPTARG} ;;
   h) happening=${OPTARG} ;;
   o) spotranges=${OPTARG} ;;
+  c) organizer_email=${OPTARG} ;;
   *) echo "Invalid flag." ;;
   esac
 done
@@ -47,7 +48,8 @@ if [ "$testing" = true ]; then
                    "maxDegreeYear": 5
                 }
               ],
-          "type": "BEDPRES" }' \
+          "type": "BEDPRES",
+          "organizerEmail": "bedkom@echo.uib.no" }' \
     "$host":"$port"/happening
   curl --verbose \
     -X PUT \
@@ -64,7 +66,8 @@ if [ "$testing" = true ]; then
                    "maxDegreeYear": 5
                 }
               ],
-          "type": "EVENT" }' \
+          "type": "EVENT",
+          "organizerEmail": "tilde@echo.uib.no" }' \
     "$host":"$port"/happening
   exit 0
 fi
@@ -84,6 +87,11 @@ if [ -z ${happening+x} ]; then
   exit 1
 fi
 
+if [ -z ${organizer_email+x} ]; then
+  echo "Organizer email not defined (use -c)"
+  exit 1
+fi
+
 curl --verbose \
   -X PUT \
   -u "$user":"$secret" \
@@ -92,5 +100,6 @@ curl --verbose \
   -d '{ "slug": "'"${slug}"'",
         "registrationDate": "'"${regdate}"'",
         "spotRanges": '"${spotranges}"',
-        "type": "'"${happening}"'" }' \
+        "type": "'"${happening}"'",
+        "organizerEmail": "'"${organizer_email}"'" }' \
   "$host":"$port"/happening

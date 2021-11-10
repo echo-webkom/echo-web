@@ -1,10 +1,10 @@
-name: Cypress develop
+name: Cypress
 on:
   pull_request:
-    branches: [develop]
+    branches: [master, develop]
 
 jobs:
-  cypress_tests_dev:
+  cypress_tests:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout backend repository
@@ -15,7 +15,6 @@ jobs:
       with:
         repository: echo-webkom/echo-web-frontend
         path: frontend
-        ref: develop
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
@@ -36,7 +35,7 @@ jobs:
         DOCKER_BUILDKIT: 1
         USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
         IMAGE_NAME: echo-web-backend
-        TAG: latest-dev
+        TAG: "${{ github.base_ref == 'master' && 'latest-prod' || 'latest-dev' }}"
         COMMIT_SHA: ${{ github.sha }}
 
     - name: Build frontend with cache
@@ -52,10 +51,10 @@ jobs:
         DOCKER_BUILDKIT: 1
         USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
         IMAGE_NAME: echo-web-frontend
-        TAG: latest-dev
+        TAG: latest
         COMMIT_SHA: ${{ github.sha }}
 
-    - name: Run Cypress end-to-end tests against develop frontend
+    - name: Run Cypress end-to-end tests against frontend
       run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
       env:
         DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}

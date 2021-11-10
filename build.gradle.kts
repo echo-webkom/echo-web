@@ -9,6 +9,7 @@ val hikari_version: String by project
 val kotest_version: String by project
 val ktor_rate_limit_version: String by project
 val flyway_version: String by project
+val sendgrid_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
@@ -18,7 +19,7 @@ plugins {
     kotlin("jvm") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.2.0"
-    id("com.adarshr.test-logger") version "3.0.0"
+    id("com.adarshr.test-logger") version "3.1.0"
 }
 
 group = "no.uib.echo"
@@ -38,6 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-gson:$ktor_version")
     implementation("io.ktor:ktor-auth:$ktor_version")
+    implementation("io.ktor:ktor-freemarker:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -53,6 +55,8 @@ dependencies {
     implementation("guru.zoroark:ktor-rate-limit:$ktor_rate_limit_version")
 
     implementation("org.flywaydb:flyway-core:$flyway_version")
+
+    implementation("com.sendgrid:sendgrid-java:$sendgrid_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 
@@ -81,7 +85,7 @@ testlogger {
     theme = ThemeType.STANDARD
     showExceptions = true
     showStackTraces = true
-    showFullStackTraces = false
+    showFullStackTraces = true
     showCauses = true
     slowThreshold = 2000
     showSummary = true
@@ -96,7 +100,12 @@ testlogger {
     logLevel = LogLevel.LIFECYCLE
 }
 
-// Set JVM target.
+// Set JVM target for Java.
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(13))
+}
+
+// Set JVM target for Kotlin.
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "13"
