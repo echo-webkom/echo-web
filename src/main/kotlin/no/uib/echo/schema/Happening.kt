@@ -136,8 +136,6 @@ fun insertOrUpdateHappening(
         }
     }
 
-    sendRegistrationsLink(sendGrid, newHappening, registrationsLink)
-
     return Pair(
         HttpStatusCode.OK,
         HappeningResponseJson(
