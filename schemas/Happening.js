@@ -97,7 +97,8 @@ export default {
         },
         {
             name: 'contactEmail',
-            title: 'Hvilken email kan man kontakte for f.eks. avmelding?',
+            title: 'Hvilken email skal liste over påmeldte sendes til, og hvem kan man kontakte ved f.eks. avmelding?',
+            description: '⚠️ Liste over påmeldte vil bli sendt til denne mailen! ⚠️',
             validation: (Rule) =>
                 Rule.custom((contactEmail, context) =>
                     context.document.registrationDate && !(contactEmail?.includes('@') ?? false)
