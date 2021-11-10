@@ -17,6 +17,13 @@
         "alwaysStrict": true,
         "incremental": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/__tests__/testing-utils.js", "jest.setup.js"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "src/components/__tests__/testing-utils.js",
+        "jest.setup.js",
+        "next.config.js"
+    ],
     "exclude": ["node_modules"]
 }

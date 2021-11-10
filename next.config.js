@@ -9,6 +9,9 @@ module.exports = {
     images: {
         domains: ['cdn.sanity.io'],
     },
+    experimental: {
+        esmExternals: false,
+    },
 
     reactStrictMode: true,
 };
