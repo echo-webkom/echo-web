@@ -23,7 +23,7 @@ fun sendEmail(from: String, to: String, subject: String, body: String, sendGrid:
         val response = sendGrid.api(req)
 
         if (response.statusCode != 202) {
-            throw Exception("Status code is not 202: ${response.statusCode}, ${response.body}")
+            throw IOException("Status code is not 202: ${response.statusCode}, ${response.body}")
         }
     } catch (e: IOException) {
         e.printStackTrace()
