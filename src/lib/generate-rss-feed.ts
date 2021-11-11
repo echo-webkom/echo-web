@@ -71,7 +71,7 @@ const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | nul
                   ),
                   author: happening.author,
                   body: happening.body,
-                  route: happening.happeningType === 'BEDPRES' ? 'bedpres' : 'event',
+                  route: happening.happeningType.toLowerCase(),
               };
           })
         : [];
