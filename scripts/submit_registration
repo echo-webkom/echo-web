@@ -73,5 +73,5 @@ curl --verbose \
       "slug": "'"${slug}"'",
       "terms": '"${terms}"',
       "answers": '"${qa}"',
-      "type": '"${happening}"' }' \
+      "type": "'"${happening}"'" }' \
   "$host":"$port"/registration
