@@ -9,7 +9,7 @@ describe('Event registration', () => {
 
         context('Event form registration', () => {
             beforeEach(() => {
-                cy.visit(`/events/${event.slug}`);
+                cy.visit(`/event/${event.slug}`);
             });
 
             it('Popup form appears correctly', () => {

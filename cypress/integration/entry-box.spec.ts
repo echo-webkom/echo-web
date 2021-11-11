@@ -19,7 +19,7 @@ describe('Entry Box', () => {
                 cy.visit('/');
                 cy.get('[data-cy=entry-box-event]').within(() => {
                     cy.get('[data-cy=button-link]').click();
-                    cy.url().should('include', '/events');
+                    cy.url().should('include', '/event');
                 });
             });
         });

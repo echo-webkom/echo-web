@@ -37,7 +37,7 @@ const IndexPage = ({
                             entryLimit={4}
                             error={eventsError}
                             altText="Ingen kommende arrangementer :("
-                            linkTo="/events"
+                            linkTo="/event"
                             type="event"
                         />
                     </Stack>

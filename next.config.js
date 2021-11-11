@@ -13,5 +13,16 @@ module.exports = {
         esmExternals: false,
     },
 
+    async redirects() {
+        return [
+            { source: '/events', destination: '/event', permanent: true },
+            {
+                source: '/events/:path',
+                destination: '/event/:path',
+                permanent: true,
+            },
+        ];
+    },
+
     reactStrictMode: true,
 };
