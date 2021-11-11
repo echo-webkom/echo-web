@@ -62,7 +62,8 @@ fun selectHappening(slug: String): HappeningJson? {
 
 fun insertOrUpdateHappening(
     newHappening: HappeningJson,
-    sendGrid: SendGrid?
+    sendGrid: SendGrid?,
+    sendEmail: Boolean
 ): Pair<HttpStatusCode, HappeningResponseJson> {
     val happening = selectHappening(newHappening.slug)
     val registrationsLink =
@@ -92,7 +93,8 @@ fun insertOrUpdateHappening(
             }
         }
 
-        sendRegistrationsLink(sendGrid, newHappening, registrationsLink)
+        if (sendEmail)
+            sendRegistrationsLink(sendGrid, newHappening, registrationsLink)
 
         return Pair(
             HttpStatusCode.OK,

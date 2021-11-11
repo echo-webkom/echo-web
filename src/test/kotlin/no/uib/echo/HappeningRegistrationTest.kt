@@ -102,6 +102,7 @@ class HappeningRegistrationTest : StringSpec({
     val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
+    val featureToggles = FeatureToggles(false, false)
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -120,19 +121,19 @@ class HappeningRegistrationTest : StringSpec({
             )
 
             for (t in be) {
-                insertOrUpdateHappening(exampleHappening1(t), null)
-                insertOrUpdateHappening(exampleHappening2(t), null)
-                insertOrUpdateHappening(exampleHappening3(t), null)
-                insertOrUpdateHappening(exampleHappening4(t), null)
-                insertOrUpdateHappening(exampleHappening5(t), null)
-                insertOrUpdateHappening(exampleHappening6(t), null)
+                insertOrUpdateHappening(exampleHappening1(t), null, false)
+                insertOrUpdateHappening(exampleHappening2(t), null, false)
+                insertOrUpdateHappening(exampleHappening3(t), null, false)
+                insertOrUpdateHappening(exampleHappening4(t), null, false)
+                insertOrUpdateHappening(exampleHappening5(t), null, false)
+                insertOrUpdateHappening(exampleHappening6(t), null, false)
             }
         }
     }
 
     "Registrations with valid data should submit correctly." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             fun submitReg(degree: Degree, degreeYear: Int, type: HAPPENING_TYPE) {
                 val submitRegCall: TestApplicationCall =
@@ -177,7 +178,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "The same user should be able to sign up for two different happenings." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 for (b in listOf(exampleHappening1(t), exampleHappening2(t))) {
@@ -199,7 +200,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Registration with valid data and empty question list should submit correctly." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -219,7 +220,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening more than once." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -251,7 +252,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening before the registration date." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -271,7 +272,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening that doesn't exist." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitRegCall: TestApplicationCall =
@@ -296,7 +297,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Email should contain @-sign." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -317,7 +318,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Degree year should not be smaller than one." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -338,7 +339,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Degree year should not be bigger than five." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -360,7 +361,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If the degree year is either four or five, the degree should not correspond to a bachelors degree." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             listOf(
                 Degree.DTEK,
@@ -391,7 +392,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If the degree year is between one and three, the degree should not correspond to a masters degree." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             listOf(Degree.INF, Degree.PROG).map { deg ->
                 for (t in be) {
@@ -416,7 +417,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If degree is KOGNI, degree year should be equal to three." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -437,7 +438,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If degree is ARMNINF, degree year should be equal to one." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -458,7 +459,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Terms should be accepted." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -484,7 +485,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Trying to delete a registration with wrong Authorization header should not work." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             val wrongAuth = "admin:feil-passord-100-bruh"
             for (t in be) {
@@ -505,7 +506,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "If a happening has filled up every spot, a registration should be put on the wait list." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 for (i in 1..(exampleHappening1(t).spotRanges[0].spots)) {
@@ -541,7 +542,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "You should not be able to sign up for a happening if you are not inside the degree year range." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 for (i in 1..2) {
@@ -605,7 +606,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Rate limit should work as expected." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (i in 1..200) {
                 val submitRegCall: TestApplicationCall =
@@ -651,7 +652,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Should get correct count of registrations and wait list registrations, and produce correct CSV list" {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             val waitListCount = 10
 
@@ -751,7 +752,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Should respond properly when not given slug of happening when count of registrations are requested" {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val getCountRegCall: TestApplicationCall =
