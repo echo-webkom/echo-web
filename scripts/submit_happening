@@ -49,7 +49,7 @@ if [ "$testing" = true ]; then
                 }
               ],
           "type": "BEDPRES",
-          "organizerEmail": "bedkom@echo.uib.no" }' \
+          "organizerEmail": "test@test.com" }' \
     "$host":"$port"/happening
   curl --verbose \
     -X PUT \
@@ -67,7 +67,7 @@ if [ "$testing" = true ]; then
                 }
               ],
           "type": "EVENT",
-          "organizerEmail": "tilde@echo.uib.no" }' \
+          "organizerEmail": "test@test.com" }' \
     "$host":"$port"/happening
   exit 0
 fi
