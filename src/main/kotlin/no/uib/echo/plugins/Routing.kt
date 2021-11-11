@@ -17,6 +17,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.getRegistrationCount
@@ -34,7 +35,7 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?) {
+fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?, featureToggles: FeatureToggles) {
     val admin = "admin"
 
     install(ContentNegotiation) {
@@ -63,13 +64,13 @@ fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?) {
 
             authenticate("auth-$admin") {
                 deleteRegistration()
-                putHappening(sendGrid)
+                putHappening(sendGrid, featureToggles.sendEmailHap)
                 deleteHappening()
                 getRegistrationCount()
             }
 
             getRegistrations()
-            postRegistration(sendGrid)
+            postRegistration(sendGrid, featureToggles.sendEmailReg)
         }
     }
 }
@@ -156,7 +157,7 @@ object Routing {
         }
     }
 
-    fun Route.postRegistration(sendGrid: SendGrid?) {
+    fun Route.postRegistration(sendGrid: SendGrid?, sendEmail: Boolean) {
         post("/$registrationRoute") {
             val emailInfo =
                 "\n\n\nSVAR PÅ TIL DENNE MAILADDRESSEN VIL IKKE BLI BESVART. TA HELLER KONTAKT MED ANSVARLIGE FOR ARRANGEMENTET."
@@ -219,7 +220,7 @@ object Routing {
                     RegistrationStatus.ACCEPTED -> {
                         call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
 
-                        if (sendGrid == null)
+                        if (sendGrid == null || !sendEmail)
                             return@post
 
                         if (!withContext(Dispatchers.IO) {
@@ -240,7 +241,7 @@ object Routing {
                             resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
                         )
 
-                        if (sendGrid == null)
+                        if (sendGrid == null || !sendEmail)
                             return@post
 
                         if (!withContext(Dispatchers.IO) {
@@ -301,11 +302,11 @@ object Routing {
         }
     }
 
-    fun Route.putHappening(sendGrid: SendGrid?) {
+    fun Route.putHappening(sendGrid: SendGrid?, sendEmail: Boolean) {
         put("/$happeningRoute") {
             try {
                 val happ = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(happ, sendGrid)
+                val result = insertOrUpdateHappening(happ, sendGrid, sendEmail)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {

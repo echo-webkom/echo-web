@@ -26,6 +26,7 @@ class HappeningTest : StringSpec({
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
+    val featureToggles = FeatureToggles(false, false)
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -47,7 +48,7 @@ class HappeningTest : StringSpec({
 
     "When trying to submit a happening, server should respond with OK." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -67,7 +68,7 @@ class HappeningTest : StringSpec({
 
     "Whe trying to update happening spots, server should respond with OK." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitBedpresCall: TestApplicationCall =
@@ -99,7 +100,7 @@ class HappeningTest : StringSpec({
 
     "When trying to update a happening with the exact same values, server should respond with ACCEPTED." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
                 val submitBedpresCall: TestApplicationCall =
@@ -131,7 +132,7 @@ class HappeningTest : StringSpec({
 
     "When trying to submit a happening with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
@@ -149,7 +150,7 @@ class HappeningTest : StringSpec({
 
     "When trying to submit or update a happening with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             val wrongAuth = "admin:damn-feil-passord-100"
 
@@ -171,7 +172,7 @@ class HappeningTest : StringSpec({
 
     "When trying to delete a happening with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting(adminKey, null)
+            configureRouting(adminKey, null, featureToggles)
         }) {
             val wrongAuth = "admin:damn-feil-passord-100"
 

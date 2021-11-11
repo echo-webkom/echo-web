@@ -11,6 +11,8 @@ import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
 import kotlin.Exception
 
+data class FeatureToggles(val sendEmailReg: Boolean, val sendEmailHap: Boolean)
+
 fun main(args: Array<String>) {
     EngineMain.main(args)
 }
@@ -61,13 +63,21 @@ fun Application.module() {
     }
 
     val adminKey = System.getenv("ADMIN_KEY") ?: throw Exception("ADMIN_KEY not defined.")
+    // Default is false
+    val sendEmailReg = (System.getenv("SEND_EMAIL_REGISTRATION")).toBoolean()
+    // Default is true
+    val sendEmailHap = when (System.getenv("SEND_EMAIL_HAPPENING")) {
+        "false" -> false
+        else -> true
+    }
     val sendGridApiKey = System.getenv("SENDGRID_API_KEY")
 
-    if (sendGridApiKey == null && System.getenv("DEV") == null)
-        throw Exception("SENDGRID_API_KEY not defined in non-dev environment.")
+    if (sendGridApiKey == null && System.getenv("DEV") == null && (sendEmailReg || sendEmailHap))
+        throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
 
     val sendGrid = if (sendGridApiKey == null) null else SendGrid(sendGridApiKey)
 
     Db.init()
-    configureRouting(adminKey, sendGrid)
+    configureRouting(adminKey, sendGrid, FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap))
 }
+
