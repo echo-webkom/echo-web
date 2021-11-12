@@ -1,14 +1,14 @@
 import { ParsedUrlQuery } from 'querystring';
-import { Box, Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
-import { format, parseISO } from 'date-fns';
+import { Box, Center, Divider, Grid, GridItem, Heading, Spinner, VStack } from '@chakra-ui/react';
+import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
-import { CgProfile } from 'react-icons/cg';
 import ErrorBox from '../../components/error-box';
+import IconText from '../../components/icon-text';
 import Section from '../../components/section';
 import SEO from '../../components/seo';
 import { Post, PostAPI } from '../../lib/api';
@@ -31,12 +31,16 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     <Box>
                         <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                             <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
-                                <Grid templateColumns="min-content auto" gap="3" alignItems="center">
-                                    <Icon as={CgProfile} boxSize={10} />
-                                    <Text>{post.author}</Text>
-                                    <Icon as={BiCalendar} boxSize={10} />
-                                    <Text>{format(parseISO(post._createdAt), 'dd. MMM yyyy', { locale: nb })}</Text>
-                                </Grid>
+                                <VStack alignItems="left" spacing={3}>
+                                    <IconText
+                                        icon={BiCalendar}
+                                        text={format(new Date(post._createdAt), 'dd. MMM yyyy', { locale: nb })}
+                                    />
+                                </VStack>
+                                <Divider my="1em" />
+                                <Center>
+                                    <Heading size="lg">@{post.author}</Heading>
+                                </Center>
                             </GridItem>
                             <GridItem
                                 colStart={[1, null, null, 2]}
