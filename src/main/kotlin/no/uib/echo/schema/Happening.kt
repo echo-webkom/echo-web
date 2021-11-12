@@ -38,8 +38,8 @@ object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
-    val organizerEmail: Column<String?> = text("organizer_email").nullable()
-    val registrationsLink: Column<String> = text("registrations_link")
+    val organizerEmail: Column<String> = text("organizer_email")
+    val registrationsLink: Column<String?> = text("registrations_link").nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
@@ -59,7 +59,7 @@ fun selectHappening(slug: String): HappeningJson? {
             it[registrationDate].toString(),
             spotRanges,
             HAPPENING_TYPE.valueOf(it[Happening.happeningType]),
-            it[organizerEmail] ?: ""
+            it[organizerEmail]
         )
     }
 }
