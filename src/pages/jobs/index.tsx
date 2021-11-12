@@ -1,7 +1,7 @@
-import { Text, Wrap, Grid, VStack } from '@chakra-ui/layout';
+import { Grid, Text, VStack, Wrap } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
 import { GetStaticProps } from 'next';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ErrorBox from '../../components/error-box';
 import JobAdvertPreview from '../../components/job-advert-preview';
 import Section from '../../components/section';
@@ -13,13 +13,18 @@ interface Props {
 }
 
 type JobType = 'all' | 'fulltime' | 'parttime' | 'internship';
-type SortType = 'company' | 'deadline' | 'published' | 'type';
+type SortType = 'deadline' | 'companyName' | '_createdAt' | 'jobType';
+
+const sortJobs = (list: JobAdvert[], field: SortType) => {
+    const sorted = list.sort((a: JobAdvert, b: JobAdvert) => (a[field] < b[field] ? -1 : a[field] > b[field] ? 1 : 0));
+    return field === '_createdAt' ? sorted.reverse() : sorted;
+};
 
 const JobAdvertPage = ({ jobAdverts, error }: Props): JSX.Element => {
     const [type, setType] = useState<JobType>('all');
     const [location, setLocation] = useState<string>('all');
     const [company, setCompany] = useState<string>('all');
-    const [sortBy, setSortBy] = useState<SortType>('company');
+    const [sortBy, setSortBy] = useState<SortType>('deadline');
 
     return (
         <>
@@ -41,8 +46,13 @@ const JobAdvertPage = ({ jobAdverts, error }: Props): JSX.Element => {
                                 {jobAdverts
                                     .map((job: JobAdvert) => job.location)
                                     .filter((value, index, self) => self.indexOf(value) === index) //get unique values
-                                    .map((location: string) => (
-                                        <option value={location.toLowerCase()}>{location}</option>
+                                    .map((location: string, index: number) => (
+                                        <option
+                                            key={`${location.toLocaleLowerCase()}-${index}`}
+                                            value={location.toLowerCase()}
+                                        >
+                                            {location}
+                                        </option>
                                     ))}
                             </Select>
                             <Text>Bedrift</Text>
@@ -51,21 +61,26 @@ const JobAdvertPage = ({ jobAdverts, error }: Props): JSX.Element => {
                                 {jobAdverts
                                     .map((job: JobAdvert) => job.companyName)
                                     .filter((value, index, self) => self.indexOf(value) === index) //get unique values
-                                    .map((company: string) => (
-                                        <option value={company.toLowerCase()}>{company}</option>
+                                    .map((company: string, index: number) => (
+                                        <option
+                                            key={`${company.toLocaleLowerCase()}-${index}`}
+                                            value={company.toLowerCase()}
+                                        >
+                                            {company}
+                                        </option>
                                     ))}
                             </Select>
                             <Text>Sorter etter</Text>
                             <Select onChange={(evt) => setSortBy(evt.target.value as SortType)} value={sortBy}>
-                                <option value="company">Bedrift</option>
                                 <option value="deadline">Søknadsfrist</option>
-                                <option value="published">Publisert</option>
-                                <option value="type">Type</option>
+                                <option value="companyName">Bedrift</option>
+                                <option value="_createdAt">Publisert</option>
+                                <option value="jobType">Type</option>
                             </Select>
                         </VStack>
                     </Section>
                     <Wrap spacing={5}>
-                        {jobAdverts.map((job: JobAdvert) =>
+                        {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
                             (location === job.location.toLowerCase() || location === 'all') &&
                             (company === job.companyName.toLowerCase() || company === 'all') ? (

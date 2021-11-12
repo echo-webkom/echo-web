@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { array, decodeType, literal, union, record, string, number } from 'typescript-json-decoder';
+import { array, decodeType, literal, number, record, string, union } from 'typescript-json-decoder';
 import SanityAPI from './api';
 import handleError from './errors';
 
-export type JobAdvert = decodeType<typeof jobAdvertDecoder>;
+type JobAdvert = decodeType<typeof jobAdvertDecoder>;
 const jobAdvertDecoder = record({
     slug: string,
     body: string,
@@ -14,6 +14,7 @@ const jobAdvertDecoder = record({
     advertLink: string,
     jobType: union(literal('fulltime'), literal('parttime'), literal('internship')),
     degreeYears: array(number),
+    _createdAt: string,
 });
 
 type JobAdvertSlug = decodeType<typeof jobAdvertSlugDecoder>;
@@ -21,12 +22,12 @@ const jobAdvertSlugDecoder = record({
     slug: string,
 });
 
-export const JobAdvertAPI = {
+const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
         try {
             const query = `*[_type == "jobAdvert"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
-            console.log(result);
+
             return array(jobAdvertSlugDecoder)(result).map((nestedSlug: JobAdvertSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
@@ -45,7 +46,8 @@ export const JobAdvertAPI = {
                     location,
                     advertLink,
                     jobType,
-                    degreeYears
+                    degreeYears,
+                    _createdAt
                 }`;
             const result = await SanityAPI.fetch(query);
 
@@ -74,7 +76,8 @@ export const JobAdvertAPI = {
                     location,
                     advertLink,
                     jobType,
-                    degreeYears
+                    degreeYears,
+                    _createdAt
                 }`;
             const result = await SanityAPI.fetch(query);
 
@@ -91,3 +94,6 @@ export const JobAdvertAPI = {
         }
     },
 };
+
+export { JobAdvertAPI };
+export type { JobAdvert };

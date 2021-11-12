@@ -1,16 +1,16 @@
-import { Divider, Heading, Center, Spinner, Box, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { ParsedUrlQuery } from 'querystring';
+import { Center, Divider, Grid, GridItem, Heading, Icon, Spinner, Text } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
 import { nb } from 'date-fns/locale';
+import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import Markdown from 'markdown-to-jsx';
-import { ParsedUrlQuery } from 'querystring';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import ErrorBox from '../../components/error-box';
-import SEO from '../../components/seo';
 import Section from '../../components/section';
+import SEO from '../../components/seo';
 import { JobAdvert, JobAdvertAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
@@ -62,9 +62,8 @@ const JobAdvertPage = ({ jobAdvert, error }: { jobAdvert: JobAdvert; error: stri
     );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+const getStaticPaths: GetStaticPaths = async () => {
     const paths = await JobAdvertAPI.getPaths();
-    console.log(paths);
 
     return {
         paths: paths.map((slug: string) => ({
@@ -80,7 +79,7 @@ interface Params extends ParsedUrlQuery {
     slug: string;
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
     const { jobAdvert, error } = await JobAdvertAPI.getJobAdvertBySlug(slug);
 
@@ -98,4 +97,5 @@ export const getStaticProps: GetStaticProps = async (context) => {
     };
 };
 
+export { getStaticPaths, getStaticProps };
 export default JobAdvertPage;
