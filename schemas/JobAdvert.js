@@ -17,6 +17,13 @@ export default {
             type: 'string',
         },
         {
+            name: 'title',
+            title: 'Tittel',
+            description: 'Tittel på stillingsannonse, f.eks: "Bekk søker nyutdannede utviklere til bla bla bla"',
+            validation: (Rule) => Rule.required(),
+            type: 'string',
+        },
+        {
             name: 'slug',
             title: 'Slug (link)',
             validation: (Rule) => Rule.required(),
