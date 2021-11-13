@@ -80,7 +80,7 @@ fun insertOrUpdateHappening(
                 it[slug] = newHappening.slug
                 it[happeningType] = newHappening.type.toString()
                 it[registrationDate] = DateTime(newHappening.registrationDate)
-                it[organizerEmail] = newHappening.organizerEmail
+                it[organizerEmail] = newHappening.organizerEmail.lowercase()
                 it[Happening.registrationsLink] = registrationsLink
             }
             newHappening.spotRanges.map { range ->
@@ -108,7 +108,7 @@ fun insertOrUpdateHappening(
     if (happening.slug == newHappening.slug &&
         DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
         happening.spotRanges == newHappening.spotRanges &&
-        happening.organizerEmail == newHappening.organizerEmail
+        happening.organizerEmail.lowercase() == newHappening.organizerEmail.lowercase()
     ) {
         return Pair(
             HttpStatusCode.Accepted,
@@ -117,7 +117,7 @@ fun insertOrUpdateHappening(
                 "Happening with slug = ${newHappening.slug}, " +
                         "registrationDate = ${newHappening.registrationDate}, " +
                         "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                        "and organizerEmail = ${newHappening.organizerEmail} has already been submitted."
+                        "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
             )
         )
     }
@@ -127,7 +127,7 @@ fun insertOrUpdateHappening(
 
         Happening.update({ Happening.slug eq newHappening.slug }) {
             it[registrationDate] = DateTime(newHappening.registrationDate)
-            it[organizerEmail] = newHappening.organizerEmail
+            it[organizerEmail] = newHappening.organizerEmail.lowercase()
         }
         newHappening.spotRanges.map { range ->
             SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug }) {
@@ -145,7 +145,7 @@ fun insertOrUpdateHappening(
             "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
                     "to registrationDate = ${newHappening.registrationDate}, " +
                     "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                    "and organizerEmail = ${organizerEmail}."
+                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
         )
     )
 }
@@ -182,7 +182,7 @@ fun sendRegistrationsLink(sendGrid: SendGrid?, newHappening: HappeningJson, regi
     if (sendGrid != null) {
         if (!sendEmail(
                 "webkom@echo.uib.no",
-                newHappening.organizerEmail,
+                newHappening.organizerEmail.lowercase(),
                 "Påmeldingsliste til '${newHappening.slug}'",
                 "Her er de påmeldte til arrangementet '${newHappening.slug}'.\n" +
                         "Siden vil oppdateres automatisk når flere melder seg på.\n" +
