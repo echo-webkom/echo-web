@@ -53,5 +53,5 @@ jobs:
             -n "<h1>Release for version $MAJOR.$MINOR.$PATCH</h1>" \
             --target master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
           LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
