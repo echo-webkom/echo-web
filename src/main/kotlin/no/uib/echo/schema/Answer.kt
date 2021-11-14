@@ -23,7 +23,7 @@ fun getAnswers(email: String, slug: String): List<AnswerJson> {
         addLogger(StdOutSqlLogger)
 
         Answer.select {
-            Answer.registrationEmail eq email and
+            Answer.registrationEmail.lowerCase() eq email.lowercase() and
                     (Answer.happeningSlug eq slug)
         }.toList()
     }

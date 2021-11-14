@@ -82,7 +82,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
-                "test1${type}@test.com",
+                "tEsT1${type}@TeSt.com",
                 "Én",
                 "Navnesen",
                 Degree.DTEK,
@@ -690,13 +690,13 @@ class HappeningRegistrationTest : StringSpec({
                                 addHeader(HttpHeaders.ContentType, "application/json")
                                 val newReg =
                                     exampleHappeningReg(t).copy(
-                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}hi69ta123t${i}@test.com",
+                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}mIxEdcAsE${i}@test.com",
                                         degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
                                         degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
                                         slug = newSlug,
                                         waitList = i > sr.spots
                                     )
-                                regsList.add(newReg)
+                                regsList.add(newReg.copy(email = newReg.email.lowercase()))
                                 setBody(gson.toJson(newReg))
                             }
 

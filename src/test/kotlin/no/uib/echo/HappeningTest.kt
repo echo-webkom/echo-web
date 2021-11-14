@@ -71,7 +71,7 @@ class HappeningTest : StringSpec({
             configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
-                val submitBedpresCall: TestApplicationCall =
+                val submitHappeningCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         addHeader(
@@ -81,9 +81,9 @@ class HappeningTest : StringSpec({
                         setBody(gson.toJson(exampleHappening(t)))
                     }
 
-                submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
+                submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
 
-                val updateBedpresCall: TestApplicationCall =
+                val updateHappeningCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         addHeader(
@@ -93,7 +93,7 @@ class HappeningTest : StringSpec({
                         setBody(gson.toJson(exampleHappening(t).copy(spotRanges = listOf(everyoneSpotRange[0].copy(spots = 123)))))
                     }
 
-                updateBedpresCall.response.status() shouldBe HttpStatusCode.OK
+                updateHappeningCall.response.status() shouldBe HttpStatusCode.OK
             }
         }
     }

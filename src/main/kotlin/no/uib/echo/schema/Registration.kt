@@ -69,7 +69,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
 
         val oldReg =
             Registration.select {
-                Registration.email eq reg.email and
+                Registration.email.lowerCase() eq reg.email.lowercase() and
                         (happeningSlug eq happening.slug)
             }.firstOrNull()
 
@@ -93,7 +93,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
         val waitListSpot = countRegs - correctRange.spots + 1
 
         Registration.insert {
-            it[email] = reg.email
+            it[email] = reg.email.lowercase()
             it[firstName] = reg.firstName
             it[lastName] = reg.lastName
             it[degree] = reg.degree.toString()
@@ -105,7 +105,7 @@ fun insertRegistration(reg: RegistrationJson): Triple<String?, List<SpotRangeJso
 
         if (reg.answers.isNotEmpty()) {
             Answer.batchInsert(reg.answers) { a ->
-                this[registrationEmail] = reg.email
+                this[registrationEmail] = reg.email.lowercase()
                 this[Answer.happeningSlug] = reg.slug
                 this[question] = a.question
                 this[answer] = a.answer
@@ -130,7 +130,7 @@ fun selectRegistrationsBySlug(slug: String): List<RegistrationJson> {
 
     return regs.map {
         RegistrationJson(
-            it[Registration.email],
+            it[Registration.email].lowercase(),
             it[Registration.firstName],
             it[Registration.lastName],
             Degree.valueOf(it[Registration.degree]),
@@ -139,7 +139,7 @@ fun selectRegistrationsBySlug(slug: String): List<RegistrationJson> {
             it[Registration.terms],
             it[Registration.submitDate].toString(),
             it[waitList],
-            getAnswers(it[Registration.email], slug),
+            getAnswers(it[Registration.email].lowercase(), slug),
             // Ignore this
             HAPPENING_TYPE.BEDPRES
         )
@@ -182,7 +182,7 @@ fun deleteRegistration(shortReg: ShortRegistrationJson) {
 
         Registration.deleteWhere {
             happeningSlug eq shortReg.slug and
-                    (Registration.email eq shortReg.email)
+                    (Registration.email.lowerCase() eq shortReg.email.lowercase())
         }
     }
 }
@@ -209,7 +209,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
     return "email,firstName,lastName,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading" +
             regs.joinToString("") { reg ->
                 "\n" +
-                        reg.email + "," +
+                        reg.email.lowercase() + "," +
                         reg.firstName + "," +
                         reg.lastName + "," +
                         reg.degree.toString() + "," +
