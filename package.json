@@ -57,7 +57,11 @@
             "import/order": "error",
             "import/exports-last": "error",
             "import/group-exports": "error",
-            "import/prefer-default-export": "error"
+            "import/prefer-default-export": "error",
+            "eqeqeq": "error",
+            "no-throw-literal": "error",
+            "no-trailing-spaces": "error",
+            "eol-last": "error"
         }
     },
     "prettier": {

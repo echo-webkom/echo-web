@@ -24,7 +24,7 @@ const happeningDecoder = record({
     happeningType: (value) => {
         if (value === 'BEDPRES' || value === 'bedpres') return HappeningType.BEDPRES;
         else if (value === 'EVENT' || value === 'event') return HappeningType.EVENT;
-        else throw `Could not decode value '${value}' to a HappeningType`;
+        else throw Error(`Could not decode value '${value}' to a HappeningType`);
     },
 });
 

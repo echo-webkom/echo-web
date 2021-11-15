@@ -22,7 +22,7 @@ const HappeningUI = ({
     spotRangeCounts: Array<SpotRangeCount> | null;
     date: number;
 }): JSX.Element => {
-    if (happening == null) return <></>;
+    if (happening === null) return <></>;
 
     const regDate = happening.registrationDate ? parseISO(happening.registrationDate) : new Date(date);
     const happeningDate = parseISO(happening.date);
