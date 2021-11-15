@@ -23,7 +23,7 @@ const Hsp = (): JSX.Element => {
                 </Heading>
             </Center>
             <Center>
-                <LinkBox>
+                <LinkBox pb="16px">
                     <NextLink href="https://bekk.no" passHref>
                         <LinkOverlay isExternal filter={logoFilter}>
                             <Image alt="Bekk" src={bekkLogo} width={300} height={72} />
