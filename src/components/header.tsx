@@ -22,13 +22,13 @@ const randomHeaderMessage = (): string => {
     const now = new Date();
 
     const stdMessages = () => {
-        let baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!', 'Spruuutnice'];
+        const baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!', 'Spruuutnice'];
 
-        if (getMonth(now) === 9) baseMessages = baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
+        if (getMonth(now) === 9) return baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
 
-        if (isThursday(now)) baseMessages = baseMessages.concat(['Vaffeltorsdag 🧇']);
+        if (isThursday(now)) return baseMessages.concat(['Vaffeltorsdag 🧇']);
 
-        if (isFriday(now)) baseMessages = baseMessages.concat(['Tacofredag 🌯']);
+        if (isFriday(now)) return baseMessages.concat(['Tacofredag 🌯']);
 
         return baseMessages;
     };
