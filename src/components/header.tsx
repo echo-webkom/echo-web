@@ -10,7 +10,7 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import { isFriday, isThursday, getHours, getMonth, isMonday } from 'date-fns';
+import { isFriday, isThursday, getDate, getHours, getMonth, isMonday } from 'date-fns';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React, { memo, useRef } from 'react';
@@ -37,6 +37,10 @@ const randomHeaderMessage = (): string => {
         return 'New week, new me?';
     } else if (isThursday(now) && getHours(now) < 12) {
         return 'Husk bedpres kl. 12:00!';
+    } else if (getMonth(now) === 11 && getDate(now) >= 24) {
+        return 'God jul! 🎅';
+    } else if (getMonth(now) === 0 && getDate(now) === 1) {
+        return 'Godt nyttår! ✨';
     }
 
     return stdMessages()[Math.floor(Math.random() * stdMessages().length)];
