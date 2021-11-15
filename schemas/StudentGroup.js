@@ -48,33 +48,33 @@ export default {
             name: 'members',
             title: 'Medlemmer',
             type: 'array',
-            of: [member],
+            of: [
+                {
+                    name: 'member',
+                    title: 'Medlem',
+                    type: 'object',
+                    fields: [
+                        {
+                            name: 'role',
+                            title: 'Rolle',
+                            type: 'string',
+                        },
+                        {
+                            name: 'profile',
+                            title: 'Profil',
+                            type: 'reference',
+                            to: [{ type: 'profile' }],
+                        },
+                    ],
+                    preview: {
+                        select: {
+                            media: 'profile.picture',
+                            title: 'profile.name',
+                            subtitle: 'title',
+                        },
+                    },
+                },
+            ],
         },
     ],
-};
-
-const member = {
-    name: 'member',
-    title: 'Medlem',
-    type: 'object',
-    fields: [
-        {
-            name: 'role',
-            title: 'Rolle',
-            type: 'string',
-        },
-        {
-            name: 'profile',
-            title: 'Profil',
-            type: 'reference',
-            to: [{ type: 'profile' }],
-        },
-    ],
-    preview: {
-        select: {
-            media: 'profile.picture',
-            title: 'profile.name',
-            subtitle: 'role',
-        },
-    },
 };
