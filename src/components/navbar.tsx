@@ -22,9 +22,9 @@ const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: 
     const isActive = router?.pathname === href || '';
 
     return (
-        <LinkBox data-testid={testid} data-cy="nav-item">
+        <LinkBox data-testid={testid} data-cy="nav-item" mr="12px">
             <NextLink href={href} passHref>
-                <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''} py="0.2rem" px="0.4rem">
+                <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''}>
                     {text}
                 </LinkOverlay>
             </NextLink>
@@ -40,10 +40,8 @@ const Nav = (): JSX.Element => (
     <Flex
         flexDirection={['column', null, null, 'row']}
         w="100%"
-        fontSize={['3xl', null, null, 'lg', '2xl']}
-        justifyContent="space-between"
-        textAlign="end"
-        alignItems="flex-end"
+        fontSize={['3xl', null, 'md', 'lg', '2xl']}
+        justify="right"
     >
         <NavLink text="Hjem" href="/" testid="hjem" />
         <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />

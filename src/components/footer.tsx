@@ -21,7 +21,7 @@ const Footer = (): JSX.Element => {
             w="100%"
             py="1.25rem"
             px="1em"
-            mt="5em"
+            mt="2em"
             bottom="0"
             pos="absolute"
             data-testid="footer"

@@ -22,7 +22,15 @@ const randomHeaderMessage = (): string => {
     const now = new Date();
 
     const stdMessages = () => {
-        const baseMessages = ['Bottom text', '🤙🤙🤙', 'Lorem ipsum', '90% stabil!', 'Uten sylteagurk!', 'Spruuutnice'];
+        const baseMessages = [
+            'Bottom text',
+            '🤙🤙🤙',
+            'Lorem ipsum',
+            '90% stabil!',
+            'Uten sylteagurk!',
+            'Spruuutnice',
+            'Vim eller forsvinn',
+        ];
 
         if (getMonth(now) === 9) return baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
 
@@ -128,15 +136,8 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
     return (
-        <Center
-            mt="1rem"
-            mb="1rem"
-            pb="1rem"
-            pt={['12px', null, '0']}
-            borderColor={borderBg}
-            data-testid="header-standard"
-        >
-            <Flex w={['90%', '70%']} h="120px" alignItems="flex-end" justify="">
+        <Center mt="1rem" mb="1rem" borderColor={borderBg} data-testid="header-standard" m="2rem auto">
+            <Flex w="100%" h="120px" alignItems="flex-end" px={['5%', '10%']}>
                 <HeaderLogo />
                 <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
                 <IconButton
