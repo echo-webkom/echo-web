@@ -2,8 +2,7 @@ import { Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue } from 
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
-import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
-import { FiMail } from 'react-icons/fi';
+import { FaFacebook, FaGithub, FaInstagram, FaCommentDots } from 'react-icons/fa';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
@@ -43,9 +42,12 @@ const Footer = (): JSX.Element => {
                     </NextLink>
                 </LinkBox>
                 <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                    <NextLink href="mailto:echo@uib.no" passHref>
+                    <NextLink
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSey2XfQijRQNvoc8-y3DaufbPaN33SdRBrITrcq87s7DyG6pg/viewform"
+                        passHref
+                    >
                         <LinkOverlay isExternal>
-                            <Icon as={FiMail} w={12} h={12} />
+                            <Icon as={FaCommentDots} w={12} h={12} />
                         </LinkOverlay>
                     </NextLink>
                 </LinkBox>
