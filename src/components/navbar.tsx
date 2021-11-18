@@ -40,8 +40,8 @@ const Nav = (): JSX.Element => (
     <Flex
         flexDirection={['column', null, null, 'row']}
         w="100%"
-        fontSize={['3xl', null, 'md', 'lg', '2xl']}
-        justify="right"
+        fontSize={['3xl', null, null, 'lg', '2xl']}
+        justify="flex-end"
     >
         <NavLink text="Hjem" href="/" testid="hjem" />
         <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
