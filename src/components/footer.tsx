@@ -78,7 +78,7 @@ const Footer = (): JSX.Element => {
                     <NextLink href="mailto:echo@uib.no" passHref>
                         <LinkOverlay isExternal>
                             <Text fontSize="md" color={color}>
-                                echo(at)uib.no
+                                echo@uib.no
                             </Text>
                         </LinkOverlay>
                     </NextLink>
