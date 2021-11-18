@@ -22,7 +22,7 @@ const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: 
     const isActive = router?.pathname === href || '';
 
     return (
-<LinkBox data-testid={testid} data-cy="nav-item" mr="1.5rem">
+        <LinkBox data-testid={testid} data-cy="nav-item" mr={['.6rem', null, null, null, '1.5rem']}>
             <NextLink href={href} passHref>
                 <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''}>
                     {text}
