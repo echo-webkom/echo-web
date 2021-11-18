@@ -16,7 +16,7 @@ const Footer = (): JSX.Element => {
             bottom="0"
             justify="center"
             bg="bg.dark.secondary"
-            p="24px"
+            p="1.5rem"
             width="100%"
             overflow="hidden"
         >
