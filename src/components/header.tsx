@@ -137,7 +137,7 @@ const Header = (): JSX.Element => {
 
     return (
         <Center mt="1rem" mb="1rem" borderColor={borderBg} data-testid="header-standard" m="2rem auto">
-            <Flex w="100%" h="120px" alignItems="flex-end" px={['5%', '10%']}>
+            <Flex w="100%" h="120px" alignItems="flex-end" maxW="1700" px={['5%', '10%']}>
                 <HeaderLogo />
                 <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
                 <IconButton
