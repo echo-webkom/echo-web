@@ -1,6 +1,5 @@
 package no.uib.echo
 
-import com.sendgrid.SendGrid
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.*
 import io.ktor.features.CORS
@@ -75,9 +74,7 @@ fun Application.module() {
     if (sendGridApiKey == null && System.getenv("DEV") == null && (sendEmailReg || sendEmailHap))
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
 
-    val sendGrid = if (sendGridApiKey == null) null else SendGrid(sendGridApiKey)
-
     Db.init()
-    configureRouting(adminKey, sendGrid, FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap))
+    configureRouting(adminKey, sendGridApiKey, FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap))
 }
 

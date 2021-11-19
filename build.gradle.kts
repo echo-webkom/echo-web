@@ -40,6 +40,10 @@ dependencies {
     implementation("io.ktor:ktor-gson:$ktor_version")
     implementation("io.ktor:ktor-auth:$ktor_version")
     implementation("io.ktor:ktor-freemarker:$ktor_version")
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-logging:$ktor_version")
+    implementation("io.ktor:ktor-client-gson:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -55,8 +59,6 @@ dependencies {
     implementation("guru.zoroark:ktor-rate-limit:$ktor_rate_limit_version")
 
     implementation("org.flywaydb:flyway-core:$flyway_version")
-
-    implementation("com.sendgrid:sendgrid-java:$sendgrid_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 

@@ -11,6 +11,8 @@ import io.ktor.server.testing.TestApplicationCall
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.*
@@ -119,14 +121,15 @@ class HappeningRegistrationTest : StringSpec({
                 Answer,
                 SpotRange
             )
-
-            for (t in be) {
-                insertOrUpdateHappening(exampleHappening1(t), null, false)
-                insertOrUpdateHappening(exampleHappening2(t), null, false)
-                insertOrUpdateHappening(exampleHappening3(t), null, false)
-                insertOrUpdateHappening(exampleHappening4(t), null, false)
-                insertOrUpdateHappening(exampleHappening5(t), null, false)
-                insertOrUpdateHappening(exampleHappening6(t), null, false)
+        }
+        for (t in be) {
+            withContext(Dispatchers.IO) {
+                insertOrUpdateHappening(exampleHappening1(t), false, null)
+                insertOrUpdateHappening(exampleHappening2(t), false, null)
+                insertOrUpdateHappening(exampleHappening3(t), false, null)
+                insertOrUpdateHappening(exampleHappening4(t), false, null)
+                insertOrUpdateHappening(exampleHappening5(t), false, null)
+                insertOrUpdateHappening(exampleHappening6(t), false, null)
             }
         }
     }

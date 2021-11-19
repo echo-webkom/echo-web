@@ -1,6 +1,5 @@
 package no.uib.echo.plugins
 
-import com.sendgrid.*
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.routing.*
@@ -19,14 +18,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
+import no.uib.echo.SendGridTemplate
+import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.getRegistrationCount
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.deleteRegistration
-import no.uib.echo.resToJson
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
+import no.uib.echo.resToJson
 import no.uib.echo.schema.*
 import no.uib.echo.schema.Happening.slug
 import no.uib.echo.sendEmail
@@ -34,8 +35,9 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.IOException
 
-fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?, featureToggles: FeatureToggles) {
+fun Application.configureRouting(adminKey: String, sendGridApiKey: String?, featureToggles: FeatureToggles) {
     val admin = "admin"
 
     install(ContentNegotiation) {
@@ -64,13 +66,13 @@ fun Application.configureRouting(adminKey: String, sendGrid: SendGrid?, featureT
 
             authenticate("auth-$admin") {
                 deleteRegistration()
-                putHappening(sendGrid, featureToggles.sendEmailHap)
+                putHappening(sendGridApiKey, featureToggles.sendEmailHap)
                 deleteHappening()
                 getRegistrationCount()
             }
 
             getRegistrations()
-            postRegistration(sendGrid, featureToggles.sendEmailReg)
+            postRegistration(sendGridApiKey, featureToggles.sendEmailReg)
         }
     }
 }
@@ -157,13 +159,17 @@ object Routing {
         }
     }
 
-    fun Route.postRegistration(sendGrid: SendGrid?, sendEmail: Boolean) {
+    fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
         post("/$registrationRoute") {
-            val emailInfo =
-                "\n\n\nSVAR PÅ TIL DENNE MAILADDRESSEN VIL IKKE BLI BESVART. TA HELLER KONTAKT MED ANSVARLIGE FOR ARRANGEMENTET."
-
             try {
                 val registration = call.receive<RegistrationJson>()
+
+                val (hapTypeLiteral, typeSlug) = when (registration.type) {
+                    HAPPENING_TYPE.EVENT ->
+                        Pair("arrangementet", "events")
+                    HAPPENING_TYPE.BEDPRES ->
+                        Pair("bedriftspresentasjonen", "bedpres")
+                }
 
                 if (!registration.email.contains('@')) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
@@ -176,13 +182,13 @@ object Routing {
                 }
 
                 if ((registration.degree == Degree.DTEK ||
-                            registration.degree == Degree.DSIK ||
-                            registration.degree == Degree.DVIT ||
-                            registration.degree == Degree.BINF ||
-                            registration.degree == Degree.IMO ||
-                            registration.degree == Degree.IKT ||
-                            registration.degree == Degree.KOGNI ||
-                            registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                        registration.degree == Degree.DSIK ||
+                        registration.degree == Degree.DVIT ||
+                        registration.degree == Degree.BINF ||
+                        registration.degree == Degree.IMO ||
+                        registration.degree == Degree.IKT ||
+                        registration.degree == Degree.KOGNI ||
+                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(
                         HttpStatusCode.BadRequest,
@@ -220,19 +226,34 @@ object Routing {
                     RegistrationStatus.ACCEPTED -> {
                         call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
 
-                        if (sendGrid == null || !sendEmail)
+                        if (sendGridApiKey == null || !sendEmail)
                             return@post
 
-                        if (!withContext(Dispatchers.IO) {
+                        val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+
+                        val fromEmail =
+                            if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
+                                hap.organizerEmail
+                            else
+                                "webkom@echo.uib.no"
+
+                        try {
+                            withContext(Dispatchers.IO) {
                                 sendEmail(
-                                    "webkom@echo.uib.no",
+                                    fromEmail,
                                     registration.email,
-                                    "Bekreftelse påmelding",
-                                    "Du har fått plass på '${registration.slug}'!$emailInfo",
-                                    sendGrid
+                                    SendGridTemplate(
+                                        hap.slug,
+                                        "https://echo.uib.no/$typeSlug/${registration.slug}",
+                                        hapTypeLiteral,
+                                        registration = registration
+                                    ),
+                                    Template.CONFIRM_REG,
+                                    sendGridApiKey
                                 )
-                            }) {
-                            System.err.println("ERROR: could not send confirmation email.")
+                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
                         }
                     }
                     RegistrationStatus.WAIT_LIST -> {
@@ -241,19 +262,33 @@ object Routing {
                             resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
                         )
 
-                        if (sendGrid == null || !sendEmail)
+                        if (sendGridApiKey == null || !sendEmail)
                             return@post
 
-                        if (!withContext(Dispatchers.IO) {
+                        val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+                        val fromEmail =
+                            if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
+                                hap.organizerEmail
+                            else
+                                "webkom@echo.uib.no"
+                        try {
+                            withContext(Dispatchers.IO) {
                                 sendEmail(
-                                    "webkom@echo.uib.no",
+                                    fromEmail,
                                     registration.email,
-                                    "Bekreftelse påmelding (venteliste)",
-                                    "Du har plass nr. $regDateOrWaitListCount på ventelisten til '${registration.slug}'.$emailInfo",
-                                    sendGrid
+                                    SendGridTemplate(
+                                        hap.slug,
+                                        "https://echo.uib.no/$typeSlug/${registration.slug}",
+                                        hapTypeLiteral,
+                                        waitListSpot = regDateOrWaitListCount?.toInt(),
+                                        registration = registration
+                                    ),
+                                    Template.CONFIRM_WAIT,
+                                    sendGridApiKey
                                 )
-                            }) {
-                            System.err.println("ERROR: could not send confirmation email.")
+                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
                         }
                     }
                     RegistrationStatus.TOO_EARLY ->
@@ -302,11 +337,11 @@ object Routing {
         }
     }
 
-    fun Route.putHappening(sendGrid: SendGrid?, sendEmail: Boolean) {
+    fun Route.putHappening(sendGridApiKey: String?, sendEmail: Boolean) {
         put("/$happeningRoute") {
             try {
                 val happ = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(happ, sendGrid, sendEmail)
+                val result = insertOrUpdateHappening(happ, sendEmail, sendGridApiKey)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {

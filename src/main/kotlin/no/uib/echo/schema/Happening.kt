@@ -1,7 +1,10 @@
 package no.uib.echo.schema
 
-import com.sendgrid.SendGrid
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import no.uib.echo.SendGridTemplate
+import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.registrationRoute
 import no.uib.echo.schema.Happening.organizerEmail
 import no.uib.echo.schema.Happening.registrationDate
@@ -10,6 +13,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import java.io.IOException
 
 private const val REG_LINK_LENGTH = 128
 
@@ -60,10 +64,10 @@ fun selectHappening(slug: String): HappeningJson? {
     }
 }
 
-fun insertOrUpdateHappening(
+suspend fun insertOrUpdateHappening(
     newHappening: HappeningJson,
-    sendGrid: SendGrid?,
-    sendEmail: Boolean
+    sendEmail: Boolean,
+    sendGridApiKey: String?
 ): Pair<HttpStatusCode, HappeningResponseJson> {
     val happening = selectHappening(newHappening.slug)
     val registrationsLink =
@@ -93,8 +97,34 @@ fun insertOrUpdateHappening(
             }
         }
 
-        if (sendEmail)
-            sendRegistrationsLink(sendGrid, newHappening, registrationsLink)
+        if (sendEmail) {
+            val hapTypeLiteral = when (newHappening.type) {
+                HAPPENING_TYPE.EVENT ->
+                    "arrangementet"
+                HAPPENING_TYPE.BEDPRES ->
+                    "bedriftspresentasjonen"
+            }
+
+            if (sendGridApiKey != null) {
+                try {
+                    withContext(Dispatchers.IO) {
+                        sendEmail(
+                            "webkom@echo.uib.no",
+                            newHappening.organizerEmail,
+                            SendGridTemplate(
+                                newHappening.slug,
+                                "https://echo-web-backend-prod/$registrationRoute/$registrationsLink",
+                                hapTypeLiteral
+                            ),
+                            Template.REGS_LINK,
+                            sendGridApiKey
+                        )
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
 
         return Pair(
             HttpStatusCode.OK,
@@ -115,9 +145,9 @@ fun insertOrUpdateHappening(
             HappeningResponseJson(
                 registrationsLink,
                 "Happening with slug = ${newHappening.slug}, " +
-                        "registrationDate = ${newHappening.registrationDate}, " +
-                        "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                        "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
+                    "registrationDate = ${newHappening.registrationDate}, " +
+                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
             )
         )
     }
@@ -143,9 +173,9 @@ fun insertOrUpdateHappening(
         HappeningResponseJson(
             registrationsLink,
             "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
-                    "to registrationDate = ${newHappening.registrationDate}, " +
-                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
+                "to registrationDate = ${newHappening.registrationDate}, " +
+                "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
         )
     )
 }
@@ -175,24 +205,6 @@ fun deleteHappeningBySlug(slug: String): Boolean {
         }
 
         return@transaction true
-    }
-}
-
-fun sendRegistrationsLink(sendGrid: SendGrid?, newHappening: HappeningJson, registrationsLink: String) {
-    if (sendGrid != null) {
-        if (!sendEmail(
-                "webkom@echo.uib.no",
-                newHappening.organizerEmail.lowercase(),
-                "Påmeldingsliste til '${newHappening.slug}'",
-                "Her er de påmeldte til arrangementet '${newHappening.slug}'.\n" +
-                        "Siden vil oppdateres automatisk når flere melder seg på.\n" +
-                        "Du trenger bare å refreshe siden for å få inn de nyeste påmeldingene." +
-                        "\n\n\nhttps://echo-web-backend-prod.herokuapp.com/$registrationRoute/$registrationsLink",
-                sendGrid
-            )
-        ) {
-            System.err.println("ERROR: could not send registrations link email.")
-        }
     }
 }
 
