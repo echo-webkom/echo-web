@@ -14,12 +14,8 @@ import io.ktor.freemarker.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
-import no.uib.echo.SendGridTemplate
-import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.getRegistrationCount
 import no.uib.echo.plugins.Routing.getRegistrations
@@ -30,12 +26,18 @@ import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.resToJson
 import no.uib.echo.schema.*
 import no.uib.echo.schema.Happening.slug
-import no.uib.echo.sendEmail
+import no.uib.echo.sendConfirmationEmail
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.IOException
+import org.joda.time.DateTime
 
 fun Application.configureRouting(adminKey: String, sendGridApiKey: String?, featureToggles: FeatureToggles) {
     val admin = "admin"
@@ -92,7 +94,31 @@ object Routing {
             val slugParam: String? = call.request.queryParameters["slug"]
 
             if (slugParam != null) {
-                call.respond(HttpStatusCode.OK, countRegistrations(slugParam))
+                val registrationCount = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    SpotRange.select {
+                        SpotRange.happeningSlug eq slugParam
+                    }.toList().map {
+                        SpotRangeWithCountJson(
+                            it[SpotRange.spots],
+                            it[SpotRange.minDegreeYear],
+                            it[SpotRange.maxDegreeYear],
+                            countRegistrationsDegreeYear(
+                                slugParam,
+                                it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                                false
+                            ),
+                            countRegistrationsDegreeYear(
+                                slugParam,
+                                it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                                true
+                            )
+                        )
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, registrationCount)
                 return@get
             } else {
                 call.respond(HttpStatusCode.BadRequest, "No slug specified.")
@@ -125,7 +151,41 @@ object Routing {
                 return@get
             }
 
-            val regs = selectRegistrationsBySlug(hap[slug])
+            val regs = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Registration.select {
+                    Registration.happeningSlug eq hap[slug]
+                }.orderBy(Registration.submitDate to SortOrder.ASC).toList().map { reg ->
+                    RegistrationJson(
+                        reg[Registration.email].lowercase(),
+                        reg[Registration.firstName],
+                        reg[Registration.lastName],
+                        Degree.valueOf(reg[Registration.degree]),
+                        reg[Registration.degreeYear],
+                        reg[Registration.happeningSlug],
+                        reg[Registration.terms],
+                        reg[Registration.submitDate].toString(),
+                        reg[Registration.waitList],
+                        transaction {
+                            addLogger(StdOutSqlLogger)
+
+                            Answer.select {
+                                Answer.registrationEmail.lowerCase() eq reg[Registration.email].lowercase() and
+                                    (Answer.happeningSlug eq hap[slug])
+                            }.toList()
+                        }.map {
+                            AnswerJson(
+                                it[Answer.question],
+                                it[Answer.answer]
+                            )
+                        },
+                        // Ignore this
+                        HAPPENING_TYPE.BEDPRES
+                    )
+                }
+            }
+
             val ans = (regs.maxByOrNull { it.answers.size })?.answers ?: emptyList()
 
             if (download) {
@@ -163,13 +223,6 @@ object Routing {
         post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
-
-                val (hapTypeLiteral, typeSlug) = when (registration.type) {
-                    HAPPENING_TYPE.EVENT ->
-                        Pair("arrangementet", "events")
-                    HAPPENING_TYPE.BEDPRES ->
-                        Pair("bedriftspresentasjonen", "bedpres")
-                }
 
                 if (!registration.email.contains('@')) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
@@ -220,97 +273,112 @@ object Routing {
                     return@post
                 }
 
-                val (regDateOrWaitListCount, spotRanges, regStatus) = insertRegistration(registration)
+                val happening = transaction {
+                    addLogger(StdOutSqlLogger)
 
-                when (regStatus) {
-                    RegistrationStatus.ACCEPTED -> {
-                        call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
+                    selectHappening(registration.slug)
+                }
 
-                        if (sendGridApiKey == null || !sendEmail)
-                            return@post
+                if (happening == null) {
+                    call.respond(
+                        HttpStatusCode.Conflict,
+                        resToJson(Response.HappeningDoesntExist, registration.type)
+                    )
+                    return@post
+                }
 
-                        val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+                if (DateTime(happening.registrationDate).isAfterNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.TooEarly, registration.type, regDate = happening.registrationDate)
+                    )
+                    return@post
+                }
 
-                        val fromEmail =
-                            if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
-                                hap.organizerEmail
-                            else
-                                "webkom@echo.uib.no"
+                val oldReg = transaction {
+                    addLogger(StdOutSqlLogger)
 
-                        try {
-                            withContext(Dispatchers.IO) {
-                                sendEmail(
-                                    fromEmail,
-                                    registration.email,
-                                    SendGridTemplate(
-                                        hap.slug,
-                                        "https://echo.uib.no/$typeSlug/${registration.slug}",
-                                        hapTypeLiteral,
-                                        registration = registration
-                                    ),
-                                    Template.CONFIRM_REG,
-                                    sendGridApiKey
-                                )
-                            }
-                        } catch (e: IOException) {
-                            e.printStackTrace()
+                    Registration.select {
+                        Registration.email.lowerCase() eq registration.email.lowercase() and
+                            (Registration.happeningSlug eq registration.slug)
+                    }.firstOrNull()
+                }
+
+                if (oldReg != null) {
+                    call.respond(
+                        HttpStatusCode.UnprocessableEntity,
+                        resToJson(Response.AlreadySubmitted, registration.type)
+                    )
+                    return@post
+                }
+
+                val spotRanges = selectSpotRanges(registration.slug)
+
+                val correctRange = happening.spotRanges.firstOrNull {
+                    registration.degreeYear in it.minDegreeYear..it.maxDegreeYear
+                }
+
+                if (correctRange == null) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.NotInRange, registration.type, spotRanges = spotRanges)
+                    )
+                    return@post
+                }
+
+                val countRegs = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq registration.slug and
+                            (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
+                    }.count()
+                }
+
+                val waitList = countRegs >= correctRange.spots
+                val waitListSpot = countRegs - correctRange.spots + 1
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.insert {
+                        it[email] = registration.email.lowercase()
+                        it[firstName] = registration.firstName
+                        it[lastName] = registration.lastName
+                        it[degree] = registration.degree.toString()
+                        it[degreeYear] = registration.degreeYear
+                        it[happeningSlug] = registration.slug
+                        it[terms] = registration.terms
+                        it[Registration.waitList] = waitList
+                    }
+
+                    if (registration.answers.isNotEmpty()) {
+                        Answer.batchInsert(registration.answers) { a ->
+                            this[Answer.registrationEmail] = registration.email.lowercase()
+                            this[Answer.happeningSlug] = registration.slug
+                            this[Answer.question] = a.question
+                            this[Answer.answer] = a.answer
                         }
                     }
-                    RegistrationStatus.WAIT_LIST -> {
-                        call.respond(
-                            HttpStatusCode.Accepted,
-                            resToJson(Response.WaitList, registration.type, waitListCount = regDateOrWaitListCount)
-                        )
+                }
 
-                        if (sendGridApiKey == null || !sendEmail)
-                            return@post
+                if (waitList) {
+                    call.respond(
+                        HttpStatusCode.Accepted,
+                        resToJson(Response.WaitList, registration.type, waitListSpot = waitListSpot)
+                    )
 
-                        val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
-                        val fromEmail =
-                            if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
-                                hap.organizerEmail
-                            else
-                                "webkom@echo.uib.no"
-                        try {
-                            withContext(Dispatchers.IO) {
-                                sendEmail(
-                                    fromEmail,
-                                    registration.email,
-                                    SendGridTemplate(
-                                        hap.slug,
-                                        "https://echo.uib.no/$typeSlug/${registration.slug}",
-                                        hapTypeLiteral,
-                                        waitListSpot = regDateOrWaitListCount?.toInt(),
-                                        registration = registration
-                                    ),
-                                    Template.CONFIRM_WAIT,
-                                    sendGridApiKey
-                                )
-                            }
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-                    RegistrationStatus.TOO_EARLY ->
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            resToJson(Response.TooEarly, registration.type, regDate = regDateOrWaitListCount)
-                        )
-                    RegistrationStatus.ALREADY_EXISTS ->
-                        call.respond(
-                            HttpStatusCode.UnprocessableEntity,
-                            resToJson(Response.AlreadySubmitted, registration.type)
-                        )
-                    RegistrationStatus.HAPPENING_DOESNT_EXIST ->
-                        call.respond(
-                            HttpStatusCode.Conflict,
-                            resToJson(Response.HappeningDoesntExist, registration.type)
-                        )
-                    RegistrationStatus.NOT_IN_RANGE ->
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            resToJson(Response.NotInRange, registration.type, spotRanges = spotRanges)
-                        )
+                    if (sendGridApiKey == null || !sendEmail)
+                        return@post
+
+                    sendConfirmationEmail(sendGridApiKey, registration, waitListSpot)
+                } else {
+                    call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
+
+                    if (sendGridApiKey == null || !sendEmail)
+                        return@post
+
+                    sendConfirmationEmail(sendGridApiKey, registration, null)
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
@@ -324,7 +392,14 @@ object Routing {
             try {
                 val shortReg = call.receive<ShortRegistrationJson>()
 
-                deleteRegistration(shortReg)
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.deleteWhere {
+                        Registration.happeningSlug eq shortReg.slug and
+                            (Registration.email.lowerCase() eq shortReg.email.lowercase())
+                    }
+                }
 
                 call.respond(
                     HttpStatusCode.OK,
@@ -354,17 +429,43 @@ object Routing {
     fun Route.deleteHappening() {
         delete("/$happeningRoute") {
             try {
-                val happ = call.receive<HappeningSlugJson>()
+                val hap = call.receive<HappeningSlugJson>()
 
-                if (deleteHappeningBySlug(happ.slug))
+                val hapDeleted = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    val happeningExists = Happening.select { slug eq hap.slug }.firstOrNull() != null
+                    if (!happeningExists)
+                        return@transaction false
+
+                    SpotRange.deleteWhere {
+                        SpotRange.happeningSlug eq hap.slug
+                    }
+
+                    Answer.deleteWhere {
+                        Answer.happeningSlug eq hap.slug
+                    }
+
+                    Registration.deleteWhere {
+                        Registration.happeningSlug eq hap.slug
+                    }
+
+                    Happening.deleteWhere {
+                        slug eq hap.slug
+                    }
+
+                    return@transaction true
+                }
+
+                if (hapDeleted)
                     call.respond(
                         HttpStatusCode.OK,
-                        "${happ.type.toString().lowercase()} with slug = ${happ.slug} deleted."
+                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
                     )
                 else
                     call.respond(
                         HttpStatusCode.NotFound,
-                        "${happ.type.toString().lowercase()} with slug = ${happ.slug} does not exist."
+                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
                     )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")

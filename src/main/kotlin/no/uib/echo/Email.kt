@@ -12,7 +12,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.selectHappening
 import java.io.IOException
 
 data class SendGridRequest(
@@ -55,6 +59,45 @@ fun fromEmail(email: String): String? {
         "webkom@echo.uib.no" -> "Webkom"
         "gnist@echo.uib.no" -> "Gnist"
         else -> null
+    }
+}
+
+suspend fun sendConfirmationEmail(
+    sendGridApiKey: String,
+    registration: RegistrationJson,
+    waitListSpot: Long?
+) {
+    val (hapTypeLiteral, typeSlug) = when (registration.type) {
+        HAPPENING_TYPE.EVENT ->
+            Pair("arrangementet", "events")
+        HAPPENING_TYPE.BEDPRES ->
+            Pair("bedriftspresentasjonen", "bedpres")
+    }
+
+    val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+    val fromEmail =
+        if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
+            hap.organizerEmail
+        else
+            "webkom@echo.uib.no"
+    try {
+        withContext(Dispatchers.IO) {
+            sendEmail(
+                fromEmail,
+                registration.email,
+                SendGridTemplate(
+                    hap.slug,
+                    "https://echo.uib.no/$typeSlug/${registration.slug}",
+                    hapTypeLiteral,
+                    waitListSpot = waitListSpot?.toInt(),
+                    registration = registration
+                ),
+                if (waitListSpot != null) Template.CONFIRM_WAIT else Template.CONFIRM_REG,
+                sendGridApiKey
+            )
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }
 

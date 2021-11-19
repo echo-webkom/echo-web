@@ -77,4 +77,3 @@ fun Application.module() {
     Db.init()
     configureRouting(adminKey, sendGridApiKey, FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap))
 }
-

@@ -180,34 +180,6 @@ suspend fun insertOrUpdateHappening(
     )
 }
 
-fun deleteHappeningBySlug(slug: String): Boolean {
-    return transaction {
-        addLogger(StdOutSqlLogger)
-
-        val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
-        if (!happeningExists)
-            return@transaction false
-
-        SpotRange.deleteWhere {
-            SpotRange.happeningSlug eq slug
-        }
-
-        Answer.deleteWhere {
-            Answer.happeningSlug eq slug
-        }
-
-        Registration.deleteWhere {
-            Registration.happeningSlug eq slug
-        }
-
-        Happening.deleteWhere {
-            Happening.slug eq slug
-        }
-
-        return@transaction true
-    }
-}
-
 fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
     return "[ ${
         spotRanges.map {
