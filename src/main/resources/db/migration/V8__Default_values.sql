@@ -1,6 +1,6 @@
-ALTER TABLE happening
-ALTER COLUMN organizer_email
-SET DEFAULT 'webkom@echo.uib.no';
+UPDATE happening
+SET organizer_email = 'webkom@echo.uib.no'
+WHERE organizer_email IS NULL;
 
 ALTER TABLE happening
 ALTER COLUMN organizer_email
