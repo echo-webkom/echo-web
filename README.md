@@ -1,6 +1,6 @@
 # echo web CMS
 
-[![Deploy to Sanity Studio](https://github.com/echo-webkom/echo-web-cms/actions/workflows/sanity-deploy.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-cms/actions/workflows/sanity-deploy.yaml)
+[![Deploy to Sanity Studio](https://github.com/echo-webkom/echo-web-cms/actions/workflows/sanity_deploy.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-cms/actions/workflows/sanity_deploy.yaml)
 [![Build project](https://github.com/echo-webkom/echo-web-cms/actions/workflows/build.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-cms/actions/workflows/build.yaml)
 
 <a href="https://sanity.io" target="_blank" rel="noopener"><img src="https://cdn.sanity.io/images/3do82whm/next/51af00784c5addcf63ae7f0c416756acca7e63ac-353x71.svg?dl=sanity-logo.svg" width="250" alt="Powered by Sanity" /></a>
