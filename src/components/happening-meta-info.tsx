@@ -53,6 +53,10 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
+    const spotsText = (spots: number) => {
+        spots <= 0 ? `${spots}` : '∞';
+    };
+
     return (
         <VStack alignItems="left" spacing={3}>
             {companyLink && (
@@ -68,7 +72,7 @@ const HappeningMetaInfo = ({
                         <IconText
                             key={`mdeventseat1-${sr.spots}`}
                             icon={MdEventSeat}
-                            text={`${sr.spots} plasser`.concat(
+                            text={`${spotsText(sr.spots)} plasser`.concat(
                                 dontShowDegreeYear ? '' : `for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
@@ -77,7 +81,7 @@ const HappeningMetaInfo = ({
                         <IconText
                             key={`mdeventseat2-${sr.spots}`}
                             icon={MdEventSeat}
-                            text={`${Math.min(sr.regCount, sr.spots)}/${sr.spots} påmeldt`.concat(
+                            text={`${Math.min(sr.regCount, sr.spots)}/${spotsText(sr.spots)} påmeldt`.concat(
                                 dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
