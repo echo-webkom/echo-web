@@ -28,6 +28,7 @@ class HappeningRegistrationTest : StringSpec({
         SpotRangeJson(20, 1, 2),
         SpotRangeJson(20, 3, 5)
     )
+    val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
         { type -> HappeningJson("${type}-med-noen", "${type} med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
@@ -86,6 +87,16 @@ class HappeningRegistrationTest : StringSpec({
                 "test@test.com"
             )
         }
+    val exampleHappening7: (type: HAPPENING_TYPE) -> HappeningJson =
+        { type ->
+            HappeningJson(
+                "${type}-med-uendelig-plasser",
+                "2020-06-29T18:07:31Z",
+                everyoneInfiniteSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
@@ -109,7 +120,7 @@ class HappeningRegistrationTest : StringSpec({
     val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
-    val featureToggles = FeatureToggles(false, false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -135,6 +146,7 @@ class HappeningRegistrationTest : StringSpec({
                 insertOrUpdateHappening(exampleHappening4(t), false, null)
                 insertOrUpdateHappening(exampleHappening5(t), false, null)
                 insertOrUpdateHappening(exampleHappening6(t), false, null)
+                insertOrUpdateHappening(exampleHappening7(t), false, null)
             }
         }
     }
@@ -614,7 +626,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Rate limit should work as expected." {
         withTestApplication({
-            configureRouting(adminKey, null, featureToggles)
+            configureRouting(adminKey, null, featureToggles.copy(rateLimit = true))
         }) {
             for (i in 1..200) {
                 val submitRegCall: TestApplicationCall =
@@ -776,6 +788,39 @@ class HappeningRegistrationTest : StringSpec({
 
                 getCountRegCall.response.status() shouldBe HttpStatusCode.BadRequest
                 getCountRegCall.response.content shouldBe "No slug specified."
+            }
+        }
+    }
+
+    "Should accept registrations for happening with infinite spots" {
+        withTestApplication({
+            configureRouting(adminKey, null, featureToggles)
+        }) {
+            fun submitReg(type: HAPPENING_TYPE, i: Int) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleHappeningReg(type).copy(
+                                    email = "${type}test${i}@test.com",
+                                    slug = exampleHappening7(type).slug
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe successfulRegMsg(type)
+            }
+
+            for (t in be) {
+                for (i in 1..1000) {
+                    submitReg(t, i)
+                }
             }
         }
     }
