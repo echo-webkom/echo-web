@@ -69,7 +69,11 @@ fun Application.module() {
         "false" -> false
         else -> true
     }
-    val sendGridApiKey = System.getenv("SENDGRID_API_KEY")
+    val maybeSendGridApiKey = System.getenv("SENDGRID_API_KEY")
+    val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
+        true -> null
+        false -> maybeSendGridApiKey
+    }
 
     if (sendGridApiKey == null && System.getenv("DEV") == null && (sendEmailReg || sendEmailHap))
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")

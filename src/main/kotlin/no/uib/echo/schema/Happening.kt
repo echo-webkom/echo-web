@@ -24,6 +24,7 @@ enum class HAPPENING_TYPE {
 
 data class HappeningJson(
     val slug: String,
+    val title: String?,
     val registrationDate: String,
     val spotRanges: List<SpotRangeJson>,
     val type: HAPPENING_TYPE,
@@ -36,6 +37,7 @@ data class HappeningResponseJson(val registrationsLink: String, val message: Str
 
 object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
+    val title: Column<String?> = text("title").nullable()
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
     val organizerEmail: Column<String> = text("organizer_email")
@@ -56,6 +58,7 @@ fun selectHappening(slug: String): HappeningJson? {
     return result?.let {
         HappeningJson(
             it[Happening.slug],
+            it[Happening.title],
             it[registrationDate].toString(),
             spotRanges,
             HAPPENING_TYPE.valueOf(it[Happening.happeningType]),
@@ -82,6 +85,7 @@ suspend fun insertOrUpdateHappening(
 
             Happening.insert {
                 it[slug] = newHappening.slug
+                it[title] = newHappening.title
                 it[happeningType] = newHappening.type.toString()
                 it[registrationDate] = DateTime(newHappening.registrationDate)
                 it[organizerEmail] = newHappening.organizerEmail.lowercase()
@@ -112,7 +116,7 @@ suspend fun insertOrUpdateHappening(
                             "webkom@echo.uib.no",
                             newHappening.organizerEmail,
                             SendGridTemplate(
-                                newHappening.slug,
+                                newHappening.title ?: newHappening.slug,
                                 "https://echo-web-backend-prod/$registrationRoute/$registrationsLink",
                                 hapTypeLiteral
                             ),
@@ -136,6 +140,7 @@ suspend fun insertOrUpdateHappening(
     }
 
     if (happening.slug == newHappening.slug &&
+        happening.title == newHappening.title &&
         DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
         happening.spotRanges == newHappening.spotRanges &&
         happening.organizerEmail.lowercase() == newHappening.organizerEmail.lowercase()
@@ -145,9 +150,10 @@ suspend fun insertOrUpdateHappening(
             HappeningResponseJson(
                 registrationsLink,
                 "Happening with slug = ${newHappening.slug}, " +
-                    "registrationDate = ${newHappening.registrationDate}, " +
-                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
+                        "title = ${newHappening.title}, " +
+                        "registrationDate = ${newHappening.registrationDate}, " +
+                        "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                        "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
             )
         )
     }
@@ -156,6 +162,7 @@ suspend fun insertOrUpdateHappening(
         addLogger(StdOutSqlLogger)
 
         Happening.update({ Happening.slug eq newHappening.slug }) {
+            it[title] = newHappening.title
             it[registrationDate] = DateTime(newHappening.registrationDate)
             it[organizerEmail] = newHappening.organizerEmail.lowercase()
         }
@@ -173,9 +180,10 @@ suspend fun insertOrUpdateHappening(
         HappeningResponseJson(
             registrationsLink,
             "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
-                "to registrationDate = ${newHappening.registrationDate}, " +
-                "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
+                    "to title = ${newHappening.title}, " +
+                    "registrationDate = ${newHappening.registrationDate}, " +
+                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
         )
     )
 }

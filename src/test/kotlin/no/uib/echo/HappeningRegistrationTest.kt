@@ -30,11 +30,12 @@ class HappeningRegistrationTest : StringSpec({
     )
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type -> HappeningJson("${type}-med-noen", "${type} med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
                 "${type}-med-noen-andre",
+                "$type med Noen Andre!",
                 "2019-07-29T20:10:11Z",
                 everyoneSpotRange,
                 type,
@@ -45,6 +46,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-dritlang-i-fremtiden",
+                "$type dritlangt i fremtiden!!",
                 "2037-07-29T20:10:11Z",
                 everyoneSpotRange,
                 type,
@@ -55,6 +57,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-for-bare-1-til-2",
+                "$type (for bare 1 til 2)!",
                 "2020-05-29T20:00:11Z",
                 oneTwoSpotRange,
                 type,
@@ -65,6 +68,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-for-bare-3-til-5",
+                "$type (for bare 3 til 5)!",
                 "2020-06-29T18:07:31Z",
                 threeFiveSpotRange,
                 type,
@@ -74,7 +78,8 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-som-er-splitta-ty-bedkom",
+                "${type}-som-er -splitta-ty-bedkom",
+                "$type (som er splitta ty Bedkom)!",
                 "2020-06-29T18:07:31Z",
                 everyoneSplitSpotRange,
                 type,

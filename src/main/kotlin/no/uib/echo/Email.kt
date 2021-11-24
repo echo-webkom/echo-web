@@ -86,7 +86,7 @@ suspend fun sendConfirmationEmail(
                 fromEmail,
                 registration.email,
                 SendGridTemplate(
-                    hap.slug,
+                    hap.title ?: hap.slug,
                     "https://echo.uib.no/$typeSlug/${registration.slug}",
                     hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),
