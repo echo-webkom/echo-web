@@ -101,7 +101,7 @@ export default {
             description: '⚠️ Liste over påmeldte vil bli sendt til denne mailen! ⚠️',
             validation: (Rule) =>
                 Rule.custom((contactEmail, context) =>
-                    context.document.registrationDate && !(contactEmail?.includes('@') ?? false)
+                    typeof context.document.registrationDate !== 'undefined' && !(contactEmail?.includes('@') ?? false)
                         ? 'Må ha en (gyldig) kontaktemail om det skal være påmelding.'
                         : true,
                 ),
