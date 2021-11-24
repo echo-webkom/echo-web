@@ -26,7 +26,7 @@ class HappeningTest : StringSpec({
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
-    val featureToggles = FeatureToggles(false, false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
     beforeSpec { Db.init() }
     beforeTest {

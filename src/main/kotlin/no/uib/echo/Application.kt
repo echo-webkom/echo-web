@@ -10,7 +10,7 @@ import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
 import kotlin.Exception
 
-data class FeatureToggles(val sendEmailReg: Boolean, val sendEmailHap: Boolean)
+data class FeatureToggles(val sendEmailReg: Boolean, val sendEmailHap: Boolean, val rateLimit: Boolean)
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -79,5 +79,9 @@ fun Application.module() {
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
 
     Db.init()
-    configureRouting(adminKey, sendGridApiKey, FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap))
+    configureRouting(
+        adminKey,
+        sendGridApiKey,
+        FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap, rateLimit = true)
+    )
 }

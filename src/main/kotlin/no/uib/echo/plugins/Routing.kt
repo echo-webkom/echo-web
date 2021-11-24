@@ -38,6 +38,7 @@ import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import java.time.Duration
 
 fun Application.configureRouting(adminKey: String, sendGridApiKey: String?, featureToggles: FeatureToggles) {
     val admin = "admin"
@@ -48,6 +49,7 @@ fun Application.configureRouting(adminKey: String, sendGridApiKey: String?, feat
 
     install(RateLimit) {
         limit = 200
+        timeBeforeReset = if (featureToggles.rateLimit) Duration.ofMinutes(2) else Duration.ZERO
     }
 
     install(Authentication) {
@@ -335,7 +337,7 @@ object Routing {
                     }.count()
                 }
 
-                val waitList = countRegs >= correctRange.spots
+                val waitList = correctRange.spots in 1..countRegs
                 val waitListSpot = countRegs - correctRange.spots + 1
 
                 transaction {
