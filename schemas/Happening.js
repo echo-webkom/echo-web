@@ -128,6 +128,12 @@ export default {
             title: 'Arrangementsplasser',
             description: 'Hvor mange plasser som er tildelt hvert trinn på et arrangement.',
             type: 'array',
+            validation: (Rule) =>
+                Rule.custom((spotRanges, context) =>
+                    typeof context.document.registrationDate !== 'undefined' && typeof spotRanges === 'undefined'
+                        ? 'Må ha arrangementsplasser om det er definert en påmeldingsdato.'
+                        : true,
+                ),
             of: [
                 {
                     type: 'reference',
