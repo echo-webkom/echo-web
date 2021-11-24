@@ -53,7 +53,7 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
-    const spotsText = (spots: number) => (spots <= 0 ? `${spots}` : '∞');
+    const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
 
     return (
         <VStack alignItems="left" spacing={3}>
