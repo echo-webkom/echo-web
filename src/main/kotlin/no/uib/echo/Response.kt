@@ -21,7 +21,7 @@ enum class Response {
     OK,
 }
 
-fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, spotRanges: List<SpotRangeJson>? = null, waitListCount: String? = null): ResponseJson {
+fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, spotRanges: List<SpotRangeJson>? = null, waitListSpot: Long? = null): ResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -46,7 +46,7 @@ fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, s
             return ResponseJson(
                 res,
                 "Alle plassene er dessverre fylt opp.",
-                "Du er på plass nr. $waitListCount på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass.",
+                "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass.",
                 regDate
             )
         Response.HappeningDoesntExist ->

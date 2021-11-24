@@ -18,7 +18,7 @@ import java.util.Base64
 class HappeningTest : StringSpec({
     val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
     val exampleHappening: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type -> HappeningJson("${type}-med-noen", ",$type med Noen!","2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type) }
 
@@ -26,7 +26,7 @@ class HappeningTest : StringSpec({
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
-    val featureToggles = FeatureToggles(false, false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -71,7 +71,7 @@ class HappeningTest : StringSpec({
             configureRouting(adminKey, null, featureToggles)
         }) {
             for (t in be) {
-                val submitBedpresCall: TestApplicationCall =
+                val submitHappeningCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         addHeader(
@@ -81,9 +81,9 @@ class HappeningTest : StringSpec({
                         setBody(gson.toJson(exampleHappening(t)))
                     }
 
-                submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
+                submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
 
-                val updateBedpresCall: TestApplicationCall =
+                val updateHappeningCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         addHeader(
@@ -93,7 +93,7 @@ class HappeningTest : StringSpec({
                         setBody(gson.toJson(exampleHappening(t).copy(spotRanges = listOf(everyoneSpotRange[0].copy(spots = 123)))))
                     }
 
-                updateBedpresCall.response.status() shouldBe HttpStatusCode.OK
+                updateHappeningCall.response.status() shouldBe HttpStatusCode.OK
             }
         }
     }

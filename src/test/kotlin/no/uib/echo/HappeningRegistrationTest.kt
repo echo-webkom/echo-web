@@ -11,6 +11,8 @@ import io.ktor.server.testing.TestApplicationCall
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.*
@@ -26,13 +28,15 @@ class HappeningRegistrationTest : StringSpec({
         SpotRangeJson(20, 1, 2),
         SpotRangeJson(20, 3, 5)
     )
+    val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type -> HappeningJson("${type}-med-noen", "${type} med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
                 "${type}-med-noen-andre",
+                "$type med Noen Andre!",
                 "2019-07-29T20:10:11Z",
                 everyoneSpotRange,
                 type,
@@ -43,6 +47,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-dritlang-i-fremtiden",
+                "$type dritlangt i fremtiden!!",
                 "2037-07-29T20:10:11Z",
                 everyoneSpotRange,
                 type,
@@ -53,6 +58,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-for-bare-1-til-2",
+                "$type (for bare 1 til 2)!",
                 "2020-05-29T20:00:11Z",
                 oneTwoSpotRange,
                 type,
@@ -63,6 +69,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-for-bare-3-til-5",
+                "$type (for bare 3 til 5)!",
                 "2020-06-29T18:07:31Z",
                 threeFiveSpotRange,
                 type,
@@ -72,9 +79,21 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-som-er-splitta-ty-bedkom",
+                "${type}-som-er -splitta-ty-bedkom",
+                "$type (som er splitta ty Bedkom)!",
                 "2020-06-29T18:07:31Z",
                 everyoneSplitSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
+    val exampleHappening7: (type: HAPPENING_TYPE) -> HappeningJson =
+        { type ->
+            HappeningJson(
+                "${type}-med-uendelig-plasser",
+                "$type med uendelig plasser!",
+                "2020-06-29T18:07:31Z",
+                everyoneInfiniteSpotRange,
                 type,
                 "test@test.com"
             )
@@ -82,7 +101,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
-                "test1${type}@test.com",
+                "tEsT1${type}@TeSt.com",
                 "Én",
                 "Navnesen",
                 Degree.DTEK,
@@ -102,7 +121,7 @@ class HappeningRegistrationTest : StringSpec({
     val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
-    val featureToggles = FeatureToggles(false, false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
     beforeSpec { Db.init() }
     beforeTest {
@@ -119,14 +138,16 @@ class HappeningRegistrationTest : StringSpec({
                 Answer,
                 SpotRange
             )
-
-            for (t in be) {
-                insertOrUpdateHappening(exampleHappening1(t), null, false)
-                insertOrUpdateHappening(exampleHappening2(t), null, false)
-                insertOrUpdateHappening(exampleHappening3(t), null, false)
-                insertOrUpdateHappening(exampleHappening4(t), null, false)
-                insertOrUpdateHappening(exampleHappening5(t), null, false)
-                insertOrUpdateHappening(exampleHappening6(t), null, false)
+        }
+        for (t in be) {
+            withContext(Dispatchers.IO) {
+                insertOrUpdateHappening(exampleHappening1(t), false, null)
+                insertOrUpdateHappening(exampleHappening2(t), false, null)
+                insertOrUpdateHappening(exampleHappening3(t), false, null)
+                insertOrUpdateHappening(exampleHappening4(t), false, null)
+                insertOrUpdateHappening(exampleHappening5(t), false, null)
+                insertOrUpdateHappening(exampleHappening6(t), false, null)
+                insertOrUpdateHappening(exampleHappening7(t), false, null)
             }
         }
     }
@@ -606,7 +627,7 @@ class HappeningRegistrationTest : StringSpec({
 
     "Rate limit should work as expected." {
         withTestApplication({
-            configureRouting(adminKey, null, featureToggles)
+            configureRouting(adminKey, null, featureToggles.copy(rateLimit = true))
         }) {
             for (i in 1..200) {
                 val submitRegCall: TestApplicationCall =
@@ -690,13 +711,13 @@ class HappeningRegistrationTest : StringSpec({
                                 addHeader(HttpHeaders.ContentType, "application/json")
                                 val newReg =
                                     exampleHappeningReg(t).copy(
-                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}hi69ta123t${i}@test.com",
+                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}mIxEdcAsE${i}@test.com",
                                         degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
                                         degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
                                         slug = newSlug,
                                         waitList = i > sr.spots
                                     )
-                                regsList.add(newReg)
+                                regsList.add(newReg.copy(email = newReg.email.lowercase()))
                                 setBody(gson.toJson(newReg))
                             }
 
@@ -768,6 +789,39 @@ class HappeningRegistrationTest : StringSpec({
 
                 getCountRegCall.response.status() shouldBe HttpStatusCode.BadRequest
                 getCountRegCall.response.content shouldBe "No slug specified."
+            }
+        }
+    }
+
+    "Should accept registrations for happening with infinite spots" {
+        withTestApplication({
+            configureRouting(adminKey, null, featureToggles)
+        }) {
+            fun submitReg(type: HAPPENING_TYPE, i: Int) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleHappeningReg(type).copy(
+                                    email = "${type}test${i}@test.com",
+                                    slug = exampleHappening7(type).slug
+                                )
+                            )
+                        )
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res.code shouldBe Response.OK
+                res.title shouldBe "Påmeldingen din er registrert!"
+                res.desc shouldBe successfulRegMsg(type)
+            }
+
+            for (t in be) {
+                for (i in 1..1000) {
+                    submitReg(t, i)
+                }
             }
         }
     }
