@@ -91,6 +91,7 @@ class HappeningRegistrationTest : StringSpec({
         { type ->
             HappeningJson(
                 "${type}-med-uendelig-plasser",
+                "$type med uendelig plasser!",
                 "2020-06-29T18:07:31Z",
                 everyoneInfiniteSpotRange,
                 type,
