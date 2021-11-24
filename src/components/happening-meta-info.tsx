@@ -79,7 +79,7 @@ const HappeningMetaInfo = ({
                         <IconText
                             key={`mdeventseat2-${sr.spots}`}
                             icon={MdEventSeat}
-                            text={`${Math.min(sr.regCount, sr.spots)}/${spotsText(sr.spots)} påmeldt`.concat(
+                            text={`${sr.regCount}/${spotsText(sr.spots)} påmeldt`.concat(
                                 dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
