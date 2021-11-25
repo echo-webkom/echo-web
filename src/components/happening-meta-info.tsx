@@ -56,7 +56,7 @@ const HappeningMetaInfo = ({
     const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
 
     return (
-        <VStack alignItems="left" spacing={3}>
+        <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
             {companyLink && (
                 <IconText
                     icon={CgOrganisation}
@@ -66,12 +66,12 @@ const HappeningMetaInfo = ({
             )}
             {trueSpotRanges.map((sr: SpotRangeCount) => (
                 <>
-                    {sr.regCount === 0 && sr.spots !== 0 && (
+                    {sr.regCount === 0 && (
                         <IconText
                             key={`mdeventseat1-${sr.spots}`}
                             icon={MdEventSeat}
                             text={`${spotsText(sr.spots)} plasser`.concat(
-                                dontShowDegreeYear ? '' : `for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
                             )}
                         />
                     )}
@@ -117,4 +117,5 @@ const HappeningMetaInfo = ({
     );
 };
 
+export type { Props };
 export default HappeningMetaInfo;
