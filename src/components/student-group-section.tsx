@@ -4,20 +4,18 @@ import { StudentGroup } from '../lib/api';
 import ErrorBox from './error-box';
 import StudentGroupView from './student-group-view';
 
-const StudentGroupSection = ({
-    studentGroups,
-    error,
-    groupType,
-}: {
+interface Props {
     studentGroups: Array<StudentGroup>;
     error: string;
     groupType: string;
-}): JSX.Element => {
+}
+
+const StudentGroupSection = ({ studentGroups, error, groupType }: Props): JSX.Element => {
     return (
         <>
             {error && <ErrorBox error={error} />}
             {studentGroups.length === 0 && !error && <Text>Finner ingen {groupType} :(</Text>}
-            {studentGroups.length !== 0 && !error && (
+            {studentGroups.length > 0 && !error && (
                 <Tabs variant="soft-rounded" p="0" data-testid="student-group-section">
                     <TabList>
                         <Wrap justify="center">

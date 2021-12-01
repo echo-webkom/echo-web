@@ -81,10 +81,10 @@ export const getStaticProps: GetStaticProps = async () => {
     const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
     const postsResponse = await PostAPI.getPosts(0);
 
-    const rss = getRssXML(
-        postsResponse.posts,
-        (eventsResponse.happenings || []).concat(bedpresesResponse.happenings || []),
-    );
+    const rss = getRssXML(postsResponse.posts, [
+        ...(eventsResponse.happenings ?? []),
+        ...(bedpresesResponse.happenings ?? []),
+    ]);
 
     fs.writeFileSync('./public/rss.xml', rss);
 
@@ -95,12 +95,12 @@ export const getStaticProps: GetStaticProps = async () => {
                     ?.filter((bedpres: Happening) => {
                         return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
                     })
-                    .slice(0, 6) || null,
+                    .slice(0, 6) ?? null,
             bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts?.slice(0, 6) || null,
+            posts: postsResponse.posts?.slice(0, 6) ?? null,
             postsError: postsResponse.error,
             events:
-                eventsResponse.happenings?.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8) ||
+                eventsResponse.happenings?.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8) ??
                 null,
             eventsError: eventsResponse.error,
         },

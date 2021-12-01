@@ -24,7 +24,7 @@ const happeningDecoder = record({
     happeningType: (value) => {
         if (value === 'BEDPRES' || value === 'bedpres') return HappeningType.BEDPRES;
         else if (value === 'EVENT' || value === 'event') return HappeningType.EVENT;
-        else throw Error(`Could not decode value '${value}' to a HappeningType`);
+        else throw new Error(`Could not decode value '${JSON.stringify(value)}' to a HappeningType`);
     },
 });
 
@@ -81,7 +81,7 @@ const HappeningAPI = {
             console.log(error); // eslint-disable-line
             return {
                 happenings: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },
@@ -131,7 +131,7 @@ const HappeningAPI = {
             return {
                 // Sanity returns a list with a single element,
                 // therefore we need [0] to get the element out of the list.
-                happening: array(happeningDecoder)(result)[0] || null,
+                happening: array(happeningDecoder)(result)[0],
                 error: null,
             };
         } catch (error) {
@@ -145,7 +145,7 @@ const HappeningAPI = {
                 }
                 return {
                     happening: null,
-                    error: handleError(error.response?.status),
+                    error: handleError(error.response.status),
                 };
             }
 

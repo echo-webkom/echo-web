@@ -24,6 +24,6 @@ describe('Header', () => {
         // drawer exists in DOM
         expect(getByTestId(/navbar-drawer/i)).toBeInTheDocument();
         // Drawer Header exists
-        expect(getByText(/Navigasjon/i)).toBeInTheDocument();
+        expect(getByText(/navigasjon/i)).toBeInTheDocument();
     });
 });

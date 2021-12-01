@@ -14,10 +14,10 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
     let latestPostDate = new Date(0);
     let postsXML = '';
 
-    posts.forEach((post) => {
+    for (const post of posts) {
         const date = new Date(post.publishedAt);
 
-        if (!latestPostDate || date > latestPostDate) latestPostDate = date;
+        if (date > latestPostDate) latestPostDate = date;
 
         postsXML += `
             <item>
@@ -34,7 +34,7 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
                 </content>
             </item>
         `;
-    });
+    }
 
     return {
         postsXML,
@@ -57,26 +57,28 @@ const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | nul
         : [];
 
     const happeningIsPast = (happening: Happening) => {
-        if (!happening?.registrationDate) return false;
+        if (!happening.registrationDate) return false;
         return isPast(sub(parseISO(happening.registrationDate), { hours: 12 }));
     };
 
     const genericHappenings = happenings
-        ? happenings.filter(happeningIsPast).map((happening) => {
-              return {
-                  slug: happening.slug,
-                  title: happening.title,
-                  publishedAt: formatISO(
-                      sub(parseISO(happening?.registrationDate || new Date().toString()), { hours: 12 }),
-                  ),
-                  author: happening.author,
-                  body: happening.body,
-                  route: happening.happeningType.toLowerCase(),
-              };
-          })
+        ? happenings
+              .filter((pred) => happeningIsPast(pred))
+              .map((happening) => {
+                  return {
+                      slug: happening.slug,
+                      title: happening.title,
+                      publishedAt: formatISO(
+                          sub(parseISO(happening.registrationDate ?? new Date().toString()), { hours: 12 }),
+                      ),
+                      author: happening.author,
+                      body: happening.body,
+                      route: happening.happeningType.toLowerCase(),
+                  };
+              })
         : [];
 
-    const all = genericPosts.concat(genericHappenings);
+    const all = [...genericPosts, ...genericHappenings];
     all.sort((a, b) => {
         if (new Date(a.publishedAt) < new Date(b.publishedAt)) return 1;
         if (new Date(b.publishedAt) < new Date(a.publishedAt)) return -1;

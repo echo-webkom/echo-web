@@ -1,7 +1,11 @@
 import { Box, Center, Text } from '@chakra-ui/react';
 import React from 'react';
 
-const ErrorBox = ({ error }: { error: string }): JSX.Element => {
+interface Props {
+    error: string;
+}
+
+const ErrorBox = ({ error }: Props): JSX.Element => {
     return (
         <Center>
             <Box p="1em">

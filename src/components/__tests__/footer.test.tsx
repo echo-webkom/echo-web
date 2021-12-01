@@ -11,8 +11,8 @@ describe('Footer', () => {
 
     test('renders correctly', () => {
         render(<Footer />);
-        expect(screen.getByText(/Thormøhlensgate 55/i)).toBeInTheDocument();
-        expect(screen.getByText(/5006 Bergen/i)).toBeInTheDocument();
-        expect(screen.getByText(/Org nr: 998 995 035/i)).toBeInTheDocument();
+        expect(screen.getByText(/thormøhlensgate 55/i)).toBeInTheDocument();
+        expect(screen.getByText(/5006 bergen/i)).toBeInTheDocument();
+        expect(screen.getByText(/org nr: 998 995 035/i)).toBeInTheDocument();
     });
 });

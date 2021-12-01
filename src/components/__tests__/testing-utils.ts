@@ -1,7 +1,8 @@
-import { render } from '@testing-library/react';
+import { ReactElement, JSXElementConstructor } from 'react';
+import { render, RenderOptions } from '@testing-library/react';
 import AllTheProviders from './testing-wrapper';
 
-const customRender = (ui, options) =>
+const customRender = (ui: ReactElement<any, string | JSXElementConstructor<any>>, options: RenderOptions<any>) =>
     render(ui, {
         wrapper: AllTheProviders,
         ...options,

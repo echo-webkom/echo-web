@@ -166,7 +166,7 @@ describe('HappeningMetaInfo', () => {
         const props = happeningMetaInfoProps[0];
         const { getByText } = render(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].spots} plasser`))).toBeInTheDocument();
+        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].spots ?? 'feil'} plasser`))).toBeInTheDocument();
     });
 
     test('renders correctly 2', () => {
@@ -174,7 +174,13 @@ describe('HappeningMetaInfo', () => {
         const { getByText } = render(<HappeningMetaInfo {...props} />);
 
         expect(
-            getByText(new RegExp(`${props.spotRangeCounts?.[0].regCount}/${props.spotRangeCounts?.[0].spots} påmeldt`)),
+            getByText(
+                new RegExp(
+                    `${props.spotRangeCounts?.[0].regCount ?? 'feil'}/${
+                        props.spotRangeCounts?.[0].spots ?? 'feil'
+                    } påmeldt`,
+                ),
+            ),
         ).toBeInTheDocument();
     });
 
@@ -189,7 +195,7 @@ describe('HappeningMetaInfo', () => {
         const props = happeningMetaInfoProps[3];
         const { getByText } = render(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].regCount}/∞ påmeldt`))).toBeInTheDocument();
+        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].regCount ?? 'feil'}/∞ påmeldt`))).toBeInTheDocument();
     });
 
     test('renders correctly 5', () => {

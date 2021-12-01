@@ -11,18 +11,15 @@ import HappeningMetaInfo from './happening-meta-info';
 import RegistrationForm from './registration-form';
 import Section from './section';
 
-const HappeningUI = ({
-    happening,
-    backendUrl,
-    spotRangeCounts,
-    date,
-}: {
+interface Props {
     happening: Happening | null;
     backendUrl: string;
     spotRangeCounts: Array<SpotRangeCount> | null;
     date: number;
-}): JSX.Element => {
-    if (happening === null) return <></>;
+}
+
+const HappeningUI = ({ happening, backendUrl, spotRangeCounts, date }: Props): JSX.Element => {
+    if (!happening) return <></>;
 
     const regDate = happening.registrationDate ? parseISO(happening.registrationDate) : new Date(date);
     const happeningDate = parseISO(happening.date);
@@ -93,11 +90,9 @@ const HappeningUI = ({
                 rowSpan={2}
                 minW="0"
             >
-                {happening && (
-                    <Section>
-                        <Article heading={happening.title} body={happening.body} />
-                    </Section>
-                )}
+                <Section>
+                    <Article heading={happening.title} body={happening.body} />
+                </Section>
             </GridItem>
         </Grid>
     );

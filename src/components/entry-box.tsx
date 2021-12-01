@@ -29,7 +29,7 @@ const EntryBox = ({
     type,
     direction,
 }: Props): JSX.Element => {
-    const choices = titles || [title];
+    const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
     return (
@@ -45,7 +45,7 @@ const EntryBox = ({
                     <Text>{altText}</Text>
                 </Center>
             )}
-            {entries && !error && entries.length !== 0 && (
+            {entries && !error && entries.length > 0 && (
                 <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
             )}
             {linkTo && <ButtonLink data-cy="se-mer" text="Se mer" linkTo={linkTo} />}

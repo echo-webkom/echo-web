@@ -2,13 +2,12 @@ import { Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra
 import React from 'react';
 import Section from './section';
 
-const StaticInfo = ({
-    tabNames,
-    tabPanels,
-}: {
+interface Props {
     tabNames: Array<string>;
     tabPanels: Array<React.ReactNode>;
-}): JSX.Element => {
+}
+
+const StaticInfo = ({ tabNames, tabPanels }: Props): JSX.Element => {
     return (
         <Tabs isLazy orientation="vertical" data-testid="static-info">
             <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">

@@ -5,7 +5,12 @@ import ButtonLink from './button-link';
 import PostPreview from './post-preview';
 import Section from './section';
 
-const PostBlock = ({ posts, error }: { posts: Array<Post> | null; error: string | null }): JSX.Element => {
+interface Props {
+    posts: Array<Post> | null;
+    error: string | null;
+}
+
+const PostBlock = ({ posts, error }: Props): JSX.Element => {
     return (
         <Section data-testid="post-block">
             <Center>

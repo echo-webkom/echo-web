@@ -42,7 +42,7 @@ const MinuteAPI = {
             console.log(error); // eslint-disable-line
             return {
                 minutes: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },

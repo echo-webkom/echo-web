@@ -8,35 +8,12 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
-    Link,
-    LinkBox,
-    LinkOverlay,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 import React, { RefObject } from 'react';
 import ColorModeButton from './color-mode-button';
+import NavLink from './nav-link';
 
-const NavLink = ({ href, text, testid }: { href: string; text: string; testid?: string }) => {
-    const router = useRouter();
-    const isActive = router?.pathname === href || '';
-
-    return (
-        <LinkBox data-testid={testid} data-cy="nav-item" mr={['.6rem', null, null, null, '1.5rem']}>
-            <NextLink href={href} passHref>
-                <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''}>
-                    {text}
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
-    );
-};
-
-NavLink.defaultProps = {
-    testid: null,
-};
-
-const Nav = (): JSX.Element => (
+const NavLinks = (): JSX.Element => (
     <Flex
         flexDirection={['column', null, null, 'row']}
         w="100%"
@@ -73,7 +50,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                     w="full"
                     direction="column"
                 >
-                    <Nav />
+                    <NavLinks />
                 </Flex>
             </Box>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
@@ -84,7 +61,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                             Navigasjon
                         </DrawerHeader>
                         <DrawerBody>
-                            <Nav />
+                            <NavLinks />
                         </DrawerBody>
                     </DrawerContent>
                 </DrawerOverlay>

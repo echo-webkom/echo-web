@@ -4,7 +4,12 @@ import EntryOverview from '../../components/entry-overview';
 import SEO from '../../components/seo';
 import { Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
-const EventsCollectionPage = ({ events, error }: { events: Array<Happening>; error: string }): JSX.Element => {
+interface Props {
+    events: Array<Happening>;
+    error: string | null;
+}
+
+const EventsCollectionPage = ({ events, error }: Props): JSX.Element => {
     return (
         <>
             <SEO title="Arrangementer" />
@@ -16,9 +21,18 @@ const EventsCollectionPage = ({ events, error }: { events: Array<Happening>; err
 export const getStaticProps: GetStaticProps = async () => {
     const { happenings, error } = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
 
+    if (happenings) {
+        const props: Props = {
+            events: happenings,
+            error,
+        };
+
+        return { props };
+    }
+
     return {
         props: {
-            events: happenings,
+            events: [],
             error,
         },
     };

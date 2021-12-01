@@ -4,15 +4,13 @@ import { Post } from '../lib/api';
 import ErrorBox from './error-box';
 import PostPreview from './post-preview';
 
-const PostList = ({
-    posts,
-    postsPerPage,
-    error,
-}: {
+interface Props {
     posts: Array<Post>;
     postsPerPage: number;
-    error: string;
-}): JSX.Element => {
+    error: string | null;
+}
+
+const PostList = ({ posts, postsPerPage, error }: Props): JSX.Element => {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -24,7 +22,7 @@ const PostList = ({
             <Center>
                 {posts.length === 0 && !error && <Text>No posts found</Text>}
                 {posts.length === 0 && error && <ErrorBox error={error} />}
-                {posts.length !== 0 && (
+                {posts.length > 0 && (
                     <Wrap pt="1rem" className="post-list" spacing={4} w="100%" justify="center">
                         {posts.slice(index, index + postsPerPage).map((post: Post) => {
                             return <PostPreview key={post.slug} post={post} data-testid={post.slug} />;

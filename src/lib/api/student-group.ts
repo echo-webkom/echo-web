@@ -51,7 +51,7 @@ const StudentGroupAPI = {
             console.log(error); // eslint-disable-line
             return {
                 studentGroups: [],
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },

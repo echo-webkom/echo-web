@@ -1,4 +1,2 @@
-import useCountdown from './use-countdown';
-import useTimeout from './use-timeout';
-
-export { useTimeout, useCountdown };
+// eslint-disable-next-line import/prefer-default-export
+export { default as useCountdown } from './use-countdown';

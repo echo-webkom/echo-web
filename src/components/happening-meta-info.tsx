@@ -21,6 +21,8 @@ interface Props {
     spotRangesFromCms: Array<SpotRange> | null;
 }
 
+const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
+
 const HappeningMetaInfo = ({
     date,
     location,
@@ -43,7 +45,7 @@ const HappeningMetaInfo = ({
                   regCount: 0,
                   waitListCount: 0,
               };
-          }) || [];
+          }) ?? [];
 
     const minDegreeYear =
         trueSpotRanges.length === 0 ? 1 : Math.min(...trueSpotRanges.map((sr: SpotRange) => sr.minDegreeYear));
@@ -52,8 +54,6 @@ const HappeningMetaInfo = ({
 
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
-
-    const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
 
     return (
         <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>

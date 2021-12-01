@@ -2,7 +2,11 @@ import { Center, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useCountdown } from '../lib/hooks';
 
-const Countdown = ({ date }: { date: Date }): JSX.Element => {
+interface Props {
+    date: Date;
+}
+
+const Countdown = ({ date }: Props): JSX.Element => {
     const { hours, minutes, seconds } = useCountdown(date);
 
     return (

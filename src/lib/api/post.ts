@@ -56,14 +56,14 @@ const PostAPI = {
             const result = await SanityAPI.fetch(query);
 
             return {
-                posts: array(postDecoder)(result) || null,
+                posts: array(postDecoder)(result),
                 error: null,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
                 posts: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },
@@ -98,18 +98,16 @@ const PostAPI = {
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error)) {
-                if (!error.response) {
-                    return {
-                        post: null,
-                        error: '404',
-                    };
-                }
+            if (axios.isAxiosError(error) && !error.response) {
+                return {
+                    post: null,
+                    error: '404',
+                };
             }
 
             return {
                 post: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },

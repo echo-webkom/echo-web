@@ -13,7 +13,7 @@ const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
     // Only for Halloween, no animated icons for Christmas
     if (month !== 10) return <>{children}</>;
 
-    const keys = Array.from(Array(n).keys());
+    const keys = [...new Array(n).keys()];
     const folder = '/halloween-icons/';
     const icons = ['ghost.svg', 'pumpkin.svg', 'skull.svg'];
 
@@ -71,7 +71,7 @@ const AnimatedIcon = ({
             opacity: [null, 1, 1, 1, 1, 0],
             rotate: [null, -10, 2, -5],
         }}
-        transition={{ delay: delay, repeatDelay: repeatDelay, duration: 5, repeat: Infinity }}
+        transition={{ delay: delay, repeatDelay: repeatDelay, duration: 5, repeat: Number.POSITIVE_INFINITY }}
     >
         <Image src={iconSrc} alt="" height={50} width={50} />
     </motion.div>

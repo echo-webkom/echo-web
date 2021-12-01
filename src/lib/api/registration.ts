@@ -118,19 +118,19 @@ const RegistrationAPI = {
             });
 
             return {
-                response: responseDecoder(data) || { ...genericError, code: 'DecodeError' },
+                response: responseDecoder(data),
                 statusCode: status,
             };
-        } catch (err) {
-            console.log(err); // eslint-disable-line
-            if (axios.isAxiosError(err)) {
-                if (err.response) {
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
                     return {
                         response: { ...genericError, code: 'InternalServerError' },
-                        statusCode: err.response.status,
+                        statusCode: error.response.status,
                     };
                 }
-                if (err.request) {
+                if (error.request) {
                     return {
                         response: { ...genericError, code: 'NoResponseError' },
                         statusCode: 500,
@@ -163,11 +163,11 @@ const RegistrationAPI = {
                 spotRangeCounts: array(spotRangeCountDecoder)(data),
                 spotRangeCountsErr: null,
             };
-        } catch (err) {
-            console.log(err); // eslint-disable-line
+        } catch (error) {
+            console.log(error); // eslint-disable-line
             return {
                 spotRangeCounts: null,
-                spotRangeCountsErr: JSON.stringify(err),
+                spotRangeCountsErr: JSON.stringify(error),
             };
         }
     },

@@ -7,7 +7,12 @@ import { FaExternalLinkAlt } from 'react-icons/fa';
 import { Minute } from '../lib/api';
 import ErrorBox from './error-box';
 
-const MinuteList = ({ minutes, error }: { minutes: Array<Minute> | null; error: string | null }): JSX.Element => {
+interface Props {
+    minutes: Array<Minute> | null;
+    error: string | null;
+}
+
+const MinuteList = ({ minutes, error }: Props): JSX.Element => {
     const color = useColorModeValue('blue', 'blue.400');
 
     return (

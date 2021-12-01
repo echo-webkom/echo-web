@@ -18,7 +18,7 @@ describe('StaticInfo', () => {
                 tabNames={tabNames}
                 tabPanels={markdownFiles.map((file) => {
                     return (
-                        <Markdown key={file.substring(0, 20)} options={{ overrides: MapMarkdownChakra }}>
+                        <Markdown key={file.slice(0, 20)} options={{ overrides: MapMarkdownChakra }}>
                             {file}
                         </Markdown>
                     );
@@ -34,7 +34,7 @@ describe('StaticInfo', () => {
                 tabNames={tabNames}
                 tabPanels={markdownFiles.map((file) => {
                     return (
-                        <Markdown key={file.substring(0, 20)} options={{ overrides: MapMarkdownChakra }}>
+                        <Markdown key={file.slice(0, 20)} options={{ overrides: MapMarkdownChakra }}>
                             {file}
                         </Markdown>
                     );

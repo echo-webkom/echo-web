@@ -15,6 +15,7 @@ const Hsp = (): JSX.Element => {
         'Vibe Partner',
         'Hovedsamarbeidspartner',
     ]);
+
     return (
         <Section>
             <Center minW="0" wordBreak="break-word">

@@ -5,7 +5,11 @@ import { Member, StudentGroup } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 import MemberProfile from './member-profile';
 
-const StudentGroupView = ({ group }: { group: StudentGroup }): JSX.Element => {
+interface Props {
+    group: StudentGroup;
+}
+
+const StudentGroupView = ({ group }: Props): JSX.Element => {
     return (
         <>
             <Markdown options={{ overrides: MapMarkdownChakra }}>{group.info}</Markdown>

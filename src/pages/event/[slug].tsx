@@ -9,29 +9,29 @@ import HappeningUI from '../../components/happening';
 import SEO from '../../components/seo';
 import { Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
 
-const EventPage = ({
-    happening,
-    backendUrl,
-    spotRangeCounts,
-    date,
-    error,
-}: {
-    happening: Happening;
+interface Props {
+    happening: Happening | null;
     backendUrl: string;
-    spotRangeCounts: Array<SpotRangeCount>;
+    spotRangeCounts: Array<SpotRangeCount> | null;
     date: number;
-    error: string;
-}): JSX.Element => {
+    error: string | null;
+}
+
+const EventPage = ({ happening, backendUrl, spotRangeCounts, date, error }: Props): JSX.Element => {
     const router = useRouter();
-    const regDate = parseISO(happening?.registrationDate || formatISO(new Date()));
+    const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const time =
-        !happening || differenceInMilliseconds(regDate, date) < 0 || differenceInMilliseconds(regDate, date) > 172800000
+        !happening ||
+        differenceInMilliseconds(regDate, date) < 0 ||
+        differenceInMilliseconds(regDate, date) > 172_800_000
             ? null
             : differenceInMilliseconds(regDate, date);
 
+    /* eslint-disable @typescript-eslint/no-floating-promises */
     useTimeout(() => {
-        if (happening.registrationDate) router.replace(router.asPath, undefined, { scroll: false });
+        if (happening?.registrationDate) router.replace(router.asPath, undefined, { scroll: false });
     }, time);
+    /* eslint-enable @typescript-eslint/no-floating-promises */
 
     return (
         <>
@@ -58,10 +58,10 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const { happening, error } = await HappeningAPI.getHappeningBySlug(slug);
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
-    if (!adminKey) throw Error('No ADMIN_KEY defined.');
+    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const { spotRangeCounts } = await RegistrationAPI.getSpotRangeCounts(
         adminKey,
@@ -78,14 +78,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
+    const props: Props = {
+        happening,
+        spotRangeCounts,
+        date,
+        backendUrl,
+        error,
+    };
+
     return {
-        props: {
-            happening,
-            spotRangeCounts,
-            date,
-            backendUrl,
-            error,
-        },
+        props,
     };
 };
 

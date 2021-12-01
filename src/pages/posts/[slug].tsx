@@ -14,7 +14,12 @@ import SEO from '../../components/seo';
 import { Post, PostAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
-const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element => {
+interface Props {
+    post: Post;
+    error: string | null;
+}
+
+const PostPage = ({ post, error }: Props): JSX.Element => {
     const router = useRouter();
 
     return (
@@ -24,8 +29,8 @@ const PostPage = ({ post, error }: { post: Post; error: string }): JSX.Element =
                     <Spinner />
                 </Center>
             )}
-            {error && !router.isFallback && !post && <ErrorBox error={error} />}
-            {post && !router.isFallback && !error && (
+            {error && !router.isFallback && <ErrorBox error={error} />}
+            {!router.isFallback && !error && (
                 <>
                     <SEO title={post.title} />
                     <Box>
@@ -85,17 +90,19 @@ const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
     const { post, error } = await PostAPI.getPostBySlug(slug);
 
-    if (error === '404') {
+    if (!post || error === '404') {
         return {
             notFound: true,
         };
     }
 
+    const props: Props = {
+        post,
+        error,
+    };
+
     return {
-        props: {
-            post,
-            error,
-        },
+        props,
     };
 };
 

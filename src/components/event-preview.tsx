@@ -6,7 +6,11 @@ import React from 'react';
 import { VscTriangleRight } from 'react-icons/vsc';
 import { Happening } from '../lib/api';
 
-const EventPreview = ({ event }: { event: Happening }): JSX.Element => {
+interface Props {
+    event: Happening;
+}
+
+const EventPreview = ({ event }: Props): JSX.Element => {
     const iconBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     return (
         <LinkBox data-testid={event.slug}>

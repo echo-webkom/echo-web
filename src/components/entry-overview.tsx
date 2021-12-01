@@ -13,14 +13,14 @@ interface Props {
 const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
     const alt = type === 'event' ? 'arrangementer' : 'bedriftspresentasjoner';
 
-    const upcoming = entries?.filter((entry: Happening) => {
+    const upcoming = entries.filter((entry: Happening) => {
         return isFuture(new Date(entry.date));
     });
     const past = entries
-        ?.filter((entry: Happening) => {
+        .filter((entry: Happening) => {
             return isPast(new Date(entry.date));
         })
-        ?.reverse();
+        .reverse();
 
     return (
         <SimpleGrid columns={[1, null, null, 2]} spacing="5">

@@ -97,7 +97,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
         terms3: boolean;
         answers: Array<string>;
     }) => {
-        RegistrationAPI.submitRegistration(
+        await RegistrationAPI.submitRegistration(
             {
                 email: data.email,
                 firstName: data.firstName,
@@ -200,7 +200,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                                             </VStack>
                                         </RadioGroup>
                                     </FormControl>
-                                    {happening.additionalQuestions?.map((q: Question, index: number) => {
+                                    {happening.additionalQuestions.map((q: Question, index: number) => {
                                         return (
                                             <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
                                         );

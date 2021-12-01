@@ -16,7 +16,11 @@ import NextLink from 'next/link';
 import React from 'react';
 import { Happening } from '../lib/api';
 
-const BedpresPreview = ({ bedpres }: { bedpres: Happening }): JSX.Element => {
+interface Props {
+    bedpres: Happening;
+}
+
+const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
 
     return (
@@ -29,7 +33,7 @@ const BedpresPreview = ({ bedpres }: { bedpres: Happening }): JSX.Element => {
                 _hover={{ bg: hoverColor }}
             >
                 <Flex verticalAlign="middle">
-                    <Avatar size="xl" src={bedpres?.logoUrl || ''} alt="firmalogo" />
+                    <Avatar size="xl" src={bedpres.logoUrl ?? undefined} alt="firmalogo" />
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>

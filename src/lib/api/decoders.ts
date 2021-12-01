@@ -26,7 +26,7 @@ const questionDecoder = record({
 });
 
 const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
-    union(array(decoder), nil)(value) || [];
+    union(array(decoder), nil)(value) ?? [];
 
 export { emptyArrayOnNilDecoder, spotRangeDecoder, questionDecoder };
 export type { SpotRange, Question };

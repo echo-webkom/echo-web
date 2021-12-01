@@ -4,11 +4,16 @@ import React from 'react';
 import removeMD from 'remove-markdown';
 import { Post } from '../lib/api';
 
-const PostPreview = ({ post }: { post: Post }): JSX.Element => {
+interface Props {
+    post: Post;
+}
+
+const PostPreview = ({ post }: Props): JSX.Element => {
     const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
+
     return (
         <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
             <NextLink href={`/posts/${post.slug}`} passHref>

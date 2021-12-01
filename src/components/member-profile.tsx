@@ -8,13 +8,18 @@ const MemberImage = chakra(Image, {
     shouldForwardProp: (prop) => ['width', 'height', 'src', 'alt', 'quality'].includes(prop),
 });
 
-const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): JSX.Element => {
-    const memberImageSize = useBreakpointValue([96, 96, 128]);
+const getInitials = (name: string) => {
+    const words = name.split(' ');
+    return words.length >= 2 ? `${words[0].charAt(0)}${words[words.length - 1].charAt(0)}` : words[0].charAt(0);
+};
 
-    const getInitials = (name: string) => {
-        const words = name.split(' ');
-        return words.length >= 2 ? `${words[0].charAt(0)}${words[words.length - 1].charAt(0)}` : words[0].charAt(0);
-    };
+interface Props {
+    profile: Profile;
+    role: string;
+}
+
+const MemberProfile = ({ profile, role }: Props): JSX.Element => {
+    const memberImageSize = useBreakpointValue([96, 96, 128]);
 
     return (
         <Box p={['0', null, '.5em']} w={['120px', null, '200px']} overflow="visible" textAlign="center">
@@ -32,13 +37,7 @@ const MemberProfile = ({ profile, role }: { profile: Profile; role: string }): J
                     />
                 )}
                 {!profile.imageUrl && (
-                    <Avatar
-                        getInitials={getInitials}
-                        size="2xl"
-                        name={profile.name}
-                        src={profile.imageUrl || undefined}
-                        alt="bilde"
-                    />
+                    <Avatar getInitials={getInitials} size="2xl" name={profile.name} src={undefined} alt="bilde" />
                 )}
             </Center>
             <Text my=".5em">{profile.name}</Text>
