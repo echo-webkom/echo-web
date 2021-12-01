@@ -8,6 +8,7 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
     const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
+    const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
     return (
         <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
             <NextLink href={`/posts/${post.slug}`} passHref>
@@ -35,7 +36,7 @@ const PostPreview = ({ post }: { post: Post }): JSX.Element => {
                             pos="absolute"
                             bottom="0"
                             right="8"
-                            color="black"
+                            color={textColor}
                             bg={authorBg}
                             py="0.5rem"
                             px="1rem"

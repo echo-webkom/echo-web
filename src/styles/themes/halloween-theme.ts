@@ -1,5 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
-import { useBreakpointValue } from '@chakra-ui/react';
+import { extendTheme, useBreakpointValue } from '@chakra-ui/react';
 
 const halloweenPallette = {
     transparent: 'transparent',
@@ -21,6 +20,16 @@ const halloweenPallette = {
             border: '#808080',
         },
     },
+    text: {
+        dark: {
+            primary: '#000000',
+            secondary: '#ffffff',
+        },
+        light: {
+            primary: '#000000',
+            secondary: '#ffffff',
+        },
+    },
     button: {
         light: {
             primary: '#FC9E31',
@@ -29,6 +38,7 @@ const halloweenPallette = {
             secondaryHover: '',
             primaryActive: '#FDB35E',
             secondaryActive: '',
+            text: '#ffffff',
         },
         dark: {
             primary: '#FDB35E',
@@ -37,6 +47,7 @@ const halloweenPallette = {
             secondaryHover: '',
             primaryActive: '#FDC98B',
             secondaryActive: '',
+            text: '#000000',
         },
     },
     highlight: {

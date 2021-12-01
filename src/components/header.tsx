@@ -66,7 +66,7 @@ const HeaderLogo = () => {
     const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
 
     // Logo accesory
-    const logoAcc = '';
+    const logoAcc = '/christmas-icons/santa_hat.svg';
 
     // Color and background of message-box
     const textBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');

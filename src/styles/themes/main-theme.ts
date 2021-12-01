@@ -1,5 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
-import { useBreakpointValue } from '@chakra-ui/react';
+import { extendTheme, useBreakpointValue } from '@chakra-ui/react';
 
 const mainPallette = {
     transparent: 'transparent',
@@ -21,6 +20,16 @@ const mainPallette = {
             border: '#808080',
         },
     },
+    text: {
+        dark: {
+            primary: '#000000',
+            secondary: '#000000',
+        },
+        light: {
+            primary: '#000000',
+            secondary: '#000000',
+        },
+    },
     button: {
         light: {
             primary: '#19A0B3',
@@ -29,6 +38,7 @@ const mainPallette = {
             secondaryHover: '',
             primaryActive: '#049fb2',
             secondaryActive: '',
+            text: '#ffffff',
         },
         dark: {
             primary: '#98E5F0',
@@ -37,6 +47,7 @@ const mainPallette = {
             secondaryHover: '',
             primaryActive: '#52afbe',
             secondaryActive: '',
+            text: '#000000',
         },
     },
     highlight: {
