@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import { getMonth } from 'date-fns';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
@@ -21,7 +22,7 @@ const App = ({ Component, pageProps }: AppProps): JSX.Element => {
                 height={4}
                 options={{ showSpinner: false }}
             />
-            {!SSR && <Snowfall snowflakeCount={200} color={'#ffffff'} />}
+            {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color={'#ffffff'} />}
             <Fonts />
             <Layout>
                 <Component {...pageProps} key={router} />

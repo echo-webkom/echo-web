@@ -1,6 +1,6 @@
-import { extendTheme, useBreakpointValue } from '@chakra-ui/react';
+import { useBreakpointValue } from '@chakra-ui/react';
 
-const mainPallette = {
+const defaultPalette = {
     transparent: 'transparent',
     black: '#000000',
     white: '#ffffff',
@@ -100,7 +100,7 @@ const mainPallette = {
     },
 };
 
-const mainTheme = extendTheme({
+const mainTheme = {
     fonts: {
         heading: 'IBM Plex Serif',
         body: 'Raleway',
@@ -116,7 +116,8 @@ const mainTheme = extendTheme({
             },
         }),
     },
-    colors: mainPallette,
-});
+    colors: defaultPalette,
+};
 
 export default mainTheme;
+export { defaultPalette };

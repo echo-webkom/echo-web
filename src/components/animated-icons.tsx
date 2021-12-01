@@ -1,3 +1,4 @@
+import { getMonth } from 'date-fns';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Box } from '@chakra-ui/react';
@@ -8,6 +9,10 @@ interface Props {
 }
 
 const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
+    const month = getMonth(new Date());
+    // Only for Halloween, no animated icons for Christmas
+    if (month !== 10) return <>{children}</>;
+
     const keys = Array.from(Array(n).keys());
     const folder = '/halloween-icons/';
     const icons = ['ghost.svg', 'pumpkin.svg', 'skull.svg'];

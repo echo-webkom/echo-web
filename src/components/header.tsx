@@ -34,6 +34,8 @@ const randomHeaderMessage = (): string => {
 
         if (getMonth(now) === 9) return baseMessages.concat(['BØ!', 'UuUuuUuuUuUu']);
 
+        if (getMonth(now) === 11) return baseMessages.concat(['Ho, ho, ho!']);
+
         if (isThursday(now)) return baseMessages.concat(['Vaffeltorsdag 🧇']);
 
         if (isFriday(now)) return baseMessages.concat(['Tacofredag 🌯']);
@@ -66,7 +68,8 @@ const HeaderLogo = () => {
     const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
 
     // Logo accesory
-    const logoAcc = '/christmas-icons/santa_hat.svg';
+    const month = getMonth(new Date());
+    const logoAcc = month === 11 ? '/christmas-icons/santa_hat.svg' : month === 9 ? '/halloween-icons/hat.svg' : null;
 
     // Color and background of message-box
     const textBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
