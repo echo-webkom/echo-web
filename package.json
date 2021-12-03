@@ -112,7 +112,7 @@
         "@emotion/styled": "11.6.0",
         "@sanity/client": "2.21.10",
         "axios": "0.24.0",
-        "date-fns": "2.26.0",
+        "date-fns": "2.27.0",
         "framer-motion": "5.3.3",
         "markdown-to-jsx": "7.1.5",
         "next": "12.0.4",
