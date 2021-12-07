@@ -29,6 +29,7 @@ class HappeningRegistrationTest : StringSpec({
         SpotRangeJson(20, 3, 5)
     )
     val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
+    val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
         { type -> HappeningJson("${type}-med-noen", "${type} med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
@@ -98,6 +99,17 @@ class HappeningRegistrationTest : StringSpec({
                 "test@test.com"
             )
         }
+    val exampleHappening8: (type: HAPPENING_TYPE) -> HappeningJson =
+        { type ->
+            HappeningJson(
+                "${type}-med-en-plass",
+                "$type med én plass!",
+                "2020-06-29T18:07:31Z",
+                onlyOneSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
@@ -148,6 +160,7 @@ class HappeningRegistrationTest : StringSpec({
                 insertOrUpdateHappening(exampleHappening5(t), false, null)
                 insertOrUpdateHappening(exampleHappening6(t), false, null)
                 insertOrUpdateHappening(exampleHappening7(t), false, null)
+                insertOrUpdateHappening(exampleHappening8(t), false, null)
             }
         }
     }
@@ -264,9 +277,65 @@ class HappeningRegistrationTest : StringSpec({
 
                 submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
                 val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
-                resAgain.code shouldBe Response.AlreadySubmitted
-                resAgain.title shouldBe "Du er allerede påmeldt."
-                resAgain.desc shouldBe "Du kan ikke melde deg på flere ganger."
+                val code = Response.AlreadySubmitted
+                val (_, title, desc) = resToJson(code, t)
+
+                resAgain.code shouldBe code
+                resAgain.title shouldBe title
+                resAgain.desc shouldBe desc
+            }
+        }
+    }
+
+    "You should not be able to sign up for a happening more than once (wait list)." {
+        withTestApplication({
+            configureRouting(adminKey, null, featureToggles)
+        }) {
+            for (t in be) {
+                val fillUpRegsCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleHappeningReg(t)))
+                    }
+
+                fillUpRegsCall.response.status() shouldBe HttpStatusCode.OK
+                val fillUpRes = gson.fromJson(fillUpRegsCall.response.content, ResponseJson::class.java)
+                val code = Response.OK
+                val (_, title) = resToJson(code, t)
+
+                fillUpRes.code shouldBe code
+                fillUpRes.title shouldBe title
+                fillUpRes.desc shouldBe successfulRegMsg(t)
+
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleHappeningReg(t).copy(email = "asd123def$t@asd.tk")))
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+
+                res.code shouldBe code
+                res.title shouldBe title
+                res.desc shouldBe successfulRegMsg(t)
+
+                for (i in 1..10) {
+                    val submitRegAgainCall: TestApplicationCall =
+                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                            addHeader(HttpHeaders.ContentType, "application/json")
+                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "asd123def$t@asd.tk")))
+                        }
+
+                    submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
+                    val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
+                    val code2 = Response.AlreadySubmitted
+                    val (_, title2, desc2) = resToJson(code2, t, waitListSpot = i.toLong())
+
+                    resAgain.code shouldBe code2
+                    resAgain.title shouldBe title2
+                    resAgain.desc shouldBe desc2
+                }
             }
         }
     }

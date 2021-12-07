@@ -26,6 +26,7 @@ import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.resToJson
 import no.uib.echo.schema.*
 import no.uib.echo.schema.Happening.slug
+import no.uib.echo.schema.Registration.waitList
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -297,23 +298,6 @@ object Routing {
                     return@post
                 }
 
-                val oldReg = transaction {
-                    addLogger(StdOutSqlLogger)
-
-                    Registration.select {
-                        Registration.email.lowerCase() eq registration.email.lowercase() and
-                            (Registration.happeningSlug eq registration.slug)
-                    }.firstOrNull()
-                }
-
-                if (oldReg != null) {
-                    call.respond(
-                        HttpStatusCode.UnprocessableEntity,
-                        resToJson(Response.AlreadySubmitted, registration.type)
-                    )
-                    return@post
-                }
-
                 val spotRanges = selectSpotRanges(registration.slug)
 
                 val correctRange = happening.spotRanges.firstOrNull {
@@ -339,6 +323,33 @@ object Routing {
 
                 val waitList = correctRange.spots in 1..countRegs
                 val waitListSpot = countRegs - correctRange.spots + 1
+
+                val oldReg = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.email.lowerCase() eq registration.email.lowercase() and
+                            (Registration.happeningSlug eq registration.slug)
+                    }.firstOrNull()
+                }
+
+                if (oldReg != null) {
+                    if (oldReg[Registration.waitList]) {
+                        call.respond(
+                            HttpStatusCode.UnprocessableEntity,
+                            resToJson(Response.AlreadySubmittedWaitList, registration.type, waitListSpot = waitListSpot)
+                        )
+                        return@post
+                    }
+                    else {
+                        call.respond(
+                            HttpStatusCode.UnprocessableEntity,
+                            resToJson(Response.AlreadySubmitted, registration.type)
+                        )
+                        return@post
+                    }
+                }
+
 
                 transaction {
                     addLogger(StdOutSqlLogger)
