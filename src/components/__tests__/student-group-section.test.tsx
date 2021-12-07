@@ -6,6 +6,7 @@ import { render } from './testing-utils';
 const studentGroups: Array<StudentGroup> = [
     {
         name: 'echo Schmilde',
+        slug: 'echo-schmilde',
         info: 'Sick undergruppe ass bruh',
         members: [
             {
@@ -33,6 +34,7 @@ const studentGroups: Array<StudentGroup> = [
     },
     {
         name: 'echo Scwebschkom',
+        slug: 'echo-scwebschkom',
         info: 'Undegruppe McUndergruppeface',
         members: [
             {
@@ -70,11 +72,7 @@ describe('StudentGroupSection', () => {
         );
 
         studentGroups.map((studentGroup) => {
-            return expect(getByTestId(new RegExp(`^${studentGroup.name}-tab$`, 'i'))).toBeInTheDocument();
-        });
-
-        studentGroups.map((studentGroup) => {
-            return expect(getByTestId(new RegExp(`^${studentGroup.name}-tabPanel`, 'i'))).toBeInTheDocument();
+            return expect(getByTestId(new RegExp(`^${studentGroup.name}`, 'i'))).toBeInTheDocument();
         });
     });
 });

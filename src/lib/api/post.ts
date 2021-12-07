@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { array, decodeType, record, string } from 'typescript-json-decoder';
+import { slugDecoder } from './decoders';
 import handleError from './errors';
 import { SanityAPI } from '.';
 
@@ -14,11 +15,6 @@ const postDecoder = record({
     _createdAt: string,
 });
 
-type PostSlug = decodeType<typeof postSlugDecoder>;
-const postSlugDecoder = record({
-    slug: string,
-});
-
 const PostAPI = {
     /**
      * Get the slugs of the 10 lasts posts.
@@ -29,7 +25,7 @@ const PostAPI = {
             const query = `*[_type == "post"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(postSlugDecoder)(result).map((nestedSlug: PostSlug) => nestedSlug.slug);
+            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];

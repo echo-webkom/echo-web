@@ -25,8 +25,13 @@ const questionDecoder = record({
     alternatives: union(nil, array(string)),
 });
 
+type Slug = decodeType<typeof slugDecoder>;
+const slugDecoder = record({
+    slug: string,
+});
+
 const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
     union(array(decoder), nil)(value) ?? [];
 
-export { emptyArrayOnNilDecoder, spotRangeDecoder, questionDecoder };
-export type { SpotRange, Question };
+export { emptyArrayOnNilDecoder, slugDecoder, spotRangeDecoder, questionDecoder };
+export type { Slug, SpotRange, Question };
