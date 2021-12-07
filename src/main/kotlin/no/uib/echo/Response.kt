@@ -14,6 +14,7 @@ enum class Response {
     DegreeMismatchKogni,
     DegreeMismatchArmninf,
     AlreadySubmitted,
+    AlreadySubmittedWaitList,
     HappeningDoesntExist,
     TooEarly,
     WaitList,
@@ -39,7 +40,9 @@ fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, s
         Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
             return ResponseJson(res, "Studieretning og årstrinn stemmer ikke overens.", defaultDesc, regDate)
         Response.AlreadySubmitted ->
-            return ResponseJson(res, "Du er allerede påmeldt.", "Du kan ikke melde deg på flere ganger.", regDate)
+            return ResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)
+        Response.AlreadySubmittedWaitList ->
+            return ResponseJson(res, "Du er allerede påmeldt.", "Du har plass nr. $waitListSpot på ventelisten.", regDate)
         Response.TooEarly ->
             return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
         Response.WaitList ->
