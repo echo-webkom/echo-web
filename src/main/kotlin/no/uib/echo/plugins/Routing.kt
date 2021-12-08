@@ -26,7 +26,6 @@ import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.resToJson
 import no.uib.echo.schema.*
 import no.uib.echo.schema.Happening.slug
-import no.uib.echo.schema.Registration.waitList
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -334,22 +333,16 @@ object Routing {
                 }
 
                 if (oldReg != null) {
-                    if (oldReg[Registration.waitList]) {
-                        call.respond(
-                            HttpStatusCode.UnprocessableEntity,
-                            resToJson(Response.AlreadySubmittedWaitList, registration.type, waitListSpot = waitListSpot)
-                        )
-                        return@post
+                    val responseCode = when (oldReg[Registration.waitList]) {
+                        true -> Response.AlreadySubmittedWaitList
+                        false -> Response.AlreadySubmitted
                     }
-                    else {
-                        call.respond(
-                            HttpStatusCode.UnprocessableEntity,
-                            resToJson(Response.AlreadySubmitted, registration.type)
-                        )
-                        return@post
-                    }
+                    call.respond(
+                        HttpStatusCode.UnprocessableEntity,
+                        resToJson(responseCode, registration.type)
+                    )
+                    return@post
                 }
-
 
                 transaction {
                     addLogger(StdOutSqlLogger)

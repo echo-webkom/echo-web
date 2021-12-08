@@ -42,16 +42,21 @@ fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, s
         Response.AlreadySubmitted ->
             return ResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)
         Response.AlreadySubmittedWaitList ->
-            return ResponseJson(res, "Du er allerede påmeldt.", "Du har plass nr. $waitListSpot på ventelisten.", regDate)
+            return ResponseJson(res, "Du er allerede påmeldt.", "Du er på ventelisten.", regDate)
         Response.TooEarly ->
             return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
-        Response.WaitList ->
+        Response.WaitList -> {
+            val desc = when (waitListSpot) {
+                null -> "Du har blitt satt på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+                else -> "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+            }
             return ResponseJson(
                 res,
                 "Alle plassene er dessverre fylt opp.",
-                "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass.",
+                desc,
                 regDate
             )
+        }
         Response.HappeningDoesntExist ->
             return ResponseJson(
                 res,
