@@ -32,7 +32,16 @@ class HappeningRegistrationTest : StringSpec({
     val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
 
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", "${type} med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type ->
+            HappeningJson(
+                "${type}-med-noen",
+                "${type} med Noen!",
+                "2020-04-29T20:43:29Z",
+                everyoneSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
@@ -295,47 +304,62 @@ class HappeningRegistrationTest : StringSpec({
                 val fillUpRegsCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t)))
+                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = exampleHappening8(t).slug)))
                     }
 
                 fillUpRegsCall.response.status() shouldBe HttpStatusCode.OK
                 val fillUpRes = gson.fromJson(fillUpRegsCall.response.content, ResponseJson::class.java)
-                val code = Response.OK
-                val (_, title) = resToJson(code, t)
+                val codeFillUp = Response.OK
+                val (_, titleFillUp, descFillUp) = resToJson(codeFillUp, t)
 
-                fillUpRes.code shouldBe code
-                fillUpRes.title shouldBe title
-                fillUpRes.desc shouldBe successfulRegMsg(t)
+                fillUpRes.code shouldBe codeFillUp
+                fillUpRes.title shouldBe titleFillUp
+                fillUpRes.desc shouldBe descFillUp
 
+                val newEmail = "bruh@moment.com"
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(email = "asd123def$t@asd.tk")))
+                        setBody(
+                            gson.toJson(
+                                exampleHappeningReg(t).copy(
+                                    slug = exampleHappening8(t).slug,
+                                    email = newEmail
+                                )
+                            )
+                        )
                     }
 
-                submitRegCall.response.status() shouldBe HttpStatusCode.OK
+                submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
                 val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val code = Response.WaitList
+                val (_, title, desc) = resToJson(code, t, waitListSpot = 1)
 
                 res.code shouldBe code
                 res.title shouldBe title
-                res.desc shouldBe successfulRegMsg(t)
+                res.desc shouldBe desc
 
-                for (i in 1..10) {
-                    val submitRegAgainCall: TestApplicationCall =
-                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                            addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "asd123def$t@asd.tk")))
-                        }
+                val submitRegAgainCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(
+                            gson.toJson(
+                                exampleHappeningReg(t).copy(
+                                    slug = exampleHappening8(t).slug,
+                                    email = newEmail
+                                )
+                            )
+                        )
+                    }
 
-                    submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
-                    val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
-                    val code2 = Response.AlreadySubmitted
-                    val (_, title2, desc2) = resToJson(code2, t, waitListSpot = i.toLong())
+                submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
+                val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
+                val codeAgain = Response.AlreadySubmittedWaitList
+                val (_, titleAgain, descAgain) = resToJson(codeAgain, t)
 
-                    resAgain.code shouldBe code2
-                    resAgain.title shouldBe title2
-                    resAgain.desc shouldBe desc2
-                }
+                resAgain.code shouldBe codeAgain
+                resAgain.title shouldBe titleAgain
+                resAgain.desc shouldBe descAgain
             }
         }
     }
