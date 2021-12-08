@@ -136,6 +136,8 @@ suspend fun sendEmail(
         }
     }
 
+    client.close()
+
     if (response.status != HttpStatusCode.Accepted) {
         throw IOException("Status code is not 202: ${response.status}, ${response.content}")
     }
