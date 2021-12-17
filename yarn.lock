@@ -7207,10 +7207,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript-json-decoder@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.3.tgz#82adb285bdc1b35dcb4e8b8c9c64646bb205ec1a"
-  integrity sha512-qeH4NfMLV/BM0hvNylNQJ0GcpvCLkxQQaNb9wbTfOiUUgNzkDcRK+6uKM7W9jK9gvDzNqJpaupZuOw02SwsRmw==
+typescript-json-decoder@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.4.tgz#57fd2cf8e40a81f32647cb87f2a81f08bb141384"
+  integrity sha512-wAqYAoYhp/uFRYH+m/QLt/ZuygkXibr986LXU4pQh0Ly93Q0Yqkp8UyQVG+OslC14kBAvNiPnh5tqodhNvi3Iw==
 
 typescript@4.5.3:
   version "4.5.3"
