@@ -131,7 +131,7 @@
         "@sanity/client": "2.23.0",
         "axios": "0.24.0",
         "date-fns": "2.27.0",
-        "framer-motion": "5.4.5",
+        "framer-motion": "5.5.5",
         "markdown-to-jsx": "7.1.5",
         "next": "12.0.7",
         "nextjs-progressbar": "0.0.13",
