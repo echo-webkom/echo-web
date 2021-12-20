@@ -1,3 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
+Cypress.on('uncaught:exception', (err) => {
+    if (err.message.includes('loop limit exceeded')) {
+        return false;
+    }
+});
+
 describe('Nav Menus', () => {
     describe('720p res', () => {
         beforeEach(() => {

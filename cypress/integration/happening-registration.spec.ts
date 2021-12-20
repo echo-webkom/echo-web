@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import users from '../fixtures/users.json';
 import { happenings } from '../fixtures/happening.json';
 
@@ -37,8 +39,8 @@ describe('Happening registration', () => {
                    */
                 });
 
-                users.bachelorDegrees.forEach((b) => {
-                    [1, 2, 3].forEach((y) => {
+                for (const b of users.bachelorDegrees) {
+                    for (const y of [1, 2, 3]) {
                         it(`User can sign up with valid input (degree = ${b}, degreeYear = ${y}, type = ${type})`, () => {
                             cy.get('[data-cy=reg-btn]').click();
                             cy.get('[data-cy=reg-form]').should('be.visible');
@@ -56,11 +58,11 @@ describe('Happening registration', () => {
 
                             cy.get('li[class=chakra-toast]').contains('Påmeldingen din er registrert!');
                         });
-                    });
-                });
+                    }
+                }
 
-                users.masterDegrees.forEach((b) => {
-                    [4, 5].forEach((y) => {
+                for (const b of users.masterDegrees) {
+                    for (const y of [4, 5]) {
                         it(`User can sign up with valid input (degree = ${b}, degreeYear = ${y}, type = ${type})`, () => {
                             cy.get('[data-cy=reg-btn]').click();
                             cy.get('[data-cy=reg-form]').should('be.visible');
@@ -78,8 +80,8 @@ describe('Happening registration', () => {
 
                             cy.get('li[class=chakra-toast]').contains('Påmeldingen din er registrert!');
                         });
-                    });
-                });
+                    }
+                }
 
                 it(`User can sign up with valid input (degree = ${users.validKogniUser.degree}, degreeYear = ${users.validKogniUser.degreeYear}, type = ${type})`, () => {
                     cy.get('[data-cy=reg-btn]').click();
