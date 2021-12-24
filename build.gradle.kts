@@ -104,13 +104,13 @@ testlogger {
 
 // Set JVM target for Java.
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(13))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 // Set JVM target for Kotlin.
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
-        jvmTarget = "13"
+        jvmTarget = "17"
     }
 }
 
