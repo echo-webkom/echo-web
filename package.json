@@ -141,7 +141,7 @@
         "react-icons": "4.3.1",
         "react-snowfall": "1.1.1",
         "remove-markdown": "0.3.0",
-        "typescript-json-decoder": "1.0.4"
+        "typescript-json-decoder": "1.0.6"
     },
     "devDependencies": {
         "@testing-library/dom": "8.11.1",
