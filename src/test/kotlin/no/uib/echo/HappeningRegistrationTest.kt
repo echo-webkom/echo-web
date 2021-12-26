@@ -860,6 +860,21 @@ class HappeningRegistrationTest : StringSpec({
 
                 getRegistrationsListCall.response.status() shouldBe HttpStatusCode.OK
                 getRegistrationsListCall.response.content shouldBe toCsv(regsList, testing = true)
+
+                val getRegistrationsListJsonCall = handleRequest(
+                    method = HttpMethod.Get,
+                    uri = "/${Routing.registrationRoute}/$regsLink?json=y&testing=y"
+                )
+
+                getRegistrationsListJsonCall.response.status() shouldBe HttpStatusCode.OK
+                val registrationsListType = object : TypeToken<List<RegistrationJson>>() {}.type
+                val registrationsList = gson.fromJson<List<RegistrationJson>>(
+                    getRegistrationsListJsonCall.response.content,
+                    registrationsListType
+                )
+                registrationsList.map {
+                    it.copy(submitDate = null)
+                } shouldBe regsList
             }
         }
     }

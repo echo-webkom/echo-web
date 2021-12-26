@@ -133,6 +133,7 @@ object Routing {
         get("/$registrationRoute/{link}") {
             val link = call.parameters["link"]
             val download = call.request.queryParameters["download"] != null
+            val json = call.request.queryParameters["json"] != null
             val testing = call.request.queryParameters["testing"] != null
 
             if ((link == null) || (link.length < 128)) {
@@ -182,8 +183,7 @@ object Routing {
                                 it[Answer.answer]
                             )
                         },
-                        // Ignore this
-                        HAPPENING_TYPE.BEDPRES
+                        HAPPENING_TYPE.valueOf(hap[Happening.happeningType])
                     )
                 }
             }
@@ -204,7 +204,10 @@ object Routing {
                     contentType = ContentType.parse("text/csv"),
                     provider = { toCsv(regs, testing = testing).toByteArray() }
                 )
-            } else {
+            } else if (json) {
+                call.respond(regs)
+            }
+            else {
                 call.respond(
                     FreeMarkerContent(
                         "registrations_link.ftl",
