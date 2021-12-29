@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { array, boolean, decodeType, number, optional, Pojo, record, string } from 'typescript-json-decoder';
+import handleError from './errors';
 import { HappeningType } from '.';
 
 enum Degree {
@@ -104,13 +105,15 @@ interface FormRegistration {
     answers: Array<Answer>;
 }
 
+const registrationRoute = 'registration';
+
 const RegistrationAPI = {
     submitRegistration: async (
         registration: FormRegistration,
         backendUrl: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/registration`, registration, {
+            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
@@ -145,6 +148,39 @@ const RegistrationAPI = {
         }
     },
 
+    getRegistrations: async (
+        link: string,
+        backendUrl: string,
+    ): Promise<{ registrations: Array<Registration> | null; error: string | null }> => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/${registrationRoute}/${link}?json=y`);
+
+            return {
+                registrations: array(registrationDecoder)(data),
+                error: null,
+            };
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return {
+                        registrations: null,
+                        error: '404',
+                    };
+                }
+                return {
+                    registrations: null,
+                    error: error.response.status === 404 ? '404' : handleError(error.response.status),
+                };
+            }
+
+            return {
+                registrations: null,
+                error: handleError(500),
+            };
+        }
+    },
+
     getSpotRangeCounts: async (
         auth: string,
         slug: string,
@@ -152,7 +188,7 @@ const RegistrationAPI = {
         backendUrl: string,
     ): Promise<{ spotRangeCounts: Array<SpotRangeCount> | null; spotRangeCountsErr: string | null }> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/registration?slug=${slug}&type=${type}`, {
+            const { data } = await axios.get(`${backendUrl}/${registrationRoute}?slug=${slug}&type=${type}`, {
                 auth: {
                     username: 'admin',
                     password: auth,
@@ -173,5 +209,5 @@ const RegistrationAPI = {
     },
 };
 
-export { Degree, RegistrationAPI };
+export { Degree, RegistrationAPI, registrationRoute };
 export type { Answer, Registration, Response, SpotRangeCount };
