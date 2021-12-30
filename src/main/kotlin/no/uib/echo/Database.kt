@@ -13,6 +13,7 @@ import java.net.URI
 object Db {
     private val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
     private val dev = System.getenv("DEV") != null
+    private val maxPoolSize = if (dev) 10 else System.getenv("MAX_POOL_SIZE").toIntOrNull() ?: 50
 
     private val dbPort = if (dbUri.port == -1) 5432 else dbUri.port
     private val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbPort}${dbUri.path}"
@@ -26,7 +27,7 @@ object Db {
             password = dbPassword
             driverClassName = "org.postgresql.Driver"
             connectionTimeout = 1000
-            maximumPoolSize = if (dev || System.getenv("LOWER_MAX_CONN") != null) 10 else 50
+            maximumPoolSize = maxPoolSize
         })
     }
 
