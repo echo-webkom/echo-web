@@ -9,9 +9,15 @@ import no.uib.echo.plugins.Routing.registrationRoute
 import no.uib.echo.schema.Happening.organizerEmail
 import no.uib.echo.schema.Happening.registrationDate
 import no.uib.echo.sendEmail
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.jodatime.datetime
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.io.IOException
 
@@ -150,10 +156,10 @@ suspend fun insertOrUpdateHappening(
             HappeningResponseJson(
                 registrationsLink,
                 "Happening with slug = ${newHappening.slug}, " +
-                        "title = ${newHappening.title}, " +
-                        "registrationDate = ${newHappening.registrationDate}, " +
-                        "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                        "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
+                    "title = ${newHappening.title}, " +
+                    "registrationDate = ${newHappening.registrationDate}, " +
+                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
             )
         )
     }
@@ -180,18 +186,18 @@ suspend fun insertOrUpdateHappening(
         HappeningResponseJson(
             registrationsLink,
             "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
-                    "to title = ${newHappening.title}, " +
-                    "registrationDate = ${newHappening.registrationDate}, " +
-                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
+                "to title = ${newHappening.title}, " +
+                "registrationDate = ${newHappening.registrationDate}, " +
+                "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
         )
     )
 }
 
 fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
     return "[ ${
-        spotRanges.map {
-            "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
-        }
+    spotRanges.map {
+        "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
+    }
     } ]"
 }

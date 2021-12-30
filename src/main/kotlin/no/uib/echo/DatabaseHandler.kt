@@ -2,13 +2,17 @@ package no.uib.echo
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.uib.echo.schema.*
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.SpotRange
 import org.flywaydb.core.Flyway
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
-object Db {
+object DatabaseHandler {
     private val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
     private val dev = System.getenv("DEV") != null
     private val maxPoolSize = if (dev) 10 else System.getenv("MAX_POOL_SIZE").toIntOrNull() ?: 50
@@ -19,14 +23,16 @@ object Db {
     private val dbPassword = dbUri.userInfo.split(":")[1]
 
     private fun dataSource(): HikariDataSource {
-        return HikariDataSource(HikariConfig().apply {
-            jdbcUrl = dbUrl
-            username = dbUsername
-            password = dbPassword
-            driverClassName = "org.postgresql.Driver"
-            connectionTimeout = 1000
-            maximumPoolSize = maxPoolSize
-        })
+        return HikariDataSource(
+            HikariConfig().apply {
+                jdbcUrl = dbUrl
+                username = dbUsername
+                password = dbPassword
+                driverClassName = "org.postgresql.Driver"
+                connectionTimeout = 1000
+                maximumPoolSize = maxPoolSize
+            }
+        )
     }
 
     private fun migrate() {
@@ -43,8 +49,7 @@ object Db {
             migrate()
             // Need to use connection once to open.
             transaction(conn) {}
-        }
-        else {
+        } else {
             try {
                 transaction(conn) {
                     SchemaUtils.create(

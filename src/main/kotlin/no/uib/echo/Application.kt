@@ -1,16 +1,21 @@
 package no.uib.echo
 
 import freemarker.cache.ClassTemplateLoader
-import io.ktor.application.*
+import io.ktor.application.Application
+import io.ktor.application.install
 import io.ktor.features.CORS
-import io.ktor.freemarker.*
+import io.ktor.freemarker.FreeMarker
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureRouting
 import kotlin.Exception
 
-data class FeatureToggles(val sendEmailReg: Boolean, val sendEmailHap: Boolean, val rateLimit: Boolean)
+data class FeatureToggles(
+    val sendEmailReg: Boolean,
+    val sendEmailHap: Boolean,
+    val rateLimit: Boolean
+)
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -78,7 +83,7 @@ fun Application.module() {
     if (sendGridApiKey == null && System.getenv("DEV") == null && (sendEmailReg || sendEmailHap))
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
 
-    Db.init()
+    DatabaseHandler.init()
     configureRouting(
         adminKey,
         sendGridApiKey,
