@@ -13,9 +13,24 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.uib.echo.plugins.configureRouting
 import no.uib.echo.plugins.Routing
-import no.uib.echo.schema.*
+import no.uib.echo.plugins.configureRouting
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningResponseJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeJson
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.masters
+import no.uib.echo.schema.toCsv
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
@@ -34,8 +49,8 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening1: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-med-noen",
-                "${type} med Noen!",
+                "$type-med-noen",
+                "$type med Noen!",
                 "2020-04-29T20:43:29Z",
                 everyoneSpotRange,
                 type,
@@ -45,7 +60,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening2: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-med-noen-andre",
+                "$type-med-noen-andre",
                 "$type med Noen Andre!",
                 "2019-07-29T20:10:11Z",
                 everyoneSpotRange,
@@ -56,7 +71,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening3: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-dritlang-i-fremtiden",
+                "$type-dritlang-i-fremtiden",
                 "$type dritlangt i fremtiden!!",
                 "2037-07-29T20:10:11Z",
                 everyoneSpotRange,
@@ -67,7 +82,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening4: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-for-bare-1-til-2",
+                "$type-for-bare-1-til-2",
                 "$type (for bare 1 til 2)!",
                 "2020-05-29T20:00:11Z",
                 oneTwoSpotRange,
@@ -78,7 +93,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening5: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-for-bare-3-til-5",
+                "$type-for-bare-3-til-5",
                 "$type (for bare 3 til 5)!",
                 "2020-06-29T18:07:31Z",
                 threeFiveSpotRange,
@@ -89,7 +104,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening6: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-som-er -splitta-ty-bedkom",
+                "$type-som-er -splitta-ty-bedkom",
                 "$type (som er splitta ty Bedkom)!",
                 "2020-06-29T18:07:31Z",
                 everyoneSplitSpotRange,
@@ -100,7 +115,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening7: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-med-uendelig-plasser",
+                "$type-med-uendelig-plasser",
                 "$type med uendelig plasser!",
                 "2020-06-29T18:07:31Z",
                 everyoneInfiniteSpotRange,
@@ -111,7 +126,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappening8: (type: HAPPENING_TYPE) -> HappeningJson =
         { type ->
             HappeningJson(
-                "${type}-med-en-plass",
+                "$type-med-en-plass",
                 "$type med én plass!",
                 "2020-06-29T18:07:31Z",
                 onlyOneSpotRange,
@@ -122,7 +137,7 @@ class HappeningRegistrationTest : StringSpec({
     val exampleHappeningReg: (type: HAPPENING_TYPE) -> RegistrationJson =
         { type ->
             RegistrationJson(
-                "tEsT1${type}@TeSt.com",
+                "tEsT1$type@TeSt.com",
                 "Én",
                 "Navnesen",
                 Degree.DTEK,
@@ -144,7 +159,7 @@ class HappeningRegistrationTest : StringSpec({
     val adminKey = "admin-passord"
     val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
-    beforeSpec { Db.init() }
+    beforeSpec { DatabaseHandler.init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(
@@ -187,7 +202,7 @@ class HappeningRegistrationTest : StringSpec({
                                 exampleHappeningReg(type).copy(
                                     degree = degree,
                                     degreeYear = degreeYear,
-                                    email = "${type}test${degree}${degreeYear}@test.com"
+                                    email = "${type}test${degree}$degreeYear@test.com"
                                 )
                             )
                         )
@@ -472,7 +487,6 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-
     "If the degree year is either four or five, the degree should not correspond to a bachelors degree." {
         withTestApplication({
             configureRouting(adminKey, null, featureToggles)
@@ -627,7 +641,7 @@ class HappeningRegistrationTest : StringSpec({
                     val submitRegCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "tesadasdt${i}@test.com")))
+                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "tesadasdt$i@test.com")))
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
@@ -641,7 +655,7 @@ class HappeningRegistrationTest : StringSpec({
                     val submitRegWaitlistCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "takadhasdh${i}@test.com")))
+                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "takadhasdh$i@test.com")))
                         }
 
                     submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
@@ -680,9 +694,9 @@ class HappeningRegistrationTest : StringSpec({
                     val descStart =
                         if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
                     res.desc shouldBe "$descStart for ${exampleHappening5(t).spotRanges[0].minDegreeYear}. til ${
-                        exampleHappening5(
-                            t
-                        ).spotRanges[0].maxDegreeYear
+                    exampleHappening5(
+                        t
+                    ).spotRanges[0].maxDegreeYear
                     }. trinn."
                 }
 
@@ -709,9 +723,9 @@ class HappeningRegistrationTest : StringSpec({
                     val descStart =
                         if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
                     res.desc shouldBe "$descStart for ${exampleHappening4(t).spotRanges[0].minDegreeYear}. til ${
-                        exampleHappening4(
-                            t
-                        ).spotRanges[0].maxDegreeYear
+                    exampleHappening4(
+                        t
+                    ).spotRanges[0].maxDegreeYear
                     }. trinn."
                 }
             }
@@ -729,7 +743,7 @@ class HappeningRegistrationTest : StringSpec({
                         setBody(
                             gson.toJson(
                                 exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
-                                    email = "ta123t${i}@test.com",
+                                    email = "ta123t$i@test.com",
                                     degree = Degree.PROG,
                                     degreeYear = 1
                                 )
@@ -751,7 +765,7 @@ class HappeningRegistrationTest : StringSpec({
                         setBody(
                             gson.toJson(
                                 exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
-                                    email = "jn12sdpp3t${i}@test.xyz",
+                                    email = "jn12sdpp3t$i@test.xyz",
                                     degree = Degree.PROG,
                                     degreeYear = 1
                                 )
@@ -804,7 +818,7 @@ class HappeningRegistrationTest : StringSpec({
                                 addHeader(HttpHeaders.ContentType, "application/json")
                                 val newReg =
                                     exampleHappeningReg(t).copy(
-                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}mIxEdcAsE${i}@test.com",
+                                        email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}mIxEdcAsE$i@test.com",
                                         degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
                                         degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
                                         slug = newSlug,
@@ -860,6 +874,21 @@ class HappeningRegistrationTest : StringSpec({
 
                 getRegistrationsListCall.response.status() shouldBe HttpStatusCode.OK
                 getRegistrationsListCall.response.content shouldBe toCsv(regsList, testing = true)
+
+                val getRegistrationsListJsonCall = handleRequest(
+                    method = HttpMethod.Get,
+                    uri = "/${Routing.registrationRoute}/$regsLink?json=y&testing=y"
+                )
+
+                getRegistrationsListJsonCall.response.status() shouldBe HttpStatusCode.OK
+                val registrationsListType = object : TypeToken<List<RegistrationJson>>() {}.type
+                val registrationsList = gson.fromJson<List<RegistrationJson>>(
+                    getRegistrationsListJsonCall.response.content,
+                    registrationsListType
+                )
+                registrationsList.map {
+                    it.copy(submitDate = null)
+                } shouldBe regsList
             }
         }
     }
@@ -897,7 +926,7 @@ class HappeningRegistrationTest : StringSpec({
                         setBody(
                             gson.toJson(
                                 exampleHappeningReg(type).copy(
-                                    email = "${type}test${i}@test.com",
+                                    email = "${type}test$i@test.com",
                                     slug = exampleHappening7(type).slug
                                 )
                             )

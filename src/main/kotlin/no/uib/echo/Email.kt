@@ -25,7 +25,10 @@ data class SendGridRequest(
     val template_id: String
 )
 
-data class SendGridPersonalization(val to: List<SendGridEmail>, val dynamic_template_data: SendGridTemplate)
+data class SendGridPersonalization(
+    val to: List<SendGridEmail>,
+    val dynamic_template_data: SendGridTemplate
+)
 
 data class SendGridTemplate(
     val title: String,
@@ -130,7 +133,8 @@ suspend fun sendEmail(
                         to = listOf(SendGridEmail(to)),
                         dynamic_template_data = sendGridTemplate
                     )
-                ), from = fromPers, template_id = templateId
+                ),
+                from = fromPers, template_id = templateId
             )
             append(HttpHeaders.Authorization, "Bearer $sendGridApiKey")
         }

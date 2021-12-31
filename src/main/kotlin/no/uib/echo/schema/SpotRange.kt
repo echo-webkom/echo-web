@@ -3,7 +3,11 @@ package no.uib.echo.schema
 import no.uib.echo.schema.SpotRange.maxDegreeYear
 import no.uib.echo.schema.SpotRange.minDegreeYear
 import no.uib.echo.schema.SpotRange.spots
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 data class SpotRangeJson(

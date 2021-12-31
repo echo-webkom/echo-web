@@ -2,30 +2,58 @@ package no.uib.echo.plugins
 
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
-import io.ktor.routing.*
-import io.ktor.application.*
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
-import io.ktor.gson.*
-import io.ktor.features.*
-import io.ktor.freemarker.*
-import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
+import io.ktor.features.ContentNegotiation
+import io.ktor.freemarker.FreeMarkerContent
+import io.ktor.gson.gson
+import io.ktor.http.ContentDisposition
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.receive
+import io.ktor.response.header
+import io.ktor.response.respond
+import io.ktor.response.respondBytes
+import io.ktor.routing.Route
+import io.ktor.routing.delete
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.put
+import io.ktor.routing.routing
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
+import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getRegistrationCount
 import no.uib.echo.plugins.Routing.getRegistrations
-import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.resToJson
-import no.uib.echo.schema.*
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Happening.slug
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.ShortRegistrationJson
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.selectHappening
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -40,7 +68,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.time.Duration
 
-fun Application.configureRouting(adminKey: String, sendGridApiKey: String?, featureToggles: FeatureToggles) {
+fun Application.configureRouting(
+    adminKey: String,
+    sendGridApiKey: String?,
+    featureToggles: FeatureToggles
+) {
     val admin = "admin"
 
     install(ContentNegotiation) {
@@ -133,6 +165,7 @@ object Routing {
         get("/$registrationRoute/{link}") {
             val link = call.parameters["link"]
             val download = call.request.queryParameters["download"] != null
+            val json = call.request.queryParameters["json"] != null
             val testing = call.request.queryParameters["testing"] != null
 
             if ((link == null) || (link.length < 128)) {
@@ -182,8 +215,7 @@ object Routing {
                                 it[Answer.answer]
                             )
                         },
-                        // Ignore this
-                        HAPPENING_TYPE.BEDPRES
+                        HAPPENING_TYPE.valueOf(hap[Happening.happeningType])
                     )
                 }
             }
@@ -204,6 +236,8 @@ object Routing {
                     contentType = ContentType.parse("text/csv"),
                     provider = { toCsv(regs, testing = testing).toByteArray() }
                 )
+            } else if (json) {
+                call.respond(regs)
             } else {
                 call.respond(
                     FreeMarkerContent(
@@ -236,14 +270,16 @@ object Routing {
                     return@post
                 }
 
-                if ((registration.degree == Degree.DTEK ||
+                if ((
+                    registration.degree == Degree.DTEK ||
                         registration.degree == Degree.DSIK ||
                         registration.degree == Degree.DVIT ||
                         registration.degree == Degree.BINF ||
                         registration.degree == Degree.IMO ||
                         registration.degree == Degree.IKT ||
                         registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ARMNINF) && registration.degreeYear !in 1..3
+                        registration.degree == Degree.ARMNINF
+                    ) && registration.degreeYear !in 1..3
                 ) {
                     call.respond(
                         HttpStatusCode.BadRequest,

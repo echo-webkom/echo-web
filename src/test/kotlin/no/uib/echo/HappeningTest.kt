@@ -1,16 +1,25 @@
 package no.uib.echo
 
 import com.google.gson.Gson
-import io.ktor.server.testing.*
-
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationCall
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.setBody
+import io.ktor.server.testing.withTestApplication
 import no.uib.echo.plugins.Routing
 import no.uib.echo.plugins.configureRouting
-import no.uib.echo.schema.*
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeJson
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Base64
@@ -18,7 +27,7 @@ import java.util.Base64
 class HappeningTest : StringSpec({
     val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
     val exampleHappening: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("${type}-med-noen", ",$type med Noen!","2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type -> HappeningJson("$type-med-noen", ",$type med Noen!", "2020-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type) }
 
@@ -28,7 +37,7 @@ class HappeningTest : StringSpec({
     val auth = "admin:$adminKey"
     val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
-    beforeSpec { Db.init() }
+    beforeSpec { DatabaseHandler.init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(
