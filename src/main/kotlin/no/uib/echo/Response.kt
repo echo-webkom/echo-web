@@ -22,7 +22,13 @@ enum class Response {
     OK,
 }
 
-fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, spotRanges: List<SpotRangeJson>? = null, waitListSpot: Long? = null): ResponseJson {
+fun resToJson(
+    res: Response,
+    regType: HAPPENING_TYPE,
+    regDate: String? = null,
+    spotRanges: List<SpotRangeJson>? = null,
+    waitListSpot: Long? = null
+): ResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
@@ -79,7 +85,7 @@ fun resToJson(res: Response, regType: HAPPENING_TYPE, regDate: String? = null, s
                         desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn."
                     2 ->
                         desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn, " +
-                                "og ${spotRanges[1].minDegreeYear}. til ${spotRanges[1].maxDegreeYear}. trinn. "
+                            "og ${spotRanges[1].minDegreeYear}. til ${spotRanges[1].maxDegreeYear}. trinn. "
                     3 ->
                         desc += "${spotRanges[0].minDegreeYear}. til ${spotRanges[0].maxDegreeYear}. trinn, " +
                             "${spotRanges[1].minDegreeYear}. til ${spotRanges[1].maxDegreeYear}. trinn, " +

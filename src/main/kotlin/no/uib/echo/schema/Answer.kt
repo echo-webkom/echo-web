@@ -1,6 +1,8 @@
 package no.uib.echo.schema
 
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.Table
 
 data class AnswerJson(
     val question: String,
