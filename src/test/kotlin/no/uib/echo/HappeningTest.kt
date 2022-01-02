@@ -22,6 +22,7 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.URI
 import java.util.Base64
 
 class HappeningTest : StringSpec({
@@ -37,7 +38,7 @@ class HappeningTest : StringSpec({
     val auth = "admin:$adminKey"
     val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
-    beforeSpec { DatabaseHandler.init() }
+    beforeSpec { DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(
