@@ -123,7 +123,7 @@ suspend fun insertOrUpdateHappening(
                             newHappening.organizerEmail,
                             SendGridTemplate(
                                 newHappening.title ?: newHappening.slug,
-                                "https://echo-web-backend-prod/$registrationRoute/$registrationsLink",
+                                "https://echo.uib.no/$registrationRoute/$registrationsLink",
                                 hapTypeLiteral
                             ),
                             Template.REGS_LINK,
