@@ -7,7 +7,7 @@ interface Props {
     title: string;
 }
 
-const SEO = ({ description, title }: Props): JSX.Element => {
+const SEO = ({ description = 'Nettsiden til echo – Fagutvalget for informatikk.', title }: Props): JSX.Element => {
     const themeColor = useColorModeValue('bg.light.primary', 'bg.dark.primary');
     return (
         <Head>
@@ -29,10 +29,6 @@ const SEO = ({ description, title }: Props): JSX.Element => {
             <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         </Head>
     );
-};
-
-SEO.defaultProps = {
-    description: 'Nettsiden til echo – Fagutvalget for informatikk.',
 };
 
 export default SEO;

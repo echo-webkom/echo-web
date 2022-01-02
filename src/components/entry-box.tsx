@@ -10,12 +10,12 @@ interface Props {
     title?: string;
     titles?: Array<string>;
     entries: Array<Happening | Post> | null;
-    entryLimit: number;
+    entryLimit?: number;
     error: string | null;
     altText?: string;
     linkTo?: string;
     type: 'event' | 'bedpres' | 'post';
-    direction: 'column' | 'row';
+    direction?: 'column' | 'row';
 }
 
 const EntryBox = ({
@@ -27,7 +27,7 @@ const EntryBox = ({
     altText,
     linkTo,
     type,
-    direction,
+    direction = 'column',
 }: Props): JSX.Element => {
     const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
@@ -51,15 +51,6 @@ const EntryBox = ({
             {linkTo && <ButtonLink data-cy="se-mer" text="Se mer" linkTo={linkTo} />}
         </Section>
     );
-};
-
-EntryBox.defaultProps = {
-    title: undefined,
-    titles: undefined,
-    entryLimit: undefined,
-    linkTo: undefined,
-    altText: undefined,
-    direction: 'column',
 };
 
 export default EntryBox;

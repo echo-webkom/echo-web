@@ -25,8 +25,4 @@ const NavLink = ({ href, text, testid }: Props) => {
     );
 };
 
-NavLink.defaultProps = {
-    testid: null,
-};
-
 export default NavLink;
