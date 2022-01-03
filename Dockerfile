@@ -1,6 +1,6 @@
-# We use OpenJDK 13 since that is what our Heroku instance uses.
+# We use OpenJDK 17 since that is what our Heroku instance uses.
 # Download Gradle wrapper and install dependencies.
-FROM openjdk:13-jdk-slim AS deps
+FROM openjdk:17-jdk-slim AS deps
 
 WORKDIR /opt/build
 
@@ -12,7 +12,7 @@ RUN ./gradlew installDist --build-cache --no-daemon
 
 
 # Build project with downloaded Gradle wrapper and cached dependencies.
-FROM openjdk:13-jdk-slim AS build
+FROM openjdk:17-jdk-slim AS build
 
 WORKDIR /opt/build
 
@@ -33,7 +33,7 @@ COPY src/test src/test
 
 
 # Run the server
-FROM openjdk:13-jdk-slim
+FROM openjdk:17-jdk-slim
 
 WORKDIR /opt/app
 
