@@ -33,6 +33,7 @@ import no.uib.echo.schema.masters
 import no.uib.echo.schema.toCsv
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.URI
 import java.util.Base64
 
 class HappeningRegistrationTest : StringSpec({
@@ -159,7 +160,7 @@ class HappeningRegistrationTest : StringSpec({
     val adminKey = "admin-passord"
     val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
 
-    beforeSpec { DatabaseHandler.init() }
+    beforeSpec { DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(

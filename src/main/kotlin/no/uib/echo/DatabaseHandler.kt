@@ -12,22 +12,18 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
 
-object DatabaseHandler {
-    private const val DEFAULT_DEV_POOL_SIZE = 10
-    private const val DEFAULT_PROD_POOL_SIZE = 50
+private const val DEFAULT_DEV_POOL_SIZE = 10
+private const val DEFAULT_PROD_POOL_SIZE = 50
 
-    private val dbUri = URI(System.getenv("DATABASE_URL") ?: throw Exception("DATABASE_URL not defined."))
-    private val dev = System.getenv("DEV") != null
-    private val mbMaxPoolSize = System.getenv("MAX_POOL_SIZE")
+class DatabaseHandler(private val dev: Boolean, dbUrl: URI, mbMaxPoolSize: String?) {
+    private val dbPort = if (dbUrl.port == -1) 5432 else dbUrl.port
+    private val dbUrl = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
+    private val dbUsername = dbUrl.userInfo.split(":")[0]
+    private val dbPassword = dbUrl.userInfo.split(":")[1]
     private val maxPoolSize =
         if (dev) DEFAULT_DEV_POOL_SIZE
         else if (mbMaxPoolSize == null) DEFAULT_PROD_POOL_SIZE
         else mbMaxPoolSize.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
-
-    private val dbPort = if (dbUri.port == -1) 5432 else dbUri.port
-    private val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbPort}${dbUri.path}"
-    private val dbUsername = dbUri.userInfo.split(":")[0]
-    private val dbPassword = dbUri.userInfo.split(":")[1]
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(
