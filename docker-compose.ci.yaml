@@ -19,8 +19,7 @@ services:
       SANITY_DATASET: ${SANITY_DATASET}
 
   backend:
-    build: backend
-    image: '${REGISTRY}/echo-webkom/echo-web-backend:${GITHUB_SHA}'
+    image: '${REGISTRY}/echo-webkom/echo-web-backend:${TAG}'
     # Don't start backend before database is up.
     depends_on:
       database:
