@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   frontend:
-    image: "${REGISTRY}/echo-webkom/echo-web-frontend:${GITHUB_SHA}"
+    image: "${REGISTRY}/echo-webkom/echo-web-frontend:${TAG}"
     command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
