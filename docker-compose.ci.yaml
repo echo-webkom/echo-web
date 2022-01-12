@@ -2,7 +2,7 @@ version: '3.9'
 services:
   frontend:
     build: .
-    image: '${DOCKER_HUB_USERNAME}/echo-web-frontend:${TAG}'
+    image: '${REGISTRY}/echo-webkom/echo-web-frontend:${GITHUB_SHA}'
     command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
@@ -20,7 +20,7 @@ services:
 
   backend:
     build: backend
-    image: '${DOCKER_HUB_USERNAME}/echo-web-backend:${TAG}'
+    image: '${REGISTRY}/echo-webkom/echo-web-backend:${GITHUB_SHA}'
     # Don't start backend before database is up.
     depends_on:
       database:

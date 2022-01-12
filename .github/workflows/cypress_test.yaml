@@ -3,6 +3,9 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   cypress_tests:
     runs-on: ubuntu-latest
@@ -17,49 +20,46 @@ jobs:
           path: backend
           ref: master
 
-      - name: Login to Docker Hub
+      - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend with cache
         run: |
           docker build \
-            --cache-from "$USERNAME/$IMAGE_NAME:$TAG" \
-            -t "$USERNAME/$IMAGE_NAME:$TAG" \
-            -t "$USERNAME/$IMAGE_NAME:$COMMIT_SHA" \
+            --cache-from "$REGISTRY/$GITHUB_REPOSITORY:$TAG" \
+            -t "$REGISTRY/$GITHUB_REPOSITORY:$TAG" \
+            -t "$REGISTRY/$GITHUB_REPOSITORY:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             .
-          docker push "$USERNAME/$IMAGE_NAME" --all-tags
+          docker push "$REGISTRY/$GITHUB_REPOSITORY" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          IMAGE_NAME: echo-web-frontend
+          REGISTRY: ${{ env.REGISTRY }}
           TAG: latest
-          COMMIT_SHA: ${{ github.sha }}
 
       - name: Build backend with cache
         run: |
           docker build \
-            --cache-from "$USERNAME/$IMAGE_NAME:$TAG" \
-            -t "$USERNAME/$IMAGE_NAME:$TAG" \
-            -t "$USERNAME/$IMAGE_NAME:$COMMIT_SHA" \
+            --cache-from "$REGISTRY/$BACKEND_REPOSITORY:$TAG" \
+            -t "$REGISTRY/$BACKEND_REPOSITORY:$TAG" \
+            -t "$REGISTRY/$BACKEND_REPOSITORY:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             backend
-          docker push "$USERNAME/$IMAGE_NAME" --all-tags
+          docker push "$REGISTRY/$BACKEND_REPOSITORY" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          IMAGE_NAME: echo-web-backend
+          REGISTRY: ${{ env.REGISTRY }}
+          BACKEND_REPOSITORY: echo-webkom/echo-web-backend
           TAG: latest-prod
-          COMMIT_SHA: ${{ github.sha }}
 
       - name: Run Cypress end-to-end tests against backend
         run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
         env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          TAG: ${{ github.sha }}
+          REGISTRY: ${{ env.REGISTRY }}
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           ADMIN_KEY: admin-passord
