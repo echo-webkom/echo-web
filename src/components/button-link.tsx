@@ -15,7 +15,7 @@ const ButtonLink = ({ text, linkTo, isExternal = false }: Props): JSX.Element =>
 
     return (
         <Center>
-            <LinkBox data-cy="button-link">
+            <LinkBox>
                 <NextLink href={linkTo} passHref>
                     <LinkOverlay isExternal={isExternal}>
                         <Button
@@ -26,6 +26,7 @@ const ButtonLink = ({ text, linkTo, isExternal = false }: Props): JSX.Element =>
                             mt="1.5rem"
                             fontSize="xl"
                             borderRadius="0.5rem"
+                            data-cy={linkTo}
                         >
                             {text}
                         </Button>
