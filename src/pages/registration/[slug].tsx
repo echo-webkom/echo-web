@@ -43,7 +43,8 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
     return (
         <Section overflowX="scroll">
             {error && !registrations && <ErrorBox error={error} />}
-            {registrations && !error && (
+            {registrations && registrations.length === 0 && !error && <Heading>Ingen påmeldinger enda</Heading>}
+            {registrations && registrations.length > 0 && !error && (
                 <>
                     <SimpleGrid p="1rem" columns={[1, null, 3]} rows={[2, null, 1]} alignItems="center">
                         <Heading
