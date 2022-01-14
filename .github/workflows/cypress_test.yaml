@@ -7,6 +7,9 @@ env:
   REGISTRY: ghcr.io
   BACKEND_TAG: latest-prod
 
+permissions:
+  packages: write
+
 jobs:
   cypress_tests:
     runs-on: ubuntu-latest
