@@ -48,7 +48,11 @@ const EntryBox = ({
             {entries && !error && entries.length > 0 && (
                 <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
             )}
-            {linkTo && <ButtonLink text="Se mer" linkTo={linkTo} />}
+            {linkTo && (
+                <ButtonLink linkTo={linkTo} mt="1.5rem">
+                    Se mer
+                </ButtonLink>
+            )}
         </Section>
     );
 };

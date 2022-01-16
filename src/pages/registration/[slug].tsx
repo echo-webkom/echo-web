@@ -54,10 +54,9 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                             colSpan={[1, null, 2]}
                         >{`Påmeldinger for '${registrations[0].slug}'`}</Heading>
                         <GridItem justifySelf={justifyBtn}>
-                            <ButtonLink
-                                text="Last ned som CSV"
-                                linkTo={`${backendUrl}/${registrationRoute}/${link}?download=y`}
-                            />
+                            <ButtonLink linkTo={`${backendUrl}/${registrationRoute}/${link}?download=y`} mt="1.5rem">
+                                Last ned som CSV
+                            </ButtonLink>
                         </GridItem>
                     </SimpleGrid>
                     <Divider mb="1em" />

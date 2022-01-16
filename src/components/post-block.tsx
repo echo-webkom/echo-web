@@ -31,7 +31,9 @@ const PostBlock = ({ posts, error }: Props): JSX.Element => {
                 </Stack>
             )}
             {!posts && error && <Text>{error}</Text>}
-            <ButtonLink text="Se mer" linkTo="/posts" />
+            <ButtonLink linkTo="/posts" mt="1.5rem">
+                Se mer
+            </ButtonLink>
         </Section>
     );
 };
