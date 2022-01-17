@@ -92,6 +92,19 @@ const genericError: { title: string; desc: string; date: string | undefined } = 
     date: undefined,
 };
 
+// Values directly from the form (aka form fields)
+interface FormValues {
+    email: string;
+    firstName: string;
+    lastName: string;
+    degree: Degree;
+    degreeYear: number;
+    terms1: boolean;
+    terms2: boolean;
+    terms3: boolean;
+    answers: Array<string>;
+}
+
 // The data from the form + slug and type
 interface FormRegistration {
     email: string;
@@ -210,4 +223,4 @@ const RegistrationAPI = {
 };
 
 export { Degree, RegistrationAPI, registrationRoute };
-export type { Answer, Registration, Response, SpotRangeCount };
+export type { Answer, FormValues, Registration, Response, SpotRangeCount };

@@ -1,11 +1,12 @@
 import { Checkbox, FormControl, FormLabel } from '@chakra-ui/react';
 import React from 'react';
-import { UseFormRegister, FieldValues } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
+import { FormValues } from '../lib/api';
 
 interface Props {
-    id: string;
+    id: 'terms1' | 'terms2' | 'terms3';
     children: React.ReactNode;
-    register: UseFormRegister<FieldValues>;
+    register: UseFormRegister<FormValues>;
 }
 
 const FormTerm = ({ id, children, register }: Props): JSX.Element => {

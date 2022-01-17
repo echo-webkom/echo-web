@@ -5,6 +5,7 @@ export { PostAPI, type Post } from './post';
 export {
     type Answer,
     Degree,
+    type FormValues,
     type Registration,
     RegistrationAPI,
     type SpotRangeCount,

@@ -24,8 +24,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
-import { FormProvider, useForm } from 'react-hook-form';
-import { Degree, Happening, HappeningType, RegistrationAPI, Question } from '../lib/api';
+import { FormProvider, useForm, SubmitHandler } from 'react-hook-form';
+import { Degree, Happening, HappeningType, RegistrationAPI, Question, FormValues } from '../lib/api';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
 
@@ -78,7 +78,7 @@ interface Props {
 const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const linkColor = useColorModeValue('blue', 'blue.400');
-    const methods = useForm();
+    const methods = useForm<FormValues>();
     const { register, handleSubmit } = methods;
 
     const toast = useToast();
@@ -86,17 +86,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
-    const submitForm = async (data: {
-        email: string;
-        firstName: string;
-        lastName: string;
-        degree: Degree;
-        degreeYear: number;
-        terms1: boolean;
-        terms2: boolean;
-        terms3: boolean;
-        answers: Array<string>;
-    }) => {
+    const submitForm: SubmitHandler<FormValues> = async (data) => {
         await RegistrationAPI.submitRegistration(
             {
                 email: data.email,
