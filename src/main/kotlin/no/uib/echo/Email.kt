@@ -1,7 +1,6 @@
 package no.uib.echo
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.Logging
@@ -47,13 +46,6 @@ enum class Template {
 }
 
 private const val SENDGRID_ENDPOINT = "https://api.sendgrid.com/v3/mail/send"
-
-val client = HttpClient(CIO) {
-    install(Logging)
-    install(JsonFeature) {
-        serializer = GsonSerializer()
-    }
-}
 
 fun fromEmail(email: String): String? {
     return when (email) {
@@ -124,23 +116,28 @@ suspend fun sendEmail(
         Template.REGS_LINK -> "d-50e33549c29e46b7a6c871e97324ac5f"
     }
 
-    val response: HttpResponse = client.post(SENDGRID_ENDPOINT) {
-        headers {
-            contentType(ContentType.Application.Json)
-            body = SendGridRequest(
-                listOf(
-                    SendGridPersonalization(
-                        to = listOf(SendGridEmail(to)),
-                        dynamic_template_data = sendGridTemplate
-                    )
-                ),
-                from = fromPers, template_id = templateId
-            )
-            append(HttpHeaders.Authorization, "Bearer $sendGridApiKey")
+    val response: HttpResponse = HttpClient {
+        install(Logging)
+        install(JsonFeature) {
+            serializer = GsonSerializer()
+        }
+    }.use { client ->
+        client.post(SENDGRID_ENDPOINT) {
+            headers {
+                contentType(ContentType.Application.Json)
+                body = SendGridRequest(
+                    listOf(
+                        SendGridPersonalization(
+                            to = listOf(SendGridEmail(to)),
+                            dynamic_template_data = sendGridTemplate
+                        )
+                    ),
+                    from = fromPers, template_id = templateId
+                )
+                append(HttpHeaders.Authorization, "Bearer $sendGridApiKey")
+            }
         }
     }
-
-    client.close()
 
     if (response.status != HttpStatusCode.Accepted) {
         throw IOException("Status code is not 202: ${response.status}, ${response.content}")
