@@ -2,7 +2,7 @@ version: '3.9'
 services:
   frontend:
     build: .
-    image: echo-web-frontend:latest
+    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-frontend:${GITHUB_SHA:-latest}'
     command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
@@ -14,13 +14,13 @@ services:
       - '3000:3000'
     environment:
       BACKEND_URL: http://backend:8080
-      ADMIN_KEY: ${ADMIN_KEY}
-      SANITY_TOKEN: ${SANITY_TOKEN}
-      SANITY_DATASET: ${SANITY_DATASET}
+      # Values from .env file.
+      SANITY_TOKEN: ${SANITY_TOKEN:?Must specify SANITY_TOKEN in .env file or environment.}
+      SANITY_DATASET: ${SANITY_DATASET:?Must specify SANITY_DATASET in .env file or environment.}
+      ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
 
   backend:
-    build: https://github.com/echo-webkom/echo-web-backend.git#${BRANCH}
-    image: echo-web-backend:latest
+    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-prod}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -40,7 +40,7 @@ services:
       # The value of DEV doesn't matter, only that it's defined.
       DEV: 'yes'
       # Values from .env file.
-      ADMIN_KEY: ${ADMIN_KEY}
+      ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
 
   database:
     # Postgres 13.4 is the version Heroku uses.

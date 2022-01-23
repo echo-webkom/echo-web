@@ -46,11 +46,10 @@ jobs:
           TAG: ${{ env.BACKEND_TAG }}
 
       - name: Run Cypress end-to-end tests against backend
-        run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
+        run: docker-compose up --exit-code-from=frontend
         env:
           REGISTRY: ${{ env.REGISTRY }}
           TAG: ${{ env.BACKEND_TAG }}
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           ADMIN_KEY: admin-passord
-          COMPOSE_FILE: docker-compose.ci.yaml
