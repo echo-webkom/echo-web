@@ -6,6 +6,7 @@ on:
 env:
   REGISTRY: ghcr.io
   FRONTEND_TAG: latest
+  BACKEND_TAG: "${{ github.base_ref == 'master' && 'latest-prod' || 'latest-dev' }}"
 
 jobs:
   cypress_tests:
@@ -25,7 +26,7 @@ jobs:
       run: |
         docker build \
           --cache-from "$REGISTRY/$GITHUB_REPOSITORY" \
-          -t "$REGISTRY/$GITHUB_REPOSITORY:$TAG" \
+          -t "$REGISTRY/$GITHUB_REPOSITORY:$BACKEND_TAG" \
           -t "$REGISTRY/$GITHUB_REPOSITORY:$GITHUB_SHA" \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           .
@@ -33,7 +34,6 @@ jobs:
       env:
         DOCKER_BUILDKIT: 1
         REGISTRY: ${{ env.REGISTRY }}
-        TAG: "${{ github.base_ref == 'master' && 'latest-prod' || 'latest-dev' }}"
 
     - name: Pull frontend image
       run: docker pull "$REGISTRY/$FRONTEND_REPOSITORY:$TAG"
@@ -46,8 +46,9 @@ jobs:
       run: docker-compose -f $COMPOSE_FILE up --exit-code-from=frontend
       env:
         REGISTRY: ${{ env.REGISTRY }}
-        TAG: ${{ env.FRONTEND_TAG }}
+        FRONTEND_TAG: ${{ env.FRONTEND_TAG }}
+        BACKEND_TAG: ${{ env.BACKEND_TAG }}
         SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
         SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
         ADMIN_KEY: admin-passord
-        COMPOSE_FILE: docker-compose.ci.yaml
+        COMPOSE_FILE: docker-compose.cypress.yaml

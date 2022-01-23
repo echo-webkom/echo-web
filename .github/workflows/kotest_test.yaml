@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  TAG: "${{ github.base_ref == 'master' && 'latest-prod' || 'latest-dev' }}"
 
 jobs:
   kotest_tests:
@@ -33,7 +34,9 @@ jobs:
       env:
         DOCKER_BUILDKIT: 1
         REGISTRY: ${{ env.REGISTRY }}
-        TAG: "${{ github.head_ref == 'refs/heads/develop' && 'latest-dev' || 'latest-prod' }}"
+        TAG: ${{ env.TAG }}
 
     - name: Run Kotest tests with Docker Compose
       run: ./scripts/test -t kotest
+      env:
+        ADMIN_KEY: admin-passord

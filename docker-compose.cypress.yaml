@@ -1,8 +1,7 @@
 version: '3.9'
 services:
   frontend:
-    build: https://github.com/echo-webkom/echo-web-frontend.git#${BRANCH}
-    image: echo-web-frontend:latest
+    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-frontend:${FRONTEND_TAG:-latest}'
     command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
@@ -15,15 +14,18 @@ services:
     environment:
       BACKEND_URL: http://backend:8080
       # Value of DEV doesn't matter, only that it's defined.
-      DEV: "yes"
-      # Values from .env file
-      SANITY_TOKEN: ${SANITY_TOKEN}
-      SANITY_DATASET: ${SANITY_DATASET}
-      ADMIN_KEY: ${ADMIN_KEY}
+      DEV: 'yes'
+      # Values from .env file.
+      SANITY_TOKEN: ${SANITY_TOKEN:?Must specify SANITY_TOKEN in .env file or environment.}
+      SANITY_DATASET: ${SANITY_DATASET:?Must specify SANITY_DATASET in .env file or environment.}
+      ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
 
   backend:
-    build: .
-    image: echo-web-backend:latest
+    build:
+      context: .
+      cache_from:
+        - '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${BACKEND_TAG:-latest-dev}'
+    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${BACKEND_TAG:-latest-dev}'
     # Don't start backend before database is up.
     depends_on:
       database:
