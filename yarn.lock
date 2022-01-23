@@ -5768,10 +5768,10 @@ react-remove-scroll@2.4.1:
     use-callback-ref "^1.2.3"
     use-sidecar "^1.0.1"
 
-react-snowfall@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-snowfall/-/react-snowfall-1.1.1.tgz#bdd5e43ed622606fb6fdb9f1c82ca367608e65db"
-  integrity sha512-SREER5iikqVY8Fu0BpaYllzGHB1iKZacXY76E/rW1n1zKUH5ClqVWG1UZS+3fR6OTg9GkeGG459juSnARVoNGQ==
+react-snowfall@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-snowfall/-/react-snowfall-1.1.2.tgz#fbe66968268a8976d2f18e6da50f3e866cefd7fc"
+  integrity sha512-dSu4y7YpNE8nybBwbDLSlRBHIZ3N3F3Hbd16f14pd2B5cGsncNf93gb+B8wvGlFMuVQcvoCg5ecq2YAFbsDYdQ==
   dependencies:
     react-fast-compare "^3.2.0"
 
