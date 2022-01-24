@@ -31,9 +31,10 @@ const StudentGroupPage = ({ studentGroup, error }: Props): JSX.Element => {
                 <>
                     <SEO title={studentGroup.name} />
                     <Section>
-                        <Heading size="2xl" pb="2rem">
+                        <Heading textAlign="center" size="2xl" pb="2rem">
                             {studentGroup.name}
                         </Heading>
+                        <Divider mb="1rem" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
                         <Divider my="5" />
                         <Wrap spacing={['1em', null, '2.5em']} justify="center">
