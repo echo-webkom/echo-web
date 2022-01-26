@@ -29,7 +29,7 @@ const BedpresPage = ({ happening, backendUrl, spotRangeCounts, date, error }: Pr
 
     /* eslint-disable @typescript-eslint/no-floating-promises */
     useTimeout(() => {
-        router.replace(router.asPath, undefined, { scroll: false });
+        if (happening?.registrationDate) router.replace(router.asPath, undefined, { scroll: false });
     }, time);
     /* eslint-enable @typescript-eslint/no-floating-promises */
 
