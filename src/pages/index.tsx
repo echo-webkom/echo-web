@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { GridItem, SimpleGrid, Stack, useBreakpointValue } from '@chakra-ui/react';
+import { Grid, GridItem, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
 import { GetStaticProps } from 'next';
 import React from 'react';
@@ -27,10 +27,29 @@ const IndexPage = ({
     return (
         <>
             <SEO title="echo – Fagutvalget for informatikk" />
-            <SimpleGrid columns={[1, null, null, 2]} spacing="5" mb="5">
-                <GridItem rowStart={[2, null, null, 1]}>
-                    <Stack minW="0" spacing="5">
+            <VStack spacing="5" mb="5">
+                <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
+                    <GridItem>
                         <Hsp />
+                    </GridItem>
+                    <GridItem rowSpan={2}>
+                        <EntryBox
+                            titles={[
+                                'Bedpres',
+                                'Bedpresolini',
+                                'Bedriftspresentasjoner',
+                                'Bedpres',
+                                'Bedriftspresentasjoner',
+                            ]}
+                            entries={bedpreses}
+                            entryLimit={3}
+                            error={bedpresError}
+                            altText="Ingen kommende bedriftspresentasjoner :("
+                            linkTo="/bedpres"
+                            type="bedpres"
+                        />
+                    </GridItem>
+                    <GridItem>
                         <EntryBox
                             title="Arrangementer"
                             entries={events}
@@ -40,38 +59,19 @@ const IndexPage = ({
                             linkTo="/event"
                             type="event"
                         />
-                    </Stack>
-                </GridItem>
-                <GridItem>
-                    <EntryBox
-                        titles={[
-                            'Bedpres',
-                            'Bedpresolini',
-                            'Bedriftspresentasjoner',
-                            'Bedpres',
-                            'Bedriftspresentasjoner',
-                        ]}
-                        entries={bedpreses}
-                        entryLimit={3}
-                        error={bedpresError}
-                        altText="Ingen kommende bedriftspresentasjoner :("
-                        linkTo="/bedpres"
-                        type="bedpres"
-                    />
-                </GridItem>
-                <GridItem colSpan={[1, null, null, 2]}>
-                    <EntryBox
-                        titles={['Innlegg']}
-                        entries={posts}
-                        entryLimit={useBreakpointValue([2, 2, 2, 2, 2, 3, 4])}
-                        error={postsError}
-                        altText="Ingen innlegg :("
-                        linkTo="/posts"
-                        type="post"
-                        direction={useBreakpointValue(['column', 'column', 'column', 'row'])}
-                    />
-                </GridItem>
-            </SimpleGrid>
+                    </GridItem>
+                </Grid>
+                <EntryBox
+                    titles={['Innlegg']}
+                    entries={posts}
+                    entryLimit={useBreakpointValue([2, 2, 2, 2, 2, 3, 4])}
+                    error={postsError}
+                    altText="Ingen innlegg :("
+                    linkTo="/posts"
+                    type="post"
+                    direction={useBreakpointValue(['column', 'column', 'column', 'row'])}
+                />
+            </VStack>
         </>
     );
 };

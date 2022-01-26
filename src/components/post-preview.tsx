@@ -15,7 +15,7 @@ const PostPreview = ({ post }: Props): JSX.Element => {
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
 
     return (
-        <LinkBox w={['100%', null, null, null, '24em']} data-testid={post.slug}>
+        <LinkBox w={['100%', null, null, null, '22em']} data-testid={post.slug}>
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Box

@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Center, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
+import { Button, ButtonProps, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 interface Props extends ButtonProps {
@@ -13,24 +13,22 @@ const ButtonLink = ({ linkTo, isExternal = false, ...props }: Props): JSX.Elemen
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
     return (
-        <Center>
-            <LinkBox>
-                <NextLink href={linkTo} passHref>
-                    <LinkOverlay isExternal={isExternal}>
-                        <Button
-                            bg={bg}
-                            color={textColor}
-                            _hover={{ bg: hover }}
-                            _active={{ borderColor: active }}
-                            fontSize="xl"
-                            borderRadius="0.5rem"
-                            data-cy={linkTo}
-                            {...props}
-                        />
-                    </LinkOverlay>
-                </NextLink>
-            </LinkBox>
-        </Center>
+        <LinkBox>
+            <NextLink href={linkTo} passHref>
+                <LinkOverlay isExternal={isExternal}>
+                    <Button
+                        bg={bg}
+                        color={textColor}
+                        _hover={{ bg: hover }}
+                        _active={{ borderColor: active }}
+                        fontSize="xl"
+                        borderRadius="0.5rem"
+                        data-cy={linkTo}
+                        {...props}
+                    />
+                </LinkOverlay>
+            </NextLink>
+        </LinkBox>
     );
 };
 

@@ -1,4 +1,4 @@
-import { Center, Heading, Text, useBreakpointValue } from '@chakra-ui/react';
+import { BoxProps, Flex, Heading, Spacer, Text, useBreakpointValue } from '@chakra-ui/react';
 import React from 'react';
 import { Happening, Post } from '../lib/api';
 import ButtonLink from './button-link';
@@ -6,7 +6,7 @@ import EntryList from './entry-list';
 import ErrorBox from './error-box';
 import Section from './section';
 
-interface Props {
+interface Props extends BoxProps {
     title?: string;
     titles?: Array<string>;
     entries: Array<Happening | Post> | null;
@@ -28,31 +28,27 @@ const EntryBox = ({
     linkTo,
     type,
     direction = 'column',
+    ...props
 }: Props): JSX.Element => {
     const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
     return (
-        <Section data-cy={`entry-box-${type}`}>
-            {heading && (
-                <Center minW="0">
-                    <Heading mb="5">{heading}</Heading>
-                </Center>
-            )}
-            {!entries && error && <ErrorBox error={error} />}
-            {altText && entries && !error && entries.length === 0 && (
-                <Center>
-                    <Text>{altText}</Text>
-                </Center>
-            )}
-            {entries && !error && entries.length > 0 && (
-                <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
-            )}
-            {linkTo && (
-                <ButtonLink linkTo={linkTo} mt="1.5rem">
-                    Se mer
-                </ButtonLink>
-            )}
+        <Section w="100%" h="100%" data-cy={`entry-box-${type}`} {...props}>
+            <Flex h="100%" direction="column" alignItems="center">
+                {heading && <Heading mb="5">{heading}</Heading>}
+                {!entries && error && <ErrorBox error={error} />}
+                {altText && entries && !error && entries.length === 0 && <Text>{altText}</Text>}
+                {entries && !error && entries.length > 0 && (
+                    <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
+                )}
+                <Spacer />
+                {linkTo && (
+                    <ButtonLink linkTo={linkTo} mt="1.5rem">
+                        Se mer
+                    </ButtonLink>
+                )}
+            </Flex>
         </Section>
     );
 };

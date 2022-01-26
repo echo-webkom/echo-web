@@ -17,7 +17,7 @@ const EntryList = ({ entries, entryLimit, type, direction = 'column' }: Props): 
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
     }
     return (
-        <Stack spacing={5} divider={<StackDivider />} direction={direction} justifyContent="space-around">
+        <Stack w="100%" spacing={5} divider={<StackDivider />} direction={direction} justifyContent="space-around">
             {entries.map((entry: Happening | Post) => {
                 switch (type) {
                     case 'bedpres':
