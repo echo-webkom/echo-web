@@ -4,7 +4,6 @@ import Author from './Author';
 import Post from './Post';
 import MeetingMinute from './MeetingMinute';
 import Profile from './Profile';
-import Role from './Role';
 import StudentGroup from './StudentGroup';
 import AdditionalQuestion from './AdditionalQuestion';
 import SpotRange from './SpotRange';
@@ -21,7 +20,6 @@ export default createSchema({
         MeetingMinute,
         Author,
         Profile,
-        Role,
         StudentGroup,
         JobAdvert,
     ]),
