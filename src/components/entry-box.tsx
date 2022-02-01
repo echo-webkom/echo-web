@@ -27,7 +27,7 @@ const EntryBox = ({
     altText,
     linkTo,
     type,
-    direction = 'column',
+    direction = 'row',
     ...props
 }: Props): JSX.Element => {
     const choices = titles ?? [title];

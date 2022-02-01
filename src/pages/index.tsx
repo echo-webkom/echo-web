@@ -47,6 +47,7 @@ const IndexPage = ({
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
+                            direction="column"
                         />
                     </GridItem>
                     <GridItem>
@@ -58,6 +59,7 @@ const IndexPage = ({
                             altText="Ingen kommende arrangementer :("
                             linkTo="/event"
                             type="event"
+                            direction="column"
                         />
                     </GridItem>
                 </Grid>
