@@ -69,7 +69,7 @@ const IndexPage = ({
                     altText="Ingen innlegg :("
                     linkTo="/posts"
                     type="post"
-                    direction={useBreakpointValue(['column', 'column', 'column', 'row'])}
+                    direction={useBreakpointValue(['column', 'column', 'row', 'row'])}
                 />
             </VStack>
         </>
