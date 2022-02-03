@@ -10,7 +10,7 @@ interface Props extends BoxProps {
     title?: string;
     titles?: Array<string>;
     entries: Array<Happening | Post | JobAdvert> | null;
-    entryLimit: number;
+    entryLimit?: number;
     error: string | null;
     altText?: string;
     linkTo?: string;
