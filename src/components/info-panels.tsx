@@ -13,13 +13,20 @@ const InfoPanels = ({ tabNames, tabPanels }: Props): JSX.Element => {
     // force eslint to not remove optional chaining operator.
     const router = useRouter() as NextRouter | null;
 
-    const mbIndex = Number(router?.query.tab);
-    const intialIndex = Number.isFinite(mbIndex) ? mbIndex : 0;
-    const [tabIndex, setTabIndex] = useState(intialIndex);
+    // Same here, eslint is dumb.
+    const rawT: Array<string> | string | undefined = router?.query.t;
+    const t = rawT?.toString() ?? tabNames[0];
+
+    const initialIndex = tabNames.includes(t) ? tabNames.indexOf(t) : 0;
+    const [tabIndex, setTabIndex] = useState(initialIndex);
 
     /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
-        void router?.replace({ pathname: router.pathname, query: { tab: tabIndex } }, undefined, { shallow: false });
+        const query = tabIndex === 0 ? undefined : { t: tabNames[tabIndex] };
+
+        void router?.replace({ pathname: router.pathname, query: query }, undefined, {
+            shallow: false,
+        });
     }, [tabIndex]);
     /* eslint-enable react-hooks/exhaustive-deps */
 
