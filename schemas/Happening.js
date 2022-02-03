@@ -69,6 +69,11 @@ export default {
             type: 'string',
         },
         {
+            name: 'locationLink',
+            title: 'Url til sted (Google Maps eller MazeMap)',
+            type: 'url',
+        },
+        {
             name: 'author',
             title: 'Forfatter',
             validation: (Rule) => Rule.required(),
