@@ -80,6 +80,7 @@ fun Application.module() {
     configureRouting(
         adminKey,
         sendGridApiKey,
+        dev,
         FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap, rateLimit = true)
     )
 }

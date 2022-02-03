@@ -25,6 +25,8 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
 import io.ktor.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
@@ -45,7 +47,6 @@ import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.ShortRegistrationJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.countRegistrationsDegreeYear
@@ -53,8 +54,10 @@ import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.selectHappening
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
+import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
@@ -64,12 +67,15 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
+import java.net.URLDecoder
 import java.time.Duration
 
 fun Application.configureRouting(
     adminKey: String,
     sendGridApiKey: String?,
+    dev: Boolean,
     featureToggles: FeatureToggles
 ) {
     val admin = "admin"
@@ -100,14 +106,14 @@ fun Application.configureRouting(
             getStatus()
 
             authenticate("auth-$admin") {
-                deleteRegistration()
-                putHappening(sendGridApiKey, featureToggles.sendEmailHap)
+                putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
                 deleteHappening()
                 getRegistrationCount()
             }
 
-            getRegistrations()
+            getRegistrations(dev)
             postRegistration(sendGridApiKey, featureToggles.sendEmailReg)
+            deleteRegistration(dev)
         }
     }
 }
@@ -160,25 +166,14 @@ object Routing {
         }
     }
 
-    fun Route.getRegistrations() {
+    fun Route.getRegistrations(dev: Boolean) {
         get("/$registrationRoute/{link}") {
             val link = call.parameters["link"]
             val download = call.request.queryParameters["download"] != null
             val json = call.request.queryParameters["json"] != null
             val testing = call.request.queryParameters["testing"] != null
 
-            if ((link == null) || (link.length < 128)) {
-                call.respond(HttpStatusCode.NotFound)
-                return@get
-            }
-
-            val hap = transaction {
-                addLogger(StdOutSqlLogger)
-
-                Happening.select {
-                    Happening.registrationsLink eq link
-                }.firstOrNull()
-            }
+            val hap = validateLink(link, dev)
 
             if (hap == null) {
                 call.respond(HttpStatusCode.NotFound)
@@ -419,24 +414,87 @@ object Routing {
         }
     }
 
-    fun Route.deleteRegistration() {
-        delete("/$registrationRoute") {
+    fun Route.deleteRegistration(dev: Boolean) {
+        delete("/$registrationRoute/{link}/{email}") {
+            fun stdResponse() {
+            }
+
+            val link = call.parameters["link"]
+            val email = withContext(Dispatchers.IO) {
+                URLDecoder.decode(call.parameters["email"], "utf-8")
+            }
+
+            val hap = validateLink(link, dev)
+
+            if (hap == null || email == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@delete
+            }
+
             try {
-                val shortReg = call.receive<ShortRegistrationJson>()
+                val reg = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq hap[slug] and
+                            (Registration.email.lowerCase() eq email.lowercase())
+                    }.firstOrNull()
+                }
+
+                if (reg == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@delete
+                }
 
                 transaction {
                     addLogger(StdOutSqlLogger)
 
+                    Answer.deleteWhere {
+                        Answer.happeningSlug eq hap[slug] and
+                            (Answer.registrationEmail.lowerCase() eq email.lowercase())
+                    }
+
                     Registration.deleteWhere {
-                        Registration.happeningSlug eq shortReg.slug and
-                            (Registration.email.lowerCase() eq shortReg.email.lowercase())
+                        Registration.happeningSlug eq hap[slug] and
+                            (Registration.email.lowerCase() eq email.lowercase())
                     }
                 }
 
-                call.respond(
-                    HttpStatusCode.OK,
-                    "Registration (${shortReg.type}) with email = ${shortReg.email} and slug = ${shortReg.slug} deleted."
-                )
+                if (reg[Registration.waitList]) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted."
+                    )
+                    return@delete
+                }
+
+                val highestOnWaitList = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.waitList eq true
+                    }.orderBy(Registration.submitDate).firstOrNull()
+                }
+
+                if (highestOnWaitList == null) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted."
+                    )
+                } else {
+                    transaction {
+                        addLogger(StdOutSqlLogger)
+
+                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() }) {
+                            it[waitList] = false
+                        }
+                    }
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted, " +
+                            "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
+                    )
+                }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
                 e.printStackTrace()
@@ -444,11 +502,11 @@ object Routing {
         }
     }
 
-    fun Route.putHappening(sendGridApiKey: String?, sendEmail: Boolean) {
+    fun Route.putHappening(sendGridApiKey: String?, sendEmail: Boolean, dev: Boolean) {
         put("/$happeningRoute") {
             try {
-                val happ = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(happ, sendEmail, sendGridApiKey)
+                val hap = call.receive<HappeningJson>()
+                val result = insertOrUpdateHappening(hap, sendGridApiKey, sendEmail, dev)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {

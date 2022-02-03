@@ -10,6 +10,7 @@ import no.uib.echo.schema.Happening.organizerEmail
 import no.uib.echo.schema.Happening.registrationDate
 import no.uib.echo.sendEmail
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
@@ -75,15 +76,19 @@ fun selectHappening(slug: String): HappeningJson? {
 
 suspend fun insertOrUpdateHappening(
     newHappening: HappeningJson,
+    sendGridApiKey: String?,
     sendEmail: Boolean,
-    sendGridApiKey: String?
+    dev: Boolean,
 ): Pair<HttpStatusCode, HappeningResponseJson> {
     val happening = selectHappening(newHappening.slug)
     val registrationsLink =
-        (1..REG_LINK_LENGTH).map {
-            (('A'..'Z') + ('a'..'z') + ('0'..'9'))
-                .random()
-        }.joinToString("")
+        if (dev)
+            newHappening.slug
+        else
+            (1..REG_LINK_LENGTH).map {
+                (('A'..'Z') + ('a'..'z') + ('0'..'9'))
+                    .random()
+            }.joinToString("")
 
     if (happening == null) {
         transaction {
@@ -200,4 +205,17 @@ fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
         "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
     }
     } ]"
+}
+
+fun validateLink(link: String?, dev: Boolean): ResultRow? {
+    if (link == null || (link.length != 128 && !dev))
+        return null
+
+    return transaction {
+        addLogger(StdOutSqlLogger)
+
+        Happening.select {
+            Happening.registrationsLink eq link
+        }.firstOrNull()
+    }
 }
