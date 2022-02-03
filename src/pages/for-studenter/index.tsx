@@ -5,10 +5,11 @@ import anononymeTilbakemeldinger from '../../../public/static/for-studenter/anon
 import masterinfo from '../../../public/static/for-studenter/masterinfo.md';
 import okonomiskStotte from '../../../public/static/for-studenter/okonomiskStotte.md';
 import utleggsskjema from '../../../public/static/for-studenter/utleggsskjema.md';
+import JobAdvertOverview from '../../components/job-advert-overview';
 import SEO from '../../components/seo';
 import InfoPanels from '../../components/info-panels';
 import StudentGroupSection from '../../components/student-group-section';
-import { StudentGroup, StudentGroupAPI } from '../../lib/api';
+import { StudentGroup, StudentGroupAPI, JobAdvert, JobAdvertAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
     subOrgsError: string | null;
     intGroups: Array<StudentGroup> | null;
     intGroupsError: string | null;
+    jobAdverts: Array<JobAdvert> | null;
+    jobAdvertsError: string | null;
 }
 
 const ForStudenterPage = ({
@@ -27,6 +30,8 @@ const ForStudenterPage = ({
     subOrgsError,
     intGroups,
     intGroupsError,
+    jobAdverts,
+    jobAdvertsError,
 }: Props): JSX.Element => {
     return (
         <>
@@ -68,6 +73,7 @@ const ForStudenterPage = ({
                         groupDefinition="Grupper som legger til rette for en fritidsinteresse blant
                         våre studenter, i samråd med echo."
                     />,
+                    <JobAdvertOverview key="stillingsannonser" jobAdverts={jobAdverts} error={jobAdvertsError} />,
                     <Markdown key="masterinfo" options={{ overrides: MapMarkdownChakra }}>
                         {masterinfo}
                     </Markdown>,
@@ -90,6 +96,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
     const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
     const intGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
+    const jobAdverts = await JobAdvertAPI.getJobAdverts(10);
 
     const props: Props = {
         intGroups: intGroups.studentGroups,
@@ -98,6 +105,8 @@ export const getStaticProps: GetStaticProps = async () => {
         subGroupsError: subGroups.error,
         subOrgs: subOrgs.studentGroups,
         subOrgsError: subOrgs.error,
+        jobAdverts: jobAdverts.jobAdverts,
+        jobAdvertsError: jobAdverts.error,
     };
 
     return {
