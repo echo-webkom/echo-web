@@ -1,5 +1,6 @@
 import { Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import React from 'react';
+import { NextRouter, useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import Section from './section';
 
 interface Props {
@@ -7,9 +8,23 @@ interface Props {
     tabPanels: Array<React.ReactNode>;
 }
 
-const StaticInfo = ({ tabNames, tabPanels }: Props): JSX.Element => {
+const InfoPanels = ({ tabNames, tabPanels }: Props): JSX.Element => {
+    // Router is null when running Jest tests, do this to
+    // force eslint to not remove optional chaining operator.
+    const router = useRouter() as NextRouter | null;
+
+    const mbIndex = Number(router?.query.tab);
+    const intialIndex = Number.isFinite(mbIndex) ? mbIndex : 0;
+    const [tabIndex, setTabIndex] = useState(intialIndex);
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        void router?.replace({ pathname: router.pathname, query: { tab: tabIndex } }, undefined, { shallow: false });
+    }, [tabIndex]);
+    /* eslint-enable react-hooks/exhaustive-deps */
+
     return (
-        <Tabs isLazy orientation="vertical" data-testid="static-info">
+        <Tabs isLazy onChange={setTabIndex} defaultIndex={tabIndex} orientation="vertical" data-testid="info-panels">
             <Grid w="100%" templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                 <GridItem minW="0" maxW="100%" colSpan={1}>
                     <Section>
@@ -44,4 +59,4 @@ const StaticInfo = ({ tabNames, tabPanels }: Props): JSX.Element => {
     );
 };
 
-export default StaticInfo;
+export default InfoPanels;

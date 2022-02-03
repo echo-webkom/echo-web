@@ -4,14 +4,14 @@ import bedriftspresentasjon from '../../public/static/for-bedrifter/bedriftspres
 import forBedrifter from '../../public/static/for-bedrifter/for-bedrifter.md';
 import stillingsutlysninger from '../../public/static/for-bedrifter/stillingsutlysninger.md';
 import SEO from '../components/seo';
-import StaticInfo from '../components/static-info';
+import InfoPanels from '../components/info-panels';
 import MapMarkdownChakra from '../markdown';
 
 const ForBedrifterPage = (): JSX.Element => {
     return (
         <>
             <SEO title="For bedrifter" />
-            <StaticInfo
+            <InfoPanels
                 tabNames={['For bedrifter', 'Bedriftspresentasjon', 'Stillingsutlysninger']}
                 tabPanels={[
                     <Markdown key="forBedrifter" options={{ overrides: MapMarkdownChakra }}>

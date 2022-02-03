@@ -9,7 +9,7 @@ import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
 import statutter from '../../public/static/om-oss/statutter.md';
 import MinuteList from '../components/minute-list';
 import SEO from '../components/seo';
-import StaticInfo from '../components/static-info';
+import InfoPanels from '../components/info-panels';
 import StudentGroupSection from '../components/student-group-section';
 import { Minute, MinuteAPI, StudentGroup, StudentGroupAPI } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
@@ -33,7 +33,7 @@ const OmOssPage = ({
     return (
         <>
             <SEO title="Om oss" />
-            <StaticInfo
+            <InfoPanels
                 tabNames={['Hvem er vi?', 'Instituttrådet', 'Statutter', 'Møtereferater', 'Bekk']}
                 tabPanels={[
                     <>

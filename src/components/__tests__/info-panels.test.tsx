@@ -1,7 +1,7 @@
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import MapMarkdownChakra from '../../markdown';
-import StaticInfo from '../static-info';
+import InfoPanels from '../info-panels';
 import { render } from './testing-utils';
 
 const tabNames = ['en fane', 'enda en fane', 'fane 100'];
@@ -11,10 +11,10 @@ const markdownFiles = [
     '## lorem ipsum dolor sit amet [link](https://google.com)',
 ];
 
-describe('StaticInfo', () => {
+describe('InfoPanels', () => {
     test('renders without crashing', () => {
         const { getByTestId } = render(
-            <StaticInfo
+            <InfoPanels
                 tabNames={tabNames}
                 tabPanels={markdownFiles.map((file) => {
                     return (
@@ -25,12 +25,12 @@ describe('StaticInfo', () => {
                 })}
             />,
         );
-        expect(getByTestId(/static-info/i)).toBeInTheDocument();
+        expect(getByTestId(/info-panels/i)).toBeInTheDocument();
     });
 
     test('renders correctly', () => {
         const { getByTestId } = render(
-            <StaticInfo
+            <InfoPanels
                 tabNames={tabNames}
                 tabPanels={markdownFiles.map((file) => {
                     return (

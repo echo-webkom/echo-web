@@ -1,12 +1,12 @@
 import Markdown from 'markdown-to-jsx';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import React from 'react';
 import anononymeTilbakemeldinger from '../../../public/static/for-studenter/anonymeTilbakemeldinger.md';
 import masterinfo from '../../../public/static/for-studenter/masterinfo.md';
 import okonomiskStotte from '../../../public/static/for-studenter/okonomiskStotte.md';
 import utleggsskjema from '../../../public/static/for-studenter/utleggsskjema.md';
 import SEO from '../../components/seo';
-import StaticInfo from '../../components/static-info';
+import InfoPanels from '../../components/info-panels';
 import StudentGroupSection from '../../components/student-group-section';
 import { StudentGroup, StudentGroupAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
@@ -31,7 +31,7 @@ const ForStudenterPage = ({
     return (
         <>
             <SEO title="For studenter" />
-            <StaticInfo
+            <InfoPanels
                 tabNames={[
                     'Undergrupper',
                     'Underorganisasjoner',
@@ -78,7 +78,7 @@ const ForStudenterPage = ({
     );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
     const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
     const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
     const intGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
