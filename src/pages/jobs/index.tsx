@@ -8,14 +8,14 @@ import Section from '../../components/section';
 import { JobAdvert, JobAdvertAPI } from '../../lib/api';
 
 interface Props {
-    jobAdverts: JobAdvert[];
-    error: string;
+    jobAdverts: Array<JobAdvert> | null;
+    error: string | null;
 }
 
 type JobType = 'all' | 'fulltime' | 'parttime' | 'internship';
 type SortType = 'deadline' | 'companyName' | '_createdAt' | 'jobType';
 
-const sortJobs = (list: JobAdvert[], field: SortType) => {
+const sortJobs = (list: Array<JobAdvert>, field: SortType) => {
     const sorted = list.sort((a: JobAdvert, b: JobAdvert) => (a[field] < b[field] ? -1 : a[field] > b[field] ? 1 : 0));
     return field === '_createdAt' ? sorted.reverse() : sorted;
 };
@@ -97,10 +97,18 @@ const JobAdvertPage = ({ jobAdverts, error }: Props): JSX.Element => {
 export const getStaticProps: GetStaticProps = async () => {
     const { jobAdverts, error } = await JobAdvertAPI.getJobAdverts(10);
 
-    return {
-        props: {
+    if (jobAdverts) {
+        const props: Props = {
             jobAdverts,
             error,
+        };
+        return { props };
+    }
+
+    return {
+        props: {
+            jobAdverts: [],
+            error: null,
         },
     };
 };

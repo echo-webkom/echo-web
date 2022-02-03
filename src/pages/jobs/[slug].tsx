@@ -14,7 +14,12 @@ import SEO from '../../components/seo';
 import { JobAdvert, JobAdvertAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
-const JobAdvertPage = ({ jobAdvert, error }: { jobAdvert: JobAdvert; error: string }): JSX.Element => {
+interface Props {
+    jobAdvert: JobAdvert | null;
+    error: string | null;
+}
+
+const JobAdvertPage = ({ jobAdvert, error }: Props): JSX.Element => {
     const router = useRouter();
 
     return (
@@ -89,12 +94,12 @@ const getStaticProps: GetStaticProps = async (context) => {
         };
     }
 
-    return {
-        props: {
-            jobAdvert,
-            error,
-        },
+    const props: Props = {
+        jobAdvert,
+        error,
     };
+
+    return { props };
 };
 
 export { getStaticPaths, getStaticProps };

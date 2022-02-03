@@ -2,6 +2,7 @@ import axios from 'axios';
 import { array, decodeType, literal, number, record, string, union } from 'typescript-json-decoder';
 import SanityAPI from './api';
 import handleError from './errors';
+import { slugDecoder, Slug } from './decoders';
 
 type JobAdvert = decodeType<typeof jobAdvertDecoder>;
 const jobAdvertDecoder = record({
@@ -18,18 +19,13 @@ const jobAdvertDecoder = record({
     _createdAt: string,
 });
 
-type JobAdvertSlug = decodeType<typeof jobAdvertSlugDecoder>;
-const jobAdvertSlugDecoder = record({
-    slug: string,
-});
-
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
         try {
             const query = `*[_type == "jobAdvert"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(jobAdvertSlugDecoder)(result).map((nestedSlug: JobAdvertSlug) => nestedSlug.slug);
+            return array(slugDecoder)(result).map((nestedSlug: Slug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -61,7 +57,7 @@ const JobAdvertAPI = {
             console.log(error); // eslint-disable-line
             return {
                 jobAdverts: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },
@@ -92,7 +88,7 @@ const JobAdvertAPI = {
             console.log(error); // eslint-disable-line
             return {
                 jobAdvert: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status || 500 : 500),
+                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
             };
         }
     },
