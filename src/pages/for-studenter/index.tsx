@@ -1,5 +1,5 @@
 import Markdown from 'markdown-to-jsx';
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import React from 'react';
 import anononymeTilbakemeldinger from '../../../public/static/for-studenter/anonymeTilbakemeldinger.md';
 import masterinfo from '../../../public/static/for-studenter/masterinfo.md';
@@ -78,7 +78,7 @@ const ForStudenterPage = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     const subGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
     const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
     const intGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
