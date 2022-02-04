@@ -42,6 +42,7 @@ const HappeningUI = ({ happening, backendUrl, spotRangeCounts, date }: Props): J
                     <HappeningMetaInfo
                         date={parseISO(happening.date)}
                         location={happening.location}
+                        locationLink={happening.locationLink}
                         title={happening.title}
                         contactEmail={happening.contactEmail}
                         companyLink={happening.companyLink}

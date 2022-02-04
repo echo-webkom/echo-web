@@ -14,6 +14,7 @@ import IconText from './icon-text';
 interface Props {
     date: Date;
     location: string;
+    locationLink: string | null;
     title: string;
     contactEmail: string | null;
     companyLink: string | null;
@@ -26,6 +27,7 @@ const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
 const HappeningMetaInfo = ({
     date,
     location,
+    locationLink,
     title,
     contactEmail,
     companyLink,
@@ -97,7 +99,11 @@ const HappeningMetaInfo = ({
             ))}
             <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
-            <IconText icon={ImLocation} text={location} />
+            {locationLink ? (
+                <IconText icon={ImLocation} text={location} link={locationLink} />
+            ) : (
+                <IconText icon={ImLocation} text={location} />
+            )}
             {contactEmail && (
                 <IconText
                     icon={MdLogout}

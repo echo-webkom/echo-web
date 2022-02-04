@@ -15,6 +15,7 @@ const happeningDecoder = record({
     date: string,
     body: string,
     location: string,
+    locationLink: string,
     companyLink: union(string, nil),
     registrationDate: union(string, nil),
     logoUrl: union(string, nil),
