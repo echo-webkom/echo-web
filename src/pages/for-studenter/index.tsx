@@ -47,18 +47,25 @@ const ForStudenterPage = ({
                         studentGroups={subGroups}
                         error={subGroupsError}
                         groupType="undergrupper"
+                        groupDefinition="En undergruppe er en utvidelse av echos virksomhet;
+                        undergruppen utfører et nødvendig arbeid Styret ellers ville ha gjort."
                     />,
                     <StudentGroupSection
                         key="underorganisasjoner"
                         studentGroups={subOrgs}
                         error={subOrgsError}
                         groupType="underorganisasjoner"
+                        groupDefinition="Grupper som legger til rette for en fritidsinteresse blant
+                        våre studenter, i samråd med echo."
                     />,
                     <StudentGroupSection
                         key="interessegrupper"
                         studentGroups={intGroups}
                         error={intGroupsError}
                         groupType="interessegrupper"
+                        groupDefinition="En autonom organisasjon som utfører deler av echo sin virksomhet,
+                        en som av ulike grunner ikke egner seg som undergruppe. Organisasjonen har et tett
+                        samarbeid med echo."
                     />,
                     <Markdown key="masterinfo" options={{ overrides: MapMarkdownChakra }}>
                         {masterinfo}

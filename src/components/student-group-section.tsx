@@ -16,11 +16,12 @@ import ErrorBox from './error-box';
 
 interface Props {
     studentGroups: Array<StudentGroup> | null;
+    groupDefinition: string;
     error: string | null;
     groupType: string;
 }
 
-const StudentGroupSection = ({ studentGroups, error, groupType }: Props): JSX.Element => {
+const StudentGroupSection = ({ studentGroups, groupDefinition, error, groupType }: Props): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
@@ -33,6 +34,9 @@ const StudentGroupSection = ({ studentGroups, error, groupType }: Props): JSX.El
                     <Heading textAlign="center" sizes={['lg', null, null, 'xl']}>
                         {[...groupType.charAt(0).toUpperCase(), ...groupType.slice(1)]}
                     </Heading>
+                    <WrapItem margin="10px">
+                        <Text align="center">{groupDefinition}</Text>
+                    </WrapItem>
                     <Divider my="1rem" />
                     <Center data-testid="student-group-section">
                         <Wrap spacing="1rem" justify="center" align="center">
