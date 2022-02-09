@@ -46,7 +46,7 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
             {registrations && registrations.length === 0 && !error && <Heading>Ingen påmeldinger enda</Heading>}
             {registrations && registrations.length > 0 && !error && (
                 <>
-                    <SimpleGrid p="1rem" columns={[1, null, 3]} rows={[2, null, 1]} alignItems="center">
+                    <SimpleGrid p="1rem" columns={[1, null, 3]} alignItems="center">
                         <Heading
                             as={GridItem}
                             size={headingSize}

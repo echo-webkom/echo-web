@@ -37,7 +37,7 @@ const MemberProfile = ({ profile, role }: Props): JSX.Element => {
                     />
                 )}
                 {!profile.imageUrl && (
-                    <Avatar getInitials={getInitials} size="2xl" name={profile.name} src={undefined} alt="bilde" />
+                    <Avatar getInitials={getInitials} size="2xl" name={profile.name} src={undefined} />
                 )}
             </Center>
             <Text my=".5em">{profile.name}</Text>

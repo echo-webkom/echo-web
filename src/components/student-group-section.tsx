@@ -5,6 +5,7 @@ import {
     LinkBox,
     LinkOverlay,
     Text,
+    useBreakpointValue,
     useColorModeValue,
     Wrap,
     WrapItem,
@@ -24,6 +25,7 @@ interface Props {
 const StudentGroupSection = ({ studentGroups, groupDefinition, error, groupType }: Props): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
+    const headingSize = useBreakpointValue(['lg', 'xl', 'xl', 'xl']);
 
     return (
         <>
@@ -31,7 +33,7 @@ const StudentGroupSection = ({ studentGroups, groupDefinition, error, groupType 
             {studentGroups && studentGroups.length === 0 && !error && <Text>{`Finner ingen ${groupType} :(`}</Text>}
             {studentGroups && studentGroups.length > 0 && !error && (
                 <>
-                    <Heading textAlign="center" sizes={['lg', null, null, 'xl']}>
+                    <Heading textAlign="center" size={headingSize}>
                         {[...groupType.charAt(0).toUpperCase(), ...groupType.slice(1)]}
                     </Heading>
                     <WrapItem margin="10px">

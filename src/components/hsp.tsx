@@ -28,9 +28,7 @@ const Hsp = (): JSX.Element => {
     return (
         <Section h="100%">
             <Flex h="100%" direction="column" justifyContent="center" alignItems="center ">
-                <Heading mb=".5em" sizes={['xs', 'md']}>
-                    {heading}
-                </Heading>
+                <Heading mb=".5em">{heading}</Heading>
                 <Box flex="1">
                     <Center h="100%">
                         <LinkBox>

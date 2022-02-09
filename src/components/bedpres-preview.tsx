@@ -33,7 +33,7 @@ const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
                 _hover={{ bg: hoverColor }}
             >
                 <Flex verticalAlign="middle">
-                    <Avatar size="xl" src={bedpres.logoUrl ?? undefined} alt="firmalogo" />
+                    <Avatar size="xl" src={bedpres.logoUrl ?? undefined} />
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>
