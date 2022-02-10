@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import React from 'react';
-import { useColorModeValue } from '@chakra-ui/react';
 
 interface Props {
     description?: string;
@@ -8,7 +7,6 @@ interface Props {
 }
 
 const SEO = ({ description = 'Nettsiden til echo – Fagutvalget for informatikk.', title }: Props): JSX.Element => {
-    const themeColor = useColorModeValue('bg.light.primary', 'bg.dark.primary');
     return (
         <Head>
             <title>{title}</title>
@@ -16,7 +14,8 @@ const SEO = ({ description = 'Nettsiden til echo – Fagutvalget for informatikk
             <meta name="robots" content="follow, index" />
             <meta name="description" content={description} />
             <meta name="msapplication-TileColor" content="#603cba" />
-            <meta name="theme-color" content={themeColor} />
+            <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E6E6E6" />
+            <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E1E1E" />
             <meta property="og:type" content="website" />
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />

@@ -1,4 +1,9 @@
-module.exports = {
+const withPWA = require('next-pwa');
+
+module.exports = withPWA({
+    pwa: {
+        dest: 'public',
+    },
     webpack: (config) => {
         config.module.rules.push({
             test: /\.md$/,
@@ -12,7 +17,6 @@ module.exports = {
     experimental: {
         esmExternals: false,
     },
-
     async redirects() {
         return [
             { source: '/events', destination: '/event', permanent: true },
@@ -23,6 +27,5 @@ module.exports = {
             },
         ];
     },
-
     reactStrictMode: true,
-};
+});
