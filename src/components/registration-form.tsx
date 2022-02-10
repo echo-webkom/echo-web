@@ -157,7 +157,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                                             <option value={Degree.DVIT}>Data Science/Datavitenskap</option>
                                             <option value={Degree.BINF}>Bioinformatikk</option>
                                             <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
-                                            <option value={Degree.IKT}>Informasjons- og kommunikasjonsvitenskap</option>
+                                            <option value={Degree.IKT}>Informasjons- og kommunikasjonsteknologi</option>
                                             <option value={Degree.KOGNI}>
                                                 Kognitiv vitenskap med spesialisering i informatikk
                                             </option>
