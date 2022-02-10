@@ -1,5 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
-import { Box, Center, Divider, Grid, GridItem, Heading, Spinner, VStack } from '@chakra-ui/react';
+import { Box, Center, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
@@ -34,35 +34,26 @@ const PostPage = ({ post, error }: Props): JSX.Element => {
                 <>
                     <SEO title={post.title} />
                     <Box>
-                        <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                            <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
-                                <VStack alignItems="left" spacing={3}>
-                                    <IconText
-                                        icon={BiCalendar}
-                                        text={format(new Date(post._createdAt), 'dd. MMM yyyy', { locale: nb })}
-                                    />
-                                </VStack>
-                                <Divider my="1em" />
-                                <Center>
-                                    <Heading size="lg">@{post.author}</Heading>
-                                </Center>
-                            </GridItem>
-                            <GridItem
-                                colStart={[1, null, null, 2]}
-                                rowStart={[1, null, null, null]}
-                                colSpan={[1, null, null, 3]}
-                                rowSpan={[1, null, null, 2]}
-                                minW="0"
-                            >
-                                <Section>
-                                    <Heading mb="0.2em" size="2xl">
-                                        {post.title}
-                                    </Heading>
-                                    <Divider mb="1em" />
-                                    <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
-                                </Section>
-                            </GridItem>
-                        </Grid>
+                        <Section>
+                            <Heading mb="0.2em" size="2xl">
+                                {post.title}
+                            </Heading>
+
+                            <Divider mb="0.5em" />
+
+                            <HStack justify="space-between">
+                                <Heading size="m">@{post.author}</Heading>
+
+                                <IconText
+                                    icon={BiCalendar}
+                                    text={format(new Date(post._createdAt), 'dd. MMM yyyy', { locale: nb })}
+                                />
+                            </HStack>
+
+                            <Divider my="0.5em" />
+
+                            <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
+                        </Section>
                     </Box>
                 </>
             )}
