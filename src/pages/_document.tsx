@@ -16,8 +16,6 @@ const CustomDocument = (): JSX.Element => {
             <Head>
                 <meta name="robots" content="follow, index" />
                 <meta name="msapplication-TileColor" content="#603cba" />
-                <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E6E6E6" />
-                <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E1E1E" />
                 <meta name="theme-color" content={themeColor} />
                 <meta property="og:type" content="website" />
 
