@@ -1,4 +1,4 @@
-import { ColorModeScript } from '@chakra-ui/react';
+import { ColorModeScript, useColorModeValue } from '@chakra-ui/react';
 import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 import theme from '../styles/theme';
@@ -9,6 +9,8 @@ const getInitialProps = async (ctx: DocumentContext): Promise<DocumentInitialPro
 };
 
 const CustomDocument = (): JSX.Element => {
+    const themeColor = useColorModeValue('bg.light.primary', 'bg.dark.primary');
+
     return (
         <Html lang="nb-NO">
             <Head>
@@ -16,6 +18,7 @@ const CustomDocument = (): JSX.Element => {
                 <meta name="msapplication-TileColor" content="#603cba" />
                 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E6E6E6" />
                 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1E1E1E" />
+                <meta name="theme-color" content={themeColor} />
                 <meta property="og:type" content="website" />
 
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
