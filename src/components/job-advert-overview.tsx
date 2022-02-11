@@ -1,4 +1,4 @@
-import { Grid, Text, VStack, Divider, Wrap } from '@chakra-ui/layout';
+import { Text, Stack, StackDivider } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
 import React, { useState } from 'react';
 import { JobAdvert } from '../lib/api';
@@ -28,8 +28,8 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
         <>
             {error && <ErrorBox error={error} />}
             {!error && jobAdverts && (
-                <Grid templateColumns="9fr 1fr 30fr" gap={5}>
-                    <VStack spacing={2}>
+                <Stack direction={['column', null, null, 'row']} spacing={5} divider={<StackDivider />}>
+                    <Stack spacing={2}>
                         <Text>Type</Text>
                         <Select onChange={(evt) => setType(evt.target.value as JobType)} value={type}>
                             <option value="all">Alle</option>
@@ -74,9 +74,8 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                             <option value="_createdAt">Publisert</option>
                             <option value="jobType">Type</option>
                         </Select>
-                    </VStack>
-                    <Divider mx="1em" orientation="vertical" />
-                    <Wrap w="100%" gap="5">
+                    </Stack>
+                    <Stack w="100%" gap="5">
                         {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
                             (location === job.location.toLowerCase() || location === 'all') &&
@@ -84,8 +83,8 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                                 <JobAdvertPreview key={job.slug} jobAdvert={job} />
                             ) : null,
                         )}
-                    </Wrap>
-                </Grid>
+                    </Stack>
+                </Stack>
             )}
         </>
     );
