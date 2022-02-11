@@ -218,8 +218,8 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                                                     <Text ml="0.5rem" fontWeight="bold">
                                                         Jeg har lest gjennom og forstått
                                                     </Text>
-                                                    <NextLink href="https://bit.ly/bedkom-faq" passHref>
-                                                        <Link href="https://bit.ly/bedkom-faq" isExternal>
+                                                    <NextLink href="https://bit.ly/bedkom-faq2" passHref>
+                                                        <Link href="https://bit.ly/bedkom-faq2" isExternal>
                                                             <Text color={linkColor} ml="0.5rem" fontWeight="bold">
                                                                 Bedkom sine retningslinjer
                                                             </Text>
