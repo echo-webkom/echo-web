@@ -46,7 +46,9 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
                 <LinkOverlay>
                     <SimpleGrid columns={2} alignItems="center">
                         <GridItem>
-                            <Text mb="1rem">{jobAdvert.title}</Text>
+                            <Text mb="1rem" fontWeight="bold" fontSize={['1.2rem', null, null, '1.5rem']}>
+                                {jobAdvert.title}
+                            </Text>
                             <Wrap>
                                 <Tag colorScheme="teal" variant="subtle">
                                     {translateJobType(jobAdvert.jobType)}
