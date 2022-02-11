@@ -64,7 +64,7 @@ const IndexPage = ({
                 <EntryBox
                     titles={['Innlegg']}
                     entries={posts}
-                    entryLimit={useBreakpointValue([2, 2, 2, 2, 2, 3, 4])}
+                    entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
                     error={postsError}
                     altText="Ingen innlegg :("
                     linkTo="/posts"
