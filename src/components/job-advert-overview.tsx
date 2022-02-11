@@ -1,4 +1,4 @@
-import { Grid, Text, VStack, Divider } from '@chakra-ui/layout';
+import { Grid, Text, VStack, Divider, Wrap } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
 import React, { useState } from 'react';
 import { JobAdvert } from '../lib/api';
@@ -76,7 +76,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                         </Select>
                     </VStack>
                     <Divider mx="1em" orientation="vertical" />
-                    <Grid>
+                    <Wrap w="100%" gap="5">
                         {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
                             (location === job.location.toLowerCase() || location === 'all') &&
@@ -84,7 +84,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                                 <JobAdvertPreview key={job.slug} jobAdvert={job} />
                             ) : null,
                         )}
-                    </Grid>
+                    </Wrap>
                 </Grid>
             )}
         </>
