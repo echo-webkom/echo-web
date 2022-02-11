@@ -9,15 +9,21 @@ interface Props {
     entries: Array<Happening | Post>;
     entryLimit?: number;
     type: 'event' | 'bedpres' | 'post';
-    direction: 'column' | 'row';
 }
 
-const EntryList = ({ entries, entryLimit, type, direction = 'column' }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type }: Props): JSX.Element => {
     if (entryLimit) {
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
     }
+
     return (
-        <Stack w="100%" spacing={5} divider={<StackDivider />} direction={direction} justifyContent="space-around">
+        <Stack
+            w="100%"
+            spacing={5}
+            divider={<StackDivider />}
+            direction={type === 'post' ? ['column', null, null, 'row'] : 'column'}
+            justifyContent="space-around"
+        >
             {entries.map((entry: Happening | Post) => {
                 switch (type) {
                     case 'bedpres':

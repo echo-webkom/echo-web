@@ -15,7 +15,6 @@ interface Props extends BoxProps {
     altText?: string;
     linkTo?: string;
     type: 'event' | 'bedpres' | 'post';
-    direction?: 'column' | 'row';
 }
 
 const EntryBox = ({
@@ -27,7 +26,6 @@ const EntryBox = ({
     altText,
     linkTo,
     type,
-    direction = 'row',
     ...props
 }: Props): JSX.Element => {
     const choices = titles ?? [title];
@@ -40,7 +38,7 @@ const EntryBox = ({
                 {!entries && error && <ErrorBox error={error} />}
                 {altText && entries && !error && entries.length === 0 && <Text>{altText}</Text>}
                 {entries && !error && entries.length > 0 && (
-                    <EntryList entries={entries} entryLimit={entryLimit} type={type} direction={direction} />
+                    <EntryList entries={entries} entryLimit={entryLimit} type={type} />
                 )}
                 <Spacer />
                 {linkTo && (

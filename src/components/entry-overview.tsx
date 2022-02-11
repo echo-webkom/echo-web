@@ -31,7 +31,6 @@ const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
                     error={error}
                     altText={`Ingen tidligere ${alt}.`}
                     type={type}
-                    direction="column"
                 />
             </GridItem>
             <GridItem rowStart={1}>
@@ -41,7 +40,6 @@ const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
                     error={error}
                     altText={`Ingen kommende ${alt}.`}
                     type={type}
-                    direction="column"
                 />
             </GridItem>
         </SimpleGrid>
