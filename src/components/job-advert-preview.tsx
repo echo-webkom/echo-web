@@ -76,4 +76,5 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
     );
 };
 
+export { translateJobType };
 export default JobAdvertPreview;
