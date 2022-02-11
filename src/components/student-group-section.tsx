@@ -36,9 +36,7 @@ const StudentGroupSection = ({ studentGroups, groupDefinition, error, groupType 
                     <Heading textAlign="center" size={headingSize}>
                         {[...groupType.charAt(0).toUpperCase(), ...groupType.slice(1)]}
                     </Heading>
-                    <WrapItem margin="10px">
-                        <Text align="center">{groupDefinition}</Text>
-                    </WrapItem>
+                    <Text align="center">{groupDefinition}</Text>
                     <Divider my="1rem" />
                     <Center data-testid="student-group-section">
                         <Wrap spacing="1rem" justify="center" align="center">

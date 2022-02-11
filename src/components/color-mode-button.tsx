@@ -7,13 +7,15 @@ const ColorModeButton = (): JSX.Element => {
     const { colorMode, toggleColorMode } = useColorMode();
     const sunBg = useColorModeValue('yellow.500', 'yellow.200');
     const moonBg = useColorModeValue('blue.500', 'blue.200');
+    const label = 'colormode-button';
 
     return (
-        <HStack data-testid="button-colormode">
+        <HStack data-testid={label}>
             <Box color={sunBg}>
                 <BsSun />
             </Box>
             <Switch
+                aria-label={label}
                 size="lg"
                 isChecked={colorMode === 'light' ? false : true}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {

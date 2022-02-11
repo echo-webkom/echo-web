@@ -33,6 +33,6 @@ describe('NavBar', () => {
         expect(getByTestId(/for-studenter/i)).toBeInTheDocument();
         expect(getByTestId(/for-bedrifter/i)).toBeInTheDocument();
         expect(getByTestId(/om-oss/i)).toBeInTheDocument();
-        expect(getByTestId(/button-colormode/i)).toBeInTheDocument();
+        expect(getByTestId(/colormode-button/i)).toBeInTheDocument();
     });
 });
