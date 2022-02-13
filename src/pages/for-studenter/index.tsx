@@ -21,6 +21,7 @@ interface Props {
     intGroupsError: string | null;
     jobAdverts: Array<JobAdvert> | null;
     jobAdvertsError: string | null;
+    enableJobAdverts: boolean;
 }
 
 const ForStudenterPage = ({
@@ -32,6 +33,7 @@ const ForStudenterPage = ({
     intGroupsError,
     jobAdverts,
     jobAdvertsError,
+    enableJobAdverts,
 }: Props): JSX.Element => {
     return (
         <>
@@ -46,7 +48,7 @@ const ForStudenterPage = ({
                     'Økonomisk støtte',
                     'Anonyme tilbakemeldinger',
                     'Utlegg på vegne av echo',
-                ]}
+                ].filter((v) => enableJobAdverts || v !== 'Stillingsannonser')}
                 tabPanels={[
                     <StudentGroupSection
                         key="undergrupper"
@@ -86,7 +88,7 @@ const ForStudenterPage = ({
                     <Markdown key="utleggsskjema" options={{ overrides: MapMarkdownChakra }}>
                         {utleggsskjema}
                     </Markdown>,
-                ]}
+                ].filter((c) => enableJobAdverts || c.key !== 'stillingsannonser')}
             />
         </>
     );
@@ -97,6 +99,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
     const intGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
     const jobAdverts = await JobAdvertAPI.getJobAdverts(10);
+    const enableJobAdverts = process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
 
     const props: Props = {
         intGroups: intGroups.studentGroups,
@@ -107,6 +110,7 @@ export const getStaticProps: GetStaticProps = async () => {
         subOrgsError: subOrgs.error,
         jobAdverts: jobAdverts.jobAdverts,
         jobAdvertsError: jobAdverts.error,
+        enableJobAdverts,
     };
 
     return {
