@@ -66,7 +66,8 @@ export default {
                 list: [
                     { title: 'Fulltid', value: 'fulltime' },
                     { title: 'Deltid', value: 'parttime' },
-                    { title: 'Sommerjobb', value: 'internship' },
+                    { title: 'Internship', value: 'internship' },
+                    { title: 'Sommerjobb', value: 'summerjob' },
                 ],
                 layout: 'dropdown',
             },
