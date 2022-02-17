@@ -8,9 +8,9 @@ import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
+import { google } from 'calendar-link'; //, outlook, office365, yahoo, ics } from 'calendar-link';
 import { HappeningType, SpotRange, SpotRangeCount } from '../lib/api';
 import IconText from './icon-text';
-import { google, outlook, office365, yahoo, ics } from 'calendar-link';
 
 interface Props {
     date: Date;
