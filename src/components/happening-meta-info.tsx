@@ -1,5 +1,5 @@
 import { VStack } from '@chakra-ui/react';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
@@ -8,14 +8,17 @@ import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
-import { SpotRange, SpotRangeCount } from '../lib/api';
+import { HappeningType, SpotRange, SpotRangeCount } from '../lib/api';
 import IconText from './icon-text';
+import { google, outlook, office365, yahoo, ics } from 'calendar-link';
 
 interface Props {
     date: Date;
     location: string;
     locationLink: string | null;
     title: string;
+    type: HappeningType;
+    slug: string;
     contactEmail: string | null;
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
@@ -29,6 +32,8 @@ const HappeningMetaInfo = ({
     location,
     locationLink,
     title,
+    type,
+    slug,
     contactEmail,
     companyLink,
     spotRangeCounts,
@@ -56,6 +61,18 @@ const HappeningMetaInfo = ({
 
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
+
+    const eventEndTime = addHours(date, 2);
+
+    const event = {
+        title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,
+        description:
+            `${title} ${type === 'EVENT' ? 'Arrangementet' : 'Bedriftspresentasjonen'}: ` +
+            `https://echo.uib.no/${type}/${slug}`.toLowerCase(),
+        start: date,
+        end: eventEndTime,
+        location: `${location}`,
+    };
 
     return (
         <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
@@ -97,7 +114,7 @@ const HappeningMetaInfo = ({
                     )}
                 </>
             ))}
-            <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
+            <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} link={google(event)} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
                 <IconText icon={ImLocation} text={location} link={locationLink} />

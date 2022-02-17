@@ -44,6 +44,8 @@ const HappeningUI = ({ happening, backendUrl, spotRangeCounts, date }: Props): J
                         location={happening.location}
                         locationLink={happening.locationLink}
                         title={happening.title}
+                        type={happening.happeningType}
+                        slug={happening.slug}
                         contactEmail={happening.contactEmail}
                         companyLink={happening.companyLink}
                         spotRangeCounts={spotRangeCounts?.length === 0 ? null : spotRangeCounts}
