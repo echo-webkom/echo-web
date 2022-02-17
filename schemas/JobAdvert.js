@@ -54,7 +54,8 @@ export default {
             name: 'location',
             title: 'Sted',
             validation: (Rule) => Rule.required(),
-            type: 'string',
+            type: 'array',
+            of: [{ type: 'string' }],
         },
         {
             name: 'jobType',
