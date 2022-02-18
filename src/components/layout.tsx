@@ -13,7 +13,13 @@ const Layout = ({ children }: Props): JSX.Element => {
         <Box overflow="hidden" pos="relative" minHeight="100vh" data-testid="layout">
             <AnimatedIcons n={50}>
                 <Header />
-                <Box maxW="2000" m="auto" px={['5%', '10%']} pb={['380px', '300px', '200px', '160px', '160px']}>
+                <Box
+                    maxW="2000"
+                    w="100%"
+                    m="auto"
+                    px={['5%', '100px']}
+                    pb={['380px', '300px', '200px', '160px', '160px']}
+                >
                     {children}
                 </Box>
                 <Footer />
