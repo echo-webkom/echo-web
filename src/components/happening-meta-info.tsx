@@ -62,15 +62,13 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
-    const eventEndTime = addHours(date, 2);
-
     const event = {
         title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,
         description:
             `${title} ${type === 'EVENT' ? 'Arrangementet' : 'Bedriftspresentasjonen'}: ` +
             `https://echo.uib.no/${type}/${slug}`.toLowerCase(),
         start: date,
-        end: eventEndTime,
+        end: addHours(date, 2),
         location: `${location}`,
     };
 
