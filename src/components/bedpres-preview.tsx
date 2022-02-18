@@ -1,18 +1,8 @@
-import {
-    Avatar,
-    Box,
-    Center,
-    Flex,
-    Heading,
-    LinkBox,
-    LinkOverlay,
-    Spacer,
-    Text,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Center, Flex, Heading, LinkBox, LinkOverlay, Spacer, Text, useColorModeValue } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import React from 'react';
 import { Happening } from '../lib/api';
 
@@ -22,6 +12,8 @@ interface Props {
 
 const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
+    // logoUrl must always be defined in a Happening of type 'BEDPRES'.
+    const logoUrl = bedpres.logoUrl as string;
 
     return (
         <LinkBox data-testid={bedpres.slug}>
@@ -33,7 +25,9 @@ const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
                 _hover={{ bg: hoverColor }}
             >
                 <Flex verticalAlign="middle">
-                    <Avatar size="xl" src={bedpres.logoUrl ?? undefined} name={bedpres.title} />
+                    <Flex borderRadius="50%" overflow="hidden">
+                        <Image src={logoUrl} width={96} height={96} alt={bedpres.title} />
+                    </Flex>
                     <Center ml="2em">
                         <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
                             <LinkOverlay>
