@@ -103,6 +103,9 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
             },
             backendUrl,
         ).then(({ response, statusCode }) => {
+            if (statusCode == 200 || statusCode == 202) {
+                onClose();
+            }
             toast({
                 title: response.title,
                 description: response.desc,
