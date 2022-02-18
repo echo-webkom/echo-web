@@ -9,6 +9,7 @@ env:
 
 permissions:
   packages: write
+  actions: read
 
 jobs:
   cypress_tests:
