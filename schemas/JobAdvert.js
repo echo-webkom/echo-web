@@ -51,8 +51,8 @@ export default {
             type: 'datetime',
         },
         {
-            name: 'location',
-            title: 'Sted',
+            name: 'locations',
+            title: 'Sted(er)',
             validation: (Rule) => Rule.required(),
             type: 'array',
             of: [{ type: 'string' }],
