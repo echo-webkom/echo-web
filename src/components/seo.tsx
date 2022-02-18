@@ -15,7 +15,6 @@ const SEO = ({ description = 'Nettsiden til echo – Fagutvalget for informatikk
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:site_name" content={title} />
-            <meta name="apple-mobile-web-app-capable" content="yes" />
         </Head>
     );
 };
