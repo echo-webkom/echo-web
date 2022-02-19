@@ -14,10 +14,10 @@ const Layout = ({ children }: Props): JSX.Element => {
             <AnimatedIcons n={50}>
                 <Header />
                 <Box
-                    maxW="2000"
-                    w="100%"
+                    maxW="1500"
+                    w="90%"
                     m="auto"
-                    px={['5%', '100px']}
+                    px={['0', '5%', '50']}
                     pb={['380px', '300px', '200px', '160px', '160px']}
                 >
                     {children}
