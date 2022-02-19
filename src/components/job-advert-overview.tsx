@@ -22,6 +22,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
     const [type, setType] = useState<JobType>('all');
     const [location, setLocation] = useState<string>('all');
     const [company, setCompany] = useState<string>('all');
+    const [degreeYear, setDegreeYear] = useState<string>('all');
     const [sortBy, setSortBy] = useState<SortType>('deadline');
 
     // list comprehension when?
@@ -74,6 +75,15 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                                     </option>
                                 ))}
                         </Select>
+                        <Text>Årstrinn</Text>
+                        <Select onChange={(evt) => setDegreeYear(evt.target.value)} value={degreeYear}>
+                            <option value="all">Alle</option>
+                            <option value="1">1. trinn</option>
+                            <option value="2">2. trinn</option>
+                            <option value="3">3. trinn</option>
+                            <option value="4">4. trinn</option>
+                            <option value="5">5. trinn</option>
+                        </Select>
                         <Text>Sorter etter</Text>
                         <Select onChange={(evt) => setSortBy(evt.target.value as SortType)} value={sortBy}>
                             <option value="deadline">Søknadsfrist</option>
@@ -86,6 +96,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                         {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
                             (job.locations.includes(location) || location === 'all') &&
+                            (job.degreeYears.includes(Number(degreeYear)) || degreeYear === 'all') &&
                             (company === job.companyName.toLowerCase() || company === 'all') ? (
                                 <JobAdvertPreview key={job.slug} jobAdvert={job} />
                             ) : null,
