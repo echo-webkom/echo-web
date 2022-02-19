@@ -58,7 +58,7 @@ const JobAdvertPage = ({ jobAdvert, error }: Props): JSX.Element => {
                             </LinkBox>
                             <VStack alignItems="left" spacing={3}>
                                 <IconText icon={BiCategory} text={translateJobType(jobAdvert.jobType)} />
-                                <IconText icon={ImLocation} text={jobAdvert.location} />
+                                <IconText icon={ImLocation} text={jobAdvert.locations.join(' - ')} />
                                 <IconText
                                     icon={FaUniversity}
                                     text={`${Math.min(...jobAdvert.degreeYears)}. - ${Math.max(

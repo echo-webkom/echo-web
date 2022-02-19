@@ -10,7 +10,7 @@ interface Props {
     error: string | null;
 }
 
-type JobType = 'all' | 'fulltime' | 'parttime' | 'internship';
+type JobType = 'all' | 'fulltime' | 'parttime' | 'internship' | 'summerjob';
 type SortType = 'deadline' | 'companyName' | '_createdAt' | 'jobType';
 
 const sortJobs = (list: Array<JobAdvert>, field: SortType) => {
@@ -24,6 +24,16 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
     const [company, setCompany] = useState<string>('all');
     const [sortBy, setSortBy] = useState<SortType>('deadline');
 
+    // list comprehension when?
+    const allLocations: Array<string> = [];
+
+    // bruh hvordan fjerne "?"
+    jobAdverts?.map((job: JobAdvert) => {
+        job.locations.map((location: string) => {
+            allLocations.push(location);
+        });
+    });
+
     return (
         <>
             {error && <ErrorBox error={error} />}
@@ -33,21 +43,18 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                         <Text>Type</Text>
                         <Select onChange={(evt) => setType(evt.target.value as JobType)} value={type}>
                             <option value="all">Alle</option>
-                            <option value="internship">Sommerjobb</option>
+                            <option value="summerjob">Sommerjobb</option>
                             <option value="parttime">Deltid</option>
                             <option value="fulltime">Fulltid</option>
+                            <option value="internship">Internship</option>
                         </Select>
                         <Text>Sted</Text>
                         <Select onChange={(evt) => setLocation(evt.target.value)} value={location}>
                             <option value="all">Alle</option>
-                            {jobAdverts
-                                .map((job: JobAdvert) => job.location)
-                                .filter((value, index, self) => self.indexOf(value) === index) //get unique values
+                            {allLocations
+                                .filter((value, index, self) => self.indexOf(value) === index)
                                 .map((location: string, index: number) => (
-                                    <option
-                                        key={`${location.toLocaleLowerCase()}-${index}`}
-                                        value={location.toLowerCase()}
-                                    >
+                                    <option key={`${location.toLocaleLowerCase()}-${index}`} value={location}>
                                         {location}
                                     </option>
                                 ))}
@@ -78,7 +85,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                     <Stack w="100%" gap="5">
                         {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
-                            (location === job.location.toLowerCase() || location === 'all') &&
+                            (job.locations.includes(location) || location === 'all') &&
                             (company === job.companyName.toLowerCase() || company === 'all') ? (
                                 <JobAdvertPreview key={job.slug} jobAdvert={job} />
                             ) : null,
