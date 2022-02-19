@@ -25,10 +25,8 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
     const [degreeYear, setDegreeYear] = useState<string>('all');
     const [sortBy, setSortBy] = useState<SortType>('deadline');
 
-    // list comprehension when?
     const allLocations: Array<string> = [];
 
-    // bruh hvordan fjerne "?"
     jobAdverts?.map((job: JobAdvert) => {
         job.locations.map((location: string) => {
             allLocations.push(location);

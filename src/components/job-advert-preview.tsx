@@ -60,9 +60,13 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
                                         {location}
                                     </Tag>
                                 ))}
-                                <Tag colorScheme="teal" variant="outline">{`${Math.min(
-                                    ...jobAdvert.degreeYears,
-                                )}. - ${Math.max(...jobAdvert.degreeYears)}. trinn`}</Tag>
+                                <Tag colorScheme="teal" variant="outline">
+                                    {jobAdvert.degreeYears.length === 1
+                                        ? `${String(jobAdvert.degreeYears[0])}. trinn`
+                                        : `${String(jobAdvert.degreeYears.sort().slice(0, -1).join(', '))} og ${String(
+                                              jobAdvert.degreeYears.slice(-1),
+                                          )} . trinn`}
+                                </Tag>
                                 <Spacer />
                             </Wrap>
                             <Tag mt=".5rem">{`Søknadsfrist: ${format(

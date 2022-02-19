@@ -61,9 +61,13 @@ const JobAdvertPage = ({ jobAdvert, error }: Props): JSX.Element => {
                                 <IconText icon={ImLocation} text={jobAdvert.locations.join(' - ')} />
                                 <IconText
                                     icon={FaUniversity}
-                                    text={`${Math.min(...jobAdvert.degreeYears)}. - ${Math.max(
-                                        ...jobAdvert.degreeYears,
-                                    )}. trinn`}
+                                    text={
+                                        jobAdvert.degreeYears.length === 1
+                                            ? `${String(jobAdvert.degreeYears[0])}. trinn`
+                                            : `${String(
+                                                  jobAdvert.degreeYears.sort().slice(0, -1).join(', '),
+                                              )} og ${String(jobAdvert.degreeYears.slice(-1))} . trinn`
+                                    }
                                 />
                                 <IconText
                                     icon={RiTimeLine}
