@@ -948,6 +948,44 @@ class HappeningRegistrationTest : StringSpec({
             }
         }
     }
+
+    "Should redirect if trying to get list of registrations via old FreeMarker page" {
+        withTestApplication({
+            configureRouting(adminKey, null, featureToggles)
+        }) {
+            for (t in be) {
+                val newSlug = "auto-link-test-100-$t"
+
+                val submitHappeningCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        addHeader(
+                            HttpHeaders.Authorization,
+                            "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
+                        )
+                        setBody(
+                            gson.toJson(
+                                exampleHappening6(t).copy(
+                                    slug = newSlug
+                                )
+                            )
+                        )
+                    }
+
+                submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
+                val regsLink = gson.fromJson(
+                    submitHappeningCall.response.content,
+                    HappeningResponseJson::class.java
+                ).registrationsLink
+
+                val attemptGetRegsCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Get, uri = "/${Routing.registrationRoute}/$regsLink")
+
+                attemptGetRegsCall.response.status() shouldBe HttpStatusCode.MovedPermanently
+                attemptGetRegsCall.response.headers["Location"] shouldBe "https://echo.uib.no/${Routing.registrationRoute}/$regsLink"
+            }
+        }
+    }
 })
 
 fun successfulRegMsg(type: HAPPENING_TYPE): String {

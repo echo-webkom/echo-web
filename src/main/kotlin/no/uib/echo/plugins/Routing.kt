@@ -10,7 +10,6 @@ import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
-import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.gson.gson
 import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
@@ -220,8 +219,6 @@ object Routing {
                 }
             }
 
-            val ans = (regs.maxByOrNull { it.answers.size })?.answers ?: emptyList()
-
             if (download) {
                 val fileName = "pameldte-${hap[slug]}.csv"
 
@@ -239,18 +236,11 @@ object Routing {
             } else if (json) {
                 call.respond(regs)
             } else {
-                call.respond(
-                    FreeMarkerContent(
-                        "registrations_link.ftl",
-                        mapOf(
-                            "answers" to ans,
-                            "regs" to regs,
-                            "registrationRoute" to registrationRoute,
-                            "regsLink" to link,
-                            "slug" to hap[slug]
-                        )
-                    )
+                call.response.header(
+                    HttpHeaders.Location,
+                    "https://echo.uib.no/$registrationRoute/$link"
                 )
+                call.respond(HttpStatusCode.MovedPermanently)
             }
         }
     }
