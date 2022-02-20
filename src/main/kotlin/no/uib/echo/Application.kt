@@ -64,8 +64,8 @@ fun Application.module() {
     val adminKey = environment.config.property("ktor.adminKey").getString()
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
-    val sendEmailReg = environment.config.property("ktor.sendEmailRegistration").getString().toBoolean()
-    val sendEmailHap = environment.config.property("ktor.sendEmailHappening").getString().toBoolean()
+    val sendEmailReg = environment.config.property("ktor.sendEmailRegistration").getString().toBooleanStrict()
+    val sendEmailHap = environment.config.property("ktor.sendEmailHappening").getString().toBooleanStrict()
     val maybeSendGridApiKey = environment.config.propertyOrNull("ktor.sendGridApiKey")?.getString()
     val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
         true -> null
