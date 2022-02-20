@@ -19,6 +19,7 @@ const Layout = ({ children }: Props): JSX.Element => {
                     m="auto"
                     px={['0', '5%', '50']}
                     pb={['380px', '300px', '200px', '160px', '160px']}
+                    mb="25"
                 >
                     {children}
                 </Box>
