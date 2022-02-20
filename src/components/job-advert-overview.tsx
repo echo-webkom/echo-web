@@ -53,7 +53,10 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                             {allLocations
                                 .filter((value, index, self) => self.indexOf(value) === index)
                                 .map((location: string, index: number) => (
-                                    <option key={`${location.toLocaleLowerCase()}-${index}`} value={location}>
+                                    <option
+                                        key={`${location.toLocaleLowerCase()}-${index}`}
+                                        value={location.toLocaleLowerCase()}
+                                    >
                                         {location}
                                     </option>
                                 ))}
@@ -67,7 +70,7 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                                 .map((company: string, index: number) => (
                                     <option
                                         key={`${company.toLocaleLowerCase()}-${index}`}
-                                        value={company.toLowerCase()}
+                                        value={company.toLocaleLowerCase()}
                                     >
                                         {company}
                                     </option>
@@ -93,7 +96,8 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                     <Stack w="100%" gap="5">
                         {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
                             (type === job.jobType || type === 'all') &&
-                            (job.locations.includes(location) || location === 'all') &&
+                            (job.locations.some((locations) => locations.toLocaleLowerCase() === location) ||
+                                location === 'all') &&
                             (job.degreeYears.includes(Number(degreeYear)) || degreeYear === 'all') &&
                             (company === job.companyName.toLowerCase() || company === 'all') ? (
                                 <JobAdvertPreview key={job.slug} jobAdvert={job} />
