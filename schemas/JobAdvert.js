@@ -53,7 +53,7 @@ export default {
         {
             name: 'locations',
             title: 'Sted(er)',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) => Rule.required().unique(),
             type: 'array',
             of: [{ type: 'string' }],
         },
@@ -81,7 +81,7 @@ export default {
         {
             name: 'degreeYears',
             title: 'Aktuelle årstrinn',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) => Rule.required().unique(),
             type: 'array',
             of: [{ type: 'number' }],
         },
