@@ -1,12 +1,8 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
 import { slugDecoder, postDecoder } from './decoders';
-import { Post } from './types';
-import handleError from './errors';
+import { ErrorMessage, Post } from './types';
 import { SanityAPI } from '.';
-
-// Automatically creates the Post type with the
-// fields we specify in our postDecoder.
 
 const PostAPI = {
     /**
@@ -29,7 +25,7 @@ const PostAPI = {
      * Get the n last published posts.
      * @param n how many posts to retrieve
      */
-    getPosts: async (n: number): Promise<{ posts: Array<Post> | null; error: string | null }> => {
+    getPosts: async (n: number): Promise<Array<Post> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
@@ -44,16 +40,10 @@ const PostAPI = {
 
             const result = await SanityAPI.fetch(query);
 
-            return {
-                posts: array(postDecoder)(result),
-                error: null,
-            };
+            return array(postDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return {
-                posts: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
-            };
+            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getPosts' };
         }
     },
 
@@ -61,7 +51,7 @@ const PostAPI = {
      * Get a post by its slug.
      * @param slug the slug of the desired post.
      */
-    getPostBySlug: async (slug: string): Promise<{ post: Post | null; error: string | null }> => {
+    getPostBySlug: async (slug: string): Promise<Post | ErrorMessage> => {
         try {
             const query = `
                 *[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
@@ -75,28 +65,20 @@ const PostAPI = {
             const result = await SanityAPI.fetch(query);
 
             if (result.length === 0) {
-                return {
-                    post: null,
-                    error: '404',
-                };
+                return { message: '404' };
             }
 
-            return {
-                post: array(postDecoder)(result)[0],
-                error: null,
-            };
+            return array(postDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error) && !error.response) {
                 return {
-                    post: null,
-                    error: '404',
+                    message: '404',
                 };
             }
 
             return {
-                post: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
+                message: axios.isAxiosError(error) ? error.message : 'Fail @ getPostBySlug',
             };
         }
     },

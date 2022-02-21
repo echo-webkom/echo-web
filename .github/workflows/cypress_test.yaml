@@ -38,6 +38,8 @@ jobs:
           DOCKER_BUILDKIT: 1
           REGISTRY: ${{ env.REGISTRY }}
           TAG: latest
+          SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
 
       - name: Pull backend image
         run: docker pull "$REGISTRY/$BACKEND_REPOSITORY:$TAG"

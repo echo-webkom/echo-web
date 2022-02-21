@@ -11,22 +11,12 @@ import MinuteList from '../components/minute-list';
 import SEO from '../components/seo';
 import InfoPanels from '../components/info-panels';
 import StudentGroupSection from '../components/student-group-section';
-import { Minute, MinuteAPI, StudentGroup, StudentGroupAPI } from '../lib/api';
+import { isErrorMessage, Minute, MinuteAPI, StudentGroup, StudentGroupAPI } from '../lib/api';
 import MapMarkdownChakra from '../markdown';
 
 const bekkLogo = '/bekk.png';
 
-const OmOssPage = ({
-    boards,
-    boardsError,
-    minutes,
-    error,
-}: {
-    boards: Array<StudentGroup>;
-    boardsError: string;
-    minutes: Array<Minute> | null;
-    error: string | null;
-}): JSX.Element => {
+const OmOssPage = ({ boards, minutes }: { boards: Array<StudentGroup>; minutes: Array<Minute> }): JSX.Element => {
     const bekkLogoFilter = useColorModeValue('invert(1)', 'invert(0)');
     const linkColor = useColorModeValue('blue', 'blue.400');
 
@@ -38,12 +28,7 @@ const OmOssPage = ({
                 tabPanels={[
                     <>
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
-                        <StudentGroupSection
-                            studentGroups={boards}
-                            error={boardsError}
-                            groupType="styrer"
-                            groupDefinition=""
-                        />
+                        <StudentGroupSection studentGroups={boards} groupType="styrer" groupDefinition="" />
                     </>,
                     <Markdown key="instituttraadet" options={{ overrides: MapMarkdownChakra }}>
                         {instituttraadet}
@@ -51,7 +36,7 @@ const OmOssPage = ({
                     <Markdown key="statutter" options={{ overrides: MapMarkdownChakra }}>
                         {statutter}
                     </Markdown>,
-                    <MinuteList key="minutes" minutes={minutes} error={error} />,
+                    <MinuteList key="minutes" minutes={minutes} />,
                     <>
                         <Center>
                             <LinkBox>
@@ -86,11 +71,14 @@ const OmOssPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { minutes, error } = await MinuteAPI.getMinutes();
+    const minutes = await MinuteAPI.getMinutes();
     const boards = await StudentGroupAPI.getStudentGroupsByType('board');
 
+    if (isErrorMessage(minutes)) throw new Error(minutes.message);
+    if (isErrorMessage(boards)) throw new Error(boards.message);
+
     return {
-        props: { boards: boards.studentGroups?.reverse(), boardsError: boards.error, minutes, error },
+        props: { boards: boards.reverse(), minutes },
     };
 };
 

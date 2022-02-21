@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
 import SanityAPI from './api';
-import handleError from './errors';
 import { slugDecoder, jobAdvertDecoder } from './decoders';
-import { Slug, JobAdvert } from './types';
+import { ErrorMessage, Slug, JobAdvert } from './types';
 
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -18,7 +17,7 @@ const JobAdvertAPI = {
         }
     },
 
-    getJobAdverts: async (n: number): Promise<{ jobAdverts: Array<JobAdvert> | null; error: string | null }> => {
+    getJobAdverts: async (n: number): Promise<Array<JobAdvert> | ErrorMessage> => {
         try {
             const query = `*[_type == "jobAdvert" && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${n}] {
                     "slug": slug.current,
@@ -35,20 +34,14 @@ const JobAdvertAPI = {
                 }`;
             const result = await SanityAPI.fetch(query);
 
-            return {
-                jobAdverts: array(jobAdvertDecoder)(result),
-                error: null,
-            };
+            return array(jobAdvertDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return {
-                jobAdverts: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
-            };
+            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdverts' };
         }
     },
 
-    getJobAdvertBySlug: async (slug: string): Promise<{ jobAdvert: JobAdvert | null; error: string | null }> => {
+    getJobAdvertBySlug: async (slug: string): Promise<JobAdvert | ErrorMessage> => {
         try {
             const query = `
                 *[_type == "jobAdvert" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
@@ -66,16 +59,10 @@ const JobAdvertAPI = {
                 }`;
             const result = await SanityAPI.fetch(query);
 
-            return {
-                jobAdvert: array(jobAdvertDecoder)(result)[0],
-                error: null,
-            };
+            return array(jobAdvertDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return {
-                jobAdvert: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
-            };
+            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdvertBySlug' };
         }
     },
 };

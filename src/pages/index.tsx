@@ -6,23 +6,17 @@ import React from 'react';
 import EntryBox from '../components/entry-box';
 import Hsp from '../components/hsp';
 import SEO from '../components/seo';
-import { HappeningAPI, Happening, HappeningType, Post, PostAPI } from '../lib/api';
+import { HappeningAPI, Happening, HappeningType, Post, PostAPI, isErrorMessage } from '../lib/api';
 import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,
-    bedpresError,
     posts,
-    postsError,
     events,
-    eventsError,
 }: {
     bedpreses: Array<Happening>;
-    bedpresError: string;
     posts: Array<Post>;
-    postsError: string;
     events: Array<Happening>;
-    eventsError: string;
 }): JSX.Element => {
     return (
         <>
@@ -43,7 +37,6 @@ const IndexPage = ({
                             ]}
                             entries={bedpreses}
                             entryLimit={3}
-                            error={bedpresError}
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
@@ -54,7 +47,6 @@ const IndexPage = ({
                             title="Arrangementer"
                             entries={events}
                             entryLimit={4}
-                            error={eventsError}
                             altText="Ingen kommende arrangementer :("
                             linkTo="/event"
                             type="event"
@@ -65,7 +57,6 @@ const IndexPage = ({
                     titles={['Innlegg']}
                     entries={posts}
                     entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
-                    error={postsError}
                     altText="Ingen innlegg :("
                     linkTo="/posts"
                     type="post"
@@ -80,28 +71,23 @@ export const getStaticProps: GetStaticProps = async () => {
     const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
     const postsResponse = await PostAPI.getPosts(0);
 
-    const rss = getRssXML(postsResponse.posts, [
-        ...(eventsResponse.happenings ?? []),
-        ...(bedpresesResponse.happenings ?? []),
-    ]);
+    if (isErrorMessage(bedpresesResponse)) throw new Error(bedpresesResponse.message);
+    if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
+    if (isErrorMessage(postsResponse)) throw new Error(postsResponse.message);
+
+    const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
 
     fs.writeFileSync('./public/rss.xml', rss);
 
     return {
         props: {
-            bedpreses:
-                bedpresesResponse.happenings
-                    ?.filter((bedpres: Happening) => {
-                        return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
-                    })
-                    .slice(0, 6) ?? null,
-            bedpresError: bedpresesResponse.error,
-            posts: postsResponse.posts?.slice(0, 6) ?? null,
-            postsError: postsResponse.error,
-            events:
-                eventsResponse.happenings?.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8) ??
-                null,
-            eventsError: eventsResponse.error,
+            bedpreses: bedpresesResponse
+                .filter((bedpres: Happening) => {
+                    return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
+                })
+                .slice(0, 6),
+            posts: postsResponse.slice(0, 6),
+            events: eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8),
         },
     };
 };

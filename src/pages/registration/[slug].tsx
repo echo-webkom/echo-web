@@ -16,7 +16,7 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import ErrorBox from '../../components/error-box';
 import ButtonLink from '../../components/button-link';
-import { RegistrationAPI, Registration, registrationRoute } from '../../lib/api';
+import { isErrorMessage, RegistrationAPI, Registration, registrationRoute } from '../../lib/api';
 import Section from '../../components/section';
 
 interface Props {
@@ -106,17 +106,17 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
-    const { registrations, error } = await RegistrationAPI.getRegistrations(slug, backendUrl);
+    const registrations = await RegistrationAPI.getRegistrations(slug, backendUrl);
 
-    if (error === '404') {
+    if (isErrorMessage(registrations) && registrations.message === '404') {
         return {
             notFound: true,
         };
     }
 
     const props: Props = {
-        registrations,
-        error,
+        registrations: isErrorMessage(registrations) ? null : registrations,
+        error: isErrorMessage(registrations) ? registrations.message : null,
         link: slug,
         backendUrl,
     };

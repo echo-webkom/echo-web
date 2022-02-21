@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
 import { happeningDecoder } from './decoders';
-import { Happening, HappeningType } from './types';
+import { ErrorMessage, Happening, HappeningType } from './types';
 import handleError from './errors';
 import { SanityAPI } from '.';
 
@@ -13,10 +13,7 @@ const HappeningAPI = {
      * Get the n last happeninges.
      * @param n how many happeninges to retrieve
      */
-    getHappeningsByType: async (
-        n: number,
-        type: HappeningType,
-    ): Promise<{ happenings: Array<Happening> | null; error: string | null }> => {
+    getHappeningsByType: async (n: number, type: HappeningType): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
@@ -49,16 +46,10 @@ const HappeningAPI = {
 
             const result = await SanityAPI.fetch(query);
 
-            return {
-                happenings: array(happeningDecoder)(result),
-                error: null,
-            };
+            return array(happeningDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return {
-                happenings: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
-            };
+            return { message: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500) };
         }
     },
 
@@ -66,7 +57,7 @@ const HappeningAPI = {
      * Get a happening by its slug.
      * @param slug the slug of the desired happening.
      */
-    getHappeningBySlug: async (slug: string): Promise<{ happening: Happening | null; error: string | null }> => {
+    getHappeningBySlug: async (slug: string): Promise<Happening | ErrorMessage> => {
         try {
             const query = `
                 *[_type == "happening" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{
@@ -100,35 +91,21 @@ const HappeningAPI = {
 
             if (result.length === 0) {
                 return {
-                    happening: null,
-                    error: '404',
+                    message: '404',
                 };
             }
 
-            return {
-                // Sanity returns a list with a single element,
-                // therefore we need [0] to get the element out of the list.
-                happening: array(happeningDecoder)(result)[0],
-                error: null,
-            };
+            // Sanity returns a list with a single element,
+            // therefore we need [0] to get the element out of the list.
+            return array(happeningDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
-                if (!error.response) {
-                    return {
-                        happening: null,
-                        error: '404',
-                    };
-                }
-                return {
-                    happening: null,
-                    error: handleError(error.response.status),
-                };
+                return { message: !error.response ? '404' : error.message };
             }
 
             return {
-                happening: null,
-                error: handleError(500),
+                message: 'Fail @ getHappeningsBySlug',
             };
         }
     },

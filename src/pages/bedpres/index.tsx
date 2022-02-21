@@ -2,40 +2,31 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import EntryOverview from '../../components/entry-overview';
 import SEO from '../../components/seo';
-import { Happening, HappeningAPI, HappeningType } from '../../lib/api';
+import { isErrorMessage, Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
 interface Props {
     bedpreses: Array<Happening>;
-    error: string | null;
 }
 
-const BedpresCollectionPage = ({ bedpreses, error }: Props): JSX.Element => {
+const BedpresCollectionPage = ({ bedpreses }: Props): JSX.Element => {
     return (
         <>
             <SEO title="Bedriftspresentasjoner" />
-            <EntryOverview entries={bedpreses} error={error} type="bedpres" />
+            <EntryOverview entries={bedpreses} type="bedpres" />
         </>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { happenings, error } = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
+    const happenings = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
 
-    if (happenings) {
-        const props: Props = {
-            bedpreses: happenings,
-            error,
-        };
+    if (isErrorMessage(happenings)) throw new Error(happenings.message);
 
-        return { props };
-    }
-
-    return {
-        props: {
-            bedpreses: [],
-            error,
-        },
+    const props: Props = {
+        bedpreses: happenings,
     };
+
+    return { props };
 };
 
 export default BedpresCollectionPage;

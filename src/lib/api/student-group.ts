@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
-import handleError from './errors';
 import { slugDecoder, studentGroupDecoder } from './decoders';
-import { StudentGroup } from './types';
+import { ErrorMessage, StudentGroup } from './types';
 import { SanityAPI } from '.';
 
 const StudentGroupAPI = {
@@ -20,7 +19,7 @@ const StudentGroupAPI = {
 
     getStudentGroupsByType: async (
         type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
-    ): Promise<{ studentGroups: Array<StudentGroup> | null; error: string | null }> => {
+    ): Promise<Array<StudentGroup> | ErrorMessage> => {
         try {
             const query = `
                 *[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))] | order(name) {
@@ -38,22 +37,16 @@ const StudentGroupAPI = {
             `;
             const result = await SanityAPI.fetch(query);
 
-            return {
-                studentGroups: array(studentGroupDecoder)(result),
-                error: null,
-            };
+            return array(studentGroupDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                studentGroups: [],
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
+                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
             };
         }
     },
 
-    getStudentGroupBySlug: async (
-        slug: string,
-    ): Promise<{ studentGroup: StudentGroup | null; error: string | null }> => {
+    getStudentGroupBySlug: async (slug: string): Promise<StudentGroup | ErrorMessage> => {
         try {
             const query = `
                 *[_type == "studentGroup" && slug.current == "${slug}" && !(_id in path('drafts.**'))] | order(name) {
@@ -72,27 +65,21 @@ const StudentGroupAPI = {
 
             if (result.length === 0) {
                 return {
-                    studentGroup: null,
-                    error: '404',
+                    message: '404',
                 };
             }
 
-            return {
-                studentGroup: array(studentGroupDecoder)(result)[0],
-                error: null,
-            };
+            return array(studentGroupDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error) && !error.response) {
                 return {
-                    studentGroup: null,
-                    error: '404',
+                    message: '404',
                 };
             }
 
             return {
-                studentGroup: null,
-                error: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500),
+                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupBySlug',
             };
         }
     },

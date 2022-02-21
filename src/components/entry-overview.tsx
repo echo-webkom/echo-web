@@ -6,11 +6,10 @@ import EntryBox from './entry-box';
 
 interface Props {
     entries: Array<Happening>;
-    error: string | null;
     type: 'event' | 'bedpres';
 }
 
-const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
+const EntryOverview = ({ entries, type }: Props): JSX.Element => {
     const alt = type === 'event' ? 'arrangementer' : 'bedriftspresentasjoner';
 
     const upcoming = entries.filter((entry: Happening) => {
@@ -25,22 +24,10 @@ const EntryOverview = ({ entries, error, type }: Props): JSX.Element => {
     return (
         <SimpleGrid columns={[1, null, null, 2]} spacing="5">
             <GridItem rowStart={[2, null, null, 1]}>
-                <EntryBox
-                    title="Tidligere"
-                    entries={past}
-                    error={error}
-                    altText={`Ingen tidligere ${alt}.`}
-                    type={type}
-                />
+                <EntryBox title="Tidligere" entries={past} altText={`Ingen tidligere ${alt}.`} type={type} />
             </GridItem>
             <GridItem rowStart={1}>
-                <EntryBox
-                    title="Kommende"
-                    entries={upcoming}
-                    error={error}
-                    altText={`Ingen kommende ${alt}.`}
-                    type={type}
-                />
+                <EntryBox title="Kommende" entries={upcoming} altText={`Ingen kommende ${alt}.`} type={type} />
             </GridItem>
         </SimpleGrid>
     );

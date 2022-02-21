@@ -7,19 +7,17 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
-import ErrorBox from '../../components/error-box';
 import IconText from '../../components/icon-text';
 import Section from '../../components/section';
 import SEO from '../../components/seo';
-import { Post, PostAPI } from '../../lib/api';
+import { isErrorMessage, Post, PostAPI } from '../../lib/api';
 import MapMarkdownChakra from '../../markdown';
 
 interface Props {
     post: Post;
-    error: string | null;
 }
 
-const PostPage = ({ post, error }: Props): JSX.Element => {
+const PostPage = ({ post }: Props): JSX.Element => {
     const router = useRouter();
 
     return (
@@ -29,8 +27,7 @@ const PostPage = ({ post, error }: Props): JSX.Element => {
                     <Spinner />
                 </Center>
             )}
-            {error && !router.isFallback && <ErrorBox error={error} />}
-            {!router.isFallback && !error && (
+            {!router.isFallback && (
                 <>
                     <SEO title={post.title} />
                     <Box>
@@ -79,17 +76,19 @@ interface Params extends ParsedUrlQuery {
 
 const getStaticProps: GetStaticProps = async (context) => {
     const { slug } = context.params as Params;
-    const { post, error } = await PostAPI.getPostBySlug(slug);
+    const post = await PostAPI.getPostBySlug(slug);
 
-    if (!post || error === '404') {
-        return {
-            notFound: true,
-        };
+    if (isErrorMessage(post)) {
+        if (post.message === '404') {
+            return {
+                notFound: true,
+            };
+        }
+        throw new Error(post.message);
     }
 
     const props: Props = {
         post,
-        error,
     };
 
     return {

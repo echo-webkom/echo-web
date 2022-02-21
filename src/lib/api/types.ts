@@ -64,7 +64,16 @@ enum Degree {
     MISC = 'MISC',
 }
 
+interface ErrorMessage {
+    message: string;
+}
+
+const isErrorMessage = (object: any): object is ErrorMessage => {
+    return 'message' in object;
+};
+
 export type {
+    ErrorMessage,
     Slug,
     SpotRange,
     Question,
@@ -81,4 +90,4 @@ export type {
     Happening,
 };
 
-export { HappeningType, Degree };
+export { HappeningType, Degree, isErrorMessage };

@@ -2,40 +2,31 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import EntryOverview from '../../components/entry-overview';
 import SEO from '../../components/seo';
-import { Happening, HappeningAPI, HappeningType } from '../../lib/api';
+import { isErrorMessage, Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
 interface Props {
     events: Array<Happening>;
-    error: string | null;
 }
 
-const EventsCollectionPage = ({ events, error }: Props): JSX.Element => {
+const EventsCollectionPage = ({ events }: Props): JSX.Element => {
     return (
         <>
             <SEO title="Arrangementer" />
-            <EntryOverview entries={events} error={error} type="event" />
+            <EntryOverview entries={events} type="event" />
         </>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { happenings, error } = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
+    const happenings = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
 
-    if (happenings) {
-        const props: Props = {
-            events: happenings,
-            error,
-        };
+    if (isErrorMessage(happenings)) throw new Error(happenings.message);
 
-        return { props };
-    }
-
-    return {
-        props: {
-            events: [],
-            error,
-        },
+    const props: Props = {
+        events: happenings,
     };
+
+    return { props };
 };
 
 export default EventsCollectionPage;

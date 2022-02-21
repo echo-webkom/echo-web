@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
-import handleError from './errors';
 import { responseDecoder, registrationDecoder, spotRangeCountDecoder } from './decoders';
-import { Degree, Answer, Response, Registration, SpotRangeCount } from './types';
+import { ErrorMessage, Degree, Answer, Response, Registration, SpotRangeCount } from './types';
 import { HappeningType } from '.';
 
 const genericError: { title: string; desc: string; date: string | undefined } = {
@@ -80,35 +79,24 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrations: async (
-        link: string,
-        backendUrl: string,
-    ): Promise<{ registrations: Array<Registration> | null; error: string | null }> => {
+    getRegistrations: async (link: string, backendUrl: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
             const { data } = await axios.get(`${backendUrl}/${registrationRoute}/${link}?json=y`);
 
-            return {
-                registrations: array(registrationDecoder)(data),
-                error: null,
-            };
+            return array(registrationDecoder)(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
                 if (!error.response) {
-                    return {
-                        registrations: null,
-                        error: '404',
-                    };
+                    return { message: '404' };
                 }
                 return {
-                    registrations: null,
-                    error: error.response.status === 404 ? '404' : handleError(error.response.status),
+                    message: error.response.status === 404 ? '404' : 'Fail @ getRegistrations',
                 };
             }
 
             return {
-                registrations: null,
-                error: handleError(500),
+                message: 'Fail @ getRegistrations',
             };
         }
     },
@@ -118,7 +106,7 @@ const RegistrationAPI = {
         slug: string,
         type: HappeningType,
         backendUrl: string,
-    ): Promise<{ spotRangeCounts: Array<SpotRangeCount> | null; spotRangeCountsErr: string | null }> => {
+    ): Promise<Array<SpotRangeCount> | ErrorMessage> => {
         try {
             const { data } = await axios.get(`${backendUrl}/${registrationRoute}?slug=${slug}&type=${type}`, {
                 auth: {
@@ -127,16 +115,10 @@ const RegistrationAPI = {
                 },
             });
 
-            return {
-                spotRangeCounts: array(spotRangeCountDecoder)(data),
-                spotRangeCountsErr: null,
-            };
+            return array(spotRangeCountDecoder)(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return {
-                spotRangeCounts: null,
-                spotRangeCountsErr: JSON.stringify(error),
-            };
+            return { message: JSON.stringify(error) };
         }
     },
 };

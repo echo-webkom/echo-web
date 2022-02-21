@@ -1,7 +1,7 @@
 import { ParsedUrlQuery } from 'querystring';
 import { GetServerSideProps } from 'next';
 import React from 'react';
-import { Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
+import { isErrorMessage, Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
 import HappeningPage from '../../components/happening-page';
 
 interface Props {
@@ -30,33 +30,28 @@ interface Params extends ParsedUrlQuery {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
-    const { happening, error } = await HappeningAPI.getHappeningBySlug(slug);
+    const happening = await HappeningAPI.getHappeningBySlug(slug);
     const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const { spotRangeCounts } = await RegistrationAPI.getSpotRangeCounts(
-        adminKey,
-        slug,
-        HappeningType.EVENT,
-        backendUrl,
-    );
+    const spotRangeCounts = await RegistrationAPI.getSpotRangeCounts(adminKey, slug, HappeningType.EVENT, backendUrl);
 
     const date = Date.now();
 
-    if (error === '404') {
+    if (isErrorMessage(happening) && happening.message === '404') {
         return {
             notFound: true,
         };
     }
 
     const props: Props = {
-        happening,
-        spotRangeCounts,
+        happening: isErrorMessage(happening) ? null : happening,
+        spotRangeCounts: isErrorMessage(spotRangeCounts) ? null : spotRangeCounts,
         date,
         backendUrl,
-        error,
+        error: !isErrorMessage(happening) && !isErrorMessage(spotRangeCounts) ? null : 'Det har skjedd en feil.',
     };
 
     return {
