@@ -25,14 +25,6 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
     const [degreeYear, setDegreeYear] = useState<string>('all');
     const [sortBy, setSortBy] = useState<SortType>('deadline');
 
-    const allLocations: Array<string> = [];
-
-    jobAdverts?.map((job: JobAdvert) => {
-        job.locations.map((location: string) => {
-            allLocations.push(location);
-        });
-    });
-
     return (
         <>
             {error && <ErrorBox error={error} />}
@@ -50,16 +42,16 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                         <Text>Sted</Text>
                         <Select onChange={(evt) => setLocation(evt.target.value)} value={location}>
                             <option value="all">Alle</option>
-                            {allLocations
-                                .filter((value, index, self) => self.indexOf(value) === index)
-                                .map((location: string, index: number) => (
+                            {[...new Set(jobAdverts.flatMap((job: JobAdvert) => job.locations))].map(
+                                (location: string, index: number) => (
                                     <option
                                         key={`${location.toLocaleLowerCase()}-${index}`}
                                         value={location.toLocaleLowerCase()}
                                     >
                                         {location}
                                     </option>
-                                ))}
+                                ),
+                            )}
                         </Select>
                         <Text>Bedrift</Text>
                         <Select onChange={(evt) => setCompany(evt.target.value)} value={company}>
