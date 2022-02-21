@@ -98,12 +98,6 @@ export default {
         {
             name: 'registrationDate',
             title: 'Dato for påmelding',
-            validation: (Rule) =>
-                Rule.custom((registrationDate, context) =>
-                    context.document.happeningType === 'BEDPRES' && typeof registrationDate === 'undefined'
-                        ? 'Må ha påmeldingsdato om det er en bedpres.'
-                        : true,
-                ),
             type: 'datetime',
         },
         {
