@@ -1,8 +1,11 @@
 version: '3.9'
 services:
   backend:
-    build: .
-    image: echo-web-backend:latest
+    build:
+      context: .
+      cache_from:
+        - '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-dev}'
+    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-dev}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -14,12 +17,12 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
       # Value of DEV doesn't matter, only that it's defined.
-      DEV: "yes"
+      DEV: 'yes'
       # Values from .env file
-      ADMIN_KEY: ${ADMIN_KEY}
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SEND_EMAIL_REGISTRATION: ${SEND_EMAIL_REGISTRATION}
-      SEND_EMAIL_HAPPENING: ${SEND_EMAIL_HAPPENING}
+      ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      SENDGRID_API_KEY:
+      SEND_EMAIL_REGISTRATION:
+      SEND_EMAIL_HAPPENING:
 
   database:
     # Postgres 13.4 is the version Heroku uses.

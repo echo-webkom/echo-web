@@ -2,7 +2,6 @@
 
 while getopts b:t: flag; do
     case "${flag}" in
-    b) branch=${OPTARG} ;;
     t) type=${OPTARG} ;;
     *) echo "Invalid flag." ;;
     esac
@@ -13,15 +12,6 @@ if [ -z ${type+x} ]; then
     echo "No test type specified (use -t). Options are 'kotest' and 'cypress'."
     exit 1
 fi
-
-if [ -z ${branch+x} ]; then
-    if [ "$type" = "cypress" ]; then
-        echo "No Git branch specified (use -b)."
-        exit 1
-    fi
-fi
-
-export BRANCH=$branch
 
 docker-compose down --remove-orphans
 

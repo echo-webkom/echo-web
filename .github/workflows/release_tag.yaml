@@ -51,7 +51,8 @@ jobs:
           gh release create "v$MAJOR.$MINOR.$PATCH" \
             -t "$MAJOR.$MINOR.$PATCH" \
             -n "<h1>Release for version $MAJOR.$MINOR.$PATCH</h1>" \
-            --target master
+            --target master \
+            --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
           LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
