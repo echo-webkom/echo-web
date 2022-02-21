@@ -136,9 +136,9 @@ const jobAdvertDecoder = record({
     title: string,
     logoUrl: string,
     deadline: string,
-    location: string,
+    locations: array(string),
     advertLink: string,
-    jobType: union(literal('fulltime'), literal('parttime'), literal('internship')),
+    jobType: union(literal('fulltime'), literal('parttime'), literal('internship'), literal('summerjob')),
     degreeYears: array(number),
     _createdAt: string,
 });
