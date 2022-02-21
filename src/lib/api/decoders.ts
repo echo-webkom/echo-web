@@ -9,23 +9,23 @@ import {
     record,
     string,
     union,
+    optional,
+    boolean,
 } from 'typescript-json-decoder';
+import { Degree, HappeningType } from './types';
 
-type SpotRange = decodeType<typeof spotRangeDecoder>;
 const spotRangeDecoder = record({
     spots: number,
     minDegreeYear: number,
     maxDegreeYear: number,
 });
 
-type Question = decodeType<typeof questionDecoder>;
 const questionDecoder = record({
     questionText: string,
     inputType: union(literal('radio'), literal('textbox')),
     alternatives: union(nil, array(string)),
 });
 
-type Slug = decodeType<typeof slugDecoder>;
 const slugDecoder = record({
     slug: string,
 });
@@ -33,5 +33,165 @@ const slugDecoder = record({
 const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
     union(array(decoder), nil)(value) ?? [];
 
-export { emptyArrayOnNilDecoder, slugDecoder, spotRangeDecoder, questionDecoder };
-export type { Slug, SpotRange, Question };
+const profileDecoder = record({
+    name: string,
+    imageUrl: union(string, nil),
+});
+
+const memberDecoder = record({
+    role: string,
+    profile: profileDecoder,
+});
+
+const studentGroupDecoder = record({
+    name: string,
+    slug: string,
+    info: string,
+    members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
+});
+
+const degreeDecoder = (value: Pojo): Degree => {
+    const str: string = string(value);
+
+    switch (str) {
+        case 'DTEK':
+            return Degree.DTEK;
+        case 'DSIK':
+            return Degree.DSIK;
+        case 'DVIT':
+            return Degree.DVIT;
+        case 'BINF':
+            return Degree.BINF;
+        case 'IMO':
+            return Degree.IMO;
+        case 'IKT':
+            return Degree.IKT;
+        case 'KOGNI':
+            return Degree.KOGNI;
+        case 'INF':
+            return Degree.INF;
+        case 'PROG':
+            return Degree.PROG;
+        case 'ARMINF':
+            return Degree.ARMNINF;
+        case 'POST':
+            return Degree.POST;
+        default:
+            return Degree.MISC;
+    }
+};
+
+const answerDecoder = record({
+    question: string,
+    answer: string,
+});
+
+const registrationDecoder = record({
+    email: string,
+    firstName: string,
+    lastName: string,
+    degree: degreeDecoder,
+    degreeYear: number,
+    slug: string,
+    terms: boolean,
+    submitDate: string,
+    waitList: boolean,
+    answers: array(answerDecoder),
+});
+
+const responseDecoder = record({
+    code: string,
+    title: string,
+    desc: string,
+    date: optional(string),
+});
+
+const spotRangeCountDecoder = record({
+    spots: number,
+    minDegreeYear: number,
+    maxDegreeYear: number,
+    regCount: number,
+    waitListCount: number,
+});
+
+const postDecoder = record({
+    title: string,
+    body: string,
+    slug: string,
+    author: (value) => record({ name: string })(value).name,
+    _createdAt: string,
+});
+
+const minuteDecoder = record({
+    date: string,
+    allmote: boolean,
+    title: string,
+    document: (value) => record({ asset: record({ url: string }) })(value).asset.url,
+});
+
+const jobAdvertDecoder = record({
+    slug: string,
+    body: string,
+    companyName: string,
+    title: string,
+    logoUrl: string,
+    deadline: string,
+    location: string,
+    advertLink: string,
+    jobType: union(literal('fulltime'), literal('parttime'), literal('internship')),
+    degreeYears: array(number),
+    _createdAt: string,
+});
+
+const happeningTypeDecoder = (value: Pojo): HappeningType => {
+    const str: string = string(value);
+
+    switch (str) {
+        case 'BEDPRES':
+            return HappeningType.BEDPRES;
+        default:
+            return HappeningType.EVENT;
+    }
+};
+
+const happeningDecoder = record({
+    _createdAt: string,
+    author: string,
+    title: string,
+    slug: string,
+    date: string,
+    body: string,
+    location: string,
+    locationLink: union(string, nil),
+    companyLink: union(string, nil),
+    registrationDate: union(string, nil),
+    logoUrl: union(string, nil),
+    contactEmail: union(string, nil),
+    additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),
+    spotRanges: (value) => emptyArrayOnNilDecoder(spotRangeDecoder, value),
+    happeningType: (value) => {
+        if (value === 'BEDPRES' || value === 'bedpres') return HappeningType.BEDPRES;
+        else if (value === 'EVENT' || value === 'event') return HappeningType.EVENT;
+        else throw new Error(`Could not decode value '${JSON.stringify(value)}' to a HappeningType`);
+    },
+});
+
+export {
+    emptyArrayOnNilDecoder,
+    slugDecoder,
+    spotRangeDecoder,
+    questionDecoder,
+    profileDecoder,
+    memberDecoder,
+    studentGroupDecoder,
+    degreeDecoder,
+    answerDecoder,
+    registrationDecoder,
+    responseDecoder,
+    spotRangeCountDecoder,
+    postDecoder,
+    minuteDecoder,
+    jobAdvertDecoder,
+    happeningDecoder,
+    happeningTypeDecoder,
+};

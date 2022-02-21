@@ -1,17 +1,12 @@
 import axios from 'axios';
-import { array, boolean, decodeType, record, string } from 'typescript-json-decoder';
+import { array } from 'typescript-json-decoder';
 import handleError from './errors';
+import { minuteDecoder } from './decoders';
+import { Minute } from './types';
 import { SanityAPI } from '.';
 
 // Automatically creates the Minute type with the
 // fields we specify in our minuteDecoder.
-type Minute = decodeType<typeof minuteDecoder>;
-const minuteDecoder = record({
-    date: string,
-    allmote: boolean,
-    title: string,
-    document: (value) => record({ asset: record({ url: string }) })(value).asset.url,
-});
 
 const MinuteAPI = {
     /**
@@ -48,5 +43,5 @@ const MinuteAPI = {
     },
 };
 
+/* eslint-disable import/prefer-default-export */
 export { MinuteAPI };
-export type { Minute };

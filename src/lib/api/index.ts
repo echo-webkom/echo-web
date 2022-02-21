@@ -1,16 +1,23 @@
 export { default as SanityAPI } from './api';
-export { HappeningAPI, HappeningType, type Happening } from './happening';
-export { type JobAdvert, JobAdvertAPI } from './job-advert';
-export { MinuteAPI, type Minute } from './minute';
-export { PostAPI, type Post } from './post';
+export { HappeningAPI } from './happening';
+export { JobAdvertAPI } from './job-advert';
+export { MinuteAPI } from './minute';
+export { PostAPI } from './post';
 export {
+    type Post,
+    type Minute,
+    type JobAdvert,
+    type Happening,
     type Answer,
-    Degree,
-    type FormValues,
     type Registration,
-    RegistrationAPI,
     type SpotRangeCount,
-    registrationRoute,
-} from './registration';
-export { StudentGroupAPI, type Member, type Profile, type StudentGroup } from './student-group';
-export { type SpotRange, type Question } from './decoders';
+    type Member,
+    type Profile,
+    type StudentGroup,
+    type SpotRange,
+    type Question,
+    HappeningType,
+    Degree,
+} from './types';
+export { RegistrationAPI, registrationRoute, type FormValues } from './registration';
+export { StudentGroupAPI } from './student-group';

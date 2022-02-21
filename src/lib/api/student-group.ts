@@ -1,28 +1,9 @@
 import axios from 'axios';
-import { array, decodeType, nil, record, string, union } from 'typescript-json-decoder';
+import { array } from 'typescript-json-decoder';
 import handleError from './errors';
-import { emptyArrayOnNilDecoder, slugDecoder } from './decoders';
+import { slugDecoder, studentGroupDecoder } from './decoders';
+import { StudentGroup } from './types';
 import { SanityAPI } from '.';
-
-type Profile = decodeType<typeof profileDecoder>;
-const profileDecoder = record({
-    name: string,
-    imageUrl: union(string, nil),
-});
-
-type Member = decodeType<typeof memberDecoder>;
-const memberDecoder = record({
-    role: string,
-    profile: profileDecoder,
-});
-
-type StudentGroup = decodeType<typeof studentGroupDecoder>;
-const studentGroupDecoder = record({
-    name: string,
-    slug: string,
-    info: string,
-    members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
-});
 
 const StudentGroupAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -117,5 +98,5 @@ const StudentGroupAPI = {
     },
 };
 
+/* eslint-disable import/prefer-default-export */
 export { StudentGroupAPI };
-export type { Profile, Member, StudentGroup };

@@ -1,19 +1,12 @@
 import axios from 'axios';
-import { array, decodeType, record, string } from 'typescript-json-decoder';
-import { slugDecoder } from './decoders';
+import { array } from 'typescript-json-decoder';
+import { slugDecoder, postDecoder } from './decoders';
+import { Post } from './types';
 import handleError from './errors';
 import { SanityAPI } from '.';
 
 // Automatically creates the Post type with the
 // fields we specify in our postDecoder.
-type Post = decodeType<typeof postDecoder>;
-const postDecoder = record({
-    title: string,
-    body: string,
-    slug: string,
-    author: (value) => record({ name: string })(value).name,
-    _createdAt: string,
-});
 
 const PostAPI = {
     /**
@@ -109,5 +102,5 @@ const PostAPI = {
     },
 };
 
+/* eslint-disable import/prefer-default-export */
 export { PostAPI };
-export type { Post };

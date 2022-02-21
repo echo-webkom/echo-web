@@ -1,38 +1,12 @@
 import axios from 'axios';
-import { array, decodeType, record, string, union, nil } from 'typescript-json-decoder';
-import { emptyArrayOnNilDecoder, spotRangeDecoder, questionDecoder } from './decoders';
+import { array } from 'typescript-json-decoder';
+import { happeningDecoder } from './decoders';
+import { Happening, HappeningType } from './types';
 import handleError from './errors';
 import { SanityAPI } from '.';
 
 // Automatically creates the Happening type with the
 // fields we specify in our happeningDecoder.
-type Happening = decodeType<typeof happeningDecoder>;
-const happeningDecoder = record({
-    _createdAt: string,
-    author: string,
-    title: string,
-    slug: string,
-    date: string,
-    body: string,
-    location: string,
-    locationLink: union(string, nil),
-    companyLink: union(string, nil),
-    registrationDate: union(string, nil),
-    logoUrl: union(string, nil),
-    contactEmail: union(string, nil),
-    additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),
-    spotRanges: (value) => emptyArrayOnNilDecoder(spotRangeDecoder, value),
-    happeningType: (value) => {
-        if (value === 'BEDPRES' || value === 'bedpres') return HappeningType.BEDPRES;
-        else if (value === 'EVENT' || value === 'event') return HappeningType.EVENT;
-        else throw new Error(`Could not decode value '${JSON.stringify(value)}' to a HappeningType`);
-    },
-});
-
-enum HappeningType {
-    BEDPRES = 'BEDPRES',
-    EVENT = 'EVENT',
-}
 
 const HappeningAPI = {
     /**
@@ -160,5 +134,5 @@ const HappeningAPI = {
     },
 };
 
-export { HappeningType, HappeningAPI };
-export type { Happening };
+/* eslint-disable import/prefer-default-export */
+export { HappeningAPI };

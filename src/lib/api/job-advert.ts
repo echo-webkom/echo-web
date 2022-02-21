@@ -1,23 +1,9 @@
 import axios from 'axios';
-import { array, decodeType, literal, number, record, string, union } from 'typescript-json-decoder';
+import { array } from 'typescript-json-decoder';
 import SanityAPI from './api';
 import handleError from './errors';
-import { slugDecoder, Slug } from './decoders';
-
-type JobAdvert = decodeType<typeof jobAdvertDecoder>;
-const jobAdvertDecoder = record({
-    slug: string,
-    body: string,
-    companyName: string,
-    title: string,
-    logoUrl: string,
-    deadline: string,
-    locations: array(string),
-    advertLink: string,
-    jobType: union(literal('fulltime'), literal('parttime'), literal('internship'), literal('summerjob')),
-    degreeYears: array(number),
-    _createdAt: string,
-});
+import { slugDecoder, jobAdvertDecoder } from './decoders';
+import { Slug, JobAdvert } from './types';
 
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -94,5 +80,5 @@ const JobAdvertAPI = {
     },
 };
 
+/* eslint-disable import/prefer-default-export */
 export { JobAdvertAPI };
-export type { JobAdvert };
