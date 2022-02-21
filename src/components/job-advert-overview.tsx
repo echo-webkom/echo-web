@@ -71,11 +71,13 @@ const JobAdvertOverview = ({ jobAdverts, error }: Props): JSX.Element => {
                         <Text>Årstrinn</Text>
                         <Select onChange={(evt) => setDegreeYear(evt.target.value)} value={degreeYear}>
                             <option value="all">Alle</option>
-                            <option value="1">1. trinn</option>
-                            <option value="2">2. trinn</option>
-                            <option value="3">3. trinn</option>
-                            <option value="4">4. trinn</option>
-                            <option value="5">5. trinn</option>
+                            {[...new Set(jobAdverts.flatMap((job: JobAdvert) => job.degreeYears))]
+                                .sort()
+                                .map((year: number, index: number) => (
+                                    <option key={`${year}-${index}`} value={year}>
+                                        {year}. trinn
+                                    </option>
+                                ))}
                         </Select>
                         <Text>Sorter etter</Text>
                         <Select onChange={(evt) => setSortBy(evt.target.value as SortType)} value={sortBy}>
