@@ -127,8 +127,8 @@
     },
     "dependencies": {
         "@chakra-ui/react": "1.8.3",
-        "@emotion/react": "11.7.1",
-        "@emotion/styled": "11.6.0",
+        "@emotion/react": "11.8.1",
+        "@emotion/styled": "11.8.1",
         "@sanity/client": "3.1.0",
         "axios": "0.26.0",
         "calendar-link": "2.1.1",
