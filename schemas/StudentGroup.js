@@ -54,6 +54,11 @@ export default {
             type: 'markdown',
         },
         {
+            name: 'picture',
+            title: 'Bilde',
+            type: 'image',
+        },
+        {
             name: 'members',
             title: 'Medlemmer',
             type: 'array',
