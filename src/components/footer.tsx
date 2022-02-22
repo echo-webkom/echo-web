@@ -6,6 +6,7 @@ import { FaFacebook, FaGithub, FaInstagram, FaCommentDots } from 'react-icons/fa
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
+const vercelLogo = '/powered-by-vercel.svg';
 
 const Footer = (): JSX.Element => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
@@ -68,7 +69,7 @@ const Footer = (): JSX.Element => {
                     <Image alt="echo" width={145.15} height={65} src={echoLogoWhite} />
                 </SimpleGrid>
 
-                <SimpleGrid columns={1} alignItems="center">
+                <SimpleGrid columns={[1, 1, 1]} alignItems="center">
                     <Text fontSize="sm" color="white" m={0} textAlign="center">
                         POWERED BY
                     </Text>
@@ -79,7 +80,15 @@ const Footer = (): JSX.Element => {
                             </LinkOverlay>
                         </NextLink>
                     </LinkBox>
+                    <LinkBox m={0}>
+                        <NextLink href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss" passHref>
+                            <LinkOverlay isExternal>
+                                <Image alt="Powered by Vercel" width={175} height={52.5} src={vercelLogo} />
+                            </LinkOverlay>
+                        </NextLink>
+                    </LinkBox>
                 </SimpleGrid>
+
                 <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
                     <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="mailto:echo@uib.no" passHref>

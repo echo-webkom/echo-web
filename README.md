@@ -3,6 +3,10 @@
 [![Jest](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/jest_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/jest_test.yaml)
 [![Cypress](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-frontend/actions/workflows/cypress_test.yaml)
 
+<a href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss" target="_blank" rel="noopener">
+   <img src="public/powered-by-vercel.svg" width="175" alt="Powered by Vercel" />
+</a>
+
 Frontend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
 
 Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
