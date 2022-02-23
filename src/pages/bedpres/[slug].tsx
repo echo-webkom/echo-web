@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         spotRangeCounts: isErrorMessage(spotRangeCounts) ? null : spotRangeCounts,
         date,
         backendUrl,
-        error: !isErrorMessage(happening) && !isErrorMessage(spotRangeCounts) ? null : 'Det har skjedd en feil.',
+        error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
     };
 
     return {
