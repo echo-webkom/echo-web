@@ -13,6 +13,9 @@ RUN yarn --frozen-lockfile
 # Build with Next (no default command).
 FROM cypress/base:latest as build
 
+ARG SANITY_TOKEN
+ARG SANITY_DATASET
+
 WORKDIR /opt/build
 COPY --from=deps /opt/build/node_modules ./node_modules/
 COPY --from=deps /root/.cache /root/.cache/
