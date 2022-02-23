@@ -1,24 +1,11 @@
 {
     "bachelorDegrees": ["DTEK", "DSIK", "DVIT", "BINF", "IMO", "IKT"],
     "masterDegrees": ["INF", "PROG"],
-    "validUser": {
-        "email": "test@test128371.com",
-        "firstName": "Test",
-        "lastName": "McTest",
-        "degree": "DTEK",
-        "degreeYear": 3
-    },
     "validKogniUser": {
-        "email": "asd@asd123123.com",
-        "firstName": "Test",
-        "lastName": "McTest",
         "degree": "KOGNI",
         "degreeYear": 3
     },
     "validArmninfUser": {
-        "email": "123azad@aaxsd13.com",
-        "firstName": "Test",
-        "lastName": "McTest",
         "degree": "ARMNINF",
         "degreeYear": 1
     }
