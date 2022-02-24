@@ -46,7 +46,7 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
         >
             <NextLink href={`/jobs/${jobAdvert.slug}`} passHref>
                 <LinkOverlay>
-                    <SimpleGrid columns={2} alignItems="center">
+                    <SimpleGrid columns={2} alignItems="start">
                         <GridItem>
                             <Text mb="1rem" fontWeight="bold" fontSize={['1.2rem', null, null, '1.5rem']}>
                                 {jobAdvert.title}
@@ -75,7 +75,17 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
                             )}`}</Tag>
                         </GridItem>
                         <GridItem>
-                            <Avatar float="right" size="xl" src={jobAdvert.logoUrl} />
+                            <SimpleGrid>
+                                <GridItem>
+                                    <Tag mb="2rem" float="right" fontSize=".85rem">{`Publisert: ${format(
+                                        new Date(jobAdvert._createdAt),
+                                        'dd.MM.yyyy',
+                                    )}`}</Tag>
+                                </GridItem>
+                                <GridItem>
+                                    <Avatar float="right" size="xl" src={jobAdvert.logoUrl} />
+                                </GridItem>
+                            </SimpleGrid>
                         </GridItem>
                     </SimpleGrid>
                 </LinkOverlay>
