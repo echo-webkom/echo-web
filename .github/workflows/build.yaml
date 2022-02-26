@@ -16,6 +16,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+          cache: 'gradle'
 
       - name: Build with Gradle & Shadow
         run: ./gradlew shadowJar

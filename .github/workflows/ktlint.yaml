@@ -16,6 +16,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+          cache: 'gradle'
 
       - name: Run ktlint checks
         run: |
