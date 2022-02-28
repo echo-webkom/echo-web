@@ -32,8 +32,8 @@ jobs:
             -t "$REGISTRY/$GITHUB_REPOSITORY:$TAG" \
             -t "$REGISTRY/$GITHUB_REPOSITORY:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --build-arg SANITY_TOKEN \
-            --build-arg SANITY_DATASET \
+            --build-arg SANITY_TOKEN=$SANITY_TOKEN \
+            --build-arg SANITY_DATASET=$SANITY_DATASET \
             .
           docker push "$REGISTRY/$GITHUB_REPOSITORY" --all-tags
         env:
