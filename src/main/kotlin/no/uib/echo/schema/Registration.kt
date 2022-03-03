@@ -26,8 +26,6 @@ data class RegistrationJson(
     val type: HAPPENING_TYPE
 )
 
-data class ShortRegistrationJson(val slug: String, val email: String, val type: HAPPENING_TYPE)
-
 object Registration : Table() {
     val email: Column<String> = text("email")
     val firstName: Column<String> = text("first_name")
