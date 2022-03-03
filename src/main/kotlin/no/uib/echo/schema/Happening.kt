@@ -203,6 +203,7 @@ suspend fun insertOrUpdateHappening(
                     it[spots] = range.spots
                     it[minDegreeYear] = range.minDegreeYear
                     it[maxDegreeYear] = range.maxDegreeYear
+                    it[happeningSlug] = newHappening.slug
                 }
             }
         }
