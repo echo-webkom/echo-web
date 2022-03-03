@@ -13,7 +13,7 @@ const randomHeaderMessage = (): string => {
             'Bottom text',
             '🤙🤙🤙',
             'Lorem ipsum',
-            '90% stabil!',
+            '98.5507246% stabil! rip pwc :(',
             'Uten sylteagurk!',
             'Spruuutnice',
             'Vim eller forsvinn',
