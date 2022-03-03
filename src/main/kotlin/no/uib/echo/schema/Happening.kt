@@ -39,7 +39,7 @@ data class HappeningJson(
 
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
-data class HappeningResponseJson(val registrationsLink: String, val message: String)
+data class HappeningResponseJson(val registrationsLink: String?, val message: String)
 
 object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
@@ -78,6 +78,13 @@ suspend fun insertOrUpdateHappening(
     sendEmail: Boolean,
     sendGridApiKey: String?
 ): Pair<HttpStatusCode, HappeningResponseJson> {
+    if (newHappening.spotRanges.isEmpty()) {
+        return Pair(
+            HttpStatusCode.BadRequest,
+            HappeningResponseJson(null, "No spot range given for happening with slug ${newHappening.slug}.")
+        )
+    }
+
     val happening = selectHappening(newHappening.slug)
     val registrationsLink =
         (1..REG_LINK_LENGTH).map {
@@ -172,11 +179,26 @@ suspend fun insertOrUpdateHappening(
             it[registrationDate] = DateTime(newHappening.registrationDate)
             it[organizerEmail] = newHappening.organizerEmail.lowercase()
         }
-        newHappening.spotRanges.map { range ->
-            SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug }) {
-                it[spots] = range.spots
-                it[minDegreeYear] = range.minDegreeYear
-                it[maxDegreeYear] = range.maxDegreeYear
+
+        val spotRangeExists = SpotRange.select {
+            SpotRange.happeningSlug eq newHappening.slug
+        }.firstOrNull() != null
+
+        if (spotRangeExists) {
+            newHappening.spotRanges.map { range ->
+                SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug }) {
+                    it[spots] = range.spots
+                    it[minDegreeYear] = range.minDegreeYear
+                    it[maxDegreeYear] = range.maxDegreeYear
+                }
+            }
+        } else {
+            newHappening.spotRanges.map { range ->
+                SpotRange.insert {
+                    it[spots] = range.spots
+                    it[minDegreeYear] = range.minDegreeYear
+                    it[maxDegreeYear] = range.maxDegreeYear
+                }
             }
         }
     }
