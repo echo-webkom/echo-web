@@ -126,6 +126,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                         <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
                             <ModalHeader>Påmelding</ModalHeader>
                             <ModalCloseButton />
