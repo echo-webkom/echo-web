@@ -199,12 +199,12 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                                             <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
                                         );
                                     })}
-                                    <FormTerm id="terms1" register={register}>
+                                    <FormTerm id="terms1">
                                         <Text ml="0.5rem" fontWeight="bold">
                                             Jeg bekrefter at jeg har fylt inn riktig informasjon.
                                         </Text>
                                     </FormTerm>
-                                    <FormTerm id="terms2" register={register}>
+                                    <FormTerm id="terms2">
                                         <Text ml="0.5rem" fontWeight="bold">
                                             {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
                                                 utestengt fra fremtidige 
@@ -215,7 +215,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                                                 }.`}
                                         </Text>
                                     </FormTerm>
-                                    <FormTerm id="terms3" register={register}>
+                                    <FormTerm id="terms3">
                                         <Text ml="0.5rem" fontWeight="bold">
                                             {type === HappeningType.BEDPRES ? (
                                                 <Wrap spacing={0}>
