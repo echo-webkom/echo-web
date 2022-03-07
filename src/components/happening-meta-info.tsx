@@ -1,16 +1,14 @@
 import { VStack } from '@chakra-ui/react';
-import { addHours, format } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { format } from 'date-fns';
 import React from 'react';
-import { BiCalendar } from 'react-icons/bi';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
-import { google } from 'calendar-link'; //, outlook, office365, yahoo, ics } from 'calendar-link';
 import { HappeningType, SpotRange, SpotRangeCount } from '../lib/api';
 import IconText from './icon-text';
+import CalendarPopup from './calendar-popup';
 
 interface Props {
     date: Date;
@@ -62,16 +60,6 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
-    const event = {
-        title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,
-        description:
-            `${title} ${type === 'EVENT' ? 'Arrangementet' : 'Bedriftspresentasjonen'}: ` +
-            `https://echo.uib.no/${type}/${slug}`.toLowerCase(),
-        start: date,
-        end: addHours(date, 2),
-        location: `${location}`,
-    };
-
     return (
         <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
             {companyLink && (
@@ -112,7 +100,8 @@ const HappeningMetaInfo = ({
                     )}
                 </>
             ))}
-            <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} link={google(event)} />
+
+            <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
                 <IconText icon={ImLocation} text={location} link={locationLink} />
