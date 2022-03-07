@@ -1,4 +1,5 @@
 {
     "baseUrl": "http://localhost:3000",
-    "defaultCommandTimeout": 5000
+    "defaultCommandTimeout": 5000,
+    "testFiles": ["entry-box.spec.ts", "nav.spec.ts", "happening-registration.spec.ts", "registration-deletion.spec.ts"]
 }

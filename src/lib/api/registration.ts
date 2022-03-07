@@ -121,6 +121,23 @@ const RegistrationAPI = {
             return { message: JSON.stringify(error) };
         }
     },
+
+    deleteRegistration: async (
+        link: string,
+        email: string,
+        backendUrl: string,
+    ): Promise<{ response: string | null; error: string | null }> => {
+        try {
+            const { data } = await axios.delete(
+                `${backendUrl}/${registrationRoute}/${link}/${encodeURIComponent(email)}`,
+            );
+
+            return { response: data, error: null };
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { response: null, error: JSON.stringify(error) };
+        }
+    },
 };
 
 export { RegistrationAPI, registrationRoute };
