@@ -14,9 +14,11 @@ import {
     ModalBody,
     ModalFooter,
     SimpleGrid,
+    TableRowProps,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 import { Registration, RegistrationAPI } from '../lib/api';
 import notEmptyOrNull from '../lib/utils';
 
@@ -27,8 +29,12 @@ interface Props {
     backendUrl: string;
 }
 
+const MotionTr = motion<TableRowProps>(Tr);
+
 const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [deleted, setDeleted] = useState(false);
 
     const toast = useToast();
 
@@ -36,7 +42,7 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
 
     return (
         <>
-            <Tr data-cy="reg-row" key={JSON.stringify(registration)}>
+            <MotionTr layout height={deleted ? '0%' : '100%'} data-cy="reg-row" key={JSON.stringify(registration)}>
                 <Td>{registration.email}</Td>
                 <Td>{registration.firstName}</Td>
                 <Td>{registration.lastName}</Td>
@@ -62,7 +68,7 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                         Slett påmelding
                     </Button>
                 </Td>
-            </Tr>
+            </MotionTr>
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -102,6 +108,7 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                                     onClose();
 
                                     if (error === null) {
+                                        setDeleted(true);
                                         void router.replace(router.asPath, undefined, { scroll: false });
                                         toast({
                                             title: 'Påmelding slettet!',
