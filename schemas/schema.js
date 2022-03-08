@@ -10,6 +10,7 @@ import SpotRange from './SpotRange';
 import Happening from './Happening';
 import JobAdvert from './JobAdvert';
 import Banner from './Banner';
+import StaticInfo from './StaticInfo';
 
 export default createSchema({
     name: 'default',
@@ -24,5 +25,6 @@ export default createSchema({
         StudentGroup,
         JobAdvert,
         Banner,
+        StaticInfo,
     ]),
 });

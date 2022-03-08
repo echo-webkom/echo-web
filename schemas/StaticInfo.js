@@ -1,18 +1,17 @@
 export default {
-    name: 'studentGroup',
-    title: 'Studentgruppe',
-    description: 'Undergruppe, underorganisasjon eller et echo-styre',
+    name: 'staticInfo',
+    title: 'Static Info',
+    description: 'Statisk Informasjon',
     type: 'document',
     preview: {
         select: {
-            title: 'name',
-            subtitle: 'groupType',
+            title: 'title',
         },
     },
     fields: [
         {
-            name: 'name',
-            title: 'Navn',
+            name: 'title',
+            title: 'Tittel',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
@@ -22,41 +21,27 @@ export default {
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
-                source: 'name',
+                source: 'title',
             },
         },
         {
-            name: 'groupType',
-            title: 'Type',
-            validation: (Rule) =>
-                Rule.required()
-                    .custom((type) =>
-                        type === 'subgroup' || type === 'suborg' || type === 'board' || type === 'intgroup'
-                            ? true
-                            : 'Må være "subgroup", "suborg", "intgroup" eller "board"',
-                    )
-                    .error(),
+            name: 'type',
+            title: 'Innholdstype',
+            validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
                 list: [
-                    { title: 'Undergruppe', value: 'subgroup' },
-                    { title: 'Underorganisasjon', value: 'suborg' },
-                    { title: 'Hovedstyre', value: 'board' },
-                    { title: 'Interessegruppe', value: 'intgroup' },
+                    { title: 'Studentgruppe', value: 'studentgroup' },
+                    { title: 'Informasjonsside', value: 'infopage' },
                 ],
                 layout: 'dropdown',
             },
         },
         {
-            name: 'info',
-            title: 'Brødtekst',
+            name: 'staticContent',
+            title: 'Innhold',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
-        },
-        {
-            name: 'grpPicture',
-            title: 'Gruppebilde',
-            type: 'image',
         },
         {
             name: 'members',
@@ -89,6 +74,7 @@ export default {
                     },
                 },
             ],
+            hidden: ({ document }) => !(document?.type === 'studentgroup'),
         },
     ],
 };
