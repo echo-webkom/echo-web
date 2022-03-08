@@ -96,7 +96,7 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
                                     <NextLink href={ics(event)} passHref>
                                         <LinkOverlay isExternal aria-label="Last ned .ics fil">
                                             <Icon as={FaFileDownload} w={12} h={12} />
-                                            <h2>.ics file</h2>
+                                            <h2>.ics fil</h2>
                                         </LinkOverlay>
                                     </NextLink>
                                 </LinkBox>
