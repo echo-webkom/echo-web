@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -54,6 +55,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-med-noen",
                 "$type med Noen!",
                 "2020-04-29T20:43:29Z",
+                "2030-04-29T20:43:29Z",
                 everyoneSpotRange,
                 type,
                 "test@test.com"
@@ -65,6 +67,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-med-noen-andre",
                 "$type med Noen Andre!",
                 "2019-07-29T20:10:11Z",
+                "2030-07-29T20:10:11Z",
                 everyoneSpotRange,
                 type,
                 "test@test.com"
@@ -76,6 +79,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-dritlang-i-fremtiden",
                 "$type dritlangt i fremtiden!!",
                 "2037-07-29T20:10:11Z",
+                "2038-01-01T20:10:11Z",
                 everyoneSpotRange,
                 type,
                 "test@test.com"
@@ -87,6 +91,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-for-bare-1-til-2",
                 "$type (for bare 1 til 2)!",
                 "2020-05-29T20:00:11Z",
+                "2030-05-29T20:00:11Z",
                 oneTwoSpotRange,
                 type,
                 "test@test.com"
@@ -98,6 +103,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-for-bare-3-til-5",
                 "$type (for bare 3 til 5)!",
                 "2020-06-29T18:07:31Z",
+                "2030-06-29T18:07:31Z",
                 threeFiveSpotRange,
                 type,
                 "test@test.com"
@@ -109,6 +115,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-som-er -splitta-ty-bedkom",
                 "$type (som er splitta ty Bedkom)!",
                 "2020-06-29T18:07:31Z",
+                "2030-06-29T18:07:31Z",
                 everyoneSplitSpotRange,
                 type,
                 "test@test.com"
@@ -120,6 +127,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-med-uendelig-plasser",
                 "$type med uendelig plasser!",
                 "2020-06-29T18:07:31Z",
+                "2030-06-29T18:07:31Z",
                 everyoneInfiniteSpotRange,
                 type,
                 "test@test.com"
@@ -131,6 +139,7 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-med-en-plass",
                 "$type med én plass!",
                 "2020-06-29T18:07:31Z",
+                "2030-06-29T18:07:31Z",
                 onlyOneSpotRange,
                 type,
                 "test@test.com"
@@ -142,6 +151,19 @@ class HappeningRegistrationTest : StringSpec({
                 "$type-med-få-plasser",
                 "$type med få plasser!",
                 "2020-02-18T16:27:05Z",
+                "2030-02-18T16:27:05Z",
+                fewSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
+    val exampleHappening10: (type: HAPPENING_TYPE) -> HappeningJson =
+        { type ->
+            HappeningJson(
+                "$type-som-har-vært",
+                "$type som har vært!",
+                "2020-02-14T12:00:00Z",
+                "2020-02-28T16:15:00Z",
                 fewSpotRange,
                 type,
                 "test@test.com"
@@ -199,6 +221,7 @@ class HappeningRegistrationTest : StringSpec({
                 insertOrUpdateHappening(exampleHappening7(t), null, sendEmail = false, dev = true)
                 insertOrUpdateHappening(exampleHappening8(t), null, sendEmail = false, dev = true)
                 insertOrUpdateHappening(exampleHappening9(t), null, sendEmail = false, dev = true)
+                insertOrUpdateHappening(exampleHappening10(t), null, sendEmail = false, dev = true)
             }
         }
     }
@@ -409,6 +432,29 @@ class HappeningRegistrationTest : StringSpec({
                 res.code shouldBe Response.TooEarly
                 res.title shouldBe "Påmeldingen er ikke åpen enda."
                 res.desc shouldBe "Vennligst vent."
+            }
+        }
+    }
+
+    "You should not be able to sign up for a happening after the happening date." {
+        withTestApplication({
+            configureRouting(adminKey, null, true, featureToggles)
+        }) {
+            for (t in be) {
+                val submitRegCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = exampleHappening10(t).slug)))
+                    }
+
+                submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
+                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                res shouldNotBe null
+                val (code, title, desc) = resToJson(res.code, t)
+
+                res.code shouldBe code
+                res.title shouldBe title
+                res.desc shouldBe desc
             }
         }
     }

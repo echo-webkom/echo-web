@@ -318,6 +318,14 @@ object Routing {
                     return@post
                 }
 
+                if (DateTime(happening.happeningDate).isBeforeNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.TooLate, registration.type)
+                    )
+                    return@post
+                }
+
                 val spotRanges = selectSpotRanges(registration.slug)
 
                 val correctRange = happening.spotRanges.firstOrNull {

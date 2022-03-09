@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import no.uib.echo.SendGridTemplate
 import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.registrationRoute
+import no.uib.echo.schema.Happening.happeningDate
 import no.uib.echo.schema.Happening.organizerEmail
 import no.uib.echo.schema.Happening.registrationDate
 import no.uib.echo.sendEmail
@@ -33,6 +34,7 @@ data class HappeningJson(
     val slug: String,
     val title: String?,
     val registrationDate: String,
+    val happeningDate: String,
     val spotRanges: List<SpotRangeJson>,
     val type: HAPPENING_TYPE,
     val organizerEmail: String
@@ -47,6 +49,7 @@ object Happening : Table() {
     val title: Column<String?> = text("title").nullable()
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
+    val happeningDate: Column<DateTime> = datetime("happening_date")
     val organizerEmail: Column<String> = text("organizer_email")
     val registrationsLink: Column<String?> = text("registrations_link").nullable()
 
@@ -67,6 +70,7 @@ fun selectHappening(slug: String): HappeningJson? {
             it[Happening.slug],
             it[Happening.title],
             it[registrationDate].toString(),
+            it[happeningDate].toString(),
             spotRanges,
             HAPPENING_TYPE.valueOf(it[Happening.happeningType]),
             it[organizerEmail]
@@ -106,6 +110,7 @@ suspend fun insertOrUpdateHappening(
                 it[title] = newHappening.title
                 it[happeningType] = newHappening.type.toString()
                 it[registrationDate] = DateTime(newHappening.registrationDate)
+                it[happeningDate] = DateTime(newHappening.happeningDate)
                 it[organizerEmail] = newHappening.organizerEmail.lowercase()
                 it[Happening.registrationsLink] = registrationsLink
             }
@@ -160,6 +165,7 @@ suspend fun insertOrUpdateHappening(
     if (happening.slug == newHappening.slug &&
         happening.title == newHappening.title &&
         DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
+        DateTime(happening.happeningDate) == DateTime(newHappening.happeningDate) &&
         happening.spotRanges == newHappening.spotRanges &&
         happening.organizerEmail.lowercase() == newHappening.organizerEmail.lowercase()
     ) {
@@ -170,6 +176,7 @@ suspend fun insertOrUpdateHappening(
                 "Happening with slug = ${newHappening.slug}, " +
                     "title = ${newHappening.title}, " +
                     "registrationDate = ${newHappening.registrationDate}, " +
+                    "happeningDate = ${newHappening.happeningDate}, " +
                     "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
                     "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
             )
@@ -182,6 +189,7 @@ suspend fun insertOrUpdateHappening(
         Happening.update({ Happening.slug eq newHappening.slug }) {
             it[title] = newHappening.title
             it[registrationDate] = DateTime(newHappening.registrationDate)
+            it[happeningDate] = DateTime(newHappening.happeningDate)
             it[organizerEmail] = newHappening.organizerEmail.lowercase()
         }
 
@@ -216,6 +224,7 @@ suspend fun insertOrUpdateHappening(
             "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
                 "to title = ${newHappening.title}, " +
                 "registrationDate = ${newHappening.registrationDate}, " +
+                "happeningDate = ${newHappening.happeningDate}, " +
                 "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
                 "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
         )
