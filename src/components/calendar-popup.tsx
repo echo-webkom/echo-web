@@ -81,7 +81,7 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
                                     </NextLink>
                                 </LinkBox>
                                 <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                                    <NextLink href={yahoo(eventPlussOneHour)} passHref>
+                                    <NextLink href={yahoo(eventPlusOneHour)} passHref>
                                         <LinkOverlay isExternal aria-label="Legg til i Yahoo kalenderen">
                                             <Icon as={FaYahoo} w={12} h={12} />
                                             <h2>Yahoo</h2>
