@@ -104,8 +104,6 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
                 </Modal>
             </>
         );
-    }
-    return CalendarModel(title);
 };
 
 export default CalendarPopup;
