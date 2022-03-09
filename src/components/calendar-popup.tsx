@@ -44,14 +44,10 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
             location: `${location}`,
         };
         //This one is needed because yahoo is off by one hour
-        const eventPlussOneHour = {
-            title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,
-            description:
-                `${title} ${type === 'EVENT' ? 'Arrangementet' : 'Bedriftspresentasjonen'}: ` +
-                `https://echo.uib.no/${type}/${slug}`.toLowerCase(),
-            start: addHours(date, 1),
-            end: addHours(date, 3),
-            location: `${location}`,
+        const eventPlusOneHour = {
+            ...event,
+            start: addHours(event.start, 1),
+            end: addHours(event.end, 1),
         };
         return (
             <>
