@@ -32,7 +32,6 @@ interface Props {
 }
 
 const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Element => {
-    function CalendarModel(this: any, title: string) {
         const { isOpen, onOpen, onClose } = useDisclosure();
         const event = {
             title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,
