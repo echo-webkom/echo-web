@@ -32,7 +32,7 @@ enum class HAPPENING_TYPE {
 
 data class HappeningJson(
     val slug: String,
-    val title: String?,
+    val title: String,
     val registrationDate: String,
     val happeningDate: String,
     val spotRanges: List<SpotRangeJson>,
@@ -46,7 +46,7 @@ data class HappeningResponseJson(val registrationsLink: String?, val message: St
 
 object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
-    val title: Column<String?> = text("title").nullable()
+    val title: Column<String> = text("title")
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
     val happeningDate: Column<DateTime> = datetime("happening_date")
@@ -139,7 +139,7 @@ suspend fun insertOrUpdateHappening(
                             "webkom@echo.uib.no",
                             newHappening.organizerEmail,
                             SendGridTemplate(
-                                newHappening.title ?: newHappening.slug,
+                                newHappening.title,
                                 "https://echo.uib.no/$registrationRoute/$registrationsLink",
                                 hapTypeLiteral
                             ),
