@@ -126,17 +126,23 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {registrations.map((reg) => {
-                                return (
-                                    <RegistrationRow
-                                        key={reg.email}
-                                        registration={reg}
-                                        questions={questions}
-                                        link={link}
-                                        backendUrl={backendUrl}
-                                    />
-                                );
-                            })}
+                            {registrations
+                                .sort((a, b) => {
+                                    if (a.waitList && !b.waitList) return 1;
+                                    else if (!a.waitList && b.waitList) return -1;
+                                    else return 0;
+                                })
+                                .map((reg) => {
+                                    return (
+                                        <RegistrationRow
+                                            key={reg.email}
+                                            registration={reg}
+                                            questions={questions}
+                                            link={link}
+                                            backendUrl={backendUrl}
+                                        />
+                                    );
+                                })}
                         </Tbody>
                     </Table>
                 </>
