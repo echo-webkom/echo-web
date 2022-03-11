@@ -25,8 +25,8 @@ services:
       SEND_EMAIL_HAPPENING:
 
   database:
-    # Postgres 13.4 is the version Heroku uses.
-    image: postgres:13.4-alpine
+    # Postgres 13.6 is the version Heroku uses.
+    image: postgres:13.6-alpine
     restart: always
     ports:
       - '5432:5432'
