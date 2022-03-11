@@ -71,11 +71,12 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
 
 interface Props {
     happening: Happening;
+    regVerifyToken: string | null;
     type: HappeningType;
     backendUrl: string;
 }
 
-const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm<FormValues>();
@@ -100,6 +101,7 @@ const RegistrationForm = ({ happening, type, backendUrl }: Props): JSX.Element =
                     return { question: q.questionText, answer: data.answers[index] };
                 }),
                 type: type,
+                regVerifyToken,
             },
             backendUrl,
         ).then(({ response, statusCode }) => {

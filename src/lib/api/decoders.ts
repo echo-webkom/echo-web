@@ -114,6 +114,11 @@ const spotRangeCountDecoder = record({
     waitListCount: number,
 });
 
+const happeningInfoDecoder = record({
+    spotRanges: array(spotRangeCountDecoder),
+    regVerifyToken: union(string, nil),
+});
+
 const postDecoder = record({
     title: string,
     body: string,
@@ -189,6 +194,7 @@ export {
     registrationDecoder,
     responseDecoder,
     spotRangeCountDecoder,
+    happeningInfoDecoder,
     postDecoder,
     minuteDecoder,
     jobAdvertDecoder,

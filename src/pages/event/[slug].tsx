@@ -7,7 +7,7 @@ import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOver
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { isErrorMessage, Happening, HappeningAPI, HappeningType, RegistrationAPI, SpotRangeCount } from '../../lib/api';
+import { isErrorMessage, Happening, HappeningAPI, HappeningType, HappeningInfo } from '../../lib/api';
 import ErrorBox from '../../components/error-box';
 import SEO from '../../components/seo';
 import Article from '../../components/article';
@@ -19,12 +19,12 @@ import Section from '../../components/section';
 interface Props {
     happening: Happening | null;
     backendUrl: string;
-    spotRangeCounts: Array<SpotRangeCount> | null;
+    happeningInfo: HappeningInfo | null;
     date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, backendUrl, spotRangeCounts, date, error }: Props): JSX.Element => {
+const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props): JSX.Element => {
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const time =
@@ -75,9 +75,15 @@ const HappeningPage = ({ happening, backendUrl, spotRangeCounts, date, error }: 
                                     slug={happening.slug}
                                     contactEmail={happening.contactEmail}
                                     companyLink={happening.companyLink}
-                                    spotRangeCounts={spotRangeCounts?.length === 0 ? null : spotRangeCounts}
+                                    spotRangeCounts={
+                                        happeningInfo?.spotRanges.length === 0
+                                            ? null
+                                            : happeningInfo?.spotRanges ?? null
+                                    }
                                     spotRangesFromCms={
-                                        !spotRangeCounts || spotRangeCounts.length === 0 ? happening.spotRanges : null
+                                        !happeningInfo?.spotRanges || happeningInfo.spotRanges.length === 0
+                                            ? happening.spotRanges
+                                            : null
                                     }
                                 />
                                 {happening.registrationDate && (
@@ -98,6 +104,7 @@ const HappeningPage = ({ happening, backendUrl, spotRangeCounts, date, error }: 
                                                 happening={happening}
                                                 type={happening.happeningType}
                                                 backendUrl={backendUrl}
+                                                regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                             />
                                         )}
                                         {isAfter(date, parseISO(happening.date)) && (
@@ -143,19 +150,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const spotRangeCounts = await RegistrationAPI.getSpotRangeCounts(adminKey, slug, backendUrl);
+    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
+    const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
 
     const date = Date.now();
 
-    if (isErrorMessage(happening) && happening.message === '404') {
+    if (isErrorMessage(happening)) {
+        if (happening.message === '404') {
+            return {
+                notFound: true,
+            };
+        }
+    } else if (happening.registrationDate && isAfter(date, parseISO(happening.registrationDate))) {
+        const props: Props = {
+            happening: isErrorMessage(happening) ? null : happening,
+            happeningInfo: isErrorMessage(hiddenHappeningInfo) ? null : hiddenHappeningInfo,
+            date,
+            backendUrl,
+            error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
+        };
+
         return {
-            notFound: true,
+            props,
         };
     }
 
     const props: Props = {
         happening: isErrorMessage(happening) ? null : happening,
-        spotRangeCounts: isErrorMessage(spotRangeCounts) ? null : spotRangeCounts,
+        happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
         date,
         backendUrl,
         error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',

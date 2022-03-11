@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
-import { happeningDecoder } from './decoders';
-import { ErrorMessage, Happening, HappeningType } from './types';
+import { happeningDecoder, happeningInfoDecoder } from './decoders';
+import { ErrorMessage, Happening, HappeningInfo, HappeningType } from './types';
 import handleError from './errors';
 import { SanityAPI } from '.';
 
@@ -107,6 +107,22 @@ const HappeningAPI = {
             return {
                 message: 'Fail @ getHappeningsBySlug',
             };
+        }
+    },
+
+    getHappeningInfo: async (auth: string, slug: string, backendUrl: string): Promise<HappeningInfo | ErrorMessage> => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/happening/${slug}`, {
+                auth: {
+                    username: 'admin',
+                    password: auth,
+                },
+            });
+
+            return happeningInfoDecoder(data);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { message: JSON.stringify(error) };
         }
     },
 };

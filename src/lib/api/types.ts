@@ -10,6 +10,7 @@ import {
     registrationDecoder,
     responseDecoder,
     spotRangeCountDecoder,
+    happeningInfoDecoder,
     postDecoder,
     minuteDecoder,
     jobAdvertDecoder,
@@ -35,6 +36,8 @@ type Registration = decodeType<typeof registrationDecoder>;
 type Response = decodeType<typeof responseDecoder>;
 
 type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
+
+type HappeningInfo = decodeType<typeof happeningInfoDecoder>;
 
 type Post = decodeType<typeof postDecoder>;
 
@@ -84,6 +87,7 @@ export type {
     Registration,
     Response,
     SpotRangeCount,
+    HappeningInfo,
     Post,
     Minute,
     JobAdvert,

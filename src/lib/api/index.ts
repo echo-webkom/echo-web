@@ -12,6 +12,7 @@ export {
     type Answer,
     type Registration,
     type SpotRangeCount,
+    type HappeningInfo,
     type Member,
     type Profile,
     type StudentGroup,

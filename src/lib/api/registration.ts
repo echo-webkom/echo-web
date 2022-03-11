@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
-import { responseDecoder, registrationDecoder, spotRangeCountDecoder } from './decoders';
-import { ErrorMessage, Degree, Answer, Response, Registration, SpotRangeCount } from './types';
+import { responseDecoder, registrationDecoder } from './decoders';
+import { ErrorMessage, Degree, Answer, Response, Registration } from './types';
 import { HappeningType } from '.';
 
 const genericError: { title: string; desc: string; date: string | undefined } = {
@@ -34,6 +34,7 @@ interface FormRegistration {
     type: HappeningType;
     terms: boolean;
     answers: Array<Answer>;
+    regVerifyToken: string | null;
 }
 
 const registrationRoute = 'registration';
@@ -98,26 +99,6 @@ const RegistrationAPI = {
             return {
                 message: 'Fail @ getRegistrations',
             };
-        }
-    },
-
-    getSpotRangeCounts: async (
-        auth: string,
-        slug: string,
-        backendUrl: string,
-    ): Promise<Array<SpotRangeCount> | ErrorMessage> => {
-        try {
-            const { data } = await axios.get(`${backendUrl}/${registrationRoute}?slug=${slug}`, {
-                auth: {
-                    username: 'admin',
-                    password: auth,
-                },
-            });
-
-            return array(spotRangeCountDecoder)(data);
-        } catch (error) {
-            console.log(error); // eslint-disable-line
-            return { message: JSON.stringify(error) };
         }
     },
 
