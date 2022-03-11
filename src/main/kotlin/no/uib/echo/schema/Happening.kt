@@ -6,9 +6,6 @@ import kotlinx.coroutines.withContext
 import no.uib.echo.SendGridTemplate
 import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.registrationRoute
-import no.uib.echo.schema.Happening.happeningDate
-import no.uib.echo.schema.Happening.organizerEmail
-import no.uib.echo.schema.Happening.registrationDate
 import no.uib.echo.sendEmail
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -26,6 +23,7 @@ import org.joda.time.DateTime
 import java.io.IOException
 
 private const val REG_LINK_LENGTH = 128
+private const val REG_VERIFY_TOKEN_LENGTH = 16
 
 enum class HAPPENING_TYPE {
     BEDPRES,
@@ -42,6 +40,11 @@ data class HappeningJson(
     val organizerEmail: String
 )
 
+data class HappeningInfoJson(
+    val spotRanges: List<SpotRangeWithCountJson>,
+    val regVerifyToken: String?
+)
+
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
 data class HappeningResponseJson(val registrationsLink: String?, val message: String)
@@ -54,30 +57,9 @@ object Happening : Table() {
     val happeningDate: Column<DateTime> = datetime("happening_date")
     val organizerEmail: Column<String> = text("organizer_email")
     val registrationsLink: Column<String?> = text("registrations_link").nullable()
+    val regVerifyToken: Column<String?> = text("reg_verify_token").nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
-}
-
-fun selectHappening(slug: String): HappeningJson? {
-    val result = transaction {
-        addLogger(StdOutSqlLogger)
-
-        Happening.select { Happening.slug eq slug }.firstOrNull()
-    }
-
-    val spotRanges = selectSpotRanges(slug)
-
-    return result?.let {
-        HappeningJson(
-            it[Happening.slug],
-            it[Happening.title],
-            it[registrationDate].toString(),
-            it[happeningDate].toString(),
-            spotRanges,
-            HAPPENING_TYPE.valueOf(it[Happening.happeningType]),
-            it[organizerEmail]
-        )
-    }
 }
 
 suspend fun insertOrUpdateHappening(
@@ -93,16 +75,27 @@ suspend fun insertOrUpdateHappening(
         )
     }
 
-    val happening = selectHappening(newHappening.slug)
+    val happening = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Happening.select {
+            Happening.slug eq newHappening.slug
+        }.firstOrNull()
+    }
+
+    val spotRanges = selectSpotRanges(newHappening.slug)
 
     val registrationsLink =
         if (dev)
             newHappening.slug
         else
-            (1..REG_LINK_LENGTH).map {
-                (('A'..'Z') + ('a'..'z') + ('0'..'9'))
-                    .random()
-            }.joinToString("")
+            randomString(REG_LINK_LENGTH)
+
+    val regVerifyToken =
+        if (dev)
+            newHappening.slug
+        else
+            randomString(REG_VERIFY_TOKEN_LENGTH)
 
     if (happening == null) {
         transaction {
@@ -116,6 +109,7 @@ suspend fun insertOrUpdateHappening(
                 it[happeningDate] = DateTime(newHappening.happeningDate)
                 it[organizerEmail] = newHappening.organizerEmail.lowercase()
                 it[Happening.registrationsLink] = registrationsLink
+                it[Happening.regVerifyToken] = regVerifyToken
             }
             SpotRange.batchInsert(newHappening.spotRanges) { sr ->
                 this[SpotRange.spots] = sr.spots
@@ -163,12 +157,12 @@ suspend fun insertOrUpdateHappening(
         )
     }
 
-    if (happening.slug == newHappening.slug &&
-        happening.title == newHappening.title &&
-        DateTime(happening.registrationDate) == DateTime(newHappening.registrationDate) &&
-        DateTime(happening.happeningDate) == DateTime(newHappening.happeningDate) &&
-        happening.spotRanges == newHappening.spotRanges &&
-        happening.organizerEmail.lowercase() == newHappening.organizerEmail.lowercase()
+    if (happening[Happening.slug] == newHappening.slug &&
+        happening[Happening.title] == newHappening.title &&
+        DateTime(happening[Happening.registrationDate]) == DateTime(newHappening.registrationDate) &&
+        DateTime(happening[Happening.happeningDate]) == DateTime(newHappening.happeningDate) &&
+        spotRanges == newHappening.spotRanges &&
+        happening[Happening.organizerEmail].lowercase() == newHappening.organizerEmail.lowercase()
     ) {
         return Pair(
             HttpStatusCode.Accepted,
@@ -239,4 +233,11 @@ fun validateLink(link: String?, dev: Boolean): ResultRow? {
             Happening.registrationsLink eq link
         }.firstOrNull()
     }
+}
+
+fun randomString(length: Int): String {
+    return (1..length).map {
+        (('A'..'Z') + ('a'..'z') + ('0'..'9'))
+            .random()
+    }.joinToString("")
 }

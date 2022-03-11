@@ -185,14 +185,16 @@ class HappeningRegistrationTest : StringSpec({
                     AnswerJson("Skal du ha mat?", "Nei"),
                     AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
                 ),
-                type
+                type,
+                null
             )
         }
 
     val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
-    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
+    val featureToggles =
+        FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false, verifyRegs = false)
 
     beforeSpec { DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init() }
     beforeTest {
@@ -886,7 +888,7 @@ class HappeningRegistrationTest : StringSpec({
                 val getCountRegCall: TestApplicationCall =
                     handleRequest(
                         method = HttpMethod.Get,
-                        uri = "/${Routing.registrationRoute}?slug=$newSlug&type=$t"
+                        uri = "/${Routing.registrationRoute}/$newSlug"
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
@@ -940,7 +942,7 @@ class HappeningRegistrationTest : StringSpec({
                 val getCountRegCall: TestApplicationCall =
                     handleRequest(
                         method = HttpMethod.Get,
-                        uri = "/${Routing.registrationRoute}?type=$t"
+                        uri = "/${Routing.registrationRoute}"
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
@@ -1107,6 +1109,42 @@ class HappeningRegistrationTest : StringSpec({
                     deleteWaitListRegCall.response.content shouldBe
                         "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted."
                 }
+            }
+        }
+    }
+
+    "Should only be able to sign in via form" {
+        withTestApplication({
+            configureRouting(adminKey, null, true, featureToggles.copy(verifyRegs = true))
+        }) {
+            for (t in be) {
+                val submitRegFailCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleHappeningReg(t)))
+                    }
+
+                submitRegFailCall.response.status() shouldBe HttpStatusCode.Unauthorized
+                val resFail = gson.fromJson(submitRegFailCall.response.content, ResponseJson::class.java)
+                resFail shouldNotBe null
+                val (_, titleFail, descFail) = resToJson(resFail.code, t)
+
+                resFail.title shouldBe titleFail
+                resFail.desc shouldBe descFail
+
+                val submitRegOkCall: TestApplicationCall =
+                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                        addHeader(HttpHeaders.ContentType, "application/json")
+                        setBody(gson.toJson(exampleHappeningReg(t).copy(regVerifyToken = exampleHappeningReg(t).slug)))
+                    }
+
+                submitRegOkCall.response.status() shouldBe HttpStatusCode.OK
+                val resOk = gson.fromJson(submitRegOkCall.response.content, ResponseJson::class.java)
+                resOk shouldNotBe null
+                val (_, titleOk, descOk) = resToJson(resOk.code, t)
+
+                resOk.title shouldBe titleOk
+                resOk.desc shouldBe descOk
             }
         }
     }
