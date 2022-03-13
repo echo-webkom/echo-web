@@ -153,7 +153,7 @@
         "@testing-library/user-event": "13.5.0",
         "@types/jest": "27.4.1",
         "@types/node": "14.18.12",
-        "@types/react": "17.0.39",
+        "@types/react": "17.0.40",
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "5.14.0",
         "@typescript-eslint/parser": "5.14.0",
