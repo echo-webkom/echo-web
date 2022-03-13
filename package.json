@@ -58,12 +58,12 @@
         "prCreation": "not-pending"
     },
     "dependencies": {
-        "@sanity/base": "2.27.2",
-        "@sanity/core": "2.27.0",
-        "@sanity/default-layout": "2.27.2",
-        "@sanity/default-login": "2.27.0",
-        "@sanity/desk-tool": "2.27.3",
-        "@sanity/vision": "2.27.2",
+        "@sanity/base": "2.28.2",
+        "@sanity/core": "2.28.1",
+        "@sanity/default-layout": "2.28.2",
+        "@sanity/default-login": "2.28.2",
+        "@sanity/desk-tool": "2.28.2",
+        "@sanity/vision": "2.28.2",
         "prop-types": "15.8.1",
         "react": "17.0.2",
         "react-dom": "17.0.2",
@@ -72,7 +72,7 @@
         "styled-components": "5.3.3"
     },
     "devDependencies": {
-        "@sanity/cli": "2.27.3",
+        "@sanity/cli": "2.28.0",
         "eslint": "8.10.0",
         "eslint-config-prettier": "8.5.0",
         "eslint-plugin-prettier": "4.0.0",
