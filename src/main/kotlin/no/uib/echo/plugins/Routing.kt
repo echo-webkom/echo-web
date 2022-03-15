@@ -340,7 +340,7 @@ object Routing {
                     return@post
                 }
 
-                val countRegs = transaction {
+                val countRegsInSpotRange = transaction {
                     addLogger(StdOutSqlLogger)
 
                     Registration.select {
@@ -349,8 +349,20 @@ object Routing {
                     }.count()
                 }
 
-                val waitList = correctRange.spots in 1..countRegs
-                val waitListSpot = countRegs - correctRange.spots + 1
+                val spotRangeOnWaitList = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq registration.slug and
+                            (
+                                Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
+                                    (Registration.waitList eq true)
+                                )
+                    }.count()
+                }
+
+                val waitList = correctRange.spots in 1..countRegsInSpotRange || spotRangeOnWaitList > 0
+                val waitListSpot = spotRangeOnWaitList + 1
 
                 val oldReg = transaction {
                     addLogger(StdOutSqlLogger)
