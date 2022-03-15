@@ -28,9 +28,9 @@ describe('Happening registration', () => {
         });
 
         for (const { slug, type } of happenings) {
-            context('Bedpres form registration', () => {
+            context('Happening form registration', () => {
                 beforeEach(() => {
-                    cy.visit(`/${type.toLowerCase()}/${slug}`);
+                    cy.visit(`/happening/${slug}`);
                 });
 
                 it('Popup form appears correctly', () => {
