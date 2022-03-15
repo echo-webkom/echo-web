@@ -57,7 +57,6 @@ import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
@@ -505,7 +504,7 @@ object Routing {
                     transaction {
                         addLogger(StdOutSqlLogger)
 
-                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() }) {
+                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() and (Registration.happeningSlug eq hap[slug]) }) {
                             it[waitList] = false
                         }
                     }
