@@ -12,11 +12,12 @@ interface Props {
 
 const EventPreview = ({ event }: Props): JSX.Element => {
     const iconBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+
     return (
         <LinkBox data-testid={event.slug}>
             <Flex align="center" _hover={{ cursor: 'pointer' }}>
                 <Icon as={VscTriangleRight} color={iconBg} />
-                <NextLink href={`/event/${event.slug}`} passHref>
+                <NextLink href={`/happening/${event.slug}`} passHref>
                     <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                         <Text ml="3">{event.title}</Text>
                     </LinkOverlay>

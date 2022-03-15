@@ -29,7 +29,7 @@ const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
                         <Image src={logoUrl} width={96} height={96} alt={bedpres.title} />
                     </Flex>
                     <Center ml="2em">
-                        <NextLink href={`/bedpres/${bedpres.slug}`} passHref>
+                        <NextLink href={`/happening/${bedpres.slug}`} passHref>
                             <LinkOverlay>
                                 <Heading display={['none', 'block']} fontWeight="regular" size="lg">
                                     {bedpres.title}

@@ -22,9 +22,11 @@ module.exports = withPWA({
             { source: '/events', destination: '/event', permanent: true },
             {
                 source: '/events/:path',
-                destination: '/event/:path',
+                destination: '/happening/:path',
                 permanent: true,
             },
+            { source: '/bedpres/:path', destination: '/happening/:path', permanent: true },
+            { source: '/event/:path', destination: '/happening/:path', permanent: true },
         ];
     },
     reactStrictMode: true,

@@ -104,11 +104,10 @@ const RegistrationAPI = {
     getSpotRangeCounts: async (
         auth: string,
         slug: string,
-        type: HappeningType,
         backendUrl: string,
     ): Promise<Array<SpotRangeCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/${registrationRoute}?slug=${slug}&type=${type}`, {
+            const { data } = await axios.get(`${backendUrl}/${registrationRoute}?slug=${slug}`, {
                 auth: {
                     username: 'admin',
                     password: auth,
