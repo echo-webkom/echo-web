@@ -57,7 +57,6 @@ import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
@@ -318,6 +317,14 @@ object Routing {
                     return@post
                 }
 
+                if (DateTime(happening.happeningDate).isBeforeNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.TooLate, registration.type)
+                    )
+                    return@post
+                }
+
                 val spotRanges = selectSpotRanges(registration.slug)
 
                 val correctRange = happening.spotRanges.firstOrNull {
@@ -332,7 +339,7 @@ object Routing {
                     return@post
                 }
 
-                val countRegs = transaction {
+                val countRegsInSpotRange = transaction {
                     addLogger(StdOutSqlLogger)
 
                     Registration.select {
@@ -341,8 +348,20 @@ object Routing {
                     }.count()
                 }
 
-                val waitList = correctRange.spots in 1..countRegs
-                val waitListSpot = countRegs - correctRange.spots + 1
+                val spotRangeOnWaitList = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq registration.slug and
+                            (
+                                Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
+                                    (Registration.waitList eq true)
+                                )
+                    }.count()
+                }
+
+                val waitList = correctRange.spots in 1..countRegsInSpotRange || spotRangeOnWaitList > 0
+                val waitListSpot = spotRangeOnWaitList + 1
 
                 val oldReg = transaction {
                     addLogger(StdOutSqlLogger)
@@ -485,7 +504,7 @@ object Routing {
                     transaction {
                         addLogger(StdOutSqlLogger)
 
-                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() }) {
+                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() and (Registration.happeningSlug eq hap[slug]) }) {
                             it[waitList] = false
                         }
                     }

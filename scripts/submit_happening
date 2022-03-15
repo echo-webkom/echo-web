@@ -7,7 +7,7 @@ testing=false
 user=admin
 spotranges="[]"
 
-while getopts zpts:i:r:x:h:c: flag; do
+while getopts zpts:i:r:d:x:h:c: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -15,6 +15,7 @@ while getopts zpts:i:r:x:h:c: flag; do
   s) slug=${OPTARG} ;;
   i) title=${OPTARG} ;;
   r) regdate=${OPTARG} ;;
+  h) hapdate=${OPTARG} ;;
   x) secret=${OPTARG} ;;
   h) happening=${OPTARG} ;;
   o) spotranges=${OPTARG} ;;
@@ -37,6 +38,7 @@ if [ "$testing" = true ]; then
     -d '{ "slug": "bedriftspresentasjon-med-bekk", 
           "title": "Bedpres med Bekk",
           "registrationDate": "2021-05-06T16:46+01:00",
+          "happeningDate": "2030-03-09T16:15+01:00",
           "spotRanges":
               [
                 { 
@@ -61,6 +63,7 @@ if [ "$testing" = true ]; then
     -d '{ "slug": "fest-med-tilde", 
           "title": "Fest med Tilde!",
           "registrationDate": "2021-05-06T16:46+01:00",
+          "happeningDate": "2030-06-02T14:20+01:00",
           "spotRanges":
               [
                 { 
@@ -85,6 +88,11 @@ if [ -z ${regdate+x} ]; then
   exit 1
 fi
 
+if [ -z ${hapdate+x} ]; then
+  echo "Happening date not defined (use -d)"
+  exit 1
+fi
+
 if [ -z ${happening+x} ]; then
   echo "Happening type not defined (use -h)"
   exit 1
@@ -103,6 +111,7 @@ if [ -z ${title+x} ]; then
     -H "Content-Type: application/json" \
     -d '{ "slug": "'"${slug}"'",
           "registrationDate": "'"${regdate}"'",
+          "happeningDate": "'"${hapdate}"'",
           "spotRanges": '"${spotranges}"',
           "type": "'"${happening}"'",
           "organizerEmail": "'"${organizer_email}"'" }' \
@@ -116,6 +125,7 @@ else
     -d '{ "slug": "'"${slug}"'",
           "title": "'"${title}"'",
           "registrationDate": "'"${regdate}"'",
+          "happeningDate": "'"${hapdate}"'",
           "spotRanges": '"${spotranges}"',
           "type": "'"${happening}"'",
           "organizerEmail": "'"${organizer_email}"'" }' \

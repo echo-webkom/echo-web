@@ -17,6 +17,7 @@ enum class Response {
     AlreadySubmittedWaitList,
     HappeningDoesntExist,
     TooEarly,
+    TooLate,
     WaitList,
     NotInRange,
     OK,
@@ -51,6 +52,8 @@ fun resToJson(
             return ResponseJson(res, "Du er allerede påmeldt.", "Du er på ventelisten.", regDate)
         Response.TooEarly ->
             return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
+        Response.TooLate ->
+            return ResponseJson(res, "Påmeldingen er stengt.", "Det er ikke mulig å melde seg på lenger.", regDate)
         Response.WaitList -> {
             val desc = when (waitListSpot) {
                 null -> "Du har blitt satt på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
