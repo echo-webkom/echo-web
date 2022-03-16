@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.select
@@ -198,11 +199,16 @@ suspend fun insertOrUpdateHappening(
         }.firstOrNull() != null
 
         if (spotRangeExists) {
-            newHappening.spotRanges.map { range ->
-                SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug }) {
-                    it[spots] = range.spots
-                    it[minDegreeYear] = range.minDegreeYear
-                    it[maxDegreeYear] = range.maxDegreeYear
+            val spotRanges =
+                SpotRange.select {
+                    SpotRange.happeningSlug eq newHappening.slug
+                }.toList()
+
+            List(spotRanges.size) { i ->
+                SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.id eq spotRanges[i][SpotRange.id]) }) {
+                    it[spots] = newHappening.spotRanges[i].spots
+                    it[minDegreeYear] = newHappening.spotRanges[i].spots
+                    it[maxDegreeYear] = newHappening.spotRanges[i].spots
                 }
             }
         } else {
