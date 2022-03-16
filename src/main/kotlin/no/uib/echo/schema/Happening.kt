@@ -207,8 +207,8 @@ suspend fun insertOrUpdateHappening(
             List(spotRanges.size) { i ->
                 SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.id eq spotRanges[i][SpotRange.id]) }) {
                     it[spots] = newHappening.spotRanges[i].spots
-                    it[minDegreeYear] = newHappening.spotRanges[i].spots
-                    it[maxDegreeYear] = newHappening.spotRanges[i].spots
+                    it[minDegreeYear] = newHappening.spotRanges[i].minDegreeYear
+                    it[maxDegreeYear] = newHappening.spotRanges[i].maxDegreeYear
                 }
             }
         } else {
