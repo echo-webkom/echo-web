@@ -60,6 +60,8 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
+    const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr);
+
     return (
         <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
             {companyLink && (
@@ -89,18 +91,9 @@ const HappeningMetaInfo = ({
                             )}
                         />
                     )}
-                    {sr.waitListCount > 0 && (
-                        <IconText
-                            key={`iomdlistbox-${sr.waitListCount}`}
-                            icon={IoMdListBox}
-                            text={`${sr.waitListCount} på venteliste`.concat(
-                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
-                            )}
-                        />
-                    )}
                 </>
             ))}
-
+            {combinedWaitList > 0 && <IconText icon={IoMdListBox} text={`${combinedWaitList} på venteliste`} />}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
