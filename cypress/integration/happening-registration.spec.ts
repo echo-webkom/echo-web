@@ -30,7 +30,7 @@ describe('Happening registration', () => {
         for (const { slug, type } of happenings) {
             context('Happening form registration', () => {
                 beforeEach(() => {
-                    cy.visit(`/happening/${slug}`);
+                    cy.visit(`/event/${slug}`);
                 });
 
                 it('Popup form appears correctly', () => {

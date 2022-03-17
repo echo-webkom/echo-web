@@ -17,7 +17,7 @@ const EventPreview = ({ event }: Props): JSX.Element => {
         <LinkBox data-testid={event.slug}>
             <Flex align="center" _hover={{ cursor: 'pointer' }}>
                 <Icon as={VscTriangleRight} color={iconBg} />
-                <NextLink href={`/happening/${event.slug}`} passHref>
+                <NextLink href={`/event/${event.slug}`} passHref>
                     <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                         <Text ml="3">{event.title}</Text>
                     </LinkOverlay>
