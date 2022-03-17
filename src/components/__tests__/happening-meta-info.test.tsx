@@ -1,5 +1,6 @@
 import React from 'react';
 import HappeningMetaInfo, { Props } from '../happening-meta-info';
+import { HappeningType } from '../../lib/api';
 import { render } from './testing-utils';
 
 const date = new Date();
@@ -8,7 +9,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'no-ls-oe',
+        slug: 'no-ls-oe',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -25,7 +29,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'io-ls-oe',
+        slug: 'io-ls-oe',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -42,7 +49,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'no-us-oe',
+        slug: 'no-us-oe',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: null,
@@ -57,7 +67,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'io-us-oe',
+        slug: 'io-us-oe',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -74,7 +87,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'no-ls-ne',
+        slug: 'no-ls-ne',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -98,7 +114,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'io-ls-ne',
+        slug: 'io-ls-ne',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -122,7 +141,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'no-us-ne',
+        slug: 'no-us-ne',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -139,7 +161,10 @@ const happeningMetaInfoProps: Array<Props> = [
     {
         date: date,
         location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
         title: 'io-us-ne',
+        slug: 'io-us-ne',
         contactEmail: 'test@test.com',
         companyLink: null,
         spotRangeCounts: [
@@ -207,6 +232,11 @@ describe('HappeningMetaInfo', () => {
                 getByText(new RegExp(`${sr.spots} plasser for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`)),
             ).toBeInTheDocument();
         });
+
+        const combinedWaitList =
+            props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
+
+        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
     });
 
     test('renders correctly 6', () => {
@@ -222,6 +252,11 @@ describe('HappeningMetaInfo', () => {
                 ),
             ).toBeInTheDocument();
         });
+
+        const combinedWaitList =
+            props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
+
+        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
     });
 
     test('renders correctly 7', () => {
