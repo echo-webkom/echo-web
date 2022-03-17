@@ -50,9 +50,12 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
     };
     return (
         <>
-            <LinkBox onClick={onOpen} style={{ cursor: 'pointer' }}>
-                <IconText icon={BiCalendar} text={format(date, 'dd. MMM yyyy', { locale: nb })} />
-            </LinkBox>
+            <IconText
+                onClick={onOpen}
+                _hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+                icon={BiCalendar}
+                text={format(date, 'dd. MMM yyyy', { locale: nb })}
+            />
 
             <Modal isOpen={isOpen} onClose={onClose} size="xl">
                 <ModalOverlay />
