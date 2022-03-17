@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
+import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
@@ -262,7 +263,7 @@ object Routing {
             try {
                 val registration = call.receive<RegistrationJson>()
 
-                if (!registration.email.contains('@')) {
+                if (!isEmailValid(registration.email)) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
                     return@post
                 }

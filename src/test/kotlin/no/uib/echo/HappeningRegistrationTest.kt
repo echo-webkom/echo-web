@@ -486,23 +486,42 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-    "Email should contain @-sign." {
+    "Email should be valid." {
         withTestApplication({
             configureRouting(adminKey, null, true, featureToggles)
         }) {
-            for (t in be) {
-                val testCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        val invalidEmail = exampleHappeningReg(t).copy(email = "test_test.com")
-                        setBody(gson.toJson(invalidEmail))
-                    }
+            val emails = listOf(
+                Pair("test@test", false),
+                Pair("test@test.", false),
+                Pair("test@test.", false),
+                Pair("test_test.com", false),
+                Pair("@test.com", false),
+                Pair("test@uib.no", true),
+                Pair("test@student.uib.no", true),
+                Pair("test_person@hotmail.com", true)
+            )
 
-                testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-                res.code shouldBe Response.InvalidEmail
-                res.title shouldBe "Vennligst skriv inn en gyldig mail."
-                res.desc shouldBe ""
+            for (t in be) {
+                for ((email, isValid) in emails) {
+                    val testCall: TestApplicationCall =
+                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                            addHeader(HttpHeaders.ContentType, "application/json")
+                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = email)))
+                        }
+
+                    if (isValid)
+                        testCall.response.status() shouldBe HttpStatusCode.OK
+                    else
+                        testCall.response.status() shouldBe HttpStatusCode.BadRequest
+
+                    val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                    res shouldNotBe null
+
+                    if (isValid)
+                        res.code shouldBe Response.OK
+                    else
+                        res.code shouldBe Response.InvalidEmail
+                }
             }
         }
     }

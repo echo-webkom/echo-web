@@ -21,6 +21,7 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.IOException
+import java.util.regex.Pattern
 
 data class SendGridRequest(
     val personalizations: List<SendGridPersonalization>,
@@ -66,11 +67,11 @@ suspend fun sendConfirmationEmail(
     registration: RegistrationJson,
     waitListSpot: Long?
 ) {
-    val (hapTypeLiteral, typeSlug) = when (registration.type) {
+    val hapTypeLiteral = when (registration.type) {
         HAPPENING_TYPE.EVENT ->
-            Pair("arrangementet", "events")
+            "arrangementet"
         HAPPENING_TYPE.BEDPRES ->
-            Pair("bedriftspresentasjonen", "bedpres")
+            "bedriftspresentasjonen"
     }
 
     val hap = transaction {
@@ -93,7 +94,7 @@ suspend fun sendConfirmationEmail(
                 registration.email,
                 SendGridTemplate(
                     hap[Happening.title],
-                    "https://echo.uib.no/$typeSlug/${registration.slug}",
+                    "https://echo.uib.no/event/${registration.slug}",
                     hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),
                     registration = registration
@@ -114,6 +115,16 @@ suspend fun sendEmail(
     template: Template,
     sendGridApiKey: String
 ) {
+    if (!isEmailValid(from)) {
+        System.err.println("Email address '$from' is not valid. Not sending email to address '$to'.")
+        return
+    }
+
+    if (!isEmailValid(to)) {
+        System.err.println("Email address '$to' is not valid. Not sending email from address '$from'.")
+        return
+    }
+
     val fromName = fromEmail(from)
     val fromPers =
         if (fromName != null)
@@ -153,4 +164,15 @@ suspend fun sendEmail(
     if (response.status != HttpStatusCode.Accepted) {
         throw IOException("Status code is not 202: ${response.status}, ${response.content}")
     }
+}
+
+fun isEmailValid(email: String): Boolean {
+    return Pattern.compile(
+        "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]|[\\w-]{2,}))@" +
+            "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
+            "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\." +
+            "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
+            "[0-9]{1,2}|25[0-5]|2[0-4][0-9]))|" +
+            "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
+    ).matcher(email).matches()
 }
