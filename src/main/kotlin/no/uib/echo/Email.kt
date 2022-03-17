@@ -70,6 +70,7 @@ suspend fun sendConfirmationEmail(
     }
 
     val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+
     val fromEmail =
         if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
             hap.organizerEmail
