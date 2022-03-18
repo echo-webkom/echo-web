@@ -15,7 +15,8 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.jodatime.datetime
 import org.jetbrains.exposed.sql.select
@@ -93,6 +94,7 @@ suspend fun insertOrUpdateHappening(
     }
 
     val happening = selectHappening(newHappening.slug)
+
     val registrationsLink =
         if (dev)
             newHappening.slug
@@ -115,13 +117,11 @@ suspend fun insertOrUpdateHappening(
                 it[organizerEmail] = newHappening.organizerEmail.lowercase()
                 it[Happening.registrationsLink] = registrationsLink
             }
-            newHappening.spotRanges.map { range ->
-                SpotRange.insert {
-                    it[spots] = range.spots
-                    it[minDegreeYear] = range.minDegreeYear
-                    it[maxDegreeYear] = range.maxDegreeYear
-                    it[happeningSlug] = newHappening.slug
-                }
+            SpotRange.batchInsert(newHappening.spotRanges) { sr ->
+                this[SpotRange.spots] = sr.spots
+                this[SpotRange.minDegreeYear] = sr.minDegreeYear
+                this[SpotRange.maxDegreeYear] = sr.maxDegreeYear
+                this[SpotRange.happeningSlug] = newHappening.slug
             }
         }
 
@@ -194,32 +194,15 @@ suspend fun insertOrUpdateHappening(
             it[organizerEmail] = newHappening.organizerEmail.lowercase()
         }
 
-        val spotRangeExists = SpotRange.select {
+        SpotRange.deleteWhere {
             SpotRange.happeningSlug eq newHappening.slug
-        }.firstOrNull() != null
+        }
 
-        if (spotRangeExists) {
-            val spotRanges =
-                SpotRange.select {
-                    SpotRange.happeningSlug eq newHappening.slug
-                }.toList()
-
-            List(spotRanges.size) { i ->
-                SpotRange.update({ SpotRange.happeningSlug eq newHappening.slug and (SpotRange.id eq spotRanges[i][SpotRange.id]) }) {
-                    it[spots] = newHappening.spotRanges[i].spots
-                    it[minDegreeYear] = newHappening.spotRanges[i].minDegreeYear
-                    it[maxDegreeYear] = newHappening.spotRanges[i].maxDegreeYear
-                }
-            }
-        } else {
-            newHappening.spotRanges.map { range ->
-                SpotRange.insert {
-                    it[spots] = range.spots
-                    it[minDegreeYear] = range.minDegreeYear
-                    it[maxDegreeYear] = range.maxDegreeYear
-                    it[happeningSlug] = newHappening.slug
-                }
-            }
+        SpotRange.batchInsert(newHappening.spotRanges) { sr ->
+            this[SpotRange.spots] = sr.spots
+            this[SpotRange.minDegreeYear] = sr.minDegreeYear
+            this[SpotRange.maxDegreeYear] = sr.maxDegreeYear
+            this[SpotRange.happeningSlug] = newHappening.slug
         }
     }
 
