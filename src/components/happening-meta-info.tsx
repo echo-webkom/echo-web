@@ -60,7 +60,7 @@ const HappeningMetaInfo = ({
     const dontShowDegreeYear =
         (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
 
-    const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr);
+    const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
 
     return (
         <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
