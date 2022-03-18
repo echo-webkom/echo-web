@@ -21,13 +21,13 @@ import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningResponseJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
-import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.masters
@@ -888,7 +888,7 @@ class HappeningRegistrationTest : StringSpec({
                 val getCountRegCall: TestApplicationCall =
                     handleRequest(
                         method = HttpMethod.Get,
-                        uri = "/${Routing.registrationRoute}/$newSlug"
+                        uri = "/${Routing.happeningRoute}/$newSlug"
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
@@ -897,15 +897,15 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 getCountRegCall.response.status() shouldBe HttpStatusCode.OK
-                val spotRangeWithCountType = object : TypeToken<List<SpotRangeWithCountJson>>() {}.type
-                val spotRangeCounts = gson.fromJson<List<SpotRangeWithCountJson>>(
+                val happeningInfoType = object : TypeToken<HappeningInfoJson>() {}.type
+                val happeningInfo = gson.fromJson<HappeningInfoJson>(
                     getCountRegCall.response.content,
-                    spotRangeWithCountType
+                    happeningInfoType
                 )
 
-                for (i in spotRangeCounts.indices) {
-                    spotRangeCounts[i].regCount shouldBe exampleHappening6(t).spotRanges[i].spots
-                    spotRangeCounts[i].waitListCount shouldBe waitListCount
+                for (i in happeningInfo.spotRanges.indices) {
+                    happeningInfo.spotRanges[i].regCount shouldBe exampleHappening6(t).spotRanges[i].spots
+                    happeningInfo.spotRanges[i].waitListCount shouldBe waitListCount
                 }
 
                 val getRegistrationsListCall = handleRequest(
@@ -934,15 +934,15 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-    "Should respond properly when not given slug of happening when count of registrations are requested" {
+    "Should respond properly when given invalid slug of happening when happening info is requested" {
         withTestApplication({
             configureRouting(adminKey, null, true, featureToggles)
         }) {
             for (t in be) {
-                val getCountRegCall: TestApplicationCall =
+                val getHappeningInfoCall: TestApplicationCall =
                     handleRequest(
                         method = HttpMethod.Get,
-                        uri = "/${Routing.registrationRoute}"
+                        uri = "/${Routing.happeningRoute}/breh-100"
                     ) {
                         addHeader(
                             HttpHeaders.Authorization,
@@ -950,8 +950,8 @@ class HappeningRegistrationTest : StringSpec({
                         )
                     }
 
-                getCountRegCall.response.status() shouldBe HttpStatusCode.BadRequest
-                getCountRegCall.response.content shouldBe "No slug specified."
+                getHappeningInfoCall.response.status() shouldBe HttpStatusCode.NotFound
+                getHappeningInfoCall.response.content shouldBe "Happening doesn't exist."
             }
         }
     }

@@ -145,6 +145,7 @@ object Routing {
 
             if (happening == null) {
                 call.respond(HttpStatusCode.NotFound, "Happening doesn't exist.")
+                return@get
             }
 
             val registrationCount = transaction {
