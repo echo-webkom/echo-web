@@ -31,7 +31,7 @@ import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
-import no.uib.echo.plugins.Routing.getRegistrationCount
+import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
@@ -42,7 +42,7 @@ import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Happening.slug
+import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
@@ -51,7 +51,6 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.schema.selectHappening
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
@@ -107,11 +106,11 @@ fun Application.configureRouting(
             authenticate("auth-$admin") {
                 putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
                 deleteHappening()
-                getRegistrationCount()
+                getHappeningInfo()
             }
 
             getRegistrations(dev)
-            postRegistration(sendGridApiKey, featureToggles.sendEmailReg)
+            postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
             deleteRegistration(dev)
         }
     }
@@ -127,41 +126,59 @@ object Routing {
         }
     }
 
-    fun Route.getRegistrationCount() {
-        get("/$registrationRoute") {
-            val slugParam: String? = call.request.queryParameters["slug"]
+    fun Route.getHappeningInfo() {
+        get("/$happeningRoute/{slug}") {
+            val slug = call.parameters["slug"]
 
-            if (slugParam != null) {
-                val registrationCount = transaction {
-                    addLogger(StdOutSqlLogger)
-
-                    SpotRange.select {
-                        SpotRange.happeningSlug eq slugParam
-                    }.toList().map {
-                        SpotRangeWithCountJson(
-                            it[SpotRange.spots],
-                            it[SpotRange.minDegreeYear],
-                            it[SpotRange.maxDegreeYear],
-                            countRegistrationsDegreeYear(
-                                slugParam,
-                                it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                                false
-                            ),
-                            countRegistrationsDegreeYear(
-                                slugParam,
-                                it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                                true
-                            )
-                        )
-                    }
-                }
-
-                call.respond(HttpStatusCode.OK, registrationCount)
-                return@get
-            } else {
+            if (slug == null) {
                 call.respond(HttpStatusCode.BadRequest, "No slug specified.")
                 return@get
             }
+
+            val happening = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select {
+                    Happening.slug eq slug
+                }.firstOrNull()
+            }
+
+            if (happening == null) {
+                call.respond(HttpStatusCode.NotFound, "Happening doesn't exist.")
+                return@get
+            }
+
+            val registrationCount = transaction {
+                addLogger(StdOutSqlLogger)
+
+                SpotRange.select {
+                    SpotRange.happeningSlug eq slug
+                }.toList().map {
+                    SpotRangeWithCountJson(
+                        it[SpotRange.spots],
+                        it[SpotRange.minDegreeYear],
+                        it[SpotRange.maxDegreeYear],
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            false
+                        ),
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            true
+                        )
+                    )
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                HappeningInfoJson(
+                    registrationCount,
+                    happening?.get(Happening.regVerifyToken)
+                )
+            )
         }
     }
 
@@ -183,7 +200,7 @@ object Routing {
                 addLogger(StdOutSqlLogger)
 
                 Registration.select {
-                    Registration.happeningSlug eq hap[slug]
+                    Registration.happeningSlug eq hap[Happening.slug]
                 }.orderBy(Registration.submitDate to SortOrder.ASC).toList().map { reg ->
                     RegistrationJson(
                         reg[Registration.email].lowercase(),
@@ -200,7 +217,7 @@ object Routing {
 
                             Answer.select {
                                 Answer.registrationEmail.lowerCase() eq reg[Registration.email].lowercase() and
-                                    (Answer.happeningSlug eq hap[slug])
+                                    (Answer.happeningSlug eq hap[Happening.slug])
                             }.toList()
                         }.map {
                             AnswerJson(
@@ -208,13 +225,14 @@ object Routing {
                                 it[Answer.answer]
                             )
                         },
-                        HAPPENING_TYPE.valueOf(hap[Happening.happeningType])
+                        HAPPENING_TYPE.valueOf(hap[Happening.happeningType]),
+                        null
                     )
                 }
             }
 
             if (download) {
-                val fileName = "pameldte-${hap[slug]}.csv"
+                val fileName = "pameldte-${hap[Happening.slug]}.csv"
 
                 call.response.header(
                     HttpHeaders.ContentDisposition,
@@ -239,7 +257,7 @@ object Routing {
         }
     }
 
-    fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
+    fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRegs: Boolean) {
         post("/$registrationRoute") {
             try {
                 val registration = call.receive<RegistrationJson>()
@@ -298,7 +316,9 @@ object Routing {
                 val happening = transaction {
                     addLogger(StdOutSqlLogger)
 
-                    selectHappening(registration.slug)
+                    Happening.select {
+                        Happening.slug eq registration.slug
+                    }.firstOrNull()
                 }
 
                 if (happening == null) {
@@ -309,15 +329,24 @@ object Routing {
                     return@post
                 }
 
-                if (DateTime(happening.registrationDate).isAfterNow) {
+                if (happening[Happening.regVerifyToken] != registration.regVerifyToken && verifyRegs) {
+                    call.respond(HttpStatusCode.Unauthorized, resToJson(Response.NotViaForm, registration.type))
+                    return@post
+                }
+
+                if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
                     call.respond(
                         HttpStatusCode.Forbidden,
-                        resToJson(Response.TooEarly, registration.type, regDate = happening.registrationDate)
+                        resToJson(
+                            Response.TooEarly,
+                            registration.type,
+                            regDate = happening[Happening.registrationDate].toString()
+                        )
                     )
                     return@post
                 }
 
-                if (DateTime(happening.happeningDate).isBeforeNow) {
+                if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(Response.TooLate, registration.type)
@@ -327,7 +356,7 @@ object Routing {
 
                 val spotRanges = selectSpotRanges(registration.slug)
 
-                val correctRange = happening.spotRanges.firstOrNull {
+                val correctRange = spotRanges.firstOrNull {
                     registration.degreeYear in it.minDegreeYear..it.maxDegreeYear
                 }
 
@@ -455,7 +484,7 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     Registration.select {
-                        Registration.happeningSlug eq hap[slug] and
+                        Registration.happeningSlug eq hap[Happening.slug] and
                             (Registration.email.lowerCase() eq email.lowercase())
                     }.firstOrNull()
                 }
@@ -469,12 +498,12 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     Answer.deleteWhere {
-                        Answer.happeningSlug eq hap[slug] and
+                        Answer.happeningSlug eq hap[Happening.slug] and
                             (Answer.registrationEmail.lowerCase() eq email.lowercase())
                     }
 
                     Registration.deleteWhere {
-                        Registration.happeningSlug eq hap[slug] and
+                        Registration.happeningSlug eq hap[Happening.slug] and
                             (Registration.email.lowerCase() eq email.lowercase())
                     }
                 }
@@ -482,7 +511,7 @@ object Routing {
                 if (reg[Registration.waitList]) {
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted."
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted."
                     )
                     return@delete
                 }
@@ -498,19 +527,19 @@ object Routing {
                 if (highestOnWaitList == null) {
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted."
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted."
                     )
                 } else {
                     transaction {
                         addLogger(StdOutSqlLogger)
 
-                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() and (Registration.happeningSlug eq hap[slug]) }) {
+                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
                             it[waitList] = false
                         }
                     }
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[slug]} deleted, " +
+                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted, " +
                             "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
                     )
                 }
@@ -543,7 +572,7 @@ object Routing {
                 val hapDeleted = transaction {
                     addLogger(StdOutSqlLogger)
 
-                    val happeningExists = Happening.select { slug eq hap.slug }.firstOrNull() != null
+                    val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
                     if (!happeningExists)
                         return@transaction false
 
@@ -560,7 +589,7 @@ object Routing {
                     }
 
                     Happening.deleteWhere {
-                        slug eq hap.slug
+                        Happening.slug eq hap.slug
                     }
 
                     return@transaction true

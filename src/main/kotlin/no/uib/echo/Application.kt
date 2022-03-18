@@ -13,7 +13,8 @@ import kotlin.Exception
 data class FeatureToggles(
     val sendEmailReg: Boolean,
     val sendEmailHap: Boolean,
-    val rateLimit: Boolean
+    val rateLimit: Boolean,
+    val verifyRegs: Boolean
 )
 
 fun main(args: Array<String>) {
@@ -66,6 +67,7 @@ fun Application.module() {
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
     val sendEmailReg = environment.config.property("ktor.sendEmailRegistration").getString().toBooleanStrict()
     val sendEmailHap = environment.config.property("ktor.sendEmailHappening").getString().toBooleanStrict()
+    val verifyRegs = environment.config.property("ktor.verifyRegs").getString().toBooleanStrict()
     val maybeSendGridApiKey = environment.config.propertyOrNull("ktor.sendGridApiKey")?.getString()
     val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
         true -> null
@@ -81,6 +83,6 @@ fun Application.module() {
         adminKey,
         sendGridApiKey,
         dev,
-        FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap, rateLimit = true)
+        FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap, rateLimit = true, verifyRegs = verifyRegs)
     )
 }

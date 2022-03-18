@@ -28,7 +28,17 @@ import java.util.Base64
 class HappeningTest : StringSpec({
     val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
     val exampleHappening: (type: HAPPENING_TYPE) -> HappeningJson =
-        { type -> HappeningJson("$type-med-noen", ",$type med Noen!", "2020-04-29T20:43:29Z", "2030-04-29T20:43:29Z", everyoneSpotRange, type, "test@test.com") }
+        { type ->
+            HappeningJson(
+                "$type-med-noen",
+                ",$type med Noen!",
+                "2020-04-29T20:43:29Z",
+                "2030-04-29T20:43:29Z",
+                everyoneSpotRange,
+                type,
+                "test@test.com"
+            )
+        }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type) }
 
@@ -36,7 +46,7 @@ class HappeningTest : StringSpec({
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
-    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false, verifyRegs = false)
 
     beforeSpec { DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init() }
     beforeTest {

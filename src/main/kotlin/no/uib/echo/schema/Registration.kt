@@ -23,7 +23,8 @@ data class RegistrationJson(
     val submitDate: String?,
     val waitList: Boolean,
     val answers: List<AnswerJson>,
-    val type: HAPPENING_TYPE
+    val type: HAPPENING_TYPE,
+    val regVerifyToken: String?,
 )
 
 object Registration : Table() {
