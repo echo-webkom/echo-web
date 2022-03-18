@@ -14,8 +14,12 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
 import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.selectHappening
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.IOException
 
 data class SendGridRequest(
@@ -69,10 +73,17 @@ suspend fun sendConfirmationEmail(
             Pair("bedriftspresentasjonen", "bedpres")
     }
 
-    val hap = selectHappening(registration.slug) ?: throw Exception("Happening is null.")
+    val hap = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Happening.select {
+            Happening.slug eq registration.slug
+        }.firstOrNull()
+    } ?: throw Exception("Happening is null.")
+
     val fromEmail =
-        if (hap.organizerEmail.contains(Regex("@echo.uib.no$")))
-            hap.organizerEmail
+        if (hap[Happening.organizerEmail].contains(Regex("@echo.uib.no$")))
+            hap[Happening.organizerEmail]
         else
             "webkom@echo.uib.no"
     try {
@@ -81,7 +92,7 @@ suspend fun sendConfirmationEmail(
                 fromEmail,
                 registration.email,
                 SendGridTemplate(
-                    hap.title,
+                    hap[Happening.title],
                     "https://echo.uib.no/$typeSlug/${registration.slug}",
                     hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),

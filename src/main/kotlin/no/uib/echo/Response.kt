@@ -16,6 +16,7 @@ enum class Response {
     AlreadySubmitted,
     AlreadySubmittedWaitList,
     HappeningDoesntExist,
+    NotViaForm,
     TooEarly,
     TooLate,
     WaitList,
@@ -50,6 +51,13 @@ fun resToJson(
             return ResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)
         Response.AlreadySubmittedWaitList ->
             return ResponseJson(res, "Du er allerede påmeldt.", "Du er på ventelisten.", regDate)
+        Response.NotViaForm ->
+            return ResponseJson(
+                res,
+                "Du må melde deg på via nettsiden.",
+                "Det ser ut som du prøve å melde deg på utenfor nettsiden. Om du mener dette ikke stemmer, ta kontakt med Webkom.",
+                regDate
+            )
         Response.TooEarly ->
             return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
         Response.TooLate ->
