@@ -116,7 +116,7 @@ const spotRangeCountDecoder = record({
 
 const happeningInfoDecoder = record({
     spotRanges: array(spotRangeCountDecoder),
-    regVerifyToken: union(string, nil),
+    regVerifyToken: optional(string),
 });
 
 const postDecoder = record({
