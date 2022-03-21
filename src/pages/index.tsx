@@ -36,7 +36,6 @@ const IndexPage = ({
                                 'Bedriftspresentasjoner',
                             ]}
                             entries={bedpreses}
-                            entryLimit={4}
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
@@ -46,7 +45,6 @@ const IndexPage = ({
                         <EntryBox
                             title="Arrangementer"
                             entries={events}
-                            entryLimit={6}
                             altText="Ingen kommende arrangementer :("
                             linkTo="/event"
                             type="event"
@@ -79,14 +77,16 @@ export const getStaticProps: GetStaticProps = async () => {
 
     fs.writeFileSync('./public/rss.xml', rss);
 
+    const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 6] : [3, 4];
+
     return {
         props: {
             bedpreses: bedpresesResponse
                 .filter((bedpres: Happening) => {
                     return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
                 })
-                .slice(0, 4),
-            posts: postsResponse.slice(0, 3),
+                .slice(0, bedpresLimit),
+            posts: postsResponse.slice(0, eventLimit),
             events: eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8),
         },
     };
