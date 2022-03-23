@@ -119,7 +119,7 @@ suspend fun insertOrUpdateHappening(
             }
         }
 
-        if (sendEmail) {
+        if (sendEmail && sendGridApiKey != null) {
             val hapTypeLiteral = when (newHappening.type) {
                 HAPPENING_TYPE.EVENT ->
                     "arrangementet"
@@ -127,24 +127,22 @@ suspend fun insertOrUpdateHappening(
                     "bedriftspresentasjonen"
             }
 
-            if (sendGridApiKey != null) {
-                try {
-                    withContext(Dispatchers.IO) {
-                        sendEmail(
-                            "webkom@echo.uib.no",
-                            newHappening.organizerEmail,
-                            SendGridTemplate(
-                                newHappening.title,
-                                "https://echo.uib.no/$registrationRoute/$registrationsLink",
-                                hapTypeLiteral
-                            ),
-                            Template.REGS_LINK,
-                            sendGridApiKey
-                        )
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
+            try {
+                withContext(Dispatchers.IO) {
+                    sendEmail(
+                        "webkom@echo.uib.no",
+                        newHappening.organizerEmail,
+                        SendGridTemplate(
+                            newHappening.title,
+                            "https://echo.uib.no/$registrationRoute/$registrationsLink",
+                            hapTypeLiteral
+                        ),
+                        Template.REGS_LINK,
+                        sendGridApiKey
+                    )
                 }
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
         }
 
