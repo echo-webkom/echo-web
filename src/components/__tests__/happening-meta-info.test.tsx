@@ -178,6 +178,33 @@ const happeningMetaInfoProps: Array<Props> = [
         ],
         spotRangesFromCms: null,
     },
+    {
+        date: date,
+        location: 'Lesesal1',
+        locationLink: null,
+        type: HappeningType.EVENT,
+        title: 'same-deg-year',
+        slug: 'same-deg-year',
+        contactEmail: 'test@test.com',
+        companyLink: null,
+        spotRangeCounts: [
+            {
+                spots: 19,
+                minDegreeYear: 4,
+                maxDegreeYear: 4,
+                regCount: 19,
+                waitListCount: 12,
+            },
+            {
+                spots: 123,
+                minDegreeYear: 5,
+                maxDegreeYear: 5,
+                regCount: 123,
+                waitListCount: 12,
+            },
+        ],
+        spotRangesFromCms: null,
+    },
 ];
 
 describe('HappeningMetaInfo', () => {
@@ -273,5 +300,21 @@ describe('HappeningMetaInfo', () => {
         props.spotRangeCounts?.map((sr) => {
             return expect(getByText(new RegExp(`${sr.regCount}/∞ påmeldt`))).toBeInTheDocument();
         });
+    });
+
+    test('renders correctly 9', () => {
+        const props = happeningMetaInfoProps[8];
+        const { getByText } = render(<HappeningMetaInfo {...props} />);
+
+        props.spotRangeCounts?.map((sr) => {
+            return expect(
+                getByText(new RegExp(`${sr.regCount}/${sr.spots} påmeldt for ${sr.minDegreeYear}. trinn`)),
+            ).toBeInTheDocument();
+        });
+
+        const combinedWaitList =
+            props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
+
+        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
     });
 });

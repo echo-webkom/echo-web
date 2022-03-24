@@ -71,28 +71,44 @@ const HappeningMetaInfo = ({
                     link={companyLink}
                 />
             )}
-            {trueSpotRanges.map((sr: SpotRangeCount) => (
-                <>
-                    {sr.regCount === 0 && (
-                        <IconText
-                            key={`mdeventseat1-${sr.spots}`}
-                            icon={MdEventSeat}
-                            text={`${spotsText(sr.spots)} plasser`.concat(
-                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
-                            )}
-                        />
-                    )}
-                    {sr.regCount !== 0 && (
-                        <IconText
-                            key={`mdeventseat2-${sr.spots}`}
-                            icon={MdEventSeat}
-                            text={`${sr.regCount}/${spotsText(sr.spots)} påmeldt`.concat(
-                                dontShowDegreeYear ? '' : ` for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
-                            )}
-                        />
-                    )}
-                </>
-            ))}
+            {trueSpotRanges.map((sr: SpotRangeCount) => {
+                const sameDegreeYear = sr.minDegreeYear === sr.maxDegreeYear;
+
+                return (
+                    <>
+                        {sr.regCount === 0 && (
+                            <IconText
+                                key={`mdeventseat1-${sr.spots}`}
+                                icon={MdEventSeat}
+                                text={`${spotsText(sr.spots)} plasser`.concat(
+                                    dontShowDegreeYear
+                                        ? ''
+                                        : ' for '.concat(
+                                              sameDegreeYear
+                                                  ? `${sr.minDegreeYear}. trinn`
+                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                          ),
+                                )}
+                            />
+                        )}
+                        {sr.regCount !== 0 && (
+                            <IconText
+                                key={`mdeventseat2-${sr.spots}`}
+                                icon={MdEventSeat}
+                                text={`${sr.regCount}/${spotsText(sr.spots)} påmeldt`.concat(
+                                    dontShowDegreeYear
+                                        ? ''
+                                        : ' for '.concat(
+                                              sameDegreeYear
+                                                  ? `${sr.minDegreeYear}. trinn`
+                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                          ),
+                                )}
+                            />
+                        )}
+                    </>
+                );
+            })}
             {combinedWaitList > 0 && <IconText icon={IoMdListBox} text={`${combinedWaitList} på venteliste`} />}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
