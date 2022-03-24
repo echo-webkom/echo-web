@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
-    const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: undefined };
+    const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
 
     const date = Date.now();
 
