@@ -61,7 +61,9 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                             Navigasjon
                         </DrawerHeader>
                         <DrawerBody>
-                            <NavLinks />
+                            <Box onClick={onClose}>
+                                <NavLinks />
+                            </Box>
                         </DrawerBody>
                     </DrawerContent>
                 </DrawerOverlay>
