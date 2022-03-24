@@ -99,6 +99,12 @@ export default {
             name: 'registrationDate',
             title: 'Dato for påmelding',
             type: 'datetime',
+            validation: (Rule) =>
+                Rule.custom((registrationDate, context) =>
+                    typeof context.document.spotRanges !== 'undefined' && typeof registrationDate === 'undefined'
+                        ? 'Må ha dato for påmelding om det er definert arrangementsplasser.'
+                        : true,
+                ),
         },
         {
             name: 'contactEmail',
@@ -106,7 +112,9 @@ export default {
             description: '⚠️ Liste over påmeldte vil bli sendt til denne mailen! ⚠️',
             validation: (Rule) =>
                 Rule.custom((contactEmail, context) =>
-                    typeof context.document.registrationDate !== 'undefined' && !(contactEmail?.includes('@') ?? false)
+                    (typeof context.document.registrationDate !== 'undefined' ||
+                        typeof context.document.registrationDate !== 'undefined') &&
+                    !(contactEmail?.includes('@') ?? false)
                         ? 'Må ha en (gyldig) kontaktemail om det skal være påmelding.'
                         : true,
                 ),
