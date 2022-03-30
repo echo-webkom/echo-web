@@ -1,4 +1,4 @@
-import { Box, Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import removeMD from 'remove-markdown';
@@ -15,42 +15,42 @@ const PostPreview = ({ post }: Props): JSX.Element => {
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
 
     return (
-        <LinkBox w={['100%', null, null, null, '22em']} data-testid={post.slug}>
+        <LinkBox
+            w={['100%', null, null, null, '22em']}
+            data-testid={post.slug}
+            border="2px"
+            borderColor="transparent"
+            borderRadius="0.5rem"
+            h="15em"
+            textAlign="left"
+            px="2em"
+            pb="10em"
+            bg={bgColor}
+            position="relative"
+            overflow="hidden"
+            _hover={{ borderColor: borderColor }}
+        >
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
-                    <Box
-                        h="15em"
-                        textAlign="left"
-                        px="2em"
-                        pb="10em"
-                        bg={bgColor}
-                        border="2px"
-                        borderColor="transparent"
-                        position="relative"
-                        overflow="hidden"
+                    <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
+                        {post.title}
+                    </Heading>
+                    <Text fontStyle="italic">{`«${removeMD(post.body.slice(0, 100))} ...»`}</Text>
+                    <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        pos="absolute"
+                        bottom="0"
+                        right="8"
+                        color={textColor}
+                        bg={authorBg}
+                        py="0.5rem"
+                        px="1rem"
                         borderRadius="0.5rem"
-                        _hover={{ borderColor: borderColor }}
+                        marginBottom="0.25rem"
                     >
-                        <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                            {post.title}
-                        </Heading>
-                        <Text fontStyle="italic">{`«${removeMD(post.body.slice(0, 100))} ...»`}</Text>
-                        <Text
-                            fontSize="md"
-                            fontWeight="bold"
-                            pos="absolute"
-                            bottom="0"
-                            right="8"
-                            color={textColor}
-                            bg={authorBg}
-                            py="0.5rem"
-                            px="1rem"
-                            borderRadius="0.5rem"
-                            marginBottom="0.25rem"
-                        >
-                            {post.author}
-                        </Text>
-                    </Box>
+                        {post.author}
+                    </Text>
                 </LinkOverlay>
             </NextLink>
         </LinkBox>
