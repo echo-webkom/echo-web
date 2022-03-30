@@ -11,19 +11,26 @@ interface Props {
     entryLimit?: number;
     type: 'event' | 'bedpres' | 'post' | 'job-advert';
     registrationCounts?: Array<RegistrationCount>;
+    enableJobAdverts?: boolean;
 }
 
-const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type, registrationCounts, enableJobAdverts = false }: Props): JSX.Element => {
     if (entryLimit) {
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
+    }
+
+    if (type === 'job-advert') {
+        entries.sort((a, b) => {
+            return (b as JobAdvert).weight - (a as JobAdvert).weight;
+        });
     }
 
     return (
         <Stack
             w="100%"
-            spacing={6}
+            spacing={type === 'post' && enableJobAdverts ? 12 : 6}
             divider={<StackDivider />}
-            direction={type === 'post' ? ['column', null, null, 'row'] : 'column'}
+            direction={type === 'post' && !enableJobAdverts ? ['column', null, null, 'row'] : 'column'}
             justifyContent="space-around"
         >
             {entries.map((entry: Happening | Post | JobAdvert) => {
@@ -46,7 +53,13 @@ const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JS
                             />
                         );
                     case 'post':
-                        return <PostPreview key={entry.slug} post={entry as Post} />;
+                        return (
+                            <PostPreview
+                                key={entry.slug}
+                                post={entry as Post}
+                                w={enableJobAdverts ? '100%' : undefined}
+                            />
+                        );
                     case 'job-advert':
                         return <JobAdvertPreview key={entry.slug} jobAdvert={entry as JobAdvert} />;
                 }

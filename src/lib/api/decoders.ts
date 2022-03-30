@@ -153,6 +153,7 @@ const jobAdvertDecoder = record({
     jobType: union(literal('fulltime'), literal('parttime'), literal('internship'), literal('summerjob')),
     degreeYears: array(number),
     _createdAt: string,
+    weight: number,
 });
 
 const happeningTypeDecoder = (value: Pojo): HappeningType => {

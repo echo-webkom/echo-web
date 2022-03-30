@@ -19,7 +19,9 @@ const JobAdvertAPI = {
 
     getJobAdverts: async (n: number): Promise<Array<JobAdvert> | ErrorMessage> => {
         try {
-            const query = `*[_type == "jobAdvert" && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${n}] {
+            const query = `*[_type == "jobAdvert" && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${
+                n - 1
+            }] {
                     "slug": slug.current,
                     body,
                     companyName,
@@ -30,7 +32,8 @@ const JobAdvertAPI = {
                     advertLink,
                     jobType,
                     degreeYears,
-                    _createdAt
+                    _createdAt,
+                    weight
                 }`;
             const result = await SanityAPI.fetch(query);
 
@@ -55,7 +58,8 @@ const JobAdvertAPI = {
                     advertLink,
                     jobType,
                     degreeYears,
-                    _createdAt
+                    _createdAt,
+                    weight
                 }`;
             const result = await SanityAPI.fetch(query);
 

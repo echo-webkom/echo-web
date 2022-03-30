@@ -36,6 +36,7 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
         <LinkBox
             w="100%"
             p="1rem"
+            my="1rem"
             pos="relative"
             bg={bgColor}
             border="2px"

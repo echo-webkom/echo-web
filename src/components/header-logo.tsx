@@ -73,6 +73,7 @@ const HeaderLogo = () => {
             data-testid="header-logo"
             borderRadius="0.5rem"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
+            mr="0rem"
         >
             <Flex display={{ base: 'none', md: 'block' }}>
                 <Image src={bigLogo} alt="logo" width={260} height={77} />

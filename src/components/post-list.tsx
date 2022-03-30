@@ -12,7 +12,7 @@ const PostList = ({ posts }: Props): JSX.Element => {
         <Center>
             <Wrap pt="1rem" className="post-list" spacing={8} w="100%" justify="center">
                 {posts.map((post: Post) => {
-                    return <PostPreview key={post.slug} post={post} data-testid={post.slug} />;
+                    return <PostPreview key={post.slug} post={post} data-testid={post.slug} w="22em" />;
                 })}
             </Wrap>
         </Center>

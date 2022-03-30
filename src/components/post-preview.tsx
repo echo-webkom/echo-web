@@ -1,14 +1,14 @@
-import { Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { BoxProps, Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import removeMD from 'remove-markdown';
 import { Post } from '../lib/api';
 
-interface Props {
+interface Props extends BoxProps {
     post: Post;
 }
 
-const PostPreview = ({ post }: Props): JSX.Element => {
+const PostPreview = ({ post, ...props }: Props): JSX.Element => {
     const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
@@ -16,7 +16,7 @@ const PostPreview = ({ post }: Props): JSX.Element => {
 
     return (
         <LinkBox
-            w={['100%', null, null, null, '22em']}
+            w="100%"
             data-testid={post.slug}
             border="2px"
             borderColor="transparent"
@@ -29,6 +29,8 @@ const PostPreview = ({ post }: Props): JSX.Element => {
             position="relative"
             overflow="visible"
             _hover={{ borderColor: borderColor }}
+            alignSelf="center"
+            {...props}
         >
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>

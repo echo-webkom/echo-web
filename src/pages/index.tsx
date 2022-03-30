@@ -18,6 +18,8 @@ import {
     PostAPI,
     RegistrationAPI,
     RegistrationCount,
+    JobAdvertAPI,
+    JobAdvert,
 } from '../lib/api';
 //import getRssXML from '../lib/generate-rss-feed';
 
@@ -27,12 +29,16 @@ const IndexPage = ({
     events,
     banner,
     registrationCounts,
+    jobs,
+    enableJobAdverts,
 }: {
     bedpreses: Array<Happening>;
     posts: Array<Post>;
     events: Array<Happening>;
     banner: Banner | null;
     registrationCounts: Array<RegistrationCount>;
+    jobs: Array<JobAdvert>;
+    enableJobAdverts: boolean;
 }): JSX.Element => {
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
@@ -50,6 +56,18 @@ const IndexPage = ({
             </Section>
         );
     };
+
+    const PostEntryBox = () => (
+        <EntryBox
+            titles={['Innlegg']}
+            entries={posts}
+            entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
+            altText="Ingen innlegg :("
+            linkTo="/posts"
+            type="post"
+            enableJobAdverts={enableJobAdverts}
+        />
+    );
 
     return (
         <>
@@ -80,13 +98,7 @@ const IndexPage = ({
                     </GridItem>
                     <GridItem>
                         <EntryBox
-                            titles={[
-                                'Bedpres',
-                                'Bedpresolini',
-                                'Bedriftspresentasjoner',
-                                'Bedpres',
-                                'Bedriftspresentasjoner',
-                            ]}
+                            titles={['Bedpres', 'Bedpresolini', 'Bedriftspresentasjoner']}
                             entries={bedpreses}
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
@@ -95,24 +107,36 @@ const IndexPage = ({
                         />
                     </GridItem>
                 </Grid>
-                <EntryBox
-                    titles={['Innlegg']}
-                    entries={posts}
-                    entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
-                    altText="Ingen innlegg :("
-                    linkTo="/posts"
-                    type="post"
-                />
+                {enableJobAdverts ? (
+                    <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
+                        <GridItem>
+                            <EntryBox
+                                titles={['Jobb', 'Annonser', 'Jobbannonser', 'Stillingsannonser']}
+                                entries={jobs}
+                                altText="Ingen stillingsannonser :("
+                                linkTo="/job"
+                                type="job-advert"
+                                enableJobAdverts={enableJobAdverts}
+                            />
+                        </GridItem>
+                        <GridItem>
+                            <PostEntryBox />
+                        </GridItem>
+                    </Grid>
+                ) : (
+                    <PostEntryBox />
+                )}
             </VStack>
         </>
     );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const [bedpresesResponse, eventsResponse, postsResponse, bannerResponse] = await Promise.all([
+    const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
         HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES),
         HappeningAPI.getHappeningsByType(0, HappeningType.EVENT),
         PostAPI.getPosts(0),
+        JobAdvertAPI.getJobAdverts(3),
         BannerAPI.getBanner(),
     ]);
 
@@ -120,6 +144,7 @@ export const getStaticProps: GetStaticProps = async () => {
     if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
     if (isErrorMessage(postsResponse)) throw new Error(postsResponse.message);
     if (bannerResponse && isErrorMessage(bannerResponse)) throw new Error(bannerResponse.message);
+    if (isErrorMessage(jobsResponse)) throw new Error(jobsResponse.message);
 
     //const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
 
@@ -140,13 +165,17 @@ export const getStaticProps: GetStaticProps = async () => {
         process.env.BACKEND_URL ?? 'http://localhost:8080',
     );
 
+    const enableJobAdverts = process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
+
     return {
         props: {
             bedpreses,
-            posts: postsResponse.slice(0, eventLimit),
+            posts: postsResponse.slice(0, process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' ? 2 : 3),
             events: events.slice(0, eventLimit),
+            jobs: jobsResponse,
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
+            enableJobAdverts,
         },
         revalidate: 60,
     };
