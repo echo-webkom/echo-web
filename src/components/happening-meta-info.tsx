@@ -91,11 +91,15 @@ const HappeningMetaInfo = ({
                                 )}
                             />
                         )}
+                        {/* eslint-disable unicorn/prefer-spread */}
                         {sr.regCount !== 0 && (
                             <IconText
                                 key={`mdeventseat2-${sr.spots}`}
                                 icon={MdEventSeat}
-                                text={`${sr.regCount}/${spotsText(sr.spots)} påmeldt`.concat(
+                                text={(sr.waitListCount > 0 || sr.regCount === sr.spots
+                                    ? 'Fullt'
+                                    : `${sr.regCount}/${spotsText(sr.spots)} påmeldt`
+                                ).concat(
                                     dontShowDegreeYear
                                         ? ''
                                         : ' for '.concat(
@@ -106,6 +110,7 @@ const HappeningMetaInfo = ({
                                 )}
                             />
                         )}
+                        {/* eslint-enable unicorn/prefer-spread */}
                     </>
                 );
             })}
