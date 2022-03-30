@@ -2,7 +2,7 @@ import { ReactElement, JSXElementConstructor } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import AllTheProviders from './testing-wrapper';
 
-const customRender = (ui: ReactElement<any, string | JSXElementConstructor<any>>, options: RenderOptions<any>) =>
+const customRender = (ui: ReactElement<any, string | JSXElementConstructor<any>>, options?: RenderOptions<any>) =>
     render(ui, {
         wrapper: AllTheProviders,
         ...options,

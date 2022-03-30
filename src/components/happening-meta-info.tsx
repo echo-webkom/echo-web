@@ -1,4 +1,4 @@
-import { VStack } from '@chakra-ui/react';
+import { VStack, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import React from 'react';
 import { CgOrganisation } from 'react-icons/cg';
@@ -75,7 +75,7 @@ const HappeningMetaInfo = ({
                 const sameDegreeYear = sr.minDegreeYear === sr.maxDegreeYear;
 
                 return (
-                    <>
+                    <Flex key={`${JSON.stringify(sr)}-${slug}`}>
                         {sr.regCount === 0 && (
                             <IconText
                                 key={`mdeventseat1-${sr.spots}`}
@@ -111,7 +111,7 @@ const HappeningMetaInfo = ({
                             />
                         )}
                         {/* eslint-enable unicorn/prefer-spread */}
-                    </>
+                    </Flex>
                 );
             })}
             {combinedWaitList > 0 && <IconText icon={IoMdListBox} text={`${combinedWaitList} på venteliste`} />}
