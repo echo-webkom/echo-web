@@ -125,7 +125,7 @@ const happeningMetaInfoProps: Array<Props> = [
                 spots: 8,
                 minDegreeYear: 1,
                 maxDegreeYear: 3,
-                regCount: 10,
+                regCount: 8,
                 waitListCount: 0,
             },
             {
@@ -272,11 +272,7 @@ describe('HappeningMetaInfo', () => {
 
         props.spotRangeCounts?.map((sr) => {
             return expect(
-                getByText(
-                    new RegExp(
-                        `${sr.regCount}/${sr.spots} påmeldt for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
-                    ),
-                ),
+                getByText(new RegExp(`Fullt for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`)),
             ).toBeInTheDocument();
         });
 
@@ -307,9 +303,7 @@ describe('HappeningMetaInfo', () => {
         const { getByText } = render(<HappeningMetaInfo {...props} />);
 
         props.spotRangeCounts?.map((sr) => {
-            return expect(
-                getByText(new RegExp(`${sr.regCount}/${sr.spots} påmeldt for ${sr.minDegreeYear}. trinn`)),
-            ).toBeInTheDocument();
+            return expect(getByText(new RegExp(`Fullt for ${sr.minDegreeYear}. trinn`))).toBeInTheDocument();
         });
 
         const combinedWaitList =
