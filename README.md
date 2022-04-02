@@ -35,7 +35,11 @@ eller send oss en mail på [webkom-styret@echo.uib.no](mailto:webkom-styret@echo
 
     yarn
 
-**4. Start en lokal server.**
+**4. Kopier innholdet i `.env.example` til en fil med navn `.env` (og evt. fyll inn verdier for feltene).**
+
+    cp .env.example .env
+
+**5. Start en lokal server.**
 
     yarn dev
 
