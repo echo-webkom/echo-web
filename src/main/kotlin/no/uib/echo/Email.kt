@@ -13,8 +13,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Happening.registrationsLink
+import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.RegistrationJson
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -100,6 +103,33 @@ suspend fun sendConfirmationEmail(
                     registration = registration
                 ),
                 if (waitListSpot != null) Template.CONFIRM_WAIT else Template.CONFIRM_REG,
+                sendGridApiKey
+            )
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+}
+
+suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson) {
+    val hapTypeLiteral = when (happening.type) {
+        HAPPENING_TYPE.EVENT ->
+            "arrangementet"
+        HAPPENING_TYPE.BEDPRES ->
+            "bedriftspresentasjonen"
+    }
+
+    try {
+        withContext(Dispatchers.IO) {
+            sendEmail(
+                "webkom@echo.uib.no",
+                happening.organizerEmail,
+                SendGridTemplate(
+                    happening.title,
+                    "https://echo.uib.no/${Routing.registrationRoute}/$registrationsLink",
+                    hapTypeLiteral
+                ),
+                Template.REGS_LINK,
                 sendGridApiKey
             )
         }
