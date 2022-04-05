@@ -1,9 +1,11 @@
 package no.uib.echo
 
+import kotlinx.serialization.Serializable
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.SpotRangeJson
 
-data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String?)
+@Serializable
+data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String? = null)
 
 enum class Response {
     InvalidEmail,

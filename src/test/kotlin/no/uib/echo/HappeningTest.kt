@@ -1,6 +1,5 @@
 package no.uib.echo
 
-import com.google.gson.Gson
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
@@ -10,6 +9,8 @@ import io.ktor.server.testing.TestApplicationCall
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import no.uib.echo.plugins.Routing
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.schema.Answer
@@ -42,7 +43,6 @@ class HappeningTest : StringSpec({
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
         { type -> HappeningSlugJson(exampleHappening(type).slug, type) }
 
-    val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
@@ -78,7 +78,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t)))
+                        setBody(Json.encodeToString(exampleHappening(t)))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.OK
@@ -98,7 +98,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t)))
+                        setBody(Json.encodeToString(exampleHappening(t)))
                     }
 
                 submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
@@ -110,7 +110,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t).copy(spotRanges = listOf(everyoneSpotRange[0].copy(spots = 123)))))
+                        setBody(Json.encodeToString(exampleHappening(t).copy(spotRanges = listOf(everyoneSpotRange[0].copy(spots = 123)))))
                     }
 
                 updateHappeningCall.response.status() shouldBe HttpStatusCode.OK
@@ -130,7 +130,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t)))
+                        setBody(Json.encodeToString(exampleHappening(t)))
                     }
 
                 submitBedpresCall.response.status() shouldBe HttpStatusCode.OK
@@ -142,7 +142,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(auth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t)))
+                        setBody(Json.encodeToString(exampleHappening(t)))
                     }
 
                 updateBedpresCall.response.status() shouldBe HttpStatusCode.Accepted
@@ -182,7 +182,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappening(t)))
+                        setBody(Json.encodeToString(exampleHappening(t)))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.Unauthorized
@@ -204,7 +204,7 @@ class HappeningTest : StringSpec({
                             HttpHeaders.Authorization,
                             "Basic ${Base64.getEncoder().encodeToString(wrongAuth.toByteArray())}"
                         )
-                        setBody(gson.toJson(exampleHappeningSlug(t)))
+                        setBody(Json.encodeToString(exampleHappeningSlug(t)))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.Unauthorized

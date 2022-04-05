@@ -1,8 +1,8 @@
 package no.uib.echo
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
@@ -13,6 +13,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.RegistrationJson
@@ -23,17 +24,20 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.IOException
 import java.util.regex.Pattern
 
+@Serializable
 data class SendGridRequest(
     val personalizations: List<SendGridPersonalization>,
     val from: SendGridEmail,
     val template_id: String
 )
 
+@Serializable
 data class SendGridPersonalization(
     val to: List<SendGridEmail>,
     val dynamic_template_data: SendGridTemplate
 )
 
+@Serializable
 data class SendGridTemplate(
     val title: String,
     val link: String,
@@ -42,6 +46,7 @@ data class SendGridTemplate(
     val registration: RegistrationJson? = null
 )
 
+@Serializable
 data class SendGridEmail(val email: String, val name: String? = null)
 
 enum class Template {
@@ -141,7 +146,7 @@ suspend fun sendEmail(
     val response: HttpResponse = HttpClient {
         install(Logging)
         install(JsonFeature) {
-            serializer = GsonSerializer()
+            serializer = KotlinxSerializer()
         }
     }.use { client ->
         client.post(SENDGRID_ENDPOINT) {

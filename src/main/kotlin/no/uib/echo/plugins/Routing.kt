@@ -10,7 +10,6 @@ import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
-import io.ktor.gson.gson
 import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -25,6 +24,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
 import io.ktor.routing.routing
+import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
@@ -80,7 +80,7 @@ fun Application.configureRouting(
     val admin = "admin"
 
     install(ContentNegotiation) {
-        gson()
+        json()
     }
 
     install(RateLimit) {
