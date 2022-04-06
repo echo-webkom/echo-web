@@ -1,12 +1,7 @@
 package no.uib.echo.schema
 
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import no.uib.echo.SendGridTemplate
-import no.uib.echo.Template
-import no.uib.echo.plugins.Routing.registrationRoute
 import no.uib.echo.sendRegsLinkEmail
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
