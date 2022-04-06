@@ -4,10 +4,10 @@ import { responseDecoder, registrationDecoder } from './decoders';
 import { ErrorMessage, Degree, Answer, Response, Registration } from './types';
 import { HappeningType } from '.';
 
-const genericError: { title: string; desc: string; date: string | undefined } = {
+const genericError = {
     title: 'Det har skjedd en feil.',
     desc: 'Vennligst prøv igjen',
-    date: undefined,
+    date: null,
 };
 
 // Values directly from the form (aka form fields)

@@ -103,7 +103,7 @@ const responseDecoder = record({
     code: string,
     title: string,
     desc: string,
-    date: optional(string),
+    date: optional(union(string, nil)),
 });
 
 const spotRangeCountDecoder = record({
