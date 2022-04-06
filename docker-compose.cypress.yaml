@@ -16,7 +16,6 @@ services:
       # Value of DEV doesn't matter, only that it's defined.
       DEV: 'yes'
       # Values from .env file.
-      SANITY_TOKEN: ${SANITY_TOKEN:?Must specify SANITY_TOKEN in .env file or environment.}
       SANITY_DATASET: ${SANITY_DATASET:?Must specify SANITY_DATASET in .env file or environment.}
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
 
