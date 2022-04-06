@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import no.uib.echo.SendGridTemplate
 import no.uib.echo.Template
 import no.uib.echo.plugins.Routing.registrationRoute
-import no.uib.echo.sendEmail
+import no.uib.echo.sendRegsLinkEmail
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -21,7 +21,6 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
-import java.io.IOException
 
 private const val REG_LINK_LENGTH = 128
 private const val REG_VERIFY_TOKEN_LENGTH = 16
@@ -125,30 +124,7 @@ suspend fun insertOrUpdateHappening(
         }
 
         if (sendEmail && sendGridApiKey != null) {
-            val hapTypeLiteral = when (newHappening.type) {
-                HAPPENING_TYPE.EVENT ->
-                    "arrangementet"
-                HAPPENING_TYPE.BEDPRES ->
-                    "bedriftspresentasjonen"
-            }
-
-            try {
-                withContext(Dispatchers.IO) {
-                    sendEmail(
-                        "webkom@echo.uib.no",
-                        newHappening.organizerEmail,
-                        SendGridTemplate(
-                            newHappening.title,
-                            "https://echo.uib.no/$registrationRoute/$registrationsLink",
-                            hapTypeLiteral
-                        ),
-                        Template.REGS_LINK,
-                        sendGridApiKey
-                    )
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+            sendRegsLinkEmail(sendGridApiKey, newHappening)
         }
 
         return Pair(
@@ -203,16 +179,30 @@ suspend fun insertOrUpdateHappening(
         }
     }
 
+    val message =
+        "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
+            "to title = ${newHappening.title}, " +
+            "registrationDate = ${newHappening.registrationDate}, " +
+            "happeningDate = ${newHappening.happeningDate}, " +
+            "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+            "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
+
+    if (happening[Happening.organizerEmail].lowercase() != newHappening.organizerEmail.lowercase() && sendEmail && sendGridApiKey != null) {
+        sendRegsLinkEmail(sendGridApiKey, newHappening)
+        return Pair(
+            HttpStatusCode.OK,
+            HappeningResponseJson(
+                registrationsLink,
+                message + "Sent mail to new address: ${newHappening.organizerEmail.lowercase()}."
+            )
+        )
+    }
+
     return Pair(
         HttpStatusCode.OK,
         HappeningResponseJson(
             registrationsLink,
-            "Updated ${newHappening.type} with slug = ${newHappening.slug} " +
-                "to title = ${newHappening.title}, " +
-                "registrationDate = ${newHappening.registrationDate}, " +
-                "happeningDate = ${newHappening.happeningDate}, " +
-                "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
+            message
         )
     )
 }
