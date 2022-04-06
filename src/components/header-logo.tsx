@@ -19,6 +19,7 @@ const randomHeaderMessage = (): string => {
             'Skambra!',
             'For ei skjønnas 😍',
             'Vim eller forsvinn',
+            'Mye å gjøre, SUCK IT!'
         ];
 
         if (getMonth(now) === 9) return [...baseMessages, 'BØ!', 'UuUuuUuuUuUu'];
