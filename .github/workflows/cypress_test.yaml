@@ -48,7 +48,6 @@ jobs:
         REGISTRY: ${{ env.REGISTRY }}
         FRONTEND_TAG: ${{ env.FRONTEND_TAG }}
         BACKEND_TAG: ${{ env.BACKEND_TAG }}
-        SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
         SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
         ADMIN_KEY: admin-passord
         COMPOSE_FILE: docker-compose.cypress.yaml

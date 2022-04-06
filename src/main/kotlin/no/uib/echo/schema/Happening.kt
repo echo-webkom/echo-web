@@ -1,6 +1,7 @@
 package no.uib.echo.schema
 
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.Serializable
 import no.uib.echo.sendRegsLinkEmail
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
@@ -24,6 +25,7 @@ enum class HAPPENING_TYPE {
     EVENT
 }
 
+@Serializable
 data class HappeningJson(
     val slug: String,
     val title: String,
@@ -34,13 +36,16 @@ data class HappeningJson(
     val organizerEmail: String
 )
 
+@Serializable
 data class HappeningInfoJson(
     val spotRanges: List<SpotRangeWithCountJson>,
     val regVerifyToken: String?
 )
 
+@Serializable
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
+@Serializable
 data class HappeningResponseJson(val registrationsLink: String?, val message: String)
 
 object Happening : Table() {

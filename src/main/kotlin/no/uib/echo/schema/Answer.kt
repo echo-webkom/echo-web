@@ -1,9 +1,11 @@
 package no.uib.echo.schema
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
+@Serializable
 data class AnswerJson(
     val question: String,
     val answer: String

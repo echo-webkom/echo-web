@@ -1,5 +1,6 @@
 package no.uib.echo.schema
 
+import kotlinx.serialization.Serializable
 import no.uib.echo.schema.SpotRange.maxDegreeYear
 import no.uib.echo.schema.SpotRange.minDegreeYear
 import no.uib.echo.schema.SpotRange.spots
@@ -10,12 +11,14 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+@Serializable
 data class SpotRangeJson(
     val spots: Int,
     val minDegreeYear: Int,
     val maxDegreeYear: Int
 )
 
+@Serializable
 data class SpotRangeWithCountJson(
     val spots: Int,
     val minDegreeYear: Int,
