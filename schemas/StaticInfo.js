@@ -5,13 +5,13 @@ export default {
     type: 'document',
     preview: {
         select: {
-            title: 'title',
+            title: 'name',
         },
     },
     fields: [
         {
-            name: 'title',
-            title: 'Tittel',
+            name: 'name',
+            title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
         },
@@ -21,60 +21,14 @@ export default {
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
-                source: 'title',
+                source: 'name',
             },
         },
         {
-            name: 'type',
-            title: 'Innholdstype',
-            validation: (Rule) => Rule.required(),
-            type: 'string',
-            options: {
-                list: [
-                    { title: 'Studentgruppe', value: 'studentgroup' },
-                    { title: 'Informasjonsside', value: 'infopage' },
-                ],
-                layout: 'dropdown',
-            },
-        },
-        {
-            name: 'staticContent',
-            title: 'Innhold',
+            name: 'info',
+            title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
-        },
-        {
-            name: 'members',
-            title: 'Medlemmer',
-            type: 'array',
-            of: [
-                {
-                    name: 'member',
-                    title: 'Medlem',
-                    type: 'object',
-                    fields: [
-                        {
-                            name: 'role',
-                            title: 'Rolle',
-                            type: 'string',
-                        },
-                        {
-                            name: 'profile',
-                            title: 'Profil',
-                            type: 'reference',
-                            to: [{ type: 'profile' }],
-                        },
-                    ],
-                    preview: {
-                        select: {
-                            media: 'profile.picture',
-                            title: 'profile.name',
-                            subtitle: 'role',
-                        },
-                    },
-                },
-            ],
-            hidden: ({ document }) => !(document?.type === 'studentgroup'),
         },
     ],
 };
