@@ -22,13 +22,22 @@ const IndexPage = ({
     events: Array<Happening>;
     banner: Banner | null;
 }): JSX.Element => {
-    const BannerComponent = ({ banner }: { banner: Banner }) => (
-        <Section px="0rem" bg={banner.color} mx="3rem" my="2rem">
-            <Heading textAlign="center" size="lg" color="white">
-                {banner.text}
-            </Heading>
-        </Section>
-    );
+    const BannerComponent = ({ banner }: { banner: Banner }) => {
+        const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
+
+        return (
+            <Section
+                bg={banner.color}
+                px="2rem"
+                mx={['0rem', null, null, '3rem']}
+                my={['1rem', null, '2rem', '2.5rem']}
+            >
+                <Heading textAlign="center" size={headingSize} color="white">
+                    {banner.text}
+                </Heading>
+            </Section>
+        );
+    };
 
     return (
         <>
