@@ -181,6 +181,13 @@ const happeningDecoder = record({
     },
 });
 
+const bannerDecoder = record({
+    color: string,
+    text: string,
+    linkTo: union(string, nil),
+    isExternal: boolean,
+});
+
 export {
     emptyArrayOnNilDecoder,
     slugDecoder,
@@ -200,4 +207,5 @@ export {
     jobAdvertDecoder,
     happeningDecoder,
     happeningTypeDecoder,
+    bannerDecoder,
 };

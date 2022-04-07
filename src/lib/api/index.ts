@@ -3,6 +3,7 @@ export { HappeningAPI } from './happening';
 export { JobAdvertAPI } from './job-advert';
 export { MinuteAPI } from './minute';
 export { PostAPI } from './post';
+export { BannerAPI } from './banner';
 export {
     type ErrorMessage,
     type Post,
@@ -18,6 +19,7 @@ export {
     type StudentGroup,
     type SpotRange,
     type Question,
+    type Banner,
     isErrorMessage,
     HappeningType,
     Degree,
