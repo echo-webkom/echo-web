@@ -85,5 +85,15 @@ export default {
             type: 'array',
             of: [{ type: 'number' }],
         },
+        {
+            name: 'weight',
+            title: 'Vekting',
+            description: 'Høyere vetkting gir høyere plassering av annonsen.',
+            validation: (Rule) =>
+                Rule.custom((weight) =>
+                    typeof weight === 'undefined' || weight < 0 ? 'Må være et positivt heltall.' : true,
+                ),
+            type: 'number',
+        },
     ],
 };
