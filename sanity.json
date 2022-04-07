@@ -13,7 +13,8 @@
         "@sanity/default-login",
         "@sanity/desk-tool",
         "markdown",
-        "media"
+        "media",
+        "color-picker"
     ],
     "env": {
         "development": {
