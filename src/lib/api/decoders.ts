@@ -51,6 +51,12 @@ const studentGroupDecoder = record({
     members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
 });
 
+const staticInfoDecoder = record({
+    name: string,
+    slug: string,
+    info: string,
+});
+
 const degreeDecoder = (value: Pojo): Degree => {
     const str: string = string(value);
 
@@ -217,6 +223,7 @@ export {
     profileDecoder,
     memberDecoder,
     studentGroupDecoder,
+    staticInfoDecoder,
     degreeDecoder,
     answerDecoder,
     registrationDecoder,

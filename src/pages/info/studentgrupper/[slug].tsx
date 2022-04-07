@@ -1,14 +1,14 @@
 import { ParsedUrlQuery } from 'querystring';
 import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
-import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
-import MemberProfile from '../../components/member-profile';
-import SEO from '../../components/seo';
-import Section from '../../components/section';
-import { isErrorMessage, StudentGroup, StudentGroupAPI, Member } from '../../lib/api';
-import MapMarkdownChakra from '../../markdown';
+import Markdown from 'markdown-to-jsx';
+import SEO from '../../../components/seo';
+import { isErrorMessage, StudentGroup, StudentGroupAPI, Member } from '../../../lib/api';
+import SidebarWrapper from '../../../components/sidebar-wrapper';
+import MapMarkdownChakra from '../../../markdown';
+import MemberProfile from '../../../components/member-profile';
 
 interface Props {
     studentGroup: StudentGroup;
@@ -27,7 +27,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
             {!router.isFallback && (
                 <>
                     <SEO title={studentGroup.name} />
-                    <Section>
+                    <SidebarWrapper>
                         <Heading textAlign="center" size="2xl" pb="2rem">
                             {studentGroup.name}
                         </Heading>
@@ -52,7 +52,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                                 </WrapItem>
                             ))}
                         </Wrap>
-                    </Section>
+                    </SidebarWrapper>
                 </>
             )}
         </>
@@ -60,7 +60,11 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
 };
 
 const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await StudentGroupAPI.getPaths();
+    const paths = await StudentGroupAPI.getPathsByType('subgroup');
+
+    if (isErrorMessage(paths)) {
+        throw new Error(paths.message);
+    }
 
     return {
         paths: paths.map((slug: string) => ({

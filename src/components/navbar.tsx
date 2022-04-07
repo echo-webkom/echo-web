@@ -39,10 +39,8 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             alignItems="center"
         >
             <NavLink text="Hjem" href="/" testid="hjem" />
-            <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
-            <NavLink text="For Bedrifter" href="/for-bedrifter" testid="for-bedrifter" />
             {/* <NavLink text="Jobb" href="/job" testid="jobb" /> */}
-            <NavLink text="Om echo" href="/om-oss" testid="om-oss" />
+            <NavLink text="Info" href="/info/om-oss" testid="om-oss" />
             {isMobile && (
                 <>
                     {status === 'authenticated' && <NavLink text="Min profil" href="/profile" testid="min-profil" />}

@@ -17,6 +17,22 @@ const StudentGroupAPI = {
         }
     },
 
+    getPathsByType: async (
+        type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
+    ): Promise<Array<string> | ErrorMessage> => {
+        try {
+            const query = `*[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))]{ "slug": slug.current }`;
+            const result = await SanityAPI.fetch(query);
+
+            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return {
+                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+            };
+        }
+    },
+
     getStudentGroupsByType: async (
         type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
     ): Promise<Array<StudentGroup> | ErrorMessage> => {

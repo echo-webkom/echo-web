@@ -6,6 +6,7 @@ import {
     profileDecoder,
     memberDecoder,
     studentGroupDecoder,
+    staticInfoDecoder,
     answerDecoder,
     registrationDecoder,
     responseDecoder,
@@ -32,6 +33,8 @@ type Profile = decodeType<typeof profileDecoder>;
 type Member = decodeType<typeof memberDecoder>;
 
 type StudentGroup = decodeType<typeof studentGroupDecoder>;
+
+type StaticInfo = decodeType<typeof staticInfoDecoder>;
 
 type Answer = decodeType<typeof answerDecoder>;
 
@@ -98,6 +101,7 @@ export type {
     Profile,
     Member,
     StudentGroup,
+    StaticInfo,
     Answer,
     Registration,
     RegistrationCount,

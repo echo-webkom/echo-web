@@ -19,6 +19,7 @@ export {
     type Member,
     type Profile,
     type StudentGroup,
+    type StaticInfo,
     type SpotRange,
     type Question,
     type Banner,
@@ -30,3 +31,4 @@ export {
 } from './types';
 export { RegistrationAPI, registrationRoute, type FormValues as RegFormValues } from './registration';
 export { StudentGroupAPI } from './student-group';
+export { StaticInfoAPI } from './static-info';
