@@ -10325,9 +10325,9 @@ sanity-diff-patch@^1.0.9:
   dependencies:
     diff-match-patch "^1.0.5"
 
-sanity-plugin-color-picker@^1.0.3:
+sanity-plugin-color-picker@1.0.3:
   version "1.0.3"
-  resolved "https://registry.npmjs.org/sanity-plugin-color-picker/-/sanity-plugin-color-picker-1.0.3.tgz#1feaa7e3b4b0478d68f882848fb73d3646dacafe"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-color-picker/-/sanity-plugin-color-picker-1.0.3.tgz#1feaa7e3b4b0478d68f882848fb73d3646dacafe"
   integrity sha512-oSGOYcZkNRO3K50MbjwmptmGPrJmc5MZYmK8dAAAm1ZvIBMkCN0m3zXL+Lc0knMwxpvOvPdjT1w3BHsLVTi8fQ==
   dependencies:
     react-color "^2.18.1"
