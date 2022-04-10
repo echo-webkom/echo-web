@@ -31,6 +31,12 @@
         "^io.kotest"
       ],
       "groupName": "Kotest packages"
+    },
+    {
+      "matchPackagePatterns": [
+        "^org.jetbrains.kotlin"
+      ],
+      "groupName": "Kotlin packages"
     }
   ]
 }
