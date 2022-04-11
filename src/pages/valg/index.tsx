@@ -9,14 +9,14 @@ import valg from '../../../public/static/valg.md';
 const ValgPage = () => {
     return (
         <>
-            <SEO title="Valg echo" />
+            <SEO title="Valg echo Hovedstyre 2022" />
             <Box>
                 <Section>
-                    <Heading textAlign="center" mb="0.2em" size="4xl">
-                        Valg echo
+                    <Heading textAlign="center" mb="0.2em" size="2xl">
+                        Nå kan du stille til valg echo i sitt Hovedstyre!
                     </Heading>
 
-                    <Divider mb="0.5em" />
+                    <Divider my="1.5rem" />
 
                     <Markdown options={{ overrides: MapMarkdownChakra }}>{valg}</Markdown>
                 </Section>
