@@ -44,7 +44,7 @@ const IndexPage = ({
             <SEO title="echo – Fagutvalget for informatikk" />
             {banner &&
                 (banner.linkTo ? (
-                    <LinkBox>
+                    <LinkBox transition="0.3s ease" _hover={{ transform: 'scale(105%)' }}>
                         <NextLink href={banner.linkTo} passHref>
                             <LinkOverlay isExternal={banner.isExternal}>
                                 <BannerComponent banner={banner} />
