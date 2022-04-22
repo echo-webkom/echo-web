@@ -39,9 +39,10 @@ import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
-import no.uib.echo.plugins.Routing.getToken
+import no.uib.echo.plugins.Routing.getUser
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
+import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
@@ -55,6 +56,8 @@ import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.User
+import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.selectSpotRanges
@@ -136,7 +139,8 @@ fun Application.configureRouting(
             }
 
             authenticate("auth-jwt") {
-                getToken()
+                getUser()
+                putUser()
             }
 
             getRegistrations(dev)
@@ -156,12 +160,74 @@ object Routing {
         }
     }
 
-    fun Route.getToken() {
-        get("/token") {
+    fun Route.getUser() {
+        get("/user") {
             val principal = call.principal<JWTPrincipal>()
             val email = principal!!.payload.getClaim("email").asString()
 
-            call.respond("Hello, $email!")
+            val user = transaction {
+                addLogger(StdOutSqlLogger)
+                User.select {
+                    User.email eq email
+                }.firstOrNull()
+            }
+
+            if (user == null) {
+                call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
+                return@get
+            }
+
+            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
+        }
+    }
+
+    fun Route.putUser() {
+        put("/user") {
+            try {
+                val user = call.receive<UserJson>()
+
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal!!.payload.getClaim("email").asString()
+
+                if (user.email != email) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+
+                val result = transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.select {
+                        User.email eq email
+                    }.firstOrNull()
+                }
+
+                if (result == null) {
+                    transaction {
+                        addLogger(StdOutSqlLogger)
+                        User.insert {
+                            it[User.email] = email
+                            it[degree] = user.degree.toString()
+                            it[degreeYear] = user.degreeYear
+                        }
+                    }
+                    call.respond(HttpStatusCode.OK, "User created with email = $email")
+                    return@put
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.update({
+                        User.email eq email
+                    }) {
+                        it[degree] = user.degree.toString()
+                        it[degreeYear] = user.degreeYear
+                    }
+                }
+                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
+            }
         }
     }
 
