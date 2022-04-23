@@ -192,8 +192,8 @@ const userDecoder = record({
     email: string,
     firstName: string,
     lastName: string,
-    classYear: number,
-    study: string,
+    grade: number,
+    degree: degreeDecoder,
     allergies: string,
 });
 

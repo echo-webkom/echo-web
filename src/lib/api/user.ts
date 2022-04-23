@@ -1,13 +1,12 @@
 import axios from 'axios';
-import {User, ErrorMessage} from './types';
+import { User, ErrorMessage } from './types';
 import { userDecoder } from './decoders';
 
-const userRoute = "user"
+const userRoute = 'user';
 const UserAPI = {
-
-    getUser: async (backendUrl: string): Promise<User | ErrorMessage> => {
+    getUser: async (): Promise<User | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/${userRoute}`);
+            const { data } = await axios.get(`/api/${userRoute}`);
 
             return userDecoder(data);
         } catch (error) {
@@ -26,6 +25,6 @@ const UserAPI = {
             };
         }
     },
-}
+};
 /* eslint-disable import/prefer-default-export */
 export { UserAPI };
