@@ -1,5 +1,6 @@
 package no.uib.echo.plugins
 
+import com.auth0.jwk.JwkProviderBuilder
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.application.Application
@@ -9,6 +10,9 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
+import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.jwt.jwt
+import io.ktor.auth.principal
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
@@ -35,6 +39,7 @@ import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
+import no.uib.echo.plugins.Routing.getToken
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.resToJson
@@ -68,8 +73,10 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
+import java.net.URL
 import java.net.URLDecoder
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
     adminKey: String,
@@ -98,6 +105,24 @@ fun Application.configureRouting(
                     null
             }
         }
+
+        val issuer = "https://auth.dataporten.no/openid/jwks"
+        val jwkProvider = JwkProviderBuilder(URL(issuer))
+            .cached(10, 24, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES)
+            .build()
+
+        jwt("auth-jwt") {
+            realm = "Verify jwt"
+            verifier(jwkProvider, issuer) {
+                acceptLeeway(3)
+                withIssuer("https://auth.dataporten.no")
+            }
+            validate { jwtCredential ->
+                println(jwtCredential.payload)
+                JWTPrincipal(jwtCredential.payload)
+            }
+        }
     }
 
     routing {
@@ -108,6 +133,10 @@ fun Application.configureRouting(
                 putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
                 deleteHappening()
                 getHappeningInfo()
+            }
+
+            authenticate("auth-jwt") {
+                getToken()
             }
 
             getRegistrations(dev)
@@ -124,6 +153,15 @@ object Routing {
     fun Route.getStatus() {
         get("/status") {
             call.respond(HttpStatusCode.OK)
+        }
+    }
+
+    fun Route.getToken() {
+        get("/token") {
+            val principal = call.principal<JWTPrincipal>()
+            val email = principal!!.payload.getClaim("email").asString()
+
+            call.respond("Hello, $email!")
         }
     }
 
