@@ -1,5 +1,6 @@
 import {
     Box,
+    Center,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -8,25 +9,53 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
+    Icon,
+    IconButton,
 } from '@chakra-ui/react';
+import { AiOutlineUser } from 'react-icons/ai';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import React, { RefObject } from 'react';
 import ColorModeButton from './color-mode-button';
 import NavLink from './nav-link';
 
-const NavLinks = (): JSX.Element => (
-    <Flex
-        flexDirection={['column', null, null, 'row']}
-        w="100%"
-        fontSize={['3xl', null, null, 'lg', '2xl']}
-        justify="flex-end"
-    >
-        <NavLink text="Hjem" href="/" testid="hjem" />
-        <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
-        <NavLink text="For Bedrifter" href="/for-bedrifter" testid="for-bedrifter" />
-        <NavLink text="Om echo" href="/om-oss" testid="om-oss" />
-        <ColorModeButton />
-    </Flex>
-);
+const NavLinks = (): JSX.Element => {
+    const { status } = useSession();
+    const router = useRouter();
+    const onProfileClick = () => {
+        if (status === 'authenticated') {
+            void router.push('/profile');
+        } else {
+            void signIn('feide');
+        }
+    };
+
+    return (
+        <Flex
+            flexDirection={['column', null, null, 'row']}
+            w="100%"
+            fontSize={['3xl', null, null, 'lg', '2xl']}
+            justify="flex-end"
+        >
+            <NavLink text="Hjem" href="/" testid="hjem" />
+            <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
+            <NavLink text="For Bedrifter" href="/for-bedrifter" testid="for-bedrifter" />
+            <NavLink text="Om echo" href="/om-oss" testid="om-oss" />
+            <ColorModeButton />
+            <IconButton
+                ml={['.6rem', null, null, null, '.6rem']}
+                aria-label={status === 'authenticated' ? 'Gå til profil' : 'Logg inn'}
+                onClick={() => void onProfileClick()}
+                variant="ghost"
+                icon={
+                    <Center>
+                        <Icon as={AiOutlineUser} boxSize={7} />
+                    </Center>
+                }
+            />
+        </Flex>
+    );
+};
 
 interface Props {
     isOpen: boolean;
