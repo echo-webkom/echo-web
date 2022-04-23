@@ -1,6 +1,7 @@
-import { Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { Button, Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { ReactNode } from 'react';
 
 interface Props {
     href: string;
@@ -24,5 +25,24 @@ const NavLink = ({ href, text, testid }: Props) => {
         </LinkBox>
     );
 };
+
+interface NavLinkButtonProps {
+    children: ReactNode;
+    onClick: () => void;
+}
+
+export const NavLinkButton = ({ children, onClick }: NavLinkButtonProps) => (
+    <Button
+        fontSize="3xl"
+        textAlign="left"
+        fontWeight="light"
+        variant="unstyled"
+        _hover={{ textDecoration: 'underline' }}
+        marginBottom="2rem"
+        onClick={onClick}
+    >
+        {children}
+    </Button>
+);
 
 export default NavLink;
