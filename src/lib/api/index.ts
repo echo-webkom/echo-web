@@ -4,6 +4,7 @@ export { JobAdvertAPI } from './job-advert';
 export { MinuteAPI } from './minute';
 export { PostAPI } from './post';
 export { BannerAPI } from './banner';
+export { UserAPI } from './user';
 export {
     type ErrorMessage,
     type Post,
@@ -20,6 +21,7 @@ export {
     type SpotRange,
     type Question,
     type Banner,
+    type User,
     isErrorMessage,
     HappeningType,
     Degree,

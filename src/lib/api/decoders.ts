@@ -188,6 +188,15 @@ const bannerDecoder = record({
     isExternal: boolean,
 });
 
+const userDecoder = record({
+    email: string,
+    firstName: string,
+    lastName: string,
+    classYear: number,
+    study: string,
+    allergies: string,
+});
+
 export {
     emptyArrayOnNilDecoder,
     slugDecoder,
@@ -208,4 +217,5 @@ export {
     happeningDecoder,
     happeningTypeDecoder,
     bannerDecoder,
+    userDecoder,
 };
