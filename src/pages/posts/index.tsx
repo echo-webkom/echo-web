@@ -30,7 +30,13 @@ const PostCollectionPage = ({ posts }: Props): JSX.Element => {
                     </ButtonLink>
                 )}
                 {pageNumber * postsPerPage <= posts.length && (
-                    <ButtonLink linkTo={`posts?page=${pageNumber + 1}`} w="6rem" ml="0.5rem">
+                    <ButtonLink
+                        linkTo={`posts?page=${pageNumber + 1}`}
+                        w="6rem"
+                        ml="0.5rem"
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)' }}
+                    >
                         Neste
                     </ButtonLink>
                 )}

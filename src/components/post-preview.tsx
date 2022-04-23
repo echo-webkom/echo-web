@@ -27,7 +27,7 @@ const PostPreview = ({ post }: Props): JSX.Element => {
             pb="10em"
             bg={bgColor}
             position="relative"
-            overflow="hidden"
+            overflow="visible"
             _hover={{ borderColor: borderColor }}
         >
             <NextLink href={`/posts/${post.slug}`} passHref>
@@ -36,23 +36,24 @@ const PostPreview = ({ post }: Props): JSX.Element => {
                         {post.title}
                     </Heading>
                     <Text fontStyle="italic">{`«${removeMD(post.body.slice(0, 100))} ...»`}</Text>
-                    <Text
-                        fontSize="md"
-                        fontWeight="bold"
-                        pos="absolute"
-                        bottom="0"
-                        right="8"
-                        color={textColor}
-                        bg={authorBg}
-                        py="0.5rem"
-                        px="1rem"
-                        borderRadius="0.5rem"
-                        marginBottom="0.25rem"
-                    >
-                        {post.author}
-                    </Text>
                 </LinkOverlay>
             </NextLink>
+            <Text
+                fontSize="md"
+                fontWeight="bold"
+                bottom="-5"
+                right="8"
+                color={textColor}
+                bg={authorBg}
+                py="0.25rem"
+                px="0.8rem"
+                borderRadius="0.5rem"
+                marginBottom="0.25rem"
+                marginTop="-70px"
+                position="absolute"
+            >
+                {post.author}
+            </Text>
         </LinkBox>
     );
 };

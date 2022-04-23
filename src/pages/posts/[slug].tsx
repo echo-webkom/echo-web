@@ -40,7 +40,6 @@ const PostPage = ({ post }: Props): JSX.Element => {
 
                             <HStack justify="space-between">
                                 <Heading size="m">@{post.author}</Heading>
-
                                 <IconText
                                     icon={BiCalendar}
                                     text={format(new Date(post._createdAt), 'dd. MMM yyyy', { locale: nb })}

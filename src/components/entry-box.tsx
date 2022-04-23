@@ -27,7 +27,12 @@ const EntryBox = ({ title, titles, entries, entryLimit, altText, linkTo, type, .
                 {entries.length > 0 && <EntryList entries={entries} entryLimit={entryLimit} type={type} />}
                 <Spacer />
                 {linkTo && (
-                    <ButtonLink linkTo={linkTo} mt="1.5rem">
+                    <ButtonLink
+                        linkTo={linkTo}
+                        mt="1.5rem"
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)' }}
+                    >
                         Se mer
                     </ButtonLink>
                 )}
