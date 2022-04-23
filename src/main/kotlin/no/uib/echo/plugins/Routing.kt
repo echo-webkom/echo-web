@@ -27,17 +27,15 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.uib.echo.FeatureToggles
-import no.uib.echo.Response
-import no.uib.echo.isEmailValid
+import no.uib.echo.*
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
+import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.putHappening
-import no.uib.echo.resToJson
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
@@ -55,7 +53,6 @@ import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
-import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -113,6 +110,7 @@ fun Application.configureRouting(
             getRegistrations(dev)
             postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
             deleteRegistration(dev)
+            postRegistrationCount()
         }
     }
 }
@@ -610,6 +608,28 @@ object Routing {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun Route.postRegistrationCount() {
+        post("/$registrationRoute/count") {
+            val slugs = call.receive<SlugRequest>().slugs
+            val registrationCounts = transaction {
+                addLogger(StdOutSqlLogger)
+
+                slugs.map {
+                    val count = Registration.select {
+                        Registration.happeningSlug eq it
+                    }.count()
+
+                    RegistrationCount(it, count)
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                registrationCounts
+            )
         }
     }
 }
