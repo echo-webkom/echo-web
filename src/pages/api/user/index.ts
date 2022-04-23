@@ -1,16 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Degree, User } from '../../../lib/api';
+import { getToken } from 'next-auth/jwt';
+import axios from 'axios';
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
-    const user: User = {
-        email: 'truls@gmail.com',
-        firstName: 'truls',
-        lastName: 'jefferson',
-        grade: 3,
-        degree: Degree.DVIT,
-        allergies: 'none',
-    };
-    res.status(200).json(user);
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (session) {
+        const idToken = session.idToken as string;
+
+        const response = await axios.get('http://localhost:8080/user', {
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+        });
+
+        res.status(200).send(response.data);
+    } else {
+        res.status(401);
+    }
+
+    res.end();
 };
 
 export default handler;
