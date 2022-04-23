@@ -1,6 +1,6 @@
 import { Stack, StackDivider } from '@chakra-ui/react';
 import React from 'react';
-import { Happening, Post, JobAdvert } from '../lib/api';
+import { Happening, Post, JobAdvert, RegistrationCount } from '../lib/api';
 import BedpresPreview from './bedpres-preview';
 import EventPreview from './event-preview';
 import PostPreview from './post-preview';
@@ -10,9 +10,10 @@ interface Props {
     entries: Array<Happening | Post | JobAdvert>;
     entryLimit?: number;
     type: 'event' | 'bedpres' | 'post' | 'job-advert';
+    registrationCounts?: Array<RegistrationCount>;
 }
 
-const EntryList = ({ entries, entryLimit, type }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JSX.Element => {
     if (entryLimit) {
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
     }
@@ -29,10 +30,21 @@ const EntryList = ({ entries, entryLimit, type }: Props): JSX.Element => {
                 switch (type) {
                     case 'bedpres':
                         return (
-                            <BedpresPreview key={entry.slug} bedpres={entry as Happening} data-testid={entry.slug} />
+                            <BedpresPreview
+                                key={entry.slug}
+                                bedpres={entry as Happening}
+                                data-testid={entry.slug}
+                                registrationCounts={registrationCounts}
+                            />
                         );
                     case 'event':
-                        return <EventPreview key={entry.slug} event={entry as Happening} />;
+                        return (
+                            <EventPreview
+                                key={entry.slug}
+                                event={entry as Happening}
+                                registrationCounts={registrationCounts}
+                            />
+                        );
                     case 'post':
                         return <PostPreview key={entry.slug} post={entry as Post} />;
                     case 'job-advert':

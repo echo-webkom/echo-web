@@ -16,6 +16,7 @@ import {
     jobAdvertDecoder,
     happeningDecoder,
     bannerDecoder,
+    registrationCountDecoder,
 } from './decoders';
 
 type SpotRange = decodeType<typeof spotRangeDecoder>;
@@ -33,6 +34,8 @@ type StudentGroup = decodeType<typeof studentGroupDecoder>;
 type Answer = decodeType<typeof answerDecoder>;
 
 type Registration = decodeType<typeof registrationDecoder>;
+
+type RegistrationCount = decodeType<typeof registrationCountDecoder>;
 
 type Response = decodeType<typeof responseDecoder>;
 
@@ -88,6 +91,7 @@ export type {
     StudentGroup,
     Answer,
     Registration,
+    RegistrationCount,
     Response,
     SpotRangeCount,
     HappeningInfo,

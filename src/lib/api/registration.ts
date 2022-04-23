@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
-import { responseDecoder, registrationDecoder } from './decoders';
+import { responseDecoder, registrationDecoder, registrationCountDecoder } from './decoders';
 import { ErrorMessage, Degree, Answer, Response, Registration } from './types';
 import { HappeningType } from '.';
 
@@ -98,6 +98,29 @@ const RegistrationAPI = {
 
             return {
                 message: 'Fail @ getRegistrations',
+            };
+        }
+    },
+
+    getRegistrationCountForSlugs: async (
+        slugs: Array<string>,
+        backendUrl: string,
+    ): Promise<Array<{ slug: string; count: number }> | ErrorMessage> => {
+        try {
+            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            return array(registrationCountDecoder)(data);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return { message: '404' };
+                }
+                return {
+                    message: error.response.status === 404 ? '404' : 'Fail @ getRegistrationCountForSlugs',
+                };
+            }
+
+            return {
+                message: 'Fail @ getRegistrationCountForSlugs',
             };
         }
     },

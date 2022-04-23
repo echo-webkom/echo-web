@@ -12,6 +12,7 @@ export {
     type Happening,
     type Answer,
     type Registration,
+    type RegistrationCount,
     type SpotRangeCount,
     type HappeningInfo,
     type Member,

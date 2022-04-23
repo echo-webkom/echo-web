@@ -1,14 +1,25 @@
 import fs from 'fs';
-import { LinkOverlay, LinkBox, Heading, Grid, GridItem, useBreakpointValue, VStack } from '@chakra-ui/react';
+import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import React from 'react';
 import EntryBox from '../components/entry-box';
 import Hsp from '../components/hsp';
-import SEO from '../components/seo';
 import Section from '../components/section';
-import { BannerAPI, Banner, HappeningAPI, Happening, HappeningType, Post, PostAPI, isErrorMessage } from '../lib/api';
+import SEO from '../components/seo';
+import {
+    Banner,
+    BannerAPI,
+    Happening,
+    HappeningAPI,
+    HappeningType,
+    isErrorMessage,
+    Post,
+    PostAPI,
+    RegistrationAPI,
+    RegistrationCount,
+} from '../lib/api';
 import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
@@ -16,11 +27,13 @@ const IndexPage = ({
     posts,
     events,
     banner,
+    registrationCounts,
 }: {
     bedpreses: Array<Happening>;
     posts: Array<Post>;
     events: Array<Happening>;
     banner: Banner | null;
+    registrationCounts: Array<RegistrationCount>;
 }): JSX.Element => {
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
@@ -72,6 +85,7 @@ const IndexPage = ({
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
+                            registrationCounts={registrationCounts}
                         />
                     </GridItem>
                     <GridItem>
@@ -81,6 +95,7 @@ const IndexPage = ({
                             altText="Ingen kommende arrangementer :("
                             linkTo="/event"
                             type="event"
+                            registrationCounts={registrationCounts}
                         />
                     </GridItem>
                 </Grid>
@@ -97,11 +112,13 @@ const IndexPage = ({
     );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-    const bedpresesResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
-    const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
-    const postsResponse = await PostAPI.getPosts(0);
-    const bannerResponse = await BannerAPI.getBanner();
+export const getServerSideProps: GetServerSideProps = async () => {
+    const [bedpresesResponse, eventsResponse, postsResponse, bannerResponse] = await Promise.all([
+        HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES),
+        HappeningAPI.getHappeningsByType(0, HappeningType.EVENT),
+        PostAPI.getPosts(0),
+        BannerAPI.getBanner(),
+    ]);
 
     if (isErrorMessage(bedpresesResponse)) throw new Error(bedpresesResponse.message);
     if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
@@ -113,17 +130,26 @@ export const getStaticProps: GetStaticProps = async () => {
     fs.writeFileSync('./public/rss.xml', rss);
 
     const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 6] : [3, 4];
+    const bedpreses = bedpresesResponse
+        .filter((bedpres: Happening) => {
+            return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
+        })
+        .slice(0, bedpresLimit);
+    const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
+
+    const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
+    const registrationCounts = await RegistrationAPI.getRegistrationCountForSlugs(
+        slugs,
+        process.env.BACKEND_URL ?? 'http://localhost:8080',
+    );
 
     return {
         props: {
-            bedpreses: bedpresesResponse
-                .filter((bedpres: Happening) => {
-                    return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
-                })
-                .slice(0, bedpresLimit),
+            bedpreses,
             posts: postsResponse.slice(0, eventLimit),
-            events: eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8),
+            events,
             banner: bannerResponse ?? null,
+            registrationCounts,
         },
     };
 };

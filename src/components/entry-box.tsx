@@ -1,6 +1,6 @@
 import { BoxProps, Flex, Heading, Spacer, Text, useBreakpointValue } from '@chakra-ui/react';
 import React from 'react';
-import { Happening, Post, JobAdvert } from '../lib/api';
+import { Happening, Post, JobAdvert, RegistrationCount } from '../lib/api';
 import ButtonLink from './button-link';
 import EntryList from './entry-list';
 import Section from './section';
@@ -13,9 +13,20 @@ interface Props extends BoxProps {
     altText?: string;
     linkTo?: string;
     type: 'event' | 'bedpres' | 'post' | 'job-advert';
+    registrationCounts?: Array<RegistrationCount>;
 }
 
-const EntryBox = ({ title, titles, entries, entryLimit, altText, linkTo, type, ...props }: Props): JSX.Element => {
+const EntryBox = ({
+    title,
+    titles,
+    entries,
+    entryLimit,
+    altText,
+    linkTo,
+    type,
+    registrationCounts,
+    ...props
+}: Props): JSX.Element => {
     const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
@@ -24,7 +35,14 @@ const EntryBox = ({ title, titles, entries, entryLimit, altText, linkTo, type, .
             <Flex h="100%" direction="column" alignItems="center">
                 {heading && <Heading mb="8">{heading}</Heading>}
                 {altText && entries.length === 0 && <Text>{altText}</Text>}
-                {entries.length > 0 && <EntryList entries={entries} entryLimit={entryLimit} type={type} />}
+                {entries.length > 0 && (
+                    <EntryList
+                        entries={entries}
+                        entryLimit={entryLimit}
+                        type={type}
+                        registrationCounts={registrationCounts}
+                    />
+                )}
                 <Spacer />
                 {linkTo && (
                     <ButtonLink
