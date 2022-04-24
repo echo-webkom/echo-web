@@ -190,11 +190,9 @@ const bannerDecoder = record({
 
 const userDecoder = record({
     email: string,
-    firstName: string,
-    lastName: string,
-    grade: number,
-    degree: degreeDecoder,
-    allergies: string,
+    name: string,
+    grade: union(number, nil),
+    degree: union(degreeDecoder, nil),
 });
 
 export {

@@ -6,7 +6,15 @@ const userRoute = 'user';
 const UserAPI = {
     getUser: async (): Promise<User | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`/api/${userRoute}`);
+            const { data, status } = await axios.get(`/api/${userRoute}`, {
+                validateStatus: (statusCode: number) => {
+                    return statusCode < 500;
+                },
+            });
+
+            if (status === 404) {
+                // No user in database
+            }
 
             return userDecoder(data);
         } catch (error) {

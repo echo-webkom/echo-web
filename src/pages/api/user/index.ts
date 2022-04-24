@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
+
 import axios from 'axios';
+import { getSession } from 'next-auth/react';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -12,9 +14,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
+            validateStatus: (statusCode: number) => {
+                return statusCode < 500;
+            },
         });
 
-        res.status(200).send(response.data);
+        if (response.status === 404) {
+            //no user in database
+            const session = await getSession({ req });
+            const user = {
+                name: session?.user?.name,
+                email: session?.user?.email,
+                degree: null,
+                grade: null,
+            };
+            res.status(200).send(user);
+        } else {
+            res.status(200).send(response.data);
+        }
     } else {
         res.status(401);
     }
