@@ -2,6 +2,7 @@ import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { BiCalendar } from 'react-icons/bi';
+import { useRouter } from 'next/router';
 import { Happening, RegistrationCount, SpotRange } from '../lib/api';
 
 interface Props {
@@ -10,6 +11,9 @@ interface Props {
 }
 
 const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => {
+    const router = useRouter();
+    const isMainPage = router.pathname === '/';
+
     return (
         <Stack textAlign="right">
             <Flex alignItems="center" justifyContent="flex-end">
@@ -20,6 +24,7 @@ const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => 
             </Flex>
 
             {event.registrationDate &&
+                isMainPage &&
                 (isPast(new Date(event.registrationDate)) ? (
                     <Text fontSize="1rem">
                         {registrationCounts?.find((regCount: RegistrationCount) => regCount.slug === event.slug)
