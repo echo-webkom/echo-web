@@ -14,6 +14,8 @@ const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => 
     const router = useRouter();
     const isMainPage = router.pathname === '/';
 
+    const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
+
     return (
         <Stack textAlign="right">
             <Flex alignItems="center" justifyContent="flex-end">
@@ -29,8 +31,7 @@ const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => 
                     <Text fontSize="1rem">
                         {registrationCounts?.find((regCount: RegistrationCount) => regCount.slug === event.slug)
                             ?.count ?? 0}{' '}
-                        av {event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0)}{' '}
-                        påmeldte
+                        av {totalSpots <= 0 ? '∞' : totalSpots} påmeldte
                     </Text>
                 ) : (
                     <Text fontSize="1rem">
