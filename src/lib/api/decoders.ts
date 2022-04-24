@@ -86,6 +86,11 @@ const answerDecoder = record({
     answer: string,
 });
 
+const registrationCountDecoder = record({
+    slug: string,
+    count: number,
+});
+
 const registrationDecoder = record({
     email: string,
     firstName: string,
@@ -215,5 +220,6 @@ export {
     happeningDecoder,
     happeningTypeDecoder,
     bannerDecoder,
+    registrationCountDecoder,
     userDecoder,
 };

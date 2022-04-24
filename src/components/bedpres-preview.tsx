@@ -1,16 +1,16 @@
-import { Box, Center, Flex, Heading, LinkBox, LinkOverlay, Spacer, Text, useColorModeValue } from '@chakra-ui/react';
-import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
-import NextLink from 'next/link';
+import { Box, Center, Flex, Heading, LinkBox, LinkOverlay, Spacer, useColorModeValue } from '@chakra-ui/react';
 import Image from 'next/image';
+import NextLink from 'next/link';
 import React from 'react';
-import { Happening } from '../lib/api';
+import { Happening, RegistrationCount } from '../lib/api';
+import HappeningKeyInfo from './happening-key-info';
 
 interface Props {
     bedpres: Happening;
+    registrationCounts?: Array<RegistrationCount>;
 }
 
-const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
+const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
     // logoUrl must always be defined in a Happening of type 'BEDPRES'.
     const logoUrl = bedpres.logoUrl as string;
@@ -39,7 +39,7 @@ const BedpresPreview = ({ bedpres }: Props): JSX.Element => {
                     </Center>
                     <Spacer />
                     <Center>
-                        <Text fontSize="1.25rem">{format(new Date(bedpres.date), 'dd. MMM yyyy', { locale: nb })}</Text>
+                        <HappeningKeyInfo event={bedpres} registrationCounts={registrationCounts} />
                     </Center>
                 </Flex>
             </Box>
