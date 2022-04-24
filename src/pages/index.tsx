@@ -5,9 +5,8 @@ import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import React from 'react';
 import EntryBox from '../components/entry-box';
-import Hsp from '../components/hsp';
-import Section from '../components/section';
 import SEO from '../components/seo';
+import Section from '../components/section';
 import {
     Banner,
     BannerAPI,
@@ -70,9 +69,16 @@ const IndexPage = ({
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
-                        <Hsp />
+                        <EntryBox
+                            title="Arrangementer"
+                            entries={events}
+                            altText="Ingen kommende arrangementer :("
+                            linkTo="/event"
+                            type="event"
+                            registrationCounts={registrationCounts}
+                        />
                     </GridItem>
-                    <GridItem rowSpan={2}>
+                    <GridItem>
                         <EntryBox
                             titles={[
                                 'Bedpres',
@@ -85,16 +91,6 @@ const IndexPage = ({
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
-                            registrationCounts={registrationCounts}
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <EntryBox
-                            title="Arrangementer"
-                            entries={events}
-                            altText="Ingen kommende arrangementer :("
-                            linkTo="/event"
-                            type="event"
                             registrationCounts={registrationCounts}
                         />
                     </GridItem>
@@ -129,13 +125,14 @@ export const getStaticProps: GetStaticProps = async () => {
 
     fs.writeFileSync('./public/rss.xml', rss);
 
-    const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 6] : [3, 4];
+    const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
+    const [bedpresLimit, eventLimit] = events.length > 3 ? [4, 8] : [2, 4];
+
     const bedpreses = bedpresesResponse
         .filter((bedpres: Happening) => {
             return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
         })
         .slice(0, bedpresLimit);
-    const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
     const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
@@ -147,7 +144,7 @@ export const getStaticProps: GetStaticProps = async () => {
         props: {
             bedpreses,
             posts: postsResponse.slice(0, eventLimit),
-            events,
+            events: events.slice(0, eventLimit),
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
         },

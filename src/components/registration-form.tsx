@@ -108,6 +108,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
             if (statusCode === 200 || statusCode === 202) {
                 onClose();
             }
+            toast.closeAll();
             toast({
                 title: response.title,
                 description: response.desc,
