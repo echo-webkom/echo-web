@@ -36,6 +36,7 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             w="100%"
             fontSize={['3xl', null, null, 'lg', '2xl']}
             justify="flex-end"
+            alignItems="center"
         >
             <NavLink text="Hjem" href="/" testid="hjem" />
             <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
