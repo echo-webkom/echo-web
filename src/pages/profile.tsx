@@ -75,15 +75,15 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
 
     return (
         <Stack direction={'row'}>
-            <Box border={'1px'}>
+            <Box>
                 <Avatar size={'2xl'} name={user.name} src="" />
             </Box>
-            <Box border={'1px'}>
+            <Box>
                 <Text>{user.name}</Text>
                 <Text>{user.email}</Text>
             </Box>
 
-            <Box border={'1px'}>
+            <Box>
                 <Text>PåmeldingsInformasjon</Text>
                 {!editing && (
                     <>
