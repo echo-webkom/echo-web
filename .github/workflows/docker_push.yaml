@@ -1,18 +1,17 @@
-name: Cypress
+name: Docker push image
 on:
-  pull_request:
+  push:
     branches: [master]
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_TAG: latest-prod
 
 permissions:
   packages: write
   actions: read
 
 jobs:
-  cypress_tests:
+  docker_push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout frontend repository
@@ -29,7 +28,7 @@ jobs:
         run: |
           docker build \
             --cache-from "$REGISTRY/$GITHUB_REPOSITORY" \
-            -t "$REGISTRY/$GITHUB_REPOSITORY:$GITHUB_SHA" \
+            -t "$REGISTRY/$GITHUB_REPOSITORY:$TAG" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg SANITY_DATASET=$SANITY_DATASET \
             .
@@ -38,18 +37,4 @@ jobs:
           DOCKER_BUILDKIT: 1
           REGISTRY: ${{ env.REGISTRY }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
-
-      - name: Pull backend image
-        run: docker pull "$REGISTRY/$BACKEND_REPOSITORY:$TAG"
-        env:
-          REGISTRY: ${{ env.REGISTRY }}
-          BACKEND_REPOSITORY: echo-webkom/echo-web-backend
-          TAG: ${{ env.BACKEND_TAG }}
-
-      - name: Run Cypress end-to-end tests against backend
-        run: docker-compose up --exit-code-from=frontend
-        env:
-          REGISTRY: ${{ env.REGISTRY }}
-          TAG: ${{ env.BACKEND_TAG }}
-          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
-          ADMIN_KEY: admin-passord
+          TAG: latest
