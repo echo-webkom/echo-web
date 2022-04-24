@@ -22,8 +22,8 @@ const PostCollectionPage = ({ posts }: Props): JSX.Element => {
         <>
             <SEO title="Innlegg" />
             <PostList posts={slicedPosts} />
-            <Divider my="5" />
-            <Center>
+            <Divider marginTop="8" marginBottom="5" />
+            <Center mb="5">
                 {pageNumber !== 1 && (
                     <ButtonLink linkTo={`posts?page=${pageNumber - 1}`} w="6rem" mr="0.5rem">
                         Forrige

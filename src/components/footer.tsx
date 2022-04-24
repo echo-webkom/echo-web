@@ -1,5 +1,15 @@
-import { Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue, Wrap, WrapItem } from '@chakra-ui/react';
-import Image from 'next/image';
+import {
+    Icon,
+    LinkBox,
+    LinkOverlay,
+    SimpleGrid,
+    Text,
+    useColorModeValue,
+    Wrap,
+    WrapItem,
+    Image,
+    Center,
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import { FaFacebook, FaGithub, FaInstagram, FaCommentDots } from 'react-icons/fa';
@@ -34,8 +44,9 @@ const Footer = (): JSX.Element => {
                 data-testid="footer"
             >
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
-                    <Image alt="echo" width={80} height={80} src={echoLogoWhite} />
-
+                    <Center>
+                        <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
+                    </Center>
                     <SimpleGrid columns={[4, 4, 2, 4, 4]} spacing="4">
                         <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <NextLink href="https://facebook.com/groups/informatikk" passHref>
@@ -71,15 +82,17 @@ const Footer = (): JSX.Element => {
                     </SimpleGrid>
                 </SimpleGrid>
 
-                <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="5px">
+                <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
                     <Text fontSize="sm" color="white" m={0} textAlign="center" fontWeight="bold">
-                        Hovedsammarbeidspartner
+                        Hovedsamarbeidspartner
                     </Text>
-                    <NextLink href="https://bekk.no" passHref>
-                        <LinkOverlay isExternal>
-                            <Image alt="bekk" width={230} height={65} src={bekkLogo} />
-                        </LinkOverlay>
-                    </NextLink>
+                    <LinkBox m={0}>
+                        <NextLink href="https://bekk.no" passHref>
+                            <LinkOverlay isExternal>
+                                <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
+                            </LinkOverlay>
+                        </NextLink>
+                    </LinkBox>
                 </SimpleGrid>
 
                 <SimpleGrid columns={[1, 1, 1]} alignItems="center">

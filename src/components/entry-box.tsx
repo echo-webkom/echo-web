@@ -22,15 +22,15 @@ const EntryBox = ({ title, titles, entries, entryLimit, altText, linkTo, type, .
     return (
         <Section w="100%" h="100%" data-cy={`entry-box-${type}`} {...props}>
             <Flex h="100%" direction="column" alignItems="center">
-                {heading && <Heading mb="5">{heading}</Heading>}
+                {heading && <Heading mb="8">{heading}</Heading>}
                 {altText && entries.length === 0 && <Text>{altText}</Text>}
                 {entries.length > 0 && <EntryList entries={entries} entryLimit={entryLimit} type={type} />}
                 <Spacer />
                 {linkTo && (
                     <ButtonLink
                         linkTo={linkTo}
-                        mt="1.5rem"
                         transition=".1s ease-out"
+                        marginTop="7"
                         _hover={{ transform: 'scale(1.05)' }}
                     >
                         Se mer

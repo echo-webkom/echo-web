@@ -20,7 +20,7 @@ const EntryList = ({ entries, entryLimit, type }: Props): JSX.Element => {
     return (
         <Stack
             w="100%"
-            spacing={5}
+            spacing={6}
             divider={<StackDivider />}
             direction={type === 'post' ? ['column', null, null, 'row'] : 'column'}
             justifyContent="space-around"
