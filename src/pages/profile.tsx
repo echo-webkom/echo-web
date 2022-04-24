@@ -87,9 +87,9 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                 <Text>PåmeldingsInformasjon</Text>
                 {!editing && (
                     <>
-                        <Button onClick={() => setEditing(true)} mr={3} colorScheme="teal">
+                        {/**<Button onClick={() => setEditing(true)} mr={3} colorScheme="teal">
                             Edit
-                        </Button>
+                        </Button>**/}
                         <Text>Studieretning: {user.degree ? user.degree : ''}</Text>
                         <Text>Årstrinn: {user.degree ? user.degree : ''}</Text>
                     </>

@@ -9,15 +9,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (session) {
         const idToken = session.idToken as string;
+        const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
-        const response = await axios.get('http://localhost:8080/user', {
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-            validateStatus: (statusCode: number) => {
-                return statusCode < 500;
-            },
-        });
+        const response =
+            req.method === 'GET'
+                ? await axios.get(backendUrl + '/user', {
+                      headers: {
+                          Authorization: `Bearer ${idToken}`,
+                      },
+                      validateStatus: (statusCode: number) => {
+                          return statusCode < 500;
+                      },
+                  })
+                : await axios.put(backendUrl + '/user', {
+                      body: req.body,
+                      headers: {
+                          Authorization: `Bearer ${idToken}`,
+                      },
+                      validateStatus: (statusCode: number) => {
+                          return statusCode < 500;
+                      },
+                  });
 
         if (response.status === 404) {
             //no user in database
