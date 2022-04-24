@@ -108,7 +108,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
     fs.writeFileSync('./public/rss.xml', rss);
 
-    const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 8] : [3, 4];
+    const futureEvents = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
+    const [bedpresLimit, eventLimit] = futureEvents.length > 3 ? [4, 8] : [2, 4];
 
     return {
         props: {
@@ -118,7 +119,7 @@ export const getStaticProps: GetStaticProps = async () => {
                 })
                 .slice(0, bedpresLimit),
             posts: postsResponse.slice(0, eventLimit),
-            events: eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8),
+            events: futureEvents.slice(0, eventLimit),
             banner: bannerResponse ?? null,
         },
     };
