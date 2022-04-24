@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import React from 'react';
 import EntryBox from '../components/entry-box';
@@ -112,7 +112,7 @@ const IndexPage = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     const [bedpresesResponse, eventsResponse, postsResponse, bannerResponse] = await Promise.all([
         HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES),
         HappeningAPI.getHappeningsByType(0, HappeningType.EVENT),
@@ -151,6 +151,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             banner: bannerResponse ?? null,
             registrationCounts,
         },
+        revalidate: 60,
     };
 };
 
