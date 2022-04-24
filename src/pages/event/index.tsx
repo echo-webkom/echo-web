@@ -3,6 +3,7 @@ import { Box, Button, Heading, LinkBox, LinkOverlay, SimpleGrid, Stack, Text } f
 import NextLink from 'next/link';
 import { addWeeks, getISOWeek, lastDayOfWeek, startOfWeek, subWeeks } from 'date-fns';
 import { GetStaticProps } from 'next';
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import SEO from '../../components/seo';
 import { isErrorMessage, Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
@@ -22,16 +23,24 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
 
 const EventsStack = ({ events, date }: EventsStackProps): React.ReactElement => {
     const eventsThisDay = events.filter((x) => datesAreOnSameDay(new Date(x.date), date));
+    const weekDay = date.toLocaleDateString('nb-NO', { weekday: 'long' });
+    const day = date.getDate();
+    const month = date.toLocaleDateString('nb-NO', { month: 'long' });
+
     return (
         <Stack>
-            <Text fontWeight={'bold'}>{date.toLocaleDateString()}</Text>
+            <Text fontWeight={'bold'} fontSize={'0.9em'}>
+                {weekDay} {day}.{month}
+            </Text>
             {eventsThisDay.map((event) => {
                 return (
                     <LinkBox key={event.slug}>
                         <NextLink href={`/event/${event.slug}`} passHref>
                             <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                                 <Box>
-                                    <Text marginBottom="1rem">{event.title}</Text>
+                                    <Text marginBottom="1rem" fontSize={'0.8em'}>
+                                        {event.title}
+                                    </Text>
                                 </Box>
                             </LinkOverlay>
                         </NextLink>
@@ -69,11 +78,18 @@ const EventsCollectionPage = ({ events }: Props): JSX.Element => {
         <>
             <SEO title="Arrangementer" />
             <Heading marginBottom={'1rem'}>Arrangementer uke {getISOWeek(date)}</Heading>
-            <Button onClick={() => setDate(subWeeks(date, 1))} marginRight="1rem">
-                Forrige uke
+            <Button
+                leftIcon={<BiLeftArrow />}
+                onClick={() => setDate(subWeeks(date, 1))}
+                marginRight="1rem"
+                size={'xs'}
+            >
+                forrige uke
             </Button>
-            <Button onClick={() => setDate(addWeeks(date, 1))}>Neste uke</Button>
-            <SimpleGrid padding={'1rem'} columns={7}>
+            <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))} size={'xs'}>
+                neste uke
+            </Button>
+            <SimpleGrid padding={'1rem'} columns={[1, 2, 3, 7]} gridGap={'1rem'}>
                 {currentWeek.map((x) => {
                     return <EventsStack key={x.toString()} date={x} events={events} />;
                 })}
@@ -83,12 +99,14 @@ const EventsCollectionPage = ({ events }: Props): JSX.Element => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const happenings = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
+    const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
+    const bedpressesResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
 
-    if (isErrorMessage(happenings)) throw new Error(happenings.message);
+    if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
+    if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);
 
     const props: Props = {
-        events: happenings,
+        events: [...eventsResponse, ...bedpressesResponse],
     };
 
     return { props };
