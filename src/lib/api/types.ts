@@ -17,6 +17,7 @@ import {
     happeningDecoder,
     bannerDecoder,
     registrationCountDecoder,
+    userDecoder,
 } from './decoders';
 
 type SpotRange = decodeType<typeof spotRangeDecoder>;
@@ -52,6 +53,8 @@ type JobAdvert = decodeType<typeof jobAdvertDecoder>;
 type Happening = decodeType<typeof happeningDecoder>;
 
 type Banner = decodeType<typeof bannerDecoder>;
+
+type User = decodeType<typeof userDecoder>;
 
 enum HappeningType {
     BEDPRES = 'BEDPRES',
@@ -100,6 +103,7 @@ export type {
     JobAdvert,
     Happening,
     Banner,
+    User,
 };
 
 export { HappeningType, Degree, isErrorMessage };
