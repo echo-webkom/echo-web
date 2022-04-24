@@ -5,7 +5,6 @@ import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import React from 'react';
 import EntryBox from '../components/entry-box';
-import Hsp from '../components/hsp';
 import SEO from '../components/seo';
 import Section from '../components/section';
 import { BannerAPI, Banner, HappeningAPI, Happening, HappeningType, Post, PostAPI, isErrorMessage } from '../lib/api';
@@ -57,9 +56,15 @@ const IndexPage = ({
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
-                        <Hsp />
+                        <EntryBox
+                            title="Arrangementer"
+                            entries={events}
+                            altText="Ingen kommende arrangementer :("
+                            linkTo="/event"
+                            type="event"
+                        />
                     </GridItem>
-                    <GridItem rowSpan={2}>
+                    <GridItem>
                         <EntryBox
                             titles={[
                                 'Bedpres',
@@ -72,15 +77,6 @@ const IndexPage = ({
                             altText="Ingen kommende bedriftspresentasjoner :("
                             linkTo="/bedpres"
                             type="bedpres"
-                        />
-                    </GridItem>
-                    <GridItem>
-                        <EntryBox
-                            title="Arrangementer"
-                            entries={events}
-                            altText="Ingen kommende arrangementer :("
-                            linkTo="/event"
-                            type="event"
                         />
                     </GridItem>
                 </Grid>
@@ -112,7 +108,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
     fs.writeFileSync('./public/rss.xml', rss);
 
-    const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 6] : [3, 4];
+    const [bedpresLimit, eventLimit] = eventsResponse.length > 3 ? [4, 8] : [3, 4];
 
     return {
         props: {
