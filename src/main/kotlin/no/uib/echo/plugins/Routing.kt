@@ -31,15 +31,17 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.uib.echo.*
+import no.uib.echo.FeatureToggles
+import no.uib.echo.Response
+import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
-import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
 import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
@@ -52,7 +54,9 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.User
@@ -62,6 +66,7 @@ import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
+import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -718,7 +723,7 @@ object Routing {
 
     fun Route.postRegistrationCount() {
         post("/$registrationRoute/count") {
-            val slugs = call.receive<SlugRequest>().slugs
+            val slugs = call.receive<SlugJson>().slugs
             val registrationCounts = transaction {
                 addLogger(StdOutSqlLogger)
 
@@ -727,7 +732,7 @@ object Routing {
                         Registration.happeningSlug eq it
                     }.count()
 
-                    RegistrationCount(it, count)
+                    RegistrationCountJson(it, count)
                 }
             }
 
