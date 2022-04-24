@@ -41,6 +41,7 @@ import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
 import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
@@ -53,7 +54,9 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.User
@@ -146,6 +149,7 @@ fun Application.configureRouting(
             getRegistrations(dev)
             postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
             deleteRegistration(dev)
+            postRegistrationCount()
         }
     }
 }
@@ -714,6 +718,28 @@ object Routing {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun Route.postRegistrationCount() {
+        post("/$registrationRoute/count") {
+            val slugs = call.receive<SlugJson>().slugs
+            val registrationCounts = transaction {
+                addLogger(StdOutSqlLogger)
+
+                slugs.map {
+                    val count = Registration.select {
+                        Registration.happeningSlug eq it
+                    }.count()
+
+                    RegistrationCountJson(it, count)
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                registrationCounts
+            )
         }
     }
 }

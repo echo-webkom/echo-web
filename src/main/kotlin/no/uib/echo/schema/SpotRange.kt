@@ -37,6 +37,17 @@ object SpotRange : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
+@Serializable
+data class SlugJson(
+    val slugs: List<String>
+)
+
+@Serializable
+data class RegistrationCountJson(
+    val slug: String,
+    val count: Long
+)
+
 fun selectSpotRanges(slug: String): List<SpotRangeJson> {
     return transaction {
         addLogger(StdOutSqlLogger)
