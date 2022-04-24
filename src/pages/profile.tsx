@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { signOut, useSession } from 'next-auth/react';
-import { Spinner, Avatar, Center, Text, FormControl, HStack, Select, Button, Stack, Box } from '@chakra-ui/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import {
+    Spinner,
+    Avatar,
+    Center,
+    Text,
+    FormControl,
+    HStack,
+    Select,
+    Button,
+    Stack,
+    Box,
+    useColorModeValue,
+    Link,
+    Flex,
+    Spacer,
+} from '@chakra-ui/react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { IoMdHome } from 'react-icons/io';
 import SEO from '../components/seo';
 import { UserAPI, User, isErrorMessage, Degree } from '../lib/api';
 import Section from '../components/section';
-import NavLink from '../components/nav-link';
 
 const ProfilePage = (): JSX.Element => {
     const [user, setUser] = useState<User | undefined>();
+
+    const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
+    const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
+    const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');
+    const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -25,7 +45,7 @@ const ProfilePage = (): JSX.Element => {
 
     return (
         <>
-            <SEO title="Profile page" />
+            <SEO title={user ? user.name : status === 'unauthenticated' ? 'Logg inn' : 'Profilside'} />
             {status === 'authenticated' && (
                 <>
                     <Section position={'relative'}>
@@ -37,7 +57,7 @@ const ProfilePage = (): JSX.Element => {
                             left={'0.5em'}
                             top={'0.5em'}
                         >
-                            Log ut
+                            Logg ut
                         </Button>
                         <Center mt={'1.5em'}>{user && <ProfileInfo user={user} />}</Center>
                     </Section>
@@ -49,10 +69,33 @@ const ProfilePage = (): JSX.Element => {
                 </Center>
             )}
             {status === 'unauthenticated' && (
-                <>
-                    <Text>Du er logget ut</Text>
-                    <NavLink href={'/'} text="<- Hjem" />
-                </>
+                <Center>
+                    <Section position="relative" height="300px" width="500px" alignContent={'center'}>
+                        <Flex direction="column" height="100%" justifyContent="center">
+                            <Text align="center" fontSize="2xl" fontWeight="extrabold">
+                                Du er ikke logget inn
+                            </Text>
+                            <Spacer />
+                            <Button
+                                width="fit-content"
+                                margin="auto"
+                                bg={bg}
+                                color={textColor}
+                                _hover={{ bg: hover }}
+                                _active={{ borderColor: active }}
+                                fontSize="lg"
+                                borderRadius="0.5rem"
+                                onClick={() => void signIn('feide')}
+                            >
+                                Logg inn med feide
+                            </Button>
+                            <Spacer />
+                            <Link href="/" alignItems="center" justifyContent="center" display="flex">
+                                {<IoMdHome />} Hovedside
+                            </Link>
+                        </Flex>
+                    </Section>
+                </Center>
             )}
         </>
     );
@@ -74,7 +117,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     };
 
     return (
-        <Stack direction={'row'}>
+        <Stack direction={['column', null, 'row']}>
             <Box>
                 <Avatar size={'2xl'} name={user.name} src="" />
             </Box>
