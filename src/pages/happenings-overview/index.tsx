@@ -7,10 +7,6 @@ import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import SEO from '../../components/seo';
 import { isErrorMessage, Happening, HappeningAPI, HappeningType } from '../../lib/api';
 
-interface Props {
-    events: Array<Happening>;
-}
-
 interface EventsStackProps {
     events: Array<Happening>;
     date: Date;
@@ -21,16 +17,14 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
 
-const EventsStack = ({ events, date }: EventsStackProps): React.ReactElement => {
+const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElement => {
     const eventsThisDay = events.filter((x) => datesAreOnSameDay(new Date(x.date), date));
-    const weekDay = date.toLocaleDateString('nb-NO', { weekday: 'long' });
-    const day = date.getDate();
-    const month = date.toLocaleDateString('nb-NO', { month: 'long' });
+    const formattedDate = date.toLocaleDateString('nb-NO', { weekday: 'long', month: 'long', day: 'numeric' });
 
     return (
         <Stack>
             <Text fontWeight={'bold'} fontSize={'0.9em'}>
-                {weekDay} {day}.{month}
+                {formattedDate}
             </Text>
             {eventsThisDay.map((event) => {
                 return (
@@ -70,7 +64,10 @@ const getWeekDatesFromDate = (date: Date): Array<Date> => {
     return getDatesInRange(firstWeekDay, lastWeekDay);
 };
 
-const EventsCollectionPage = ({ events }: Props): JSX.Element => {
+interface Props {
+    events: Array<Happening>;
+}
+const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
     const [date, setDate] = useState(new Date());
     const currentWeek = getWeekDatesFromDate(date);
 
@@ -91,7 +88,7 @@ const EventsCollectionPage = ({ events }: Props): JSX.Element => {
             </Button>
             <SimpleGrid padding={'1rem'} columns={[1, 2, 3, 7]} gridGap={'1rem'}>
                 {currentWeek.map((x) => {
-                    return <EventsStack key={x.toString()} date={x} events={events} />;
+                    return <HappeningsColumn key={x.toString()} date={x} events={events} />;
                 })}
             </SimpleGrid>
         </>
@@ -112,4 +109,4 @@ export const getStaticProps: GetStaticProps = async () => {
     return { props };
 };
 
-export default EventsCollectionPage;
+export default HappeningsOverviewPage;
