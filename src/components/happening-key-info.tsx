@@ -10,7 +10,7 @@ interface Props {
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => {
+const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
     const router = useRouter();
     const isMainPage = router.pathname === '/';
 
@@ -29,7 +29,7 @@ const HappeningKeyInfo = ({ event, registrationCounts }: Props): JSX.Element => 
                 isMainPage &&
                 (isPast(new Date(event.registrationDate)) ? (
                     <Text fontSize="1rem">
-                        {registrationCounts?.find((regCount: RegistrationCount) => regCount.slug === event.slug)
+                        {registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)
                             ?.count ?? 0}{' '}
                         av {totalSpots <= 0 ? '∞' : totalSpots} påmeldte
                     </Text>

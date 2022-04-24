@@ -138,7 +138,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
-    const registrationCounts = await RegistrationAPI.getRegistrationCountForSlugs(
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
         slugs,
         process.env.BACKEND_URL ?? 'http://localhost:8080',
     );
@@ -149,7 +149,7 @@ export const getStaticProps: GetStaticProps = async () => {
             posts: postsResponse.slice(0, eventLimit),
             events,
             banner: bannerResponse ?? null,
-            registrationCounts,
+            registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
         },
         revalidate: 60,
     };
