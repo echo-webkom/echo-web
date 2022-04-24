@@ -1,8 +1,8 @@
 package no.uib.echo
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
@@ -13,26 +13,34 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Happening.registrationsLink
+import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.RegistrationJson
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.IOException
+import java.util.regex.Pattern
 
+@Serializable
 data class SendGridRequest(
     val personalizations: List<SendGridPersonalization>,
     val from: SendGridEmail,
     val template_id: String
 )
 
+@Serializable
 data class SendGridPersonalization(
     val to: List<SendGridEmail>,
     val dynamic_template_data: SendGridTemplate
 )
 
+@Serializable
 data class SendGridTemplate(
     val title: String,
     val link: String,
@@ -41,6 +49,7 @@ data class SendGridTemplate(
     val registration: RegistrationJson? = null
 )
 
+@Serializable
 data class SendGridEmail(val email: String, val name: String? = null)
 
 enum class Template {
@@ -66,11 +75,11 @@ suspend fun sendConfirmationEmail(
     registration: RegistrationJson,
     waitListSpot: Long?
 ) {
-    val (hapTypeLiteral, typeSlug) = when (registration.type) {
+    val hapTypeLiteral = when (registration.type) {
         HAPPENING_TYPE.EVENT ->
-            Pair("arrangementet", "events")
+            "arrangementet"
         HAPPENING_TYPE.BEDPRES ->
-            Pair("bedriftspresentasjonen", "bedpres")
+            "bedriftspresentasjonen"
     }
 
     val hap = transaction {
@@ -93,12 +102,39 @@ suspend fun sendConfirmationEmail(
                 registration.email,
                 SendGridTemplate(
                     hap[Happening.title],
-                    "https://echo.uib.no/$typeSlug/${registration.slug}",
+                    "https://echo.uib.no/event/${registration.slug}",
                     hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),
                     registration = registration
                 ),
                 if (waitListSpot != null) Template.CONFIRM_WAIT else Template.CONFIRM_REG,
+                sendGridApiKey
+            )
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+}
+
+suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson) {
+    val hapTypeLiteral = when (happening.type) {
+        HAPPENING_TYPE.EVENT ->
+            "arrangementet"
+        HAPPENING_TYPE.BEDPRES ->
+            "bedriftspresentasjonen"
+    }
+
+    try {
+        withContext(Dispatchers.IO) {
+            sendEmail(
+                "webkom@echo.uib.no",
+                happening.organizerEmail,
+                SendGridTemplate(
+                    happening.title,
+                    "https://echo.uib.no/${Routing.registrationRoute}/$registrationsLink",
+                    hapTypeLiteral
+                ),
+                Template.REGS_LINK,
                 sendGridApiKey
             )
         }
@@ -114,6 +150,16 @@ suspend fun sendEmail(
     template: Template,
     sendGridApiKey: String
 ) {
+    if (!isEmailValid(from)) {
+        System.err.println("Email address '$from' is not valid. Not sending email to address '$to'.")
+        return
+    }
+
+    if (!isEmailValid(to)) {
+        System.err.println("Email address '$to' is not valid. Not sending email from address '$from'.")
+        return
+    }
+
     val fromName = fromEmail(from)
     val fromPers =
         if (fromName != null)
@@ -130,7 +176,7 @@ suspend fun sendEmail(
     val response: HttpResponse = HttpClient {
         install(Logging)
         install(JsonFeature) {
-            serializer = GsonSerializer()
+            serializer = KotlinxSerializer()
         }
     }.use { client ->
         client.post(SENDGRID_ENDPOINT) {
@@ -153,4 +199,15 @@ suspend fun sendEmail(
     if (response.status != HttpStatusCode.Accepted) {
         throw IOException("Status code is not 202: ${response.status}, ${response.content}")
     }
+}
+
+fun isEmailValid(email: String): Boolean {
+    return Pattern.compile(
+        "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]|[\\w-]{2,}))@" +
+            "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
+            "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\." +
+            "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
+            "[0-9]{1,2}|25[0-5]|2[0-4][0-9]))|" +
+            "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
+    ).matcher(email).matches()
 }

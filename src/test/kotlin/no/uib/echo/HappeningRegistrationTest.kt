@@ -1,7 +1,5 @@
 package no.uib.echo
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -14,6 +12,9 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import no.uib.echo.plugins.Routing
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.schema.Answer
@@ -190,7 +191,6 @@ class HappeningRegistrationTest : StringSpec({
             )
         }
 
-    val gson = Gson()
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val featureToggles =
@@ -237,7 +237,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(type).copy(
                                     degree = degree,
                                     degreeYear = degreeYear,
@@ -248,7 +248,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
                 res.desc shouldBe successfulRegMsg(type)
@@ -282,11 +282,11 @@ class HappeningRegistrationTest : StringSpec({
                     val submitRegCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(slug = b.slug)))
+                            setBody(Json.encodeToString(exampleHappeningReg(t).copy(slug = b.slug)))
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     res.code shouldBe Response.OK
                     res.title shouldBe "Påmeldingen din er registrert!"
                     res.desc shouldBe successfulRegMsg(t)
@@ -303,11 +303,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(answers = emptyList())))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(answers = emptyList())))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
                 res.desc shouldBe successfulRegMsg(t)
@@ -323,11 +323,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t)))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
                 res.desc shouldBe successfulRegMsg(t)
@@ -335,11 +335,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegAgainCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t)))
                     }
 
                 submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
-                val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
+                val resAgain = Json.decodeFromString<ResponseJson>(submitRegAgainCall.response.content!!)
                 val code = Response.AlreadySubmitted
                 val (_, title, desc) = resToJson(code, t)
 
@@ -358,11 +358,11 @@ class HappeningRegistrationTest : StringSpec({
                 val fillUpRegsCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = exampleHappening8(t).slug)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(slug = exampleHappening8(t).slug)))
                     }
 
                 fillUpRegsCall.response.status() shouldBe HttpStatusCode.OK
-                val fillUpRes = gson.fromJson(fillUpRegsCall.response.content, ResponseJson::class.java)
+                val fillUpRes = Json.decodeFromString<ResponseJson>(fillUpRegsCall.response.content!!)
                 val codeFillUp = Response.OK
                 val (_, titleFillUp, descFillUp) = resToJson(codeFillUp, t)
 
@@ -375,7 +375,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(t).copy(
                                     slug = exampleHappening8(t).slug,
                                     email = newEmail
@@ -385,7 +385,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 val code = Response.WaitList
                 val (_, title, desc) = resToJson(code, t, waitListSpot = 1)
 
@@ -397,7 +397,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(t).copy(
                                     slug = exampleHappening8(t).slug,
                                     email = newEmail
@@ -407,7 +407,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitRegAgainCall.response.status() shouldBe HttpStatusCode.UnprocessableEntity
-                val resAgain = gson.fromJson(submitRegAgainCall.response.content, ResponseJson::class.java)
+                val resAgain = Json.decodeFromString<ResponseJson>(submitRegAgainCall.response.content!!)
                 val codeAgain = Response.AlreadySubmittedWaitList
                 val (_, titleAgain, descAgain) = resToJson(codeAgain, t)
 
@@ -426,11 +426,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = exampleHappening3(t).slug)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(slug = exampleHappening3(t).slug)))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.TooEarly
                 res.title shouldBe "Påmeldingen er ikke åpen enda."
                 res.desc shouldBe "Vennligst vent."
@@ -446,11 +446,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = exampleHappening10(t).slug)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(slug = exampleHappening10(t).slug)))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res shouldNotBe null
                 val (code, title, desc) = resToJson(res.code, t)
 
@@ -469,11 +469,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(slug = "ikke-eksisterende-happening-som-ikke-finnes")))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(slug = "ikke-eksisterende-happening-som-ikke-finnes")))
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.Conflict
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.HappeningDoesntExist
                 when (t) {
                     HAPPENING_TYPE.BEDPRES ->
@@ -486,23 +486,42 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-    "Email should contain @-sign." {
+    "Email should be valid." {
         withTestApplication({
             configureRouting(adminKey, null, true, featureToggles)
         }) {
-            for (t in be) {
-                val testCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        val invalidEmail = exampleHappeningReg(t).copy(email = "test_test.com")
-                        setBody(gson.toJson(invalidEmail))
-                    }
+            val emails = listOf(
+                Pair("test@test", false),
+                Pair("test@test.", false),
+                Pair("test@test.", false),
+                Pair("test_test.com", false),
+                Pair("@test.com", false),
+                Pair("test@uib.no", true),
+                Pair("test@student.uib.no", true),
+                Pair("test_person@hotmail.com", true)
+            )
 
-                testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
-                res.code shouldBe Response.InvalidEmail
-                res.title shouldBe "Vennligst skriv inn en gyldig mail."
-                res.desc shouldBe ""
+            for (t in be) {
+                for ((email, isValid) in emails) {
+                    val testCall: TestApplicationCall =
+                        handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
+                            addHeader(HttpHeaders.ContentType, "application/json")
+                            setBody(Json.encodeToString(exampleHappeningReg(t).copy(email = email)))
+                        }
+
+                    if (isValid)
+                        testCall.response.status() shouldBe HttpStatusCode.OK
+                    else
+                        testCall.response.status() shouldBe HttpStatusCode.BadRequest
+
+                    val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
+                    res shouldNotBe null
+
+                    if (isValid)
+                        res.code shouldBe Response.OK
+                    else
+                        res.code shouldBe Response.InvalidEmail
+                }
             }
         }
     }
@@ -516,11 +535,11 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = 0)
-                        setBody(gson.toJson(invalidDegreeYear))
+                        setBody(Json.encodeToString(invalidDegreeYear))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.InvalidDegreeYear
                 res.title shouldBe "Vennligst velgt et gyldig trinn."
                 res.desc shouldBe ""
@@ -537,11 +556,11 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = 6)
-                        setBody(gson.toJson(invalidDegreeYear))
+                        setBody(Json.encodeToString(invalidDegreeYear))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.InvalidDegreeYear
                 res.title shouldBe "Vennligst velgt et gyldig trinn."
                 res.desc shouldBe ""
@@ -567,11 +586,11 @@ class HappeningRegistrationTest : StringSpec({
                             handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                                 addHeader(HttpHeaders.ContentType, "application/json")
                                 val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = year, degree = deg)
-                                setBody(gson.toJson(invalidDegreeYear))
+                                setBody(Json.encodeToString(invalidDegreeYear))
                             }
 
                         testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                        val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                        val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                         res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
                         res.desc shouldBe "Vennligst prøv igjen."
                     }
@@ -591,11 +610,11 @@ class HappeningRegistrationTest : StringSpec({
                             handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                                 addHeader(HttpHeaders.ContentType, "application/json")
                                 val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = i, degree = deg)
-                                setBody(gson.toJson(invalidDegreeYear))
+                                setBody(Json.encodeToString(invalidDegreeYear))
                             }
 
                         testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                        val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                        val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                         res.code shouldBe Response.DegreeMismatchMaster
                         res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
                         res.desc shouldBe "Vennligst prøv igjen."
@@ -614,11 +633,11 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = 2, degree = Degree.KOGNI)
-                        setBody(gson.toJson(invalidDegreeYear))
+                        setBody(Json.encodeToString(invalidDegreeYear))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.DegreeMismatchKogni
                 res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
                 res.desc shouldBe "Vennligst prøv igjen."
@@ -635,11 +654,11 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = 2, degree = Degree.ARMNINF)
-                        setBody(gson.toJson(invalidDegreeYear))
+                        setBody(Json.encodeToString(invalidDegreeYear))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.DegreeMismatchArmninf
                 res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
                 res.desc shouldBe "Vennligst prøv igjen."
@@ -656,11 +675,11 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         val invalidTerms = exampleHappeningReg(t).copy(terms = false)
-                        setBody(gson.toJson(invalidTerms))
+                        setBody(Json.encodeToString(invalidTerms))
                     }
 
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(testCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.InvalidTerms
                 when (t) {
                     HAPPENING_TYPE.BEDPRES ->
@@ -682,11 +701,11 @@ class HappeningRegistrationTest : StringSpec({
                     val submitRegCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "tesadasdt$i@test.com")))
+                            setBody(Json.encodeToString(exampleHappeningReg(t).copy(email = "tesadasdt$i@test.com")))
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     res.code shouldBe Response.OK
                     res.title shouldBe "Påmeldingen din er registrert!"
                     res.desc shouldBe successfulRegMsg(t)
@@ -696,11 +715,11 @@ class HappeningRegistrationTest : StringSpec({
                     val submitRegWaitlistCall: TestApplicationCall =
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
-                            setBody(gson.toJson(exampleHappeningReg(t).copy(email = "takadhasdh$i@test.com")))
+                            setBody(Json.encodeToString(exampleHappeningReg(t).copy(email = "takadhasdh$i@test.com")))
                         }
 
                     submitRegWaitlistCall.response.status() shouldBe HttpStatusCode.Accepted
-                    val res = gson.fromJson(submitRegWaitlistCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegWaitlistCall.response.content!!)
                     res.code shouldBe Response.WaitList
                     res.title shouldBe "Alle plassene er dessverre fylt opp."
                     res.desc shouldBe "Du er på plass nr. $i på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
@@ -719,7 +738,7 @@ class HappeningRegistrationTest : StringSpec({
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
                             setBody(
-                                gson.toJson(
+                                Json.encodeToString(
                                     exampleHappeningReg(t).copy(
                                         email = "teasds${i}t3t@test.com",
                                         degreeYear = i,
@@ -730,7 +749,7 @@ class HappeningRegistrationTest : StringSpec({
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     res.code shouldBe Response.NotInRange
                     val descStart =
                         if (t == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen er kun åpen" else "Dette arrangementet er kun åpent"
@@ -746,7 +765,7 @@ class HappeningRegistrationTest : StringSpec({
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
                             setBody(
-                                gson.toJson(
+                                Json.encodeToString(
                                     exampleHappeningReg(t).copy(
                                         email = "tlsbreh100aasdlo0${i}t3t@test.com",
                                         degreeYear = i,
@@ -758,7 +777,7 @@ class HappeningRegistrationTest : StringSpec({
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.Forbidden
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     res.code shouldBe Response.NotInRange
                     res.title shouldBe "Du kan dessverre ikke melde deg på."
                     val descStart =
@@ -782,7 +801,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
                                     email = "ta123t$i@test.com",
                                     degree = Degree.PROG,
@@ -793,7 +812,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.DegreeMismatchMaster
                 res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
                 res.desc shouldBe "Vennligst prøv igjen."
@@ -804,7 +823,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
                                     email = "jn12sdpp3t$i@test.xyz",
                                     degree = Degree.PROG,
@@ -836,7 +855,7 @@ class HappeningRegistrationTest : StringSpec({
                             "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
                         )
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappening6(t).copy(
                                     slug = newSlug
                                 )
@@ -845,9 +864,8 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
-                val regsLink = gson.fromJson(
-                    submitHappeningCall.response.content,
-                    HappeningResponseJson::class.java
+                val regsLink = Json.decodeFromString<HappeningResponseJson>(
+                    submitHappeningCall.response.content!!,
                 ).registrationsLink
 
                 val regsList = mutableListOf<RegistrationJson>()
@@ -866,18 +884,18 @@ class HappeningRegistrationTest : StringSpec({
                                         waitList = i > sr.spots
                                     )
                                 regsList.add(newReg.copy(email = newReg.email.lowercase()))
-                                setBody(gson.toJson(newReg))
+                                setBody(Json.encodeToString(newReg))
                             }
 
                         if (i > sr.spots) {
                             submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
-                            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                            val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                             res.code shouldBe Response.WaitList
                             res.title shouldBe "Alle plassene er dessverre fylt opp."
                             res.desc shouldBe "Du er på plass nr. ${i - sr.spots} på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
                         } else {
                             submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                            val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                            val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                             res.code shouldBe Response.OK
                             res.title shouldBe "Påmeldingen din er registrert!"
                             res.desc shouldBe successfulRegMsg(t)
@@ -897,10 +915,8 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 getCountRegCall.response.status() shouldBe HttpStatusCode.OK
-                val happeningInfoType = object : TypeToken<HappeningInfoJson>() {}.type
-                val happeningInfo = gson.fromJson<HappeningInfoJson>(
-                    getCountRegCall.response.content,
-                    happeningInfoType
+                val happeningInfo = Json.decodeFromString<HappeningInfoJson>(
+                    getCountRegCall.response.content!!,
                 )
 
                 for (i in happeningInfo.spotRanges.indices) {
@@ -914,7 +930,7 @@ class HappeningRegistrationTest : StringSpec({
                 )
 
                 getRegistrationsListCall.response.status() shouldBe HttpStatusCode.OK
-                getRegistrationsListCall.response.content shouldBe toCsv(regsList, testing = true)
+                getRegistrationsListCall.response.content!! shouldBe toCsv(regsList, testing = true)
 
                 val getRegistrationsListJsonCall = handleRequest(
                     method = HttpMethod.Get,
@@ -922,10 +938,8 @@ class HappeningRegistrationTest : StringSpec({
                 )
 
                 getRegistrationsListJsonCall.response.status() shouldBe HttpStatusCode.OK
-                val registrationsListType = object : TypeToken<List<RegistrationJson>>() {}.type
-                val registrationsList = gson.fromJson<List<RegistrationJson>>(
-                    getRegistrationsListJsonCall.response.content,
-                    registrationsListType
+                val registrationsList = Json.decodeFromString<List<RegistrationJson>>(
+                    getRegistrationsListJsonCall.response.content!!,
                 )
                 registrationsList.map {
                     it.copy(submitDate = null)
@@ -951,7 +965,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 getHappeningInfoCall.response.status() shouldBe HttpStatusCode.NotFound
-                getHappeningInfoCall.response.content shouldBe "Happening doesn't exist."
+                getHappeningInfoCall.response.content!! shouldBe "Happening doesn't exist."
             }
         }
     }
@@ -965,7 +979,7 @@ class HappeningRegistrationTest : StringSpec({
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappeningReg(type).copy(
                                     email = "${type}test$i@test.com",
                                     slug = exampleHappening7(type).slug
@@ -975,7 +989,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                 res.code shouldBe Response.OK
                 res.title shouldBe "Påmeldingen din er registrert!"
                 res.desc shouldBe successfulRegMsg(type)
@@ -1004,7 +1018,7 @@ class HappeningRegistrationTest : StringSpec({
                             "Basic ${Base64.getEncoder().encodeToString("admin:$adminKey".toByteArray())}"
                         )
                         setBody(
-                            gson.toJson(
+                            Json.encodeToString(
                                 exampleHappening6(t).copy(
                                     slug = newSlug
                                 )
@@ -1013,9 +1027,8 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 submitHappeningCall.response.status() shouldBe HttpStatusCode.OK
-                val regsLink = gson.fromJson(
-                    submitHappeningCall.response.content,
-                    HappeningResponseJson::class.java
+                val regsLink = Json.decodeFromString<HappeningResponseJson>(
+                    submitHappeningCall.response.content!!,
                 ).registrationsLink
 
                 val attemptGetRegsCall: TestApplicationCall =
@@ -1039,7 +1052,7 @@ class HappeningRegistrationTest : StringSpec({
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
                             setBody(
-                                gson.toJson(
+                                Json.encodeToString(
                                     exampleHappeningReg(t).copy(
                                         email = "${t}$i@test.com",
                                         slug = exampleHappening9(t).slug
@@ -1049,7 +1062,7 @@ class HappeningRegistrationTest : StringSpec({
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.OK
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     res.code shouldBe Response.OK
                     res.title shouldBe "Påmeldingen din er registrert!"
                     res.desc shouldBe successfulRegMsg(t)
@@ -1060,7 +1073,7 @@ class HappeningRegistrationTest : StringSpec({
                         handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                             addHeader(HttpHeaders.ContentType, "application/json")
                             setBody(
-                                gson.toJson(
+                                Json.encodeToString(
                                     exampleHappeningReg(t).copy(
                                         email = "waitlist${t}$i@test.com",
                                         slug = exampleHappening9(t).slug
@@ -1070,7 +1083,7 @@ class HappeningRegistrationTest : StringSpec({
                         }
 
                     submitRegCall.response.status() shouldBe HttpStatusCode.Accepted
-                    val res = gson.fromJson(submitRegCall.response.content, ResponseJson::class.java)
+                    val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
                     val code = Response.WaitList
                     val (_, title, desc) = resToJson(code, t, waitListSpot = i.toLong())
 
@@ -1091,7 +1104,7 @@ class HappeningRegistrationTest : StringSpec({
                         )
 
                     deleteRegCall.response.status() shouldBe HttpStatusCode.OK
-                    deleteRegCall.response.content shouldBe
+                    deleteRegCall.response.content!! shouldBe
                         "Registration with email = ${regEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted, " +
                         "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list."
                 }
@@ -1106,7 +1119,7 @@ class HappeningRegistrationTest : StringSpec({
                         )
 
                     deleteWaitListRegCall.response.status() shouldBe HttpStatusCode.OK
-                    deleteWaitListRegCall.response.content shouldBe
+                    deleteWaitListRegCall.response.content!! shouldBe
                         "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted."
                 }
             }
@@ -1121,11 +1134,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegFailCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t)))
                     }
 
                 submitRegFailCall.response.status() shouldBe HttpStatusCode.Unauthorized
-                val resFail = gson.fromJson(submitRegFailCall.response.content, ResponseJson::class.java)
+                val resFail = Json.decodeFromString<ResponseJson>(submitRegFailCall.response.content!!)
                 resFail shouldNotBe null
                 val (_, titleFail, descFail) = resToJson(resFail.code, t)
 
@@ -1135,11 +1148,11 @@ class HappeningRegistrationTest : StringSpec({
                 val submitRegOkCall: TestApplicationCall =
                     handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
                         addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(gson.toJson(exampleHappeningReg(t).copy(regVerifyToken = exampleHappeningReg(t).slug)))
+                        setBody(Json.encodeToString(exampleHappeningReg(t).copy(regVerifyToken = exampleHappeningReg(t).slug)))
                     }
 
                 submitRegOkCall.response.status() shouldBe HttpStatusCode.OK
-                val resOk = gson.fromJson(submitRegOkCall.response.content, ResponseJson::class.java)
+                val resOk = Json.decodeFromString<ResponseJson>(submitRegOkCall.response.content!!)
                 resOk shouldNotBe null
                 val (_, titleOk, descOk) = resToJson(resOk.code, t)
 

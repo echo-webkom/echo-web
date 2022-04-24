@@ -1,5 +1,6 @@
 package no.uib.echo.plugins
 
+import com.auth0.jwk.JwkProviderBuilder
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.application.Application
@@ -9,8 +10,10 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
+import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.jwt.jwt
+import io.ktor.auth.principal
 import io.ktor.features.ContentNegotiation
-import io.ktor.gson.gson
 import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -25,17 +28,22 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
 import io.ktor.routing.routing
+import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
+import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
+import no.uib.echo.plugins.Routing.getUser
 import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
+import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
@@ -46,9 +54,13 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.User
+import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.selectSpotRanges
@@ -67,8 +79,10 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
+import java.net.URL
 import java.net.URLDecoder
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
     adminKey: String,
@@ -79,7 +93,7 @@ fun Application.configureRouting(
     val admin = "admin"
 
     install(ContentNegotiation) {
-        gson()
+        json()
     }
 
     install(RateLimit) {
@@ -97,6 +111,24 @@ fun Application.configureRouting(
                     null
             }
         }
+
+        val issuer = "https://auth.dataporten.no/openid/jwks"
+        val jwkProvider = JwkProviderBuilder(URL(issuer))
+            .cached(10, 24, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES)
+            .build()
+
+        jwt("auth-jwt") {
+            realm = "Verify jwt"
+            verifier(jwkProvider, issuer) {
+                acceptLeeway(3)
+                withIssuer("https://auth.dataporten.no")
+            }
+            validate { jwtCredential ->
+                println(jwtCredential.payload)
+                JWTPrincipal(jwtCredential.payload)
+            }
+        }
     }
 
     routing {
@@ -109,9 +141,15 @@ fun Application.configureRouting(
                 getHappeningInfo()
             }
 
+            authenticate("auth-jwt") {
+                getUser()
+                putUser()
+            }
+
             getRegistrations(dev)
             postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
             deleteRegistration(dev)
+            postRegistrationCount()
         }
     }
 }
@@ -123,6 +161,77 @@ object Routing {
     fun Route.getStatus() {
         get("/status") {
             call.respond(HttpStatusCode.OK)
+        }
+    }
+
+    fun Route.getUser() {
+        get("/user") {
+            val principal = call.principal<JWTPrincipal>()
+            val email = principal!!.payload.getClaim("email").asString()
+
+            val user = transaction {
+                addLogger(StdOutSqlLogger)
+                User.select {
+                    User.email eq email
+                }.firstOrNull()
+            }
+
+            if (user == null) {
+                call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
+                return@get
+            }
+
+            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
+        }
+    }
+
+    fun Route.putUser() {
+        put("/user") {
+            try {
+                val user = call.receive<UserJson>()
+
+                val principal = call.principal<JWTPrincipal>()
+                val email = principal!!.payload.getClaim("email").asString()
+
+                if (user.email != email) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+
+                val result = transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.select {
+                        User.email eq email
+                    }.firstOrNull()
+                }
+
+                if (result == null) {
+                    transaction {
+                        addLogger(StdOutSqlLogger)
+                        User.insert {
+                            it[User.email] = email
+                            it[degree] = user.degree.toString()
+                            it[degreeYear] = user.degreeYear
+                        }
+                    }
+                    call.respond(HttpStatusCode.OK, "User created with email = $email")
+                    return@put
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.update({
+                        User.email eq email
+                    }) {
+                        it[degree] = user.degree.toString()
+                        it[degreeYear] = user.degreeYear
+                    }
+                }
+                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
+            }
         }
     }
 
@@ -262,7 +371,7 @@ object Routing {
             try {
                 val registration = call.receive<RegistrationJson>()
 
-                if (!registration.email.contains('@')) {
+                if (!isEmailValid(registration.email)) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
                     return@post
                 }
@@ -609,6 +718,28 @@ object Routing {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun Route.postRegistrationCount() {
+        post("/$registrationRoute/count") {
+            val slugs = call.receive<SlugJson>().slugs
+            val registrationCounts = transaction {
+                addLogger(StdOutSqlLogger)
+
+                slugs.map {
+                    val count = Registration.select {
+                        Registration.happeningSlug eq it
+                    }.count()
+
+                    RegistrationCountJson(it, count)
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                registrationCounts
+            )
         }
     }
 }

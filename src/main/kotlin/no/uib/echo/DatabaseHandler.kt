@@ -6,6 +6,7 @@ import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.User
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -59,7 +60,8 @@ class DatabaseHandler(private val dev: Boolean, dbUrl: URI, mbMaxPoolSize: Strin
                         Happening,
                         Registration,
                         Answer,
-                        SpotRange
+                        SpotRange,
+                        User
                     )
                 }
             } catch (e: Exception) {

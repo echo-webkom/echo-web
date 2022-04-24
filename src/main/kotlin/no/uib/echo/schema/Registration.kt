@@ -1,5 +1,6 @@
 package no.uib.echo.schema
 
+import kotlinx.serialization.Serializable
 import no.uib.echo.schema.Registration.happeningSlug
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -12,6 +13,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
+@Serializable
 data class RegistrationJson(
     val email: String,
     val firstName: String,
@@ -20,11 +22,11 @@ data class RegistrationJson(
     val degreeYear: Int,
     val slug: String,
     val terms: Boolean,
-    val submitDate: String?,
-    val waitList: Boolean,
+    val submitDate: String? = null,
+    val waitList: Boolean? = null,
     val answers: List<AnswerJson>,
     val type: HAPPENING_TYPE,
-    val regVerifyToken: String?,
+    val regVerifyToken: String? = null,
 )
 
 object Registration : Table() {

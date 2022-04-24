@@ -4,7 +4,7 @@ FROM openjdk:17-jdk-slim AS deps
 
 WORKDIR /opt/build
 
-COPY *.kts gradle.properties gradlew* ./
+COPY *.kts gradle.properties gradlew* /opt/build/
 COPY gradle gradle
 
 # Add or remove '--info' as needed.
@@ -20,7 +20,7 @@ WORKDIR /opt/build
 COPY --from=deps /root/.gradle /root/.gradle/
 
 # Copy config, and all code except tests.
-COPY *.kts gradle.properties gradlew* ./
+COPY *.kts gradle.properties gradlew* /opt/build/
 COPY gradle gradle
 COPY src/main src/main
 
@@ -40,8 +40,8 @@ WORKDIR /opt/app
 RUN apt update \
  && apt install -yq --no-install-recommends curl
 
-COPY --from=build /opt/build/build/libs/*-all.jar ./build/libs/
-COPY Procfile .
+COPY --from=build /opt/build/build/libs/*-all.jar /opt/app/build/libs/
+COPY Procfile /opt/app
 COPY scripts scripts
 
 # Use Procfile as single source of truth.
