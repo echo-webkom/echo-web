@@ -18,7 +18,7 @@ export default NextAuth({
             wellKnown: 'https://auth.dataporten.no/.well-known/openid-configuration',
             authorization: {
                 params: {
-                    scope: 'groups-org email gk_fs-studentbevis userinfo-name longterm gk_fs-alumni profile groups-edu userid openid groups-other',
+                    scope: 'email userinfo-name profile userid openid',
                 },
             },
             clientId: process.env.FEIDE_CLIENT_ID,
