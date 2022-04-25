@@ -25,7 +25,7 @@ import {
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
 import { FormProvider, useForm, SubmitHandler } from 'react-hook-form';
-import { Degree, Happening, HappeningType, RegistrationAPI, Question, FormValues } from '../lib/api';
+import { Degree, Happening, HappeningType, RegistrationAPI, Question, RegFormValues } from '../lib/api';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
 
@@ -79,7 +79,7 @@ interface Props {
 const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const linkColor = useColorModeValue('blue', 'blue.400');
-    const methods = useForm<FormValues>();
+    const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 
     const toast = useToast();
@@ -87,7 +87,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
-    const submitForm: SubmitHandler<FormValues> = async (data) => {
+    const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         await RegistrationAPI.submitRegistration(
             {
                 email: data.email,

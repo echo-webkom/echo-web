@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, FormLabel } from '@chakra-ui/react';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FormValues } from '../lib/api';
+import { RegFormValues } from '../lib/api';
 
 interface Props {
     id: 'terms1' | 'terms2' | 'terms3';
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const FormTerm = ({ id, children }: Props): JSX.Element => {
-    const { register } = useFormContext<FormValues>();
+    const { register } = useFormContext<RegFormValues>();
 
     return (
         <FormControl id={id} isRequired>

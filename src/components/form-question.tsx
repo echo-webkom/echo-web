@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Input, Radio, RadioGroup, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FormValues, Question } from '../lib/api';
+import { RegFormValues, Question } from '../lib/api';
 
 interface Props {
     q: Question;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const FormQuestion = ({ q, index }: Props): JSX.Element => {
-    const { register } = useFormContext<FormValues>();
+    const { register } = useFormContext<RegFormValues>();
 
     return q.inputType === 'radio' ? (
         <FormControl as="fieldset" isRequired>

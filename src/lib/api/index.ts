@@ -4,7 +4,7 @@ export { JobAdvertAPI } from './job-advert';
 export { MinuteAPI } from './minute';
 export { PostAPI } from './post';
 export { BannerAPI } from './banner';
-export { UserAPI } from './user';
+export { type FormValues as ProfileFormValues, UserAPI } from './user';
 export {
     type ErrorMessage,
     type Post,
@@ -23,9 +23,10 @@ export {
     type Question,
     type Banner,
     type User,
+    type UserWithName,
     isErrorMessage,
     HappeningType,
     Degree,
 } from './types';
-export { RegistrationAPI, registrationRoute, type FormValues } from './registration';
+export { RegistrationAPI, registrationRoute, type FormValues as RegFormValues } from './registration';
 export { StudentGroupAPI } from './student-group';

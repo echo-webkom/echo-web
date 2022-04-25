@@ -195,9 +195,15 @@ const bannerDecoder = record({
 
 const userDecoder = record({
     email: string,
-    name: string,
-    grade: union(number, nil),
     degree: union(degreeDecoder, nil),
+    degreeYear: union(number, nil),
+});
+
+const userWithNameDecoder = record({
+    email: string,
+    name: string,
+    degree: union(degreeDecoder, nil),
+    degreeYear: union(number, nil),
 });
 
 export {
@@ -222,4 +228,5 @@ export {
     bannerDecoder,
     registrationCountDecoder,
     userDecoder,
+    userWithNameDecoder,
 };
