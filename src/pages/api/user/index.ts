@@ -16,6 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 res.status(401);
                 return;
             }
+
             const response = await axios.get(`${backendUrl}/user`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
@@ -39,7 +40,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     degreeYear: null,
                     degree: null,
                 };
+
                 res.status(200).send(user);
+                return;
             }
 
             const user: UserWithName = {
@@ -48,6 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 degree: response.data.degree ?? null,
                 degreeYear: response.data.degreeYear ?? null,
             };
+
             res.status(200).send(user);
             return;
         }
@@ -73,11 +77,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
 
             res.status(200).send(response.data);
+            return;
         }
 
         // method not valid
         res.status(400);
-
         return;
     }
 
