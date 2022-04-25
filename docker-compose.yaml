@@ -34,6 +34,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    logging:
+      driver: 'none'
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
       # The value of DEV doesn't matter, only that it's defined.

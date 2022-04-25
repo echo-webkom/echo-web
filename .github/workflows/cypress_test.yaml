@@ -47,7 +47,7 @@ jobs:
           TAG: ${{ env.BACKEND_TAG }}
 
       - name: Run Cypress end-to-end tests against backend
-        run: docker-compose up --exit-code-from=frontend
+        run: docker compose up --exit-code-from=frontend --attach=frontend
         env:
           REGISTRY: ${{ env.REGISTRY }}
           TAG: ${{ env.BACKEND_TAG }}
