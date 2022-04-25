@@ -1,6 +1,9 @@
 import NextAuth from 'next-auth';
 
 export default NextAuth({
+    session: {
+        maxAge: 3600,
+    },
     callbacks: {
         // eslint-disable-next-line @typescript-eslint/require-await
         async jwt({ token, account }) {
