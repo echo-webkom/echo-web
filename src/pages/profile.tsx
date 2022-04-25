@@ -30,7 +30,7 @@ const ProfilePage = (): JSX.Element => {
 
     return (
         <>
-            <SEO title={user?.name ?? status === 'unauthenticated' ? 'Logg inn' : 'Profilside'} />
+            <SEO title={user?.name ?? status === 'unauthenticated' ? 'Profilside' : 'Logg inn'} />
             {status === 'authenticated' && (
                 <>
                     <Section position="relative">
