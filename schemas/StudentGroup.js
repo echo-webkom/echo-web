@@ -54,8 +54,8 @@ export default {
             type: 'markdown',
         },
         {
-            name: 'picture',
-            title: 'Bilde',
+            name: 'grpPicture',
+            title: 'Gruppebilde',
             type: 'image',
         },
         {
