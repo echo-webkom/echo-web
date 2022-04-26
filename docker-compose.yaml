@@ -17,6 +17,8 @@ services:
       # Values from .env file.
       SANITY_DATASET: ${SANITY_DATASET:?Must specify SANITY_DATASET in .env file or environment.}
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-very-secret-string-123}
 
   backend:
     image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-prod}'

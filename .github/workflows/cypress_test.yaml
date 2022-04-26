@@ -53,3 +53,4 @@ jobs:
           TAG: ${{ env.BACKEND_TAG }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           ADMIN_KEY: admin-passord
+          NEXTAUTH_SECRET: very-secret-string-123
