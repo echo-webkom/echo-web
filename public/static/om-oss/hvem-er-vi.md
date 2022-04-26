@@ -19,4 +19,4 @@ echo gjennomfører valg på slutten av hvert vårsemester. Her anbefaler vi alle
 
 Student hos oss? Meld deg inn i vår facebookside for å få med deg hva som skjer!
 
-Alle spørsmål kan rettes direkte til en av våre representanter eller på mail til [echo(at)uib.no](mailto:echo@uib.no).
+Alle spørsmål kan rettes direkte til en av våre representanter eller på mail til [echo@uib.no](mailto:echo@uib.no).
