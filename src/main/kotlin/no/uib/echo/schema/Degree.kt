@@ -6,14 +6,16 @@ enum class Degree {
     DVIT,
     BINF,
     IMO,
-    IKT,
-    KOGNI,
     INF,
     PROG,
     ARMNINF,
     POST,
-    MISC
+    MISC,
+    // IKT and KOGNI should not be used,
+    // they are only here for backwards compatibility.
+    IKT,
+    KOGNI
 }
 
-val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO, Degree.IKT)
+val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO)
 val masters: List<Degree> = listOf(Degree.INF, Degree.PROG)
