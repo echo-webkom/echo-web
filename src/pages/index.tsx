@@ -148,7 +148,7 @@ export const getStaticProps: GetStaticProps = async () => {
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
         },
-        revalidate: 60,
+        revalidate: 30,
     };
 };
 
