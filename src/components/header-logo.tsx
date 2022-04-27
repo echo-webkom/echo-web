@@ -94,7 +94,7 @@ const HeaderLogo = () => {
                             fontSize="md"
                             noOfLines={1}
                             suppressHydrationWarning
-                            borderRadius="0.25rem"
+                            borderRadius="0.5rem"
                             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
                         >
                             {randomHeaderMessage()}
