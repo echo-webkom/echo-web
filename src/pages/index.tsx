@@ -1,4 +1,4 @@
-import fs from 'fs';
+//import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { isBefore, isFuture } from 'date-fns';
 import { GetStaticProps } from 'next';
@@ -19,7 +19,7 @@ import {
     RegistrationAPI,
     RegistrationCount,
 } from '../lib/api';
-import getRssXML from '../lib/generate-rss-feed';
+//import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,
@@ -121,9 +121,9 @@ export const getStaticProps: GetStaticProps = async () => {
     if (isErrorMessage(postsResponse)) throw new Error(postsResponse.message);
     if (bannerResponse && isErrorMessage(bannerResponse)) throw new Error(bannerResponse.message);
 
-    const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
+    //const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
 
-    fs.writeFileSync('./public/rss.xml', rss);
+    //fs.writeFileSync('./public/rss.xml', rss);
 
     const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
     const [bedpresLimit, eventLimit] = events.length > 3 ? [4, 8] : [2, 4];
@@ -148,7 +148,7 @@ export const getStaticProps: GetStaticProps = async () => {
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
         },
-        revalidate: 30,
+        revalidate: 60,
     };
 };
 

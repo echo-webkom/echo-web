@@ -14,6 +14,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
     const router = useRouter();
     const isMainPage = router.pathname === '/';
 
+    const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
     return (
@@ -29,9 +30,9 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 isMainPage &&
                 (isPast(new Date(event.registrationDate)) ? (
                     <Text fontSize="1rem">
-                        {registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)
-                            ?.count ?? 0}{' '}
-                        av {totalSpots <= 0 ? '∞' : totalSpots} påmeldte
+                        {totalReg >= totalSpots && totalSpots !== 0
+                            ? 'Fullt'
+                            : `${totalReg} av ${totalSpots === 0 ? '∞' : totalSpots}`}
                     </Text>
                 ) : (
                     <Text fontSize="1rem">
