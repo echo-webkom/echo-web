@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
-import { Box, Button, Heading, LinkBox, LinkOverlay, SimpleGrid, Stack, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import {
+    Box,
+    Divider,
+    Flex,
+    Heading,
+    LinkBox,
+    LinkOverlay,
+    SimpleGrid,
+    Spacer,
+    Stack,
+    Text,
+    useColorModeValue,
+} from '@chakra-ui/react';
 import { addWeeks, getISOWeek, lastDayOfWeek, startOfWeek, subWeeks } from 'date-fns';
 import { GetStaticProps } from 'next';
+import NextLink from 'next/link';
+import React, { useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
+import Button from '../../components/button';
+import Section from '../../components/section';
 import SEO from '../../components/seo';
-import { isErrorMessage, Happening, HappeningAPI, HappeningType } from '../../lib/api';
+import { Happening, HappeningAPI, HappeningType, isErrorMessage } from '../../lib/api';
 
 interface EventsStackProps {
     events: Array<Happening>;
@@ -19,20 +33,23 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
 
 const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElement => {
     const eventsThisDay = events.filter((x) => datesAreOnSameDay(new Date(x.date), date));
-    const formattedDate = date.toLocaleDateString('nb-NO', { weekday: 'long', month: 'long', day: 'numeric' });
+    const formattedDate = date.toLocaleDateString('nb-NO', { weekday: 'long', month: 'short', day: 'numeric' });
+    const titleColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
 
     return (
         <Stack>
             <Text fontWeight={'bold'} fontSize={'0.9em'}>
                 {formattedDate}
             </Text>
+            <Divider />
             {eventsThisDay.map((event) => {
                 return (
                     <LinkBox key={event.slug}>
                         <NextLink href={`/event/${event.slug}`} passHref>
                             <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                                 <Box>
-                                    <Text marginBottom="1rem" fontSize={'0.8em'}>
+                                    <Text marginBottom="1rem" fontSize={'0.8em'} color={titleColor}>
+                                        {event.happeningType === HappeningType.BEDPRES ? 'Bedpres: ' : ''}
                                         {event.title}
                                     </Text>
                                 </Box>
@@ -74,19 +91,21 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
     return (
         <>
             <SEO title="Arrangementer" />
-            <Heading marginBottom={'1rem'}>Arrangementer uke {getISOWeek(date)}</Heading>
-            <Button
-                leftIcon={<BiLeftArrow />}
-                onClick={() => setDate(subWeeks(date, 1))}
-                marginRight="1rem"
-                size={'xs'}
-            >
-                forrige uke
-            </Button>
-            <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))} size={'xs'}>
-                neste uke
-            </Button>
-            <SimpleGrid padding={'1rem'} columns={[1, 2, 3, 7]} gridGap={'1rem'}>
+            <Flex direction={['column', null, 'row']} mb="1rem">
+                <Heading size="lg" marginBottom={'1rem'}>
+                    Arrangementer uke {getISOWeek(date)}
+                </Heading>
+                <Spacer />
+                <Flex justifyContent="center">
+                    <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subWeeks(date, 1))} marginRight="1rem">
+                        forrige uke
+                    </Button>
+                    <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))}>
+                        neste uke
+                    </Button>
+                </Flex>
+            </Flex>
+            <SimpleGrid as={Section} padding={'1rem'} columns={[1, 2, 3, 7]} gridGap={'1rem'}>
                 {currentWeek.map((x) => {
                     return <HappeningsColumn key={x.toString()} date={x} events={events} />;
                 })}
