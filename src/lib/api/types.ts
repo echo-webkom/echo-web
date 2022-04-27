@@ -70,8 +70,11 @@ enum Degree {
     DVIT = 'DVIT',
     BINF = 'BINF',
     IMO = 'IMO',
+    // IKT and KOGNI should not be used,
+    // are only here for backwards compatibility.
     IKT = 'IKT',
     KOGNI = 'KOGNI',
+    //
     INF = 'INF',
     PROG = 'PROG',
     ARMNINF = 'ARMNINF',

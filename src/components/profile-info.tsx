@@ -66,8 +66,6 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                             <option value={Degree.DVIT}>Data Science/Datavitenskap</option>
                             <option value={Degree.BINF}>Bioinformatikk</option>
                             <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
-                            <option value={Degree.IKT}>Informasjons- og kommunikasjonsteknologi</option>
-                            <option value={Degree.KOGNI}>Kognitiv vitenskap med spesialisering i informatikk</option>
                             <option value={Degree.INF}>Master i informatikk</option>
                             <option value={Degree.PROG}>Felles master i programvareutvikling</option>
                             <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
