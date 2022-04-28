@@ -1,10 +1,10 @@
 Statutter
 ---
 
-### Statutter for echo – Fagutvalget for informatikk
+### Statutter for echo – Linjeforeningen for informatikk
 
 #### FORMÅL
-1. Fagutvalgets offisielle navn er “echo – Fagutvalget for informatikk” (fullt navn), eller “echo” (kort navn).  Det har til formål å ivareta og fremme de interesser Våre studenter har, mht. studentenes studie- og arbeidsvilkår både faglig og sosialt, i forhold til Institutt for informatikks ledelse, fakultetet og Universitetet i Bergen generelt.
+1. Linjeforeningens offisielle navn er “echo – Linjeforeningen for informatikk” (fullt navn), eller “echo” (kort navn).  Det har til formål å ivareta og fremme de interesser Våre studenter har, mht. studentenes studie- og arbeidsvilkår både faglig og sosialt, i forhold til Institutt for informatikks ledelse, fakultetet og Universitetet i Bergen generelt.
 
 #### FAGUTVALGET
 
