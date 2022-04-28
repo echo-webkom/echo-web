@@ -22,7 +22,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 <Text ml="1" fontWeight="bold">
-                    {format(new Date(event.date), 'dd. MMM yyyy', { locale: nb })}
+                    {format(new Date(event.date), 'dd. MMM', { locale: nb })}
                 </Text>
             </Flex>
 
