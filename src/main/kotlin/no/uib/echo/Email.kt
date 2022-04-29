@@ -1,14 +1,14 @@
 package no.uib.echo
 
 import io.ktor.client.HttpClient
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.features.logging.Logging
-import io.ktor.client.request.headers
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
@@ -175,14 +175,13 @@ suspend fun sendEmail(
 
     val response: HttpResponse = HttpClient {
         install(Logging)
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
+        install(ContentNegotiation)
     }.use { client ->
         client.post(SENDGRID_ENDPOINT) {
-            headers {
-                contentType(ContentType.Application.Json)
-                body = SendGridRequest(
+            contentType(ContentType.Application.Json)
+            bearerAuth(sendGridApiKey)
+            setBody(
+                SendGridRequest(
                     listOf(
                         SendGridPersonalization(
                             to = listOf(SendGridEmail(to)),
@@ -191,23 +190,22 @@ suspend fun sendEmail(
                     ),
                     from = fromPers, template_id = templateId
                 )
-                append(HttpHeaders.Authorization, "Bearer $sendGridApiKey")
-            }
+            )
         }
     }
 
     if (response.status != HttpStatusCode.Accepted) {
-        throw IOException("Status code is not 202: ${response.status}, ${response.content}")
+        throw IOException("Status code is not 202: ${response.status}, ${response.bodyAsText()}")
     }
 }
 
 fun isEmailValid(email: String): Boolean {
     return Pattern.compile(
         "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]|[\\w-]{2,}))@" +
-            "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
-            "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\." +
-            "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?" +
-            "[0-9]{1,2}|25[0-5]|2[0-4][0-9]))|" +
+            "((([0-1]?\\d{1,2}|25[0-5]|2[0-4]\\d)\\.([0-1]?" +
+            "\\d{1,2}|25[0-5]|2[0-4]\\d)\\." +
+            "([0-1]?\\d{1,2}|25[0-5]|2[0-4]\\d)\\.([0-1]?" +
+            "\\d{1,2}|25[0-5]|2[0-4]\\d))|" +
             "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
     ).matcher(email).matches()
 }
