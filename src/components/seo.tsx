@@ -6,7 +6,7 @@ interface Props {
     title: string;
 }
 
-const SEO = ({ description = 'Nettsiden til echo – Fagutvalget for informatikk.', title }: Props): JSX.Element => {
+const SEO = ({ description = 'Nettsiden til echo - Linjeforeningen for informatikk.', title }: Props): JSX.Element => {
     return (
         <Head>
             <title>{title}</title>

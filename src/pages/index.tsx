@@ -53,7 +53,7 @@ const IndexPage = ({
 
     return (
         <>
-            <SEO title="echo – Fagutvalget for informatikk" />
+            <SEO title="echo - Linjeforeningen for informatikk" />
             {banner &&
                 (banner.linkTo ? (
                     <LinkBox transition="0.3s ease" _hover={{ transform: 'scale(105%)' }}>

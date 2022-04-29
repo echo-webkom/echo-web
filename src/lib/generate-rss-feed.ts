@@ -95,7 +95,7 @@ const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | nul
             version="2.0"
         >
             <channel>
-                <title><![CDATA[echo – Fagutvalget for informatikk]]></title>
+                <title><![CDATA[echo - Linjeforeningen for informatikk]]></title>
                 <link>https://echo.uib.no/</link>
                 <description></description>
                 <language>en-US</language>

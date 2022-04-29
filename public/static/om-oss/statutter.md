@@ -6,7 +6,7 @@ Statutter
 #### FORMÅL
 1. Linjeforeningens offisielle navn er “echo – Linjeforeningen for informatikk” (fullt navn), eller “echo” (kort navn).  Det har til formål å ivareta og fremme de interesser Våre studenter har, mht. studentenes studie- og arbeidsvilkår både faglig og sosialt, i forhold til Institutt for informatikks ledelse, fakultetet og Universitetet i Bergen generelt.
 
-#### FAGUTVALGET
+#### Linjeforeningen
 
 1. Hovedstyret i echo (Styret) består av tolv representanter som velges direkte ved preferansevalg. Der skal være minst to representanter fra lavere grad og to fra høyere grad studieprogrammer ved Institutt for informatikk.
 
@@ -67,10 +67,10 @@ Statutter
 7. Våre studenter eller studenter ved UiB som tar fag ved Institutt for informatikk inneværende studieår, ut over innføringsfag (INF100), har stemmerett ved valget.
 
 #### OPPHØR
-1. Oppløsning skjer dersom Fagutvalget er uten styremedlemmer i mer enn 6 måneder. Eventuelle eiendeler skal da overføres til Institutt for informatikk ved UiB.
+1. Oppløsning skjer dersom Linjeforeningen er uten styremedlemmer i mer enn 6 måneder. Eventuelle eiendeler skal da overføres til Institutt for informatikk ved UiB.
 
 #### Reglementsendringer
-1. Disse statuttene gjelder fra 7/11-95. Det sittende fagutvalg har ansvaret for iverksettelsen av disse statuttene.
+1. Disse statuttene gjelder fra 7/11-95. Den sittende linjeforening har ansvaret for iverksettelsen av disse statuttene.
 
 2. Disse statutter kan KUN endres av et allmøte ved Institutt for informatikk. Et vedtak om en endring må ha oppnådd 2/3 flertall blant de tilstedeværende stemmeberettigede.
 

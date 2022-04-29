@@ -7,7 +7,7 @@
    <img src="public/powered-by-vercel.svg" width="175" alt="Powered by Vercel" />
 </a>
 
-Frontend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
+Frontend til nettsiden til **echo – Linjeforeningen for informatikk** ved Universitetet i Bergen.
 
 Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
