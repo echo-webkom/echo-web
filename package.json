@@ -144,7 +144,7 @@
         "react-hook-form": "7.30.0",
         "react-icons": "4.3.1",
         "react-snowfall": "1.1.2",
-        "remove-markdown": "0.3.0",
+        "remove-markdown": "0.5.0",
         "typescript-json-decoder": "1.0.6"
     },
     "devDependencies": {
