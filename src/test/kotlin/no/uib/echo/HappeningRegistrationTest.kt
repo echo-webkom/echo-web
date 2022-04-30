@@ -792,52 +792,6 @@ class HappeningRegistrationTest : StringSpec({
         }
     }
 
-    "Rate limit should work as expected." {
-        withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles.copy(rateLimit = true))
-        }) {
-            for (i in 1..200) {
-                val submitRegCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(
-                            Json.encodeToString(
-                                exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
-                                    email = "ta123t$i@test.com",
-                                    degree = Degree.PROG,
-                                    degreeYear = 1
-                                )
-                            )
-                        )
-                    }
-
-                submitRegCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = Json.decodeFromString<ResponseJson>(submitRegCall.response.content!!)
-                res.code shouldBe Response.DegreeMismatchMaster
-                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-                res.desc shouldBe "Vennligst prøv igjen."
-            }
-
-            for (i in 1..5) {
-                val submitRegCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        setBody(
-                            Json.encodeToString(
-                                exampleHappeningReg(HAPPENING_TYPE.BEDPRES).copy(
-                                    email = "jn12sdpp3t$i@test.xyz",
-                                    degree = Degree.PROG,
-                                    degreeYear = 1
-                                )
-                            )
-                        )
-                    }
-
-                submitRegCall.response.status() shouldBe HttpStatusCode.TooManyRequests
-            }
-        }
-    }
-
     "Should get correct count of registrations and wait list registrations, and produce correct CSV list" {
         withTestApplication({
             configureRouting(adminKey, null, true, featureToggles)

@@ -1,11 +1,11 @@
 package no.uib.echo
 
-import io.ktor.application.Application
-import io.ktor.application.install
-import io.ktor.features.CORS
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.netty.EngineMain
+import io.ktor.server.plugins.cors.routing.CORS
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
 import kotlin.Exception
@@ -23,42 +23,15 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     install(CORS) {
-        run {
-            method(HttpMethod.Get)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
-        run {
-            method(HttpMethod.Post)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
-        run {
-            method(HttpMethod.Put)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
-        run {
-            method(HttpMethod.Options)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
-        run {
-            method(HttpMethod.Patch)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
-        run {
-            method(HttpMethod.Delete)
-            header(HttpHeaders.AccessControlAllowOrigin)
-            anyHost()
-            allowNonSimpleContentTypes = true
-        }
+        anyHost()
+
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Delete)
+
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Authorization)
     }
 
     val dev = environment.config.propertyOrNull("ktor.dev") != null

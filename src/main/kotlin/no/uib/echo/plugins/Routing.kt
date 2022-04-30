@@ -1,34 +1,32 @@
 package no.uib.echo.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
-import guru.zoroark.ratelimit.RateLimit
-import guru.zoroark.ratelimit.rateLimited
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.UserIdPrincipal
-import io.ktor.auth.authenticate
-import io.ktor.auth.basic
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
-import io.ktor.auth.principal
-import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.header
-import io.ktor.response.respond
-import io.ktor.response.respondBytes
-import io.ktor.routing.Route
-import io.ktor.routing.delete
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.put
-import io.ktor.routing.routing
-import io.ktor.serialization.json
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.basic
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.auth.principal
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.receive
+import io.ktor.server.response.header
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondBytes
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
@@ -81,7 +79,6 @@ import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
@@ -94,11 +91,6 @@ fun Application.configureRouting(
 
     install(ContentNegotiation) {
         json()
-    }
-
-    install(RateLimit) {
-        limit = 200
-        timeBeforeReset = if (featureToggles.rateLimit) Duration.ofMinutes(2) else Duration.ZERO
     }
 
     install(Authentication) {
@@ -132,25 +124,23 @@ fun Application.configureRouting(
     }
 
     routing {
-        rateLimited {
-            getStatus()
+        getStatus()
 
-            authenticate("auth-$admin") {
-                putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
-                deleteHappening()
-                getHappeningInfo()
-            }
-
-            authenticate("auth-jwt") {
-                getUser()
-                putUser()
-            }
-
-            getRegistrations(dev)
-            postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
-            deleteRegistration(dev)
-            postRegistrationCount()
+        authenticate("auth-$admin") {
+            putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
+            deleteHappening()
+            getHappeningInfo()
         }
+
+        authenticate("auth-jwt") {
+            getUser()
+            putUser()
+        }
+
+        getRegistrations(dev)
+        postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
+        deleteRegistration(dev)
+        postRegistrationCount()
     }
 }
 
@@ -285,7 +275,7 @@ object Routing {
                 HttpStatusCode.OK,
                 HappeningInfoJson(
                     registrationCount,
-                    happening?.get(Happening.regVerifyToken)
+                    happening[Happening.regVerifyToken]
                 )
             )
         }
@@ -532,7 +522,7 @@ object Routing {
                         it[degree] = registration.degree.toString()
                         it[degreeYear] = registration.degreeYear
                         it[happeningSlug] = registration.slug
-                        it[terms] = registration.terms
+                        it[terms] = true
                         it[Registration.waitList] = waitList
                     }
 
@@ -573,9 +563,6 @@ object Routing {
 
     fun Route.deleteRegistration(dev: Boolean) {
         delete("/$registrationRoute/{link}/{email}") {
-            fun stdResponse() {
-            }
-
             val link = call.parameters["link"]
             val email = withContext(Dispatchers.IO) {
                 URLDecoder.decode(call.parameters["email"], "utf-8")
