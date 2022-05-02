@@ -89,6 +89,7 @@ const answerDecoder = record({
 const registrationCountDecoder = record({
     slug: string,
     count: number,
+    waitListCount: number,
 });
 
 const registrationDecoder = record({

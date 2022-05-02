@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { array } from 'typescript-json-decoder';
 import { responseDecoder, registrationDecoder, registrationCountDecoder } from './decoders';
-import { ErrorMessage, Degree, Answer, Response, Registration } from './types';
+import { ErrorMessage, Degree, Answer, Response, Registration, RegistrationCount } from './types';
 import { HappeningType } from '.';
 
 const genericError = {
@@ -105,7 +105,7 @@ const RegistrationAPI = {
     getRegistrationCountForSlugs: async (
         slugs: Array<string>,
         backendUrl: string,
-    ): Promise<Array<{ slug: string; count: number }> | ErrorMessage> => {
+    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
             const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
             return array(registrationCountDecoder)(data);

@@ -1,8 +1,8 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
-import { BiCalendar } from 'react-icons/bi';
 import { useRouter } from 'next/router';
+import { BiCalendar } from 'react-icons/bi';
 import { Happening, RegistrationCount, SpotRange } from '../lib/api';
 
 interface Props {
@@ -15,6 +15,8 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
     const isMainPage = router.pathname === '/';
 
     const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
+    const waitListCount =
+        registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.waitListCount ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
     return (
@@ -26,22 +28,22 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 </Text>
             </Flex>
 
-            {event.registrationDate &&
-                isMainPage &&
-                (isPast(new Date(event.registrationDate)) ? (
-                    <Text fontSize="1rem">
-                        {totalReg >= totalSpots && totalSpots !== 0
-                            ? 'Fullt'
-                            : `${totalReg} av ${totalSpots === 0 ? '∞' : totalSpots}`}
-                    </Text>
-                ) : (
-                    <Text fontSize="1rem">
-                        Påmelding{' '}
-                        <span style={{ whiteSpace: 'nowrap' }}>
-                            {format(new Date(event.registrationDate), 'dd. MMM yyyy', { locale: nb })}
-                        </span>
-                    </Text>
-                ))}
+            {event.registrationDate && isMainPage && (
+                <Flex alignItems="center" justifyContent="flex-end">
+                    {isPast(new Date(event.registrationDate)) ? (
+                        <Text ml="1" fontSize="1rem">
+                            {waitListCount > 0 ? `Fullt` : `${totalReg} av ${totalSpots === 0 ? '∞' : totalSpots}`}
+                        </Text>
+                    ) : (
+                        <Text ml="1" fontSize="1rem">
+                            Påmelding{' '}
+                            <span style={{ whiteSpace: 'nowrap' }}>
+                                {format(new Date(event.registrationDate), 'dd. MMM yyyy', { locale: nb })}
+                            </span>
+                        </Text>
+                    )}
+                </Flex>
+            )}
         </Stack>
     );
 };
