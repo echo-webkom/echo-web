@@ -30,7 +30,7 @@ const MenuDropdown = (props: MenuDropdownProps) => {
             <AccordionItem border="hidden">
                 <h2>
                     <AccordionButton px={0} _hover={{ textDecoration: 'underline' }}>
-                        <Box flex="1" textAlign="left" fontSize={19} fontWeight={'bold'}>
+                        <Box flex="1" textAlign="left" fontSize={20} fontWeight={'bold'}>
                             {props.title}
                             <AccordionIcon />
                         </Box>
@@ -59,7 +59,7 @@ const MenuLink = ({ href, isFocused, focusColor, testid, children }: MenuLinkPro
                 <LinkOverlay
                     as={Link}
                     textUnderlineOffset={'0.1em'}
-                    fontSize={17}
+                    fontSize={20}
                     textColor={isFocused ? focusColor : undefined}
                 >
                     {children}

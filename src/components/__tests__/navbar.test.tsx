@@ -30,8 +30,6 @@ describe('NavBar', () => {
         );
         // navbar buttons exist
         expect(getByTestId(/hjem/i)).toBeInTheDocument();
-        expect(getByTestId(/for-studenter/i)).toBeInTheDocument();
-        expect(getByTestId(/for-bedrifter/i)).toBeInTheDocument();
         expect(getByTestId(/om-oss/i)).toBeInTheDocument();
         expect(getByTestId(/colormode-button/i)).toBeInTheDocument();
     });

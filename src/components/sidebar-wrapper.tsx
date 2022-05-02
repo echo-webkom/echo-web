@@ -37,8 +37,8 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                     position={'fixed'}
                     left={-6}
                     top={'10em'}
-                    h={'4em'}
-                    w={'4em'}
+                    h={'5em'}
+                    w={'5em'}
                     bg={bgColor}
                     opacity={'70%'}
                     borderRadius={'0 60% 60% 0'}
@@ -49,13 +49,14 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                     <IconButton
                         variant="unstyled"
                         ref={menuButtonRef}
+                        alignItems={'center'}
                         left={2}
                         onClick={onOpen}
-                        display={['block', null, 'block']}
                         aria-label="show sidebar"
+                        h={'4em'}
                         icon={
                             <Center>
-                                <Icon as={IoIosArrowForward} viewBox={'300 0 300 300'} boxSize={10} />
+                                <Icon as={IoIosArrowForward} boxSize={16} />
                             </Center>
                         }
                         data-testid="sidebar-button"
