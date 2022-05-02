@@ -719,7 +719,11 @@ object Routing {
                         Registration.happeningSlug eq it
                     }.count()
 
-                    RegistrationCountJson(it, count)
+                    val waitListCount = Registration.select {
+                        Registration.happeningSlug eq it and (Registration.waitList eq true)
+                    }.count()
+
+                    RegistrationCountJson(it, count, waitListCount)
                 }
             }
 
