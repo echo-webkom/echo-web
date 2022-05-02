@@ -11,6 +11,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -174,7 +175,9 @@ suspend fun sendEmail(
 
     val response: HttpResponse = HttpClient {
         install(Logging)
-        install(ContentNegotiation)
+        install(ContentNegotiation) {
+            json()
+        }
     }.use { client ->
         client.post(SENDGRID_ENDPOINT) {
             contentType(ContentType.Application.Json)
