@@ -7,7 +7,6 @@ val exposed_version: String by project
 val postgres_version: String by project
 val hikari_version: String by project
 val kotest_version: String by project
-val ktor_rate_limit_version: String by project
 val flyway_version: String by project
 val sendgrid_version: String by project
 
@@ -16,8 +15,8 @@ project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
 
 plugins {
     application
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     id("com.adarshr.test-logger") version "3.2.0"
@@ -32,19 +31,23 @@ application {
 
 repositories {
     mavenCentral()
-    maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("io.ktor:ktor-serialization:$ktor_version")
-    implementation("io.ktor:ktor-auth:$ktor_version")
-    implementation("io.ktor:ktor-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-logging:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
@@ -56,8 +59,6 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
 
     implementation("com.zaxxer:HikariCP:$hikari_version")
-
-    implementation("guru.zoroark:ktor-rate-limit:$ktor_rate_limit_version")
 
     implementation("org.flywaydb:flyway-core:$flyway_version")
 

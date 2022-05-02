@@ -37,7 +37,7 @@ object Registration : Table() {
     val degreeYear: Column<Int> = integer("degree_year")
     val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
     val terms: Column<Boolean> = bool("terms")
-    val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime())
+    val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
     val waitList: Column<Boolean> = bool("wait_list")
 
     override val primaryKey: PrimaryKey = PrimaryKey(email, happeningSlug)
