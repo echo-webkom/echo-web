@@ -17,7 +17,6 @@ import kotlinx.serialization.Serializable
 import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Happening.registrationsLink
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.RegistrationJson
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -116,7 +115,7 @@ suspend fun sendConfirmationEmail(
     }
 }
 
-suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson) {
+suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson, regsLink: String) {
     val hapTypeLiteral = when (happening.type) {
         HAPPENING_TYPE.EVENT ->
             "arrangementet"
@@ -131,7 +130,7 @@ suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson) 
                 happening.organizerEmail,
                 SendGridTemplate(
                     happening.title,
-                    "https://echo.uib.no/${Routing.registrationRoute}/$registrationsLink",
+                    "https://echo.uib.no/${Routing.registrationRoute}/$regsLink",
                     hapTypeLiteral
                 ),
                 Template.REGS_LINK,
