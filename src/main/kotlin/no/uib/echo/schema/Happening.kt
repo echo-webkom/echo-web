@@ -119,7 +119,7 @@ suspend fun insertOrUpdateHappening(
         }
 
         if (sendEmail && sendGridApiKey != null) {
-            sendRegsLinkEmail(sendGridApiKey, newHappening)
+            sendRegsLinkEmail(sendGridApiKey, newHappening, registrationsLink)
         }
 
         return Pair(
@@ -183,7 +183,7 @@ suspend fun insertOrUpdateHappening(
             "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
 
     if (happening[Happening.organizerEmail].lowercase() != newHappening.organizerEmail.lowercase() && sendEmail && sendGridApiKey != null) {
-        sendRegsLinkEmail(sendGridApiKey, newHappening)
+        sendRegsLinkEmail(sendGridApiKey, newHappening, registrationsLink)
         return Pair(
             HttpStatusCode.OK,
             HappeningResponseJson(
