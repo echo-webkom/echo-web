@@ -28,7 +28,7 @@ const OmOssPage = ({ boards, minutes }: { boards: Array<StudentGroup>; minutes: 
                 tabPanels={[
                     <>
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{hvemErVi}</Markdown>
-                        <StudentGroupSection studentGroups={boards} groupType="styrer" groupDefinition="" />
+                        <StudentGroupSection studentGroups={boards} groupType="styrer" />
                     </>,
                     <Markdown key="instituttraadet" options={{ overrides: MapMarkdownChakra }}>
                         {instituttraadet}

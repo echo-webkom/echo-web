@@ -16,7 +16,7 @@ import { StudentGroup } from '../lib/api';
 
 interface Props {
     studentGroups: Array<StudentGroup>;
-    groupDefinition: string;
+    groupDefinition?: string;
     groupType: string;
 }
 

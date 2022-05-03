@@ -1,5 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
-import { Center, Divider, Heading, Spinner, Wrap, WrapItem } from '@chakra-ui/react';
+import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -33,6 +33,16 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                         </Heading>
                         <Divider mb="1rem" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
+                        <Divider my="5" />
+                        <Center>
+                            <Image
+                                src={studentGroup.imageUrl}
+                                alt={studentGroup.name}
+                                objectFit="cover"
+                                maxHeight="570px"
+                                minWidth="100%"
+                            />
+                        </Center>
                         <Divider my="5" />
                         <Wrap spacing={['1em', null, '2.5em']} justify="center">
                             {studentGroup.members.map((member: Member) => (

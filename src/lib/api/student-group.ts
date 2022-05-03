@@ -26,6 +26,7 @@ const StudentGroupAPI = {
                     name,
                     "slug": slug.current,
                     info,
+                    "imageUrl": grpPicture.asset -> url,
                     "members": members[] {
                         role,
                         "profile": profile -> {
@@ -53,6 +54,7 @@ const StudentGroupAPI = {
                     name,
                     "slug": slug.current,
                     info,
+                    "imageUrl": grpPicture.asset -> url,
                     "members": members[] {
                         role,
                         "profile": profile -> {

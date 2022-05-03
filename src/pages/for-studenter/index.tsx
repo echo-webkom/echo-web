@@ -41,7 +41,7 @@ const ForStudenterPage = ({ subGroups, subOrgs, intGroups, jobAdverts, enableJob
                         studentGroups={subGroups}
                         groupType="undergrupper"
                         groupDefinition="En undergruppe er en utvidelse av echos virksomhet;
-                        undergruppen utfører et nødvendig arbeid Styret ellers ville ha gjort."
+                        undergruppen utfører et nødvendig arbeid styret ellers ville ha gjort."
                     />,
                     <StudentGroupSection
                         key="underorganisasjoner"

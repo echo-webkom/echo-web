@@ -47,6 +47,7 @@ const studentGroupDecoder = record({
     name: string,
     slug: string,
     info: string,
+    imageUrl: union(string, nil),
     members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
 });
 
