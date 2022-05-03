@@ -33,11 +33,10 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                         </Heading>
                         <Divider mb="1rem" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
-                        <Divider my="5" />
                         <Center>
                             <Image
                                 src={studentGroup.imageUrl}
-                                alt={studentGroup.name}
+                                alt=""
                                 objectFit="cover"
                                 maxHeight="570px"
                                 minWidth="100%"
