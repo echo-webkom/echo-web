@@ -33,15 +33,17 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                         </Heading>
                         <Divider mb="1rem" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
-                        <Center>
-                            <Image
-                                src={studentGroup.imageUrl}
-                                alt=""
-                                objectFit="cover"
-                                maxHeight="570px"
-                                minWidth="100%"
-                            />
-                        </Center>
+                        {studentGroup.imageUrl && (
+                            <Center>
+                                <Image
+                                    src={studentGroup.imageUrl}
+                                    alt=""
+                                    objectFit="cover"
+                                    maxHeight="570px"
+                                    minWidth="100%"
+                                />
+                            </Center>
+                        )}
                         <Divider my="5" />
                         <Wrap spacing={['1em', null, '2.5em']} justify="center">
                             {studentGroup.members.map((member: Member) => (
