@@ -1,5 +1,4 @@
-echo – Linjeforeningen for informatikk
----
+## echo – Linjeforeningen for informatikk
 
 echo består av 12 demokratisk valgte studenter. Vi er linjeforeningen for informatikk ved Universitetet i Bergen, men har også et overordnet ansvar for studentsaker som angår det faglige ved instituttet. Vi jobber utelukkende med å gjøre studiehverdagen for oss informatikere bedre og er studentenes stemme opp mot instituttet, fakultetet og arbeidsmarkedet.
 
@@ -13,7 +12,7 @@ echo administrerer vår egen bachelorlesesal som brukes til lesing på dagtid og
 
 Lesesalen ligger i første etasje i Høyteknologisenteret, Thormøhlensgate 55.
 
-###  Bli med i echo
+### Bli med i echo
 
 echo gjennomfører valg på slutten av hvert vårsemester. Her anbefaler vi alle som ønsker å gjøre frivillig arbeid for et bedre studiemiljø om å søke. I god tid før valget vil det bli gitt ut informasjon om hvordan man kan melde kandidatur, og selve avstemningen skjer på Lesesalen.
 

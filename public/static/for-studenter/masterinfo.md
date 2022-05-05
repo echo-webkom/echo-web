@@ -1,7 +1,7 @@
-For studenter som tar en mastergrad
----
+## For studenter som tar en mastergrad
 
 ### Oppgaveskriving
+
 Skal du skrive en masteroppgave i LaTeX og ønsker å komme kjapt i gang?
 Da kan det være lurt å starte ut med en allerede laget mal.
 
@@ -18,4 +18,4 @@ Ref. reglementet, vil alle plasser som ikke er i bruk innen **kl. 10:00** kunne 
 
 Om du har noen tilbakemeldinger eller ris/ros på masterlesesalordiningen, fyll gjerne ut skjemaet [her](https://forms.gle/kEhvaafrKnWmRdW7A).
 
-Dersom du har noen spørsmål eller noe annet du lurer på, kan du ta kontakt med echo sin *masterlesesalansvarlig* (se [her](https://echo.uib.no/om-oss) for hvem som har stillingen).
+Dersom du har noen spørsmål eller noe annet du lurer på, kan du ta kontakt med echo sin _masterlesesalansvarlig_ (se [her](https://echo.uib.no/om-oss) for hvem som har stillingen).
