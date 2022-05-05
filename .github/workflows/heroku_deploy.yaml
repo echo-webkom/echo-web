@@ -2,7 +2,7 @@ name: Heroku deploy
 on:
   push:
     branches: [master]
-    paths: 'backend/**'
+#   paths: 'backend/**'
 
 jobs:
   heroku_deploy:
@@ -11,22 +11,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Heroku CLI
-        run: npm install -g heroku
-
       - name: Deploy to Heroku dev environment
         run: |
-          heroku git:remote -a echo-web-backend-develop
-          git remote rename heroku heroku-dev
-          git subtree push --prefix backend heroku-dev master
-        with:
+          git push \
+            https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git \
+            `git subtree split --prefix backend master`:master \
+            --force
+        env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-# Uncomment when deploy is working correctly
+          HEROKU_APP_NAME: 'echo-web-backend-develop'
 #
-#     - name: Deploy to Heroku production environment
+# Uncomment when deploy is working correctly:
+#
+#     - name: Deploy to Heroku prod environment
 #       run: |
-#         heroku git:remote -a echo-web-backend-prod
-#         git remote rename heroku heroku-prod
-#         git subtree push --prefix backend heroku-prod master
-#       with:
+#         git push \
+#           https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git \
+#           `git subtree split --prefix backend master`:master \
+#           --force
+#       env:
 #         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#         HEROKU_APP_NAME: 'echo-web-backend-prod'
