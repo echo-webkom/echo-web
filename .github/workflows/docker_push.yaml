@@ -1,0 +1,55 @@
+name: Docker push images
+on:
+  push:
+    branches: [master]
+
+permissions:
+  packages: write
+  actions: read
+
+env:
+  IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+
+jobs:
+  docker_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build frontend with cache and push to registry
+        run: |
+          cd frontend
+          docker build \
+            --cache-from "$IMAGE_NAME/frontend" \
+            -t "$IMAGE_NAME/frontend:$TAG" \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --build-arg SANITY_DATASET=$SANITY_DATASET \
+            .
+          docker push "$IMAGE_NAME/frontend" --all-tags
+        env:
+          DOCKER_BUILDKIT: 1
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          TAG: latest
+
+      - name: Build backend with cache and push to registry
+        run: |
+          cd backend
+          docker build \
+            --cache-from "$IMAGE_NAME/backend" \
+            -t "$IMAGE_NAME/backend:$TAG" \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            .
+          docker push "$IMAGE_NAME/backend" --all-tags
+        env:
+          DOCKER_BUILDKIT: 1
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          TAG: latest
