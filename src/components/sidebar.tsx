@@ -80,7 +80,7 @@ const Sidebar = (props: BoxProps) => {
             items: [
                 { name: 'Hvem er vi?', href: '/om-echo/om-oss' },
                 { name: 'Instituttrådet', href: '/om-echo/instituttraadet' },
-                { name: 'Statutter', href: '/om-echo/statutter' },
+                { name: 'Vedtekter', href: '/om-echo/vedtekter' },
                 { name: 'Møtereferat', href: '/om-echo/moetereferat' },
                 { name: 'Bekk', href: '/om-echo/bekk' },
             ],
