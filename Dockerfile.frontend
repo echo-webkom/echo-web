@@ -1,22 +1,23 @@
 # Install dependencies with yarn.
 # Node 14 is the version Vercel uses.
-FROM node:14-alpine as deps
+FROM node:14-alpine AS deps
 
 WORKDIR /opt/build
 COPY package.json yarn.lock ./
 COPY frontend frontend
 
-RUN yarn --frozen-lockfile --ignore-scripts
+RUN yarn --frozen-lockfile
 
 
 # Build with Next (no default command).
-FROM cypress/base:latest as build
+FROM cypress/base:latest AS build
 
 ARG SANITY_DATASET
 
 WORKDIR /opt/build
 COPY --from=deps /opt/build/node_modules ./node_modules/
+COPY --from=deps /opt/build/frontend/node_modules ./frontend/node_modules/
 COPY --from=deps /root/.cache /root/.cache/
 COPY frontend frontend
 
-RUN yarn build --production
+RUN yarn --cwd frontend build

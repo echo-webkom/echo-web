@@ -26,8 +26,8 @@ jobs:
 
       - name: Build frontend with cache and push to registry
         run: |
-          cd frontend
           docker build \
+            -f Dockerfile.frontend \
             --cache-from "$IMAGE_NAME/frontend:latest" \
             -t "$IMAGE_NAME/frontend:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \

@@ -2,6 +2,7 @@ name: Build CMS
 on:
   pull_request:
     branches: [master]
+    paths: 'cms/**'
 
 jobs:
   build_cms:

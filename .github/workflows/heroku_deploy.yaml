@@ -2,7 +2,7 @@ name: Heroku deploy
 on:
   push:
     branches: [master]
-#   paths: 'backend/**'
+    paths: 'backend/**'
 
 jobs:
   heroku_deploy:
@@ -20,15 +20,13 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: 'echo-web-backend-develop'
-#
-# Uncomment when deploy is working correctly:
-#
-#     - name: Deploy to Heroku prod environment
-#       run: |
-#         git push \
-#           https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git \
-#           `git subtree split --prefix backend master`:master \
-#           --force
-#       env:
-#         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#         HEROKU_APP_NAME: 'echo-web-backend-prod'
+
+      - name: Deploy to Heroku prod environment
+        run: |
+          git push \
+            https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git \
+            `git subtree split --prefix backend master`:master \
+            --force
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: 'echo-web-backend-prod'
