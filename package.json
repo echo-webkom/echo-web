@@ -1,6 +1,6 @@
 {
     "name": "echo-web-frontend",
-    "description": "Frontend til nettsiden til echo - Linjeforeningen for informatikk.",
+    "description": "Frontend til nettsiden til echo – Linjeforeningen for informatikk.",
     "private": true,
     "version": "1.0.0",
     "author": "echo Webkom",
