@@ -26,8 +26,8 @@ jobs:
 
       - name: Build frontend with cache and push to registry
         run: |
-          cd frontend
           docker build \
+            -f Dockerfile.frontend \
             --cache-from "$IMAGE_NAME/frontend:latest" \
             -t "$IMAGE_NAME/frontend:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
@@ -36,8 +36,8 @@ jobs:
           docker push "$IMAGE_NAME/frontend" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          SANITY_DATASET: testing
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          SANITY_DATASET: testing
 
   build_backend:
     runs-on: ubuntu-latest

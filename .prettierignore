@@ -1,0 +1,4 @@
+.next/
+
+frontend/public/sw.js*
+frontend/public/workbox-*.js*

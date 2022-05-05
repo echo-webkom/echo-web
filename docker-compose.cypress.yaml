@@ -5,7 +5,7 @@ services:
       context: frontend
       dockerfile: Dockerfile.frontend
     image: '${IMAGE_NAME:-echo-webkom/echo-web}/frontend:${TAG:-latest}'
-    command: bash -c "yarn start & yarn cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
+    command: bash -c "yarn --cwd frontend start & yarn --cwd frontend cypress run --config video=false,screenshotOnRunFailure=false && kill $$!"
     # Don't start tests before backend is up.
     depends_on:
       backend:
