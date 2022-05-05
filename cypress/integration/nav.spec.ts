@@ -19,8 +19,8 @@ describe('Nav Menus', () => {
 
             describe('navbar', () => {
                 it('Should navigate to om-echo page', () => {
-                    cy.get('[data-cy=nav-item]').contains('Info').click();
-                    cy.url().should('include', '/om-oss');
+                    cy.get('[data-cy=nav-item]').contains('Om echo').click();
+                    cy.url().should('include', '/om-echo/om-oss');
                 });
                 it('Should navigate to home page', () => {
                     cy.get('[data-cy=nav-item]').contains('Hjem').click();
