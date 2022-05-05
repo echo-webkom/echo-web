@@ -13,7 +13,6 @@ enum class Response {
     InvalidTerms,
     DegreeMismatchBachelor,
     DegreeMismatchMaster,
-    DegreeMismatchKogni,
     DegreeMismatchArmninf,
     AlreadySubmitted,
     AlreadySubmittedWaitList,
@@ -47,7 +46,7 @@ fun resToJson(
                 defaultDesc,
                 regDate
             )
-        Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchKogni, Response.DegreeMismatchArmninf ->
+        Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchArmninf ->
             return ResponseJson(res, "Studieretning og årstrinn stemmer ikke overens.", defaultDesc, regDate)
         Response.AlreadySubmitted ->
             return ResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)

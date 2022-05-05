@@ -59,8 +59,10 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.masters
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.schema.validateLink
@@ -371,17 +373,7 @@ object Routing {
                     return@post
                 }
 
-                if ((
-                    registration.degree == Degree.DTEK ||
-                        registration.degree == Degree.DSIK ||
-                        registration.degree == Degree.DVIT ||
-                        registration.degree == Degree.BINF ||
-                        registration.degree == Degree.IMO ||
-                        registration.degree == Degree.IKT ||
-                        registration.degree == Degree.KOGNI ||
-                        registration.degree == Degree.ARMNINF
-                    ) && registration.degreeYear !in 1..3
-                ) {
+                if (registration.degree in bachelors && registration.degreeYear !in 1..3) {
                     call.respond(
                         HttpStatusCode.BadRequest,
                         resToJson(Response.DegreeMismatchBachelor, registration.type)
@@ -389,7 +381,7 @@ object Routing {
                     return@post
                 }
 
-                if ((registration.degree == Degree.INF || registration.degree == Degree.PROG) && (registration.degreeYear !in 4..5)) {
+                if (registration.degree in masters && registration.degreeYear !in 4..5) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, registration.type))
                     return@post
                 }
@@ -399,11 +391,6 @@ object Routing {
                         HttpStatusCode.BadRequest,
                         resToJson(Response.DegreeMismatchArmninf, registration.type)
                     )
-                    return@post
-                }
-
-                if (registration.degree == Degree.KOGNI && registration.degreeYear != 3) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchKogni, registration.type))
                     return@post
                 }
 

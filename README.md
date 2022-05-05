@@ -6,7 +6,7 @@
 [![Cypress](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test.yaml/badge.svg)](https://github.com/echo-webkom/echo-web-backend/actions/workflows/cypress_test.yaml)
 
 
-Backend til nettsiden til **echo – Fagutvalget for informatikk** ved Universitetet i Bergen.
+Backend til nettsiden til **echo – Linjeforeningen for informatikk** ved Universitetet i Bergen.
 
 Utviklet av frivillige informatikkstudenter fra undergruppen **echo Webkom**.
 
