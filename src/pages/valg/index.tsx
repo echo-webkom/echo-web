@@ -13,7 +13,7 @@ const ValgPage = () => {
             <Box>
                 <Section>
                     <Heading textAlign="center" mb="0.2em" size="2xl">
-                        Nå kan du stille til valg i echo sitt Hovedstyre!
+                        Husk å bruke stemmeretten din!
                     </Heading>
 
                     <Divider my="1.5rem" />
