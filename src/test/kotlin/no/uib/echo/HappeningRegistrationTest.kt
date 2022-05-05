@@ -266,9 +266,6 @@ class HappeningRegistrationTest : StringSpec({
                         submitReg(m, y, t)
                     }
                 }
-
-                submitReg(Degree.KOGNI, 3, t)
-                submitReg(Degree.ARMNINF, 1, t)
             }
         }
     }
@@ -578,7 +575,6 @@ class HappeningRegistrationTest : StringSpec({
                 Degree.DVIT,
                 Degree.BINF,
                 Degree.IMO,
-                Degree.IKT,
             ).map { deg ->
                 for (t in be) {
                     for (year in 4..5) {
@@ -620,27 +616,6 @@ class HappeningRegistrationTest : StringSpec({
                         res.desc shouldBe "Vennligst prøv igjen."
                     }
                 }
-            }
-        }
-    }
-
-    "If degree is KOGNI, degree year should be equal to three." {
-        withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
-        }) {
-            for (t in be) {
-                val testCall: TestApplicationCall =
-                    handleRequest(method = HttpMethod.Post, uri = "/${Routing.registrationRoute}") {
-                        addHeader(HttpHeaders.ContentType, "application/json")
-                        val invalidDegreeYear = exampleHappeningReg(t).copy(degreeYear = 2, degree = Degree.KOGNI)
-                        setBody(Json.encodeToString(invalidDegreeYear))
-                    }
-
-                testCall.response.status() shouldBe HttpStatusCode.BadRequest
-                val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
-                res.code shouldBe Response.DegreeMismatchKogni
-                res.title shouldBe "Studieretning og årstrinn stemmer ikke overens."
-                res.desc shouldBe "Vennligst prøv igjen."
             }
         }
     }
