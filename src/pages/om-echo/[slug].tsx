@@ -1,5 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
-import { Center, Spinner, Heading, Divider } from '@chakra-ui/react';
+import { Center, Spinner } from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -27,10 +27,6 @@ const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
                 <>
                     <SEO title={staticInfo.name} />
                     <SidebarWrapper>
-                        <Heading textAlign="center" size="2xl" pb="2rem">
-                            {staticInfo.name}
-                        </Heading>
-                        <Divider mb="1rem" />
                         <Markdown options={{ overrides: MapMarkdownChakra }}>{staticInfo.info}</Markdown>
                     </SidebarWrapper>
                 </>
