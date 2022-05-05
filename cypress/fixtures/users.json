@@ -1,10 +1,6 @@
 {
-    "bachelorDegrees": ["DTEK", "DSIK", "DVIT", "BINF", "IMO", "IKT"],
+    "bachelorDegrees": ["DTEK", "DSIK", "DVIT", "BINF", "IMO"],
     "masterDegrees": ["INF", "PROG"],
-    "validKogniUser": {
-        "degree": "KOGNI",
-        "degreeYear": 3
-    },
     "validArmninfUser": {
         "degree": "ARMNINF",
         "degreeYear": 1

@@ -73,10 +73,6 @@ describe('Happening registration', () => {
                     }
                 }
 
-                it(`User can sign up with valid input (degree = ${users.validKogniUser.degree}, degreeYear = ${users.validKogniUser.degreeYear}, type = ${type})`, () => {
-                    checkSubmitRegistration(users.validKogniUser.degree, users.validKogniUser.degreeYear);
-                });
-
                 it(`User can sign up with valid input (degree = ${users.validArmninfUser.degree}, degreeYear = ${users.validArmninfUser.degreeYear}, type = ${type})`, () => {
                     checkSubmitRegistration(users.validArmninfUser.degree, users.validArmninfUser.degreeYear);
                 });

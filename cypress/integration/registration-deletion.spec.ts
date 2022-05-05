@@ -10,7 +10,7 @@ describe('Happening registration', () => {
         });
 
         for (const { slug } of happenings) {
-            for (let rows = 24; rows > 0; rows--) {
+            for (let rows = 20; rows > 0; rows--) {
                 describe('Happening registration deletion', () => {
                     beforeEach(() => {
                         cy.visit(`/${registrationRoute}/${slug}`);
