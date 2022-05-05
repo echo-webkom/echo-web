@@ -41,9 +41,7 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             <NavLink text="Hjem" href="/" testid="hjem" />
             <NavLink text="For Studenter" href="/for-studenter" testid="for-studenter" />
             <NavLink text="For Bedrifter" href="/for-bedrifter" testid="for-bedrifter" />
-            {process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' && (
-                <NavLink text="Jobb" href="/job" testid="jobb" />
-            )}
+            {/* <NavLink text="Jobb" href="/job" testid="jobb" /> */}
             <NavLink text="Om echo" href="/om-oss" testid="om-oss" />
             {isMobile && (
                 <>
