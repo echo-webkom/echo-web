@@ -1,0 +1,8 @@
+{
+    "bachelorDegrees": ["DTEK", "DSIK", "DVIT", "BINF", "IMO"],
+    "masterDegrees": ["INF", "PROG"],
+    "validArmninfUser": {
+        "degree": "ARMNINF",
+        "degreeYear": 1
+    }
+}
