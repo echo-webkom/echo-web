@@ -1,0 +1,32 @@
+name: ktlint
+
+on:
+  pull_request:
+    branches: [develop, master]
+
+jobs:
+  ktlint_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: 'gradle'
+
+      - name: Run ktlint checks
+        run: |
+          ./gradlew loadKtlintReporters
+          # For *.kts files
+          ./gradlew runKtlintCheckOverKotlinScripts
+          ./gradlew ktlintKotlinScriptCheck
+          # For *.kt files in /src/main
+          ./gradlew runKtlintCheckOverMainSourceSet
+          ./gradlew ktlintMainSourceSetCheck
+          # For *.kt files in /src/test
+          ./gradlew runKtlintCheckOverTestSourceSet
+          ./gradlew ktlintTestSourceSetCheck

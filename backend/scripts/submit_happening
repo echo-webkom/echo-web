@@ -1,0 +1,133 @@
+#!/bin/bash
+
+# Default values
+host=http://localhost
+port=8080
+testing=false
+user=admin
+spotranges="[]"
+
+while getopts zpts:i:r:d:x:h:c: flag; do
+  case "${flag}" in
+  z) host=${OPTARG} ;;
+  p) port=${OPTARG} ;;
+  t) testing=true ;;
+  s) slug=${OPTARG} ;;
+  i) title=${OPTARG} ;;
+  r) regdate=${OPTARG} ;;
+  h) hapdate=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
+  o) spotranges=${OPTARG} ;;
+  c) organizer_email=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
+done
+
+if [ -z ${secret+x} ]; then
+  echo "No authorization header specified (use -x)"
+  exit 1
+fi
+
+if [ "$testing" = true ]; then
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "bedriftspresentasjon-med-bekk", 
+          "title": "Bedpres med Bekk",
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "happeningDate": "2030-03-09T16:15+01:00",
+          "spotRanges":
+              [
+                { 
+                   "spots": 30,
+                   "minDegreeYear": 1,
+                   "maxDegreeYear": 2
+                },
+                { 
+                   "spots": 30,
+                   "minDegreeYear": 3,
+                   "maxDegreeYear": 5
+                }
+              ],
+          "type": "BEDPRES",
+          "organizerEmail": "test@test.com" }' \
+    "$host":"$port"/happening
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "fest-med-tilde", 
+          "title": "Fest med Tilde!",
+          "registrationDate": "2021-05-06T16:46+01:00",
+          "happeningDate": "2030-06-02T14:20+01:00",
+          "spotRanges":
+              [
+                { 
+                   "spots": 50,
+                   "minDegreeYear": 1,
+                   "maxDegreeYear": 5
+                }
+              ],
+          "type": "EVENT",
+          "organizerEmail": "test@test.com" }' \
+    "$host":"$port"/happening
+  exit 0
+fi
+
+if [ -z ${slug+x} ]; then
+  echo "Slug not defined (use -s)"
+  exit 1
+fi
+
+if [ -z ${regdate+x} ]; then
+  echo "Registration date not defined (use -r)"
+  exit 1
+fi
+
+if [ -z ${hapdate+x} ]; then
+  echo "Happening date not defined (use -d)"
+  exit 1
+fi
+
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
+if [ -z ${organizer_email+x} ]; then
+  echo "Organizer email not defined (use -c)"
+  exit 1
+fi
+
+if [ -z ${title+x} ]; then
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "'"${slug}"'",
+          "registrationDate": "'"${regdate}"'",
+          "happeningDate": "'"${hapdate}"'",
+          "spotRanges": '"${spotranges}"',
+          "type": "'"${happening}"'",
+          "organizerEmail": "'"${organizer_email}"'" }' \
+    "$host":"$port"/happening
+else
+  curl --verbose \
+    -X PUT \
+    -u "$user":"$secret" \
+    -H "Connection: close" \
+    -H "Content-Type: application/json" \
+    -d '{ "slug": "'"${slug}"'",
+          "title": "'"${title}"'",
+          "registrationDate": "'"${regdate}"'",
+          "happeningDate": "'"${hapdate}"'",
+          "spotRanges": '"${spotranges}"',
+          "type": "'"${happening}"'",
+          "organizerEmail": "'"${organizer_email}"'" }' \
+    "$host":"$port"/happening
+fi

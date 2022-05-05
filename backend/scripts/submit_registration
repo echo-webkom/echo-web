@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Default values
+host=http://localhost
+port=8080
+qa="[]"
+
+while getopts zpe:f:l:d:y:s:t:q:h: flag; do
+  case "${flag}" in
+  z) host=${OPTARG} ;;
+  p) port=${OPTARG} ;;
+  e) email=${OPTARG} ;;
+  f) firstName=${OPTARG} ;;
+  l) lastName=${OPTARG} ;;
+  d) degree=${OPTARG} ;;
+  y) degree_year=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  t) terms=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
+  q) qa=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
+done
+
+if [ -z ${email+x} ]; then
+  echo "Email not defined (use -e)"
+  exit 1
+fi
+
+if [ -z ${firstName+x} ]; then
+  echo "First name not defined (use -f)"
+  exit 1
+fi
+
+if [ -z ${lastName+x} ]; then
+  echo "Last name not defined (use -l)"
+  exit 1
+fi
+
+if [ -z ${degree+x} ]; then
+  echo "Degree not defined (use -d)"
+  exit 1
+fi
+
+if [ -z ${degree_year+x} ]; then
+  echo "Degree year not defined (use -y)"
+  exit 1
+fi
+
+if [ -z ${slug+x} ]; then
+  echo "Slug not defined (use -s)"
+  exit 1
+fi
+
+if [ -z ${terms+x} ]; then
+  echo "Terms not defined (use -t)"
+  exit 1
+fi
+
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
+curl --verbose \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "'"${email}"'",
+      "firstName": "'"${firstName}"'",
+      "lastName": "'"${lastName}"'",
+      "degree": "'"${degree}"'",
+      "degreeYear": '"${degree_year}"',
+      "slug": "'"${slug}"'",
+      "terms": '"${terms}"',
+      "answers": '"${qa}"',
+      "type": "'"${happening}"'" }' \
+  "$host":"$port"/registration

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Default values
+host=http://localhost
+port=8080
+user=admin
+
+while getopts zps:x:h: flag; do
+  case "${flag}" in
+  z) host=${OPTARG} ;;
+  p) port=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  h) happening=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
+done
+
+if [ -z ${secret+x} ]; then
+  echo "No authorization header specified (use -x)"
+  exit 1
+fi
+
+if [ -z ${slug+x} ]; then
+  echo "Slug not defined (use -s)"
+  exit 1
+fi
+
+if [ -z ${happening+x} ]; then
+  echo "Happening type not defined (use -h)"
+  exit 1
+fi
+
+curl --verbose \
+  -X DELETE \
+  -u "$user":"$secret" \
+  -H "Connection: close" \
+  -H "Content-Type: application/json" \
+  -d '{ "slug": "'"$slug"'",
+        "type": "'"$happening"'" }' \
+  "$host":"$port"/happening

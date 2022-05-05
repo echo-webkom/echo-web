@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Default values
+host=http://localhost
+port=8080
+user=admin
+
+while getopts zpe:s:x:w: flag; do
+  case "${flag}" in
+  z) host=${OPTARG} ;;
+  p) port=${OPTARG} ;;
+  s) slug=${OPTARG} ;;
+  x) secret=${OPTARG} ;;
+  w) waitlist=${OPTARG} ;;
+  *) echo "Invalid flag." ;;
+  esac
+done
+
+if [ -z ${secret+x} ]; then
+  echo "No authorization header specified (use -x)."
+  exit 1
+fi
+
+if [ -z ${slug+x} ]; then
+    echo "Slug not defined (use -s)."
+    exit 1
+elif [ -z ${waitlist+x} ]; then
+  curl --verbose \
+    -u "$user":"$secret" \
+    "$host:$port/registration?count=y&slug=$slug"
+else
+  curl --verbose \
+    -u "$user":"$secret" \
+    "$host:$port/registration?count=y&slug=$slug&waitlist=y"
+fi

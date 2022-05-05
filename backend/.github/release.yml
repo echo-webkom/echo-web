@@ -1,0 +1,22 @@
+changelog:
+  exclude:
+    labels:
+      - "release :label:"
+      - "ignore :stop_sign:"
+  categories:
+  - title: Breaking changes 💥
+    labels:
+      - "major :arrow_double_up:"
+  - title: New features ✨
+    labels:
+      - "minor :arrow_up_small:"
+  - title: Patches and bugfixes 🐛
+    labels:
+      - "patch :mag:"
+      - "bug :bug:"
+  - title: Dependency updates ⬆️
+    labels:
+      - "dependencies :handshake:"
+  - title: Other changes 🤙
+    labels:
+       - "*"

@@ -1,0 +1,42 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "labels": [
+    "dependencies :handshake:"
+  ],
+  "commitMessagePrefix": "⬆️",
+  "prHourlyLimit": 0,
+  "stabilityDays": 3,
+  "prCreation": "not-pending",
+  "ignoreDeps": [
+    "openjdk",
+    "postgres"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "^org.jetbrains.exposed"
+      ],
+      "groupName": "Exposed packages"
+    },
+    {
+      "matchPackagePatterns": [
+        "^io.ktor"
+      ],
+      "groupName": "Ktor packages"
+    },
+    {
+      "matchPackagePatterns": [
+        "^io.kotest"
+      ],
+      "groupName": "Kotest packages"
+    },
+    {
+      "matchPackagePatterns": [
+        "^org.jetbrains.kotlin"
+      ],
+      "groupName": "Kotlin packages"
+    }
+  ]
+}
