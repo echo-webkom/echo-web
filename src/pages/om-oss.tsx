@@ -6,7 +6,7 @@ import React from 'react';
 import bekk from '../../public/static/om-oss/bekk.md';
 import hvemErVi from '../../public/static/om-oss/hvem-er-vi.md';
 import instituttraadet from '../../public/static/om-oss/instituttraadet.md';
-import statutter from '../../public/static/om-oss/statutter.md';
+import vedtekter from '../../public/static/om-oss/vedtekter.md';
 import MinuteList from '../components/minute-list';
 import SEO from '../components/seo';
 import InfoPanels from '../components/info-panels';
@@ -33,8 +33,8 @@ const OmOssPage = ({ boards, minutes }: { boards: Array<StudentGroup>; minutes: 
                     <Markdown key="instituttraadet" options={{ overrides: MapMarkdownChakra }}>
                         {instituttraadet}
                     </Markdown>,
-                    <Markdown key="statutter" options={{ overrides: MapMarkdownChakra }}>
-                        {statutter}
+                    <Markdown key="vedtekter" options={{ overrides: MapMarkdownChakra }}>
+                        {vedtekter}
                     </Markdown>,
                     <MinuteList key="minutes" minutes={minutes} />,
                     <>
