@@ -5,8 +5,8 @@ services:
       context: .
       target: build
       cache_from:
-        - '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-dev}'
-    image: '${REGISTRY:-ghcr.io}/echo-webkom/echo-web-backend:${TAG:-latest-dev}'
+        - '${IMAGE_NAME:-echo-webkom/echo-web}/backend:${TAG:-latest}'
+    image: '${IMAGE_NAME:-echo-webkom/echo-web}backend:${TAG:-latest}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -31,7 +31,7 @@ services:
       - '5432:5432'
     # Check if database is ready.
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
