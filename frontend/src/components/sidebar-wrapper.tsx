@@ -69,7 +69,7 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                         borderColor={separatorColor}
                         display={['none', null, null, 'none', 'block']}
                     >
-                        <Sidebar onClose={() => {}} />
+                        <Sidebar />
 
                         <Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={menuButtonRef}>
                             <DrawerOverlay>
@@ -80,7 +80,7 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                                     </DrawerHeader>
                                     <DrawerBody>
                                         <Box>
-                                            <Sidebar onClose={onClose} />
+                                            <Sidebar onClick={onClose} />
                                         </Box>
                                     </DrawerBody>
                                 </DrawerContent>

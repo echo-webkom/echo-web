@@ -13,7 +13,6 @@ import {
     LinkOverlay,
     UnorderedList,
     ListItem,
-    BoxProps,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -70,11 +69,7 @@ const MenuLink = ({ href, isFocused, onClick, focusColor, testid, children }: Me
     );
 };
 
-interface SidebarProps extends BoxProps{
-    onClose: () => void,
-}
-
-const Sidebar = (props: SidebarProps) => {
+const Sidebar = ({ onClick }: { onClick?: () => void }) => {
     type MenuItem =
         | { name: string; href: string; items?: Array<MenuItem> }
         | { name: string; href?: string; items: Array<MenuItem> };
@@ -135,7 +130,7 @@ const Sidebar = (props: SidebarProps) => {
         },
     ];
 
-    const renderMenuItem = (item: MenuItem, onClose: () => void) => {
+    const renderMenuItem = (item: MenuItem, onClick?: () => void) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const { asPath } = useRouter();
 
@@ -146,7 +141,7 @@ const Sidebar = (props: SidebarProps) => {
 
             return (
                 <ListItem listStyleType={isFocused ? 'initial' : 'none'} color={isFocused ? textColor : undefined}>
-                    <MenuLink href={item.href} onClick={onClose} isFocused={isFocused} focusColor={textColor}>
+                    <MenuLink href={item.href} onClick={onClick} isFocused={isFocused} focusColor={textColor}>
                         {item.name}
                     </MenuLink>
                 </ListItem>
@@ -158,7 +153,7 @@ const Sidebar = (props: SidebarProps) => {
                 <MenuDropdown title={item.name} isOpen={isFocused ? isFocused : false}>
                     {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        item.items?.map((item) => renderMenuItem(item, onClose))
+                        item.items?.map((item) => renderMenuItem(item, onClick))
                     }
                 </MenuDropdown>
             );
@@ -167,7 +162,7 @@ const Sidebar = (props: SidebarProps) => {
 
     return (
         <>
-            <Stack h={'100%'} gap={'0.5px'} {...props}>
+            <Stack h={'100%'} gap={'0.5px'}>
                 <aside>
                     <nav>
                         {sidebarStruct.map((entry) => (
@@ -175,7 +170,9 @@ const Sidebar = (props: SidebarProps) => {
                                 <Text fontSize={25} fontWeight={'bold'}>
                                     {entry.name}
                                 </Text>
-                                <UnorderedList pl={0}>{entry.items.map((item) => renderMenuItem(item, props.onClose))}</UnorderedList>
+                                <UnorderedList pl={0}>
+                                    {entry.items.map((item) => renderMenuItem(item, onClick))}
+                                </UnorderedList>
                             </Box>
                         ))}
                     </nav>
