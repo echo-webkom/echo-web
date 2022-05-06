@@ -6,6 +6,7 @@
     "stabilityDays": 3,
     "prCreation": "not-pending",
     "ignoreDeps": ["openjdk", "postgres", "node"],
+    "updateInternalDeps": true,
     "packageRules": [
         {
             "matchPackagePatterns": ["^org.jetbrains.exposed"],
