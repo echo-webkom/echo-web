@@ -47,14 +47,15 @@ const MenuDropdown = (props: MenuDropdownProps) => {
 interface MenuLinkProps {
     href: string;
     isFocused: boolean;
+    onClick?: () => void;
     focusColor?: string;
     testid?: string;
     children?: React.ReactNode;
 }
 
-const MenuLink = ({ href, isFocused, focusColor, testid, children }: MenuLinkProps) => {
+const MenuLink = ({ href, isFocused, onClick, focusColor, testid, children }: MenuLinkProps) => {
     return (
-        <LinkBox data-testid={testid} data-cy="nav-item" py={'0.2em'}>
+        <LinkBox data-testid={testid} onClick={onClick} data-cy="nav-item" py={'0.2em'}>
             <NextLink href={href} passHref>
                 <LinkOverlay
                     as={Link}
@@ -69,7 +70,11 @@ const MenuLink = ({ href, isFocused, focusColor, testid, children }: MenuLinkPro
     );
 };
 
-const Sidebar = (props: BoxProps) => {
+interface SidebarProps extends BoxProps{
+    onClose: () => void,
+}
+
+const Sidebar = (props: SidebarProps) => {
     type MenuItem =
         | { name: string; href: string; items?: Array<MenuItem> }
         | { name: string; href?: string; items: Array<MenuItem> };
@@ -130,7 +135,7 @@ const Sidebar = (props: BoxProps) => {
         },
     ];
 
-    const renderMenuItem = (item: MenuItem) => {
+    const renderMenuItem = (item: MenuItem, onClose: () => void) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const { asPath } = useRouter();
 
@@ -141,7 +146,7 @@ const Sidebar = (props: BoxProps) => {
 
             return (
                 <ListItem listStyleType={isFocused ? 'initial' : 'none'} color={isFocused ? textColor : undefined}>
-                    <MenuLink href={item.href} isFocused={isFocused} focusColor={textColor}>
+                    <MenuLink href={item.href} onClick={onClose} isFocused={isFocused} focusColor={textColor}>
                         {item.name}
                     </MenuLink>
                 </ListItem>
@@ -153,7 +158,7 @@ const Sidebar = (props: BoxProps) => {
                 <MenuDropdown title={item.name} isOpen={isFocused ? isFocused : false}>
                     {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        item.items?.map((item) => renderMenuItem(item))
+                        item.items?.map((item) => renderMenuItem(item, onClose))
                     }
                 </MenuDropdown>
             );
@@ -170,7 +175,7 @@ const Sidebar = (props: BoxProps) => {
                                 <Text fontSize={25} fontWeight={'bold'}>
                                     {entry.name}
                                 </Text>
-                                <UnorderedList pl={0}>{entry.items.map((item) => renderMenuItem(item))}</UnorderedList>
+                                <UnorderedList pl={0}>{entry.items.map((item) => renderMenuItem(item, props.onClose))}</UnorderedList>
                             </Box>
                         ))}
                     </nav>

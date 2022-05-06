@@ -37,8 +37,8 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                     position={'fixed'}
                     left={-6}
                     top={'10em'}
-                    h={'5em'}
-                    w={'5em'}
+                    h={'4em'}
+                    w={'4em'}
                     bg={bgColor}
                     opacity={'70%'}
                     borderRadius={'0 60% 60% 0'}
@@ -56,7 +56,7 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                         h={'4em'}
                         icon={
                             <Center>
-                                <Icon as={IoIosArrowForward} boxSize={16} />
+                                <Icon as={IoIosArrowForward} boxSize={14} />
                             </Center>
                         }
                         data-testid="sidebar-button"
@@ -69,7 +69,7 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                         borderColor={separatorColor}
                         display={['none', null, null, 'none', 'block']}
                     >
-                        <Sidebar />
+                        <Sidebar onClose={() => {}} />
 
                         <Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={menuButtonRef}>
                             <DrawerOverlay>
@@ -79,8 +79,8 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                                         Info
                                     </DrawerHeader>
                                     <DrawerBody>
-                                        <Box onClick={onClose}>
-                                            <Sidebar />
+                                        <Box>
+                                            <Sidebar onClose={onClose} />
                                         </Box>
                                     </DrawerBody>
                                 </DrawerContent>
