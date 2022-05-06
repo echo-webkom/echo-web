@@ -21,6 +21,4 @@ jobs:
         run: yarn --frozen-lockfile --ignore-scripts
 
       - name: Build with yarn
-        run: |
-          cd cms
-          yarn build
+        run: yarn --cwd cms build

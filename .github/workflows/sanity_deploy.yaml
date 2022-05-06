@@ -21,9 +21,7 @@ jobs:
         run: yarn --frozen-lockfile --ignore-scripts
 
       - name: Deploy to Sanity
-        run: |
-          cd cms
-          yarn sanity deploy
+        run: yarn --cwd cms sanity deploy
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_API_DATASET: production

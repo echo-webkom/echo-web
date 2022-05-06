@@ -20,6 +20,4 @@ jobs:
         run: yarn --frozen-lockfile --ignore-scripts
 
       - name: Run API & component tests
-        run: |
-          cd frontend
-          yarn test
+        run: yarn --cwd frontend test
