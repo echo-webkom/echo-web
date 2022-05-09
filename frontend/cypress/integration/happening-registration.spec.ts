@@ -3,11 +3,15 @@
 import users from '../fixtures/users.json';
 import { happenings } from '../fixtures/happening.json';
 
-const checkSubmitRegistration = (degree: string, degreeYear: number) => {
+const checkSubmitRegistration = (degree: string, degreeYear: number, email?: string, waitListSpot?: number) => {
     cy.get('[data-cy=reg-btn]').click();
     cy.get('[data-cy=reg-form]').should('be.visible');
 
-    cy.get('input[name=email]').type(`${degree}${degreeYear}@test.com`);
+    if (email) {
+        cy.get('input[name=email]').type(email);
+    } else {
+        cy.get('input[name=email]').type(`${degree}${degreeYear}@test.com`);
+    }
     cy.get('input[name=firstName]').type('Test');
     cy.get('input[name=lastName]').type('McTest');
     cy.get('select[name=degree]').select(degree);
@@ -18,7 +22,13 @@ const checkSubmitRegistration = (degree: string, degreeYear: number) => {
 
     cy.get('button[type=submit]').click();
 
-    cy.get('li[class=chakra-toast]').contains('Påmeldingen din er registrert!');
+    if (!email || !waitListSpot) {
+        cy.get('li[class=chakra-toast]').contains('Påmeldingen din er registrert!');
+    } else {
+        cy.get('li[class=chakra-toast]').contains(
+            `Du er på plass nr. ${waitListSpot} på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass.`,
+        );
+    }
 };
 
 describe('Happening registration', () => {
@@ -76,6 +86,12 @@ describe('Happening registration', () => {
                 it(`User can sign up with valid input (degree = ${users.validArmninfUser.degree}, degreeYear = ${users.validArmninfUser.degreeYear}, type = ${type})`, () => {
                     checkSubmitRegistration(users.validArmninfUser.degree, users.validArmninfUser.degreeYear);
                 });
+
+                for (const { e, spot } of users.waitListEmails) {
+                    it('User is put on wait list', () => {
+                        checkSubmitRegistration('DTEK', 2, e, spot);
+                    });
+                }
             });
         }
     });
