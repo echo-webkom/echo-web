@@ -42,12 +42,12 @@ if [ "$testing" = true ]; then
           "spotRanges":
               [
                 { 
-                   "spots": 30,
+                   "spots": 11,
                    "minDegreeYear": 1,
                    "maxDegreeYear": 2
                 },
                 { 
-                   "spots": 30,
+                   "spots": 9,
                    "minDegreeYear": 3,
                    "maxDegreeYear": 5
                 }
@@ -67,7 +67,7 @@ if [ "$testing" = true ]; then
           "spotRanges":
               [
                 { 
-                   "spots": 50,
+                   "spots": 20,
                    "minDegreeYear": 1,
                    "maxDegreeYear": 5
                 }

@@ -42,7 +42,12 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
 
     return (
         <>
-            <MotionTr layout height={deleted ? '0%' : '100%'} data-cy="reg-row" key={JSON.stringify(registration)}>
+            <MotionTr
+                layout
+                height={deleted ? '0%' : '100%'}
+                data-cy={`reg-row-${registration.email}`}
+                key={JSON.stringify(registration)}
+            >
                 <Td>{registration.email}</Td>
                 <Td>{registration.firstName}</Td>
                 <Td>{registration.lastName}</Td>
@@ -55,11 +60,11 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                     <Td fontStyle="italic">{`ikke besvart`}</Td>
                 )}
                 {registration.waitList ? (
-                    <Td fontWeight="bold" color="red.400">
+                    <Td data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
                         Ja
                     </Td>
                 ) : (
-                    <Td fontWeight="bold" color="green.400">
+                    <Td data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
                         Nei
                     </Td>
                 )}
