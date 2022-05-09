@@ -23,7 +23,7 @@ const MinutesPage = ({ minutes }: Props): JSX.Element => {
             )}
             {!router.isFallback && (
                 <>
-                    <SEO title={'minutes'} />
+                    <SEO title="minutes" />
                     <SidebarWrapper>
                         <MinuteList key="minutes" minutes={minutes} />
                     </SidebarWrapper>

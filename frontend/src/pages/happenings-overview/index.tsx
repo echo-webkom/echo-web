@@ -38,7 +38,7 @@ const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElemen
 
     return (
         <Stack>
-            <Text fontWeight={'bold'} fontSize={'0.9em'}>
+            <Text fontWeight="bold" fontSize="0.9em">
                 {formattedDate}
             </Text>
             <Divider />
@@ -48,7 +48,7 @@ const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElemen
                         <NextLink href={`/event/${event.slug}`} passHref>
                             <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
                                 <Box>
-                                    <Text marginBottom="1rem" fontSize={'0.8em'} color={titleColor}>
+                                    <Text marginBottom="1rem" fontSize="0.8em" color={titleColor}>
                                         {event.happeningType === HappeningType.BEDPRES ? 'Bedpres: ' : ''}
                                         {event.title}
                                     </Text>
@@ -92,7 +92,7 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
         <>
             <SEO title="Arrangementer" />
             <Flex direction={['column', null, 'row']} mb="1rem">
-                <Heading size="lg" marginBottom={'1rem'}>
+                <Heading size="lg" marginBottom="1rem">
                     Arrangementer uke {getISOWeek(date)}
                 </Heading>
                 <Spacer />
@@ -105,7 +105,7 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
                     </Button>
                 </Flex>
             </Flex>
-            <SimpleGrid as={Section} padding={'1rem'} columns={[1, 2, 3, 7]} gridGap={'1rem'}>
+            <SimpleGrid as={Section} padding="1rem" columns={[1, 2, 3, 7]} gridGap="1rem">
                 {currentWeek.map((x) => {
                     return <HappeningsColumn key={x.toString()} date={x} events={events} />;
                 })}
