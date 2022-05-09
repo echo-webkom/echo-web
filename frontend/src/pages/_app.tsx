@@ -24,7 +24,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX
                     height={4}
                     options={{ showSpinner: false }}
                 />
-                {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color={'#ffffff'} />}
+                {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color="#ffffff" />}
                 <Fonts />
                 <Layout>
                     <Component {...pageProps} key={router} />

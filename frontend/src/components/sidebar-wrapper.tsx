@@ -34,26 +34,26 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
         <>
             <Section>
                 <Center
-                    position={'fixed'}
+                    position="fixed"
                     left={-6}
-                    top={'10em'}
-                    h={'4em'}
-                    w={'4em'}
+                    top="10em"
+                    h="4em"
+                    w="4em"
                     bg={bgColor}
-                    opacity={'70%'}
-                    borderRadius={'0 60% 60% 0'}
-                    border={'2px'}
+                    opacity="70%"
+                    borderRadius="0 60% 60% 0"
+                    border="2px"
                     borderColor={highlightColor}
                     display={['flex', null, null, 'flex', 'none']}
                 >
                     <IconButton
                         variant="unstyled"
                         ref={menuButtonRef}
-                        alignItems={'center'}
+                        alignItems="center"
                         left={2}
                         onClick={onOpen}
                         aria-label="show sidebar"
-                        h={'4em'}
+                        h="4em"
                         icon={
                             <Center>
                                 <Icon as={IoIosArrowForward} boxSize={14} />
@@ -62,10 +62,10 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
                         data-testid="sidebar-button"
                     />
                 </Center>
-                <Grid templateColumns="repeat(20, 1fr)" gap={'1em'}>
+                <Grid templateColumns="repeat(20, 1fr)" gap="1em">
                     <GridItem
                         colSpan={[0, null, null, 0, 5, 4]}
-                        borderRight={'2px'}
+                        borderRight="2px"
                         borderColor={separatorColor}
                         display={['none', null, null, 'none', 'block']}
                     >

@@ -53,6 +53,12 @@
             "no-trailing-spaces": "error",
             "eol-last": "error",
             "react/jsx-props-no-spreading": "off",
+            "react/jsx-curly-brace-presence": [
+                "error",
+                {
+                    "props": "never"
+                }
+            ],
             "import/no-useless-path-segments": "error",
             "import/order": "error",
             "import/exports-last": "error",
