@@ -29,13 +29,13 @@ const MenuDropdown = (props: MenuDropdownProps) => {
             <AccordionItem border="hidden">
                 <h2>
                     <AccordionButton px={0} _hover={{ textDecoration: 'underline' }}>
-                        <Box flex="1" textAlign="left" fontSize={20} fontWeight={'bold'}>
+                        <Box flex="1" textAlign="left" fontSize={20} fontWeight="bold">
                             {props.title}
                             <AccordionIcon />
                         </Box>
                     </AccordionButton>
                 </h2>
-                <AccordionPanel py={'0.1em'} pl={0}>
+                <AccordionPanel py="0.1em" pl={0}>
                     <UnorderedList>{props.children}</UnorderedList>
                 </AccordionPanel>
             </AccordionItem>
@@ -54,11 +54,11 @@ interface MenuLinkProps {
 
 const MenuLink = ({ href, isFocused, onClick, focusColor, testid, children }: MenuLinkProps) => {
     return (
-        <LinkBox data-testid={testid} onClick={onClick} data-cy="nav-item" py={'0.2em'}>
+        <LinkBox data-testid={testid} onClick={onClick} data-cy="nav-item" py="0.2em">
             <NextLink href={href} passHref>
                 <LinkOverlay
                     as={Link}
-                    textUnderlineOffset={'0.1em'}
+                    textUnderlineOffset="0.1em"
                     fontSize={20}
                     textColor={isFocused ? focusColor : undefined}
                 >
@@ -162,12 +162,12 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
 
     return (
         <>
-            <Stack h={'100%'} gap={'0.5px'}>
+            <Stack h="100%" gap="0.5px">
                 <aside>
                     <nav>
                         {sidebarStruct.map((entry) => (
                             <Box key={entry.name}>
-                                <Text fontSize={25} fontWeight={'bold'}>
+                                <Text fontSize={25} fontWeight="bold">
                                     {entry.name}
                                 </Text>
                                 <UnorderedList pl={0}>

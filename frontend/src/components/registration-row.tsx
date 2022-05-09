@@ -52,7 +52,7 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                         <Td key={`answer-${index}-${JSON.stringify(ans)}`}>{ans.answer}</Td>
                     ))}
                 {!notEmptyOrNull(registration.answers) && notEmptyOrNull(questions) && (
-                    <Td fontStyle="italic">{`ikke besvart`}</Td>
+                    <Td fontStyle="italic">ikke besvart</Td>
                 )}
                 {registration.waitList ? (
                     <Td fontWeight="bold" color="red.400">

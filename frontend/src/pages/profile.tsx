@@ -38,13 +38,13 @@ const ProfilePage = (): JSX.Element => {
                             onClick={() => {
                                 void signOut();
                             }}
-                            position={'absolute'}
-                            left={'0.5em'}
-                            top={'0.5em'}
+                            position="absolute"
+                            left="0.5em"
+                            top="0.5em"
                         >
                             Logg ut
                         </Button>
-                        <Center mt={'1.5em'}>{user && <ProfileInfo user={user} />}</Center>
+                        <Center mt="1.5em">{user && <ProfileInfo user={user} />}</Center>
                     </Section>
                 </>
             )}
@@ -55,7 +55,7 @@ const ProfilePage = (): JSX.Element => {
             )}
             {status === 'unauthenticated' && (
                 <Center>
-                    <Section position="relative" height="300px" width="500px" alignContent={'center'}>
+                    <Section position="relative" height="300px" width="500px" alignContent="center">
                         <Flex direction="column" height="100%" justifyContent="center">
                             <Text align="center" fontSize="2xl" fontWeight="extrabold">
                                 Du er ikke logget inn
@@ -76,7 +76,7 @@ const ProfilePage = (): JSX.Element => {
                             </Button>
                             <Spacer />
                             <Link href="/" alignItems="center" justifyContent="center" display="flex">
-                                {<IoMdHome />} Hovedside
+                                <IoMdHome /> Hovedside
                             </Link>
                         </Flex>
                     </Section>
