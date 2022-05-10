@@ -1,7 +1,11 @@
 import {
+    Box,
     Divider,
     Flex,
     Heading,
+    HStack,
+    Icon,
+    IconProps,
     LinkBox,
     Popover,
     PopoverArrow,
@@ -14,7 +18,6 @@ import {
     Stack,
     Text,
     useColorModeValue,
-    // useColorModeValue,
 } from '@chakra-ui/react';
 import { addWeeks, getISOWeek, lastDayOfWeek, startOfWeek, subWeeks } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
@@ -136,12 +139,20 @@ const getWeekDatesFromDate = (date: Date): Array<Date> => {
     return getDatesInRange(firstWeekDay, lastWeekDay);
 };
 
+const CircleIcon = (props: IconProps) => (
+    <Icon viewBox="0 0 200 200" {...props}>
+        <path fill="currentColor" d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0" />
+    </Icon>
+);
+
 interface Props {
     events: Array<Happening>;
 }
 const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
     const [date, setDate] = useState(new Date());
     const currentWeek = getWeekDatesFromDate(date);
+    const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
     return (
         <>
@@ -160,6 +171,16 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
                     </Button>
                 </Flex>
             </Flex>
+            <HStack alignItems="center" gap={5}>
+                <Flex alignItems="inherit">
+                    <CircleIcon color={bedpresColor} />
+                    Bedpres
+                </Flex>
+                <Flex alignItems="inherit">
+                    <CircleIcon color={otherColor} />
+                    Annet
+                </Flex>
+            </HStack>
             <SimpleGrid as={Section} padding="1rem" columns={[1, 2, 3, 7]} gridGap="1rem">
                 {currentWeek.map((x) => (
                     <HappeningsColumn key={x.toString()} date={x} events={events} />
