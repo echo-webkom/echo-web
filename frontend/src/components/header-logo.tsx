@@ -33,7 +33,9 @@ const randomHeaderMessage = (): string => {
         return baseMessages;
     };
 
-    if (isMonday(now)) {
+    if (getMonth(now) === 4 && getDate(now) === 17) {
+        return 'Gralla 🇳🇴';
+    } else if (isMonday(now)) {
         return 'New week, new me?';
     } else if (isThursday(now) && getHours(now) < 12) {
         return 'Husk bedpres kl. 12:00!';
