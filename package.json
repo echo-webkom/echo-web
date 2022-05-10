@@ -6,7 +6,8 @@
     "author": "echo Webkom",
     "scripts": {
         "pcheck": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md}\" && prettier -c --tab-width=2 \"**/*.{yaml,yml}\"",
-        "format": "prettier -w \"**/*.{ts,tsx,js,jsx,json,md}\" && prettier -w --tab-width=2 \"**/*.{yaml,yml}\""
+        "format": "prettier -w \"**/*.{ts,tsx,js,jsx,json,md}\" && prettier -w --tab-width=2 \"**/*.{yaml,yml}\"",
+        "prepare": "husky install"
     },
     "prettier": {
         "semi": true,
