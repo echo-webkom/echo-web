@@ -33,14 +33,16 @@ const randomHeaderMessage = (): string => {
         return baseMessages;
     };
 
-    if (isMonday(now)) {
-        return 'New week, new me?';
+    if (getMonth(now) === 4 && getDate(now) === 17) {
+        return 'Gralla 🇳🇴';
     } else if (isThursday(now) && getHours(now) < 12) {
         return 'Husk bedpres kl. 12:00!';
     } else if (getMonth(now) === 11 && getDate(now) >= 24) {
         return 'God jul! 🎅';
     } else if (getMonth(now) === 0 && getDate(now) === 1) {
         return 'Godt nyttår! ✨';
+    } else if (isMonday(now)) {
+        return 'New week, new me?';
     }
 
     return stdMessages()[Math.floor(Math.random() * stdMessages().length)];
