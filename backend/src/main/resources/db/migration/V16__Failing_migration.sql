@@ -1,0 +1,2 @@
+ALTER TABLE bruh_moment
+ADD COLUMN fail_69 TEXT;
