@@ -51,20 +51,21 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
 const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBoxProps) => {
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
+
     return (
         <LinkBox
             bg={type === HappeningType.BEDPRES ? bedpresColor : otherColor}
-            p="1"
+            p="2"
             borderRadius="0.25rem"
             _hover={{ cursor: 'pointer' }}
         >
-            <NextLink href={`/event/${slug}`}>
-                <Popover trigger="hover">
-                    <PopoverTrigger>
-                        <Text noOfLines={1} color="black">
-                            {title}
-                        </Text>
-                    </PopoverTrigger>
+            <Popover>
+                <PopoverTrigger>
+                    <Text noOfLines={1} fontSize="lg" color="black">
+                        {title}
+                    </Text>
+                </PopoverTrigger>
+                <NextLink href={`/event/${slug}`} passHref>
                     <PopoverContent>
                         <PopoverArrow />
                         <PopoverHeader>
@@ -77,7 +78,7 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
                             )}
                             <Text fontWeight="extrabold">{title}</Text>
                         </PopoverHeader>
-                        <PopoverBody>
+                        <PopoverBody fontSize="lg">
                             <Text>@ {location}</Text>
                             <Divider />
                             <Text noOfLines={5}>
@@ -88,8 +89,8 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
                             </Text>
                         </PopoverBody>
                     </PopoverContent>
-                </Popover>
-            </NextLink>
+                </NextLink>
+            </Popover>
         </LinkBox>
     );
 };
@@ -163,10 +164,10 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
                 <Spacer />
                 <Flex justifyContent="center">
                     <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subWeeks(date, 1))} marginRight="1rem">
-                        forrige uke
+                        Forrige uke
                     </Button>
                     <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))}>
-                        neste uke
+                        Neste uke
                     </Button>
                 </Flex>
             </Flex>
