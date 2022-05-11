@@ -4,8 +4,8 @@ services:
     build:
       context: .
       cache_from:
-        - '${REGISTRY:-ghcr.io}/echo-webkom/backend:${TAG:-latest}'
-    image: '${REGISTRY:-ghcr.io}/echo-webkom/backend:${TAG:-latest}'
+        - '${IMAGE_NAME:-echo-webkom/echo-web}/backend:${TAG:-latest}'
+    image: '${IMAGE_NAME:-echo-webkom/echo-web}/backend:${TAG:-latest}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -23,6 +23,7 @@ services:
       SENDGRID_API_KEY:
       SEND_EMAIL_REGISTRATION:
       SEND_EMAIL_HAPPENING:
+      TEST_MIGRATION:
 
   database:
     # Postgres 13.6 is the version Heroku uses.

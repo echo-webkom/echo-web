@@ -16,7 +16,7 @@ import java.net.URI
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
 
-class DatabaseHandler(private val dev: Boolean, dbUrl: URI, mbMaxPoolSize: String?) {
+class DatabaseHandler(private val dev: Boolean, private val testMigration: Boolean, dbUrl: URI, mbMaxPoolSize: String?) {
     private val dbPort = if (dbUrl.port == -1) 5432 else dbUrl.port
     private val dbUrl = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
     private val dbUsername = dbUrl.userInfo.split(":")[0]
@@ -49,7 +49,7 @@ class DatabaseHandler(private val dev: Boolean, dbUrl: URI, mbMaxPoolSize: Strin
 
     fun init() {
         // Don't migrate if running on local machine
-        if (!dev) {
+        if (!dev || testMigration) {
             migrate()
             // Need to use connection once to open.
             transaction(conn) {}
