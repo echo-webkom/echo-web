@@ -2,6 +2,7 @@ name: Jest
 on:
   pull_request:
     branches: [master]
+    paths: ['frontend/**']
 
 jobs:
   jest_tests:
