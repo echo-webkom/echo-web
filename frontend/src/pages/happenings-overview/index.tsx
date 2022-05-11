@@ -1,10 +1,17 @@
 import {
-    Box,
     Divider,
     Flex,
     Heading,
+    HStack,
+    Icon,
+    IconProps,
     LinkBox,
-    LinkOverlay,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
     SimpleGrid,
     Spacer,
     Stack,
@@ -12,6 +19,7 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react';
 import { addWeeks, getISOWeek, lastDayOfWeek, startOfWeek, subWeeks } from 'date-fns';
+import Markdown from 'markdown-to-jsx';
 import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import React, { useState } from 'react';
@@ -26,15 +34,70 @@ interface EventsStackProps {
     date: Date;
 }
 
+interface HappeningBoxProps {
+    type: HappeningType;
+    title: string;
+    slug: string;
+    location: string;
+    author: string;
+    body: string;
+}
+
 const datesAreOnSameDay = (first: Date, second: Date) =>
     first.getFullYear() === second.getFullYear() &&
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
 
+const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBoxProps) => {
+    const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
+
+    return (
+        <LinkBox
+            bg={type === HappeningType.BEDPRES ? bedpresColor : otherColor}
+            p="2"
+            borderRadius="0.25rem"
+            _hover={{ cursor: 'pointer' }}
+        >
+            <Popover>
+                <PopoverTrigger>
+                    <Text noOfLines={1} fontSize="lg" color="black">
+                        {title}
+                    </Text>
+                </PopoverTrigger>
+                <NextLink href={`/event/${slug}`} passHref>
+                    <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverHeader>
+                            {type === HappeningType.BEDPRES ? (
+                                <Text as="em" fontWeight="bold" fontSize="sm">
+                                    Bedpres
+                                </Text>
+                            ) : (
+                                ''
+                            )}
+                            <Text fontWeight="extrabold">{title}</Text>
+                        </PopoverHeader>
+                        <PopoverBody fontSize="lg">
+                            <Text>@ {location}</Text>
+                            <Divider />
+                            <Text noOfLines={5}>
+                                <Markdown>{body}</Markdown>
+                            </Text>
+                            <Text as="em" fontSize="sm">
+                                {author}
+                            </Text>
+                        </PopoverBody>
+                    </PopoverContent>
+                </NextLink>
+            </Popover>
+        </LinkBox>
+    );
+};
+
 const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElement => {
     const eventsThisDay = events.filter((x) => datesAreOnSameDay(new Date(x.date), date));
     const formattedDate = date.toLocaleDateString('nb-NO', { weekday: 'long', month: 'short', day: 'numeric' });
-    const titleColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
 
     return (
         <Stack>
@@ -42,22 +105,17 @@ const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElemen
                 {formattedDate}
             </Text>
             <Divider />
-            {eventsThisDay.map((event) => {
-                return (
-                    <LinkBox key={event.slug}>
-                        <NextLink href={`/event/${event.slug}`} passHref>
-                            <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
-                                <Box>
-                                    <Text marginBottom="1rem" fontSize="0.8em" color={titleColor}>
-                                        {event.happeningType === HappeningType.BEDPRES ? 'Bedpres: ' : ''}
-                                        {event.title}
-                                    </Text>
-                                </Box>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                );
-            })}
+            {eventsThisDay.map((event) => (
+                <HappeningBox
+                    key={event.slug}
+                    type={event.happeningType}
+                    title={event.title}
+                    slug={event.slug}
+                    location={event.location}
+                    body={event.body}
+                    author={event.author}
+                />
+            ))}
         </Stack>
     );
 };
@@ -81,12 +139,20 @@ const getWeekDatesFromDate = (date: Date): Array<Date> => {
     return getDatesInRange(firstWeekDay, lastWeekDay);
 };
 
+const CircleIcon = (props: IconProps) => (
+    <Icon viewBox="0 0 200 200" {...props}>
+        <path fill="currentColor" d="M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0" />
+    </Icon>
+);
+
 interface Props {
     events: Array<Happening>;
 }
 const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
     const [date, setDate] = useState(new Date());
     const currentWeek = getWeekDatesFromDate(date);
+    const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
     return (
         <>
@@ -98,17 +164,27 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
                 <Spacer />
                 <Flex justifyContent="center">
                     <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subWeeks(date, 1))} marginRight="1rem">
-                        forrige uke
+                        Forrige uke
                     </Button>
                     <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))}>
-                        neste uke
+                        Neste uke
                     </Button>
                 </Flex>
             </Flex>
+            <HStack alignItems="center" gap={5}>
+                <Flex alignItems="inherit">
+                    <CircleIcon color={bedpresColor} />
+                    Bedpres
+                </Flex>
+                <Flex alignItems="inherit">
+                    <CircleIcon color={otherColor} />
+                    Annet
+                </Flex>
+            </HStack>
             <SimpleGrid as={Section} padding="1rem" columns={[1, 2, 3, 7]} gridGap="1rem">
-                {currentWeek.map((x) => {
-                    return <HappeningsColumn key={x.toString()} date={x} events={events} />;
-                })}
+                {currentWeek.map((x) => (
+                    <HappeningsColumn key={x.toString()} date={x} events={events} />
+                ))}
             </SimpleGrid>
         </>
     );

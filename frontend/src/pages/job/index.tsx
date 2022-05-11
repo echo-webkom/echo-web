@@ -11,7 +11,7 @@ interface Props {
 const JobPage = ({ jobAdverts }: Props) => {
     return (
         <Section>
-            <JobAdvertOverview jobAdverts={jobAdverts} />;
+            <JobAdvertOverview jobAdverts={jobAdverts} />
         </Section>
     );
 };
