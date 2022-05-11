@@ -1,0 +1,12 @@
+name: Jest
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore: ['frontend/**']
+
+jobs:
+  jest_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: echo 'Nothing to be done, passing checks.'
