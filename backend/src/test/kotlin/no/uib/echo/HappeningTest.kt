@@ -48,7 +48,7 @@ class HappeningTest : StringSpec({
     val auth = "admin:$adminKey"
     val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false, verifyRegs = false)
 
-    beforeSpec { DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init() }
+    beforeSpec { DatabaseHandler(dev = true, testMigration = false, URI(System.getenv("DATABASE_URL")), null).init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(

@@ -35,6 +35,7 @@ fun Application.module() {
     }
 
     val dev = environment.config.propertyOrNull("ktor.dev") != null
+    val testMigration = environment.config.property("ktor.testMigration").getString().toBooleanStrict()
     val adminKey = environment.config.property("ktor.adminKey").getString()
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
@@ -50,7 +51,7 @@ fun Application.module() {
     if (sendGridApiKey == null && !dev && (sendEmailReg || sendEmailHap))
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
 
-    DatabaseHandler(dev, databaseUrl, mbMaxPoolSize).init()
+    DatabaseHandler(dev, testMigration, databaseUrl, mbMaxPoolSize).init()
 
     configureRouting(
         adminKey,

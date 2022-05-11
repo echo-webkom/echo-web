@@ -3,6 +3,7 @@ kt/
 !.env.example
 .graphqlconfig
 schema.graphql
+*.dump
 
 ### Created by https://www.gitignore.io
 ### Intellij+all ###
