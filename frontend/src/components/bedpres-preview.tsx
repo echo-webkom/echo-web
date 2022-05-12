@@ -1,4 +1,4 @@
-import { Box, HStack, LinkBox, LinkOverlay, Spacer, useColorModeValue, Heading } from '@chakra-ui/react';
+import { Box, LinkBox, LinkOverlay, Spacer, useColorModeValue, Heading, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import React from 'react';
@@ -17,7 +17,7 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
 
     return (
         <LinkBox data-testid={bedpres.slug}>
-            <HStack
+            <Flex
                 alignItems="center"
                 border="2px"
                 borderColor="transparent"
@@ -41,7 +41,7 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
                 <Box minW="fit-content">
                     <HappeningKeyInfo event={bedpres} registrationCounts={registrationCounts} />
                 </Box>
-            </HStack>
+            </Flex>
         </LinkBox>
     );
 };
