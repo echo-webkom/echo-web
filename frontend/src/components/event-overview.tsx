@@ -1,16 +1,17 @@
 import { Box, Heading, HStack, Text } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { useState } from 'react';
-import { Happening } from '../lib/api';
+import { Happening, RegistrationCount } from '../lib/api';
 import EntryBox from './entry-box';
 
 interface Props {
     events: Array<Happening>;
     title: string;
     type: 'bedpres' | 'event';
+    registrationCounts: Array<RegistrationCount>;
 }
 
-const EventOverview = ({ title, events, type }: Props) => {
+const EventOverview = ({ title, events, type, registrationCounts }: Props) => {
     const [time, setTime] = useState('upcoming');
 
     const upcoming = events.filter((entry: Happening) => isFuture(new Date(entry.date)));
@@ -41,6 +42,7 @@ const EventOverview = ({ title, events, type }: Props) => {
                 entries={time === 'upcoming' ? upcoming : past}
                 type={type}
                 altText={type === 'bedpres' ? 'Ingen flere bedriftpresentasjoner :(' : 'Ingen flere arrangement :('}
+                registrationCounts={registrationCounts}
             />
         </Box>
     );

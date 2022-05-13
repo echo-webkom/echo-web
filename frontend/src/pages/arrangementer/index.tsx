@@ -3,14 +3,22 @@ import { GetStaticProps } from 'next';
 import EventCalendar from '../../components/event-calendar';
 import EventOverview from '../../components/event-overview';
 import SEO from '../../components/seo';
-import { Happening, HappeningAPI, HappeningType, isErrorMessage } from '../../lib/api';
+import {
+    Happening,
+    HappeningAPI,
+    HappeningType,
+    isErrorMessage,
+    RegistrationAPI,
+    RegistrationCount,
+} from '../../lib/api';
 
 interface Props {
     events: Array<Happening>;
     bedpresses: Array<Happening>;
+    registrationCounts: Array<RegistrationCount>;
 }
 
-const HappeningsOverviewPage = ({ events, bedpresses }: Props): JSX.Element => {
+const HappeningsOverviewPage = ({ events, bedpresses, registrationCounts }: Props): JSX.Element => {
     return (
         <>
             <SEO title="Arrangementer" />
@@ -20,10 +28,20 @@ const HappeningsOverviewPage = ({ events, bedpresses }: Props): JSX.Element => {
                     <EventCalendar events={[...events, ...bedpresses]} />
                 </GridItem>
                 <GridItem>
-                    <EventOverview title="Arrangement" events={events} type="event" />
+                    <EventOverview
+                        title="Arrangement"
+                        events={events}
+                        registrationCounts={registrationCounts}
+                        type="event"
+                    />
                 </GridItem>
                 <GridItem>
-                    <EventOverview title="Bedriftspresentasjon" events={bedpresses} type="bedpres" />
+                    <EventOverview
+                        title="Bedriftspresentasjon"
+                        events={bedpresses}
+                        registrationCounts={registrationCounts}
+                        type="bedpres"
+                    />
                 </GridItem>
             </SimpleGrid>
         </>
@@ -37,9 +55,16 @@ export const getStaticProps: GetStaticProps = async () => {
     if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
     if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);
 
+    const slugs = [...bedpressesResponse, ...eventsResponse].map((happening: Happening) => happening.slug);
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
+        slugs,
+        process.env.BACKEND_URL ?? 'http://localhost:8080',
+    );
+
     const props: Props = {
         events: eventsResponse,
         bedpresses: bedpressesResponse,
+        registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
     };
 
     return { props };
