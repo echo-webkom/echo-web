@@ -1,9 +1,8 @@
-import { Box, Center, Heading, HStack, Text } from '@chakra-ui/react';
+import { Box, Heading, HStack, Text } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { useState } from 'react';
 import { Happening } from '../lib/api';
 import EntryBox from './entry-box';
-import Section from './section';
 
 interface Props {
     events: Array<Happening>;
@@ -38,27 +37,13 @@ const EventOverview = ({ title, events, type }: Props) => {
                     Kommende
                 </Text>
             </HStack>
-            {time === 'upcoming' && upcoming.length > 0 ? (
-                <EntryBox entries={upcoming} type={type} />
-            ) : time === 'upcoming' ? (
-                <NoMoreEntries type={type} />
-            ) : (
-                <EntryBox entries={past} type={type} />
-            )}
+            <EntryBox
+                entries={time === 'upcoming' ? upcoming : past}
+                type={type}
+                altText={type === 'bedpres' ? 'Ingen flere bedriftpresentasjoner :(' : 'Ingen flere arrangement :('}
+            />
         </Box>
     );
 };
-
-type NoMoreEntriesProps = {
-    type: 'event' | 'bedpres';
-};
-
-const NoMoreEntries = ({ type }: NoMoreEntriesProps): JSX.Element => (
-    <Section w="100%" h="100%">
-        <Center>
-            {type === 'bedpres' ? 'Ingen kommende bedriftspresentasjoner :(' : 'Ingen kommende arrangement :('}
-        </Center>
-    </Section>
-);
 
 export default EventOverview;

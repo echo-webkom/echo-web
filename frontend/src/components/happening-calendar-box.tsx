@@ -13,6 +13,7 @@ import {
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
 import { HappeningType } from '../lib/api/types';
+import getAuthorColor from '../lib/author-colors';
 
 interface Props {
     type: HappeningType;
@@ -36,7 +37,14 @@ const HappeningCalendarBox = ({ type, title, slug, location, body, author }: Pro
         >
             <Popover>
                 <PopoverTrigger>
-                    <Text noOfLines={1} fontSize="lg" color="black">
+                    <Text
+                        noOfLines={1}
+                        fontSize="lg"
+                        px="1"
+                        color="black"
+                        borderLeft="3px solid"
+                        borderColor={getAuthorColor(author)}
+                    >
                         {title}
                     </Text>
                 </PopoverTrigger>
