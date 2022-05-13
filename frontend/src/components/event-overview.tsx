@@ -12,14 +12,8 @@ interface Props {
 const EventOverview = ({ title, events }: Props) => {
     const [time, setTime] = useState('upcoming');
 
-    const upcoming = events.filter((entry: Happening) => {
-        return isFuture(new Date(entry.date));
-    });
-    const past = events
-        .filter((entry: Happening) => {
-            return isPast(new Date(entry.date));
-        })
-        .reverse();
+    const upcoming = events.filter((entry: Happening) => isFuture(new Date(entry.date)));
+    const past = events.filter((entry: Happening) => isPast(new Date(entry.date))).reverse();
 
     return (
         <Box>
@@ -42,8 +36,15 @@ const EventOverview = ({ title, events }: Props) => {
                     Kommende
                 </Text>
             </HStack>
-            {time === 'upcoming' ? (
+            {/* {time === 'upcoming' ? (
                 <EntryBox entries={upcoming} type="event" />
+            ) : (
+                <EntryBox entries={past} type="event" />
+            )} */}
+            {time === 'upcoming' && upcoming.length > 0 ? (
+                <EntryBox entries={upcoming} type="event" />
+            ) : time === 'upcoming' ? (
+                <Text>Ingen kommende bedriftspresentasjoner :(</Text>
             ) : (
                 <EntryBox entries={past} type="event" />
             )}
