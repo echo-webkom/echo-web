@@ -20,10 +20,10 @@ const HappeningsOverviewPage = ({ events, bedpresses }: Props): JSX.Element => {
                     <EventCalendar events={[...events, ...bedpresses]} />
                 </GridItem>
                 <GridItem>
-                    <EventOverview title="Arrangement" events={events} />
+                    <EventOverview title="Arrangement" events={events} type="event" />
                 </GridItem>
                 <GridItem>
-                    <EventOverview title="Bedriftspresentasjon" events={bedpresses} />
+                    <EventOverview title="Bedriftspresentasjon" events={bedpresses} type="bedpres" />
                 </GridItem>
             </SimpleGrid>
         </>
