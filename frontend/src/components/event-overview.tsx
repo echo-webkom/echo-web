@@ -29,6 +29,7 @@ const EventOverview = ({ title, events }: Props) => {
                     onClick={() => setTime('past')}
                     borderBottom="2px solid"
                     borderColor={time === 'past' ? 'cyan.500' : 'transparent'}
+                    _hover={{ cursor: 'pointer' }}
                 >
                     Tidligere
                 </Text>
@@ -36,6 +37,7 @@ const EventOverview = ({ title, events }: Props) => {
                     onClick={() => setTime('upcoming')}
                     borderBottom="2px solid transparent"
                     borderColor={time === 'upcoming' ? 'cyan.500' : 'transparent'}
+                    _hover={{ cursor: 'pointer' }}
                 >
                     Kommende
                 </Text>
