@@ -14879,10 +14879,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript-json-decoder@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.6.tgz#f5a44c163d9bba8fc5b46881fa5cc823d840c97d"
-  integrity sha512-acSpXrCf7LTEolJbqQDo6eP7h/mpO2u9VGJB4N6WvTcvKQdBIvHOXImXibn7N93kVwIoJbdikAOFdD8VDoeJaQ==
+typescript-json-decoder@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.7.tgz#a59774b5ea400bc3a94313808ecd38da7168c7ae"
+  integrity sha512-eM7wkFsW81rttMrx3AY2ykNEEuSAcdB3fEpQMWK4r1TfmM4LQBrSkqzJCCPR4AYggiYHMHb2/i3RUtRp5Ty5qA==
 
 typescript@4.6.4:
   version "4.6.4"
