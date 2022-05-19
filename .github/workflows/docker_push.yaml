@@ -17,7 +17,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: |
+            frontend
+            yarn.lock
+            package.json
+            Dockerfile.frontend
+          files_ignore: |
+            *.md
+            *.png
+            *.ico
+            *.svg
+            *.test.tsx
+            frontend/.gitignore
+            frontend/.env.example
+
       - name: Login to GitHub Container Registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -25,11 +44,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend with cache and push to registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           docker build \
             -f Dockerfile.frontend \
             --cache-from "$IMAGE_NAME/frontend:latest" \
-            -t "$IMAGE_NAME/frontend:$GITHUB_SHA" \
+            -t "$IMAGE_NAME/frontend:$TAG" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg SANITY_DATASET=$SANITY_DATASET \
             .
@@ -37,7 +57,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_DATASET: testing
           TAG: latest
 
   docker_push_backend:
@@ -46,7 +66,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: backend
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
       - name: Login to GitHub Container Registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -54,6 +84,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build backend with cache and push to registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           cd backend
           docker build \
