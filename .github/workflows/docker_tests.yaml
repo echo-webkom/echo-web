@@ -17,7 +17,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: |
+            frontend
+            yarn.lock
+            package.json
+            Dockerfile.frontend
+            docker-compose.cypress.yaml
+          files_ignore: |
+            *.md
+            *.png
+            *.ico
+            *.svg
+            *.test.tsx
+            frontend/.gitignore
+            frontend/.env.example
+
       - name: Login to GitHub Container Registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -25,6 +45,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend with cache and push to registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           docker build \
             -f Dockerfile.frontend \
@@ -45,7 +66,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: backend
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
       - name: Login to GitHub Container Registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -53,6 +84,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build backend with cache and push to registry
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           cd backend
           docker build \
@@ -72,12 +104,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: backend
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
       - name: Pull Docker image
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
       - name: Run Kotest tests with Docker Compose
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: docker compose -f backend/docker-compose.kotest.yaml up --exit-code-from=backend
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
@@ -91,18 +134,63 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Pull Docker images
+      - name: Get changed files, frontend
+        id: changed-files-frontend
+        uses: tj-actions/changed-files@v20
+        with:
+          files: |
+            frontend
+            yarn.lock
+            package.json
+            Dockerfile.frontend
+            docker-compose.cypress.yaml
+          files_ignore: |
+            *.md
+            *.png
+            *.ico
+            *.svg
+            *.test.tsx
+            frontend/.gitignore
+            frontend/.env.example
+
+      - name: Get changed files, backend
+        id: changed-files-backend
+        uses: tj-actions/changed-files@v20
+        with:
+          files: backend
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Pull Docker images, depending on what has changed
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
-          docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
-          docker pull "$IMAGE_NAME/frontend:$GITHUB_SHA"
+          { if [[ "$FRONTEND_CHANGED" = "true" ]] && [[ "$BACKEND_CHANGED" = "true" ]]; then
+              echo "Both changed."
+              docker pull "$IMAGE_NAME/frontend:$GITHUB_SHA"
+              docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+            elif [[ "$FRONTEND_CHANGED" = "true" ]]; then
+              echo "Only frontend changed."
+              docker pull "$IMAGE_NAME/frontend:$GITHUB_SHA"
+              docker pull "$IMAGE_NAME/backend:latest"
+            else
+              echo "Only backend changed."
+              docker pull "$IMAGE_NAME/frontend:latest"
+              docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+            fi
+          }
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          FRONTEND_CHANGED: ${{ steps.changed-files-frontend.outputs.any_changed }}
+          BACKEND_CHANGED: ${{ steps.changed-files-backend.outputs.any_changed }}
 
       - name: Run Cypress end-to-end tests
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: docker compose -f docker-compose.cypress.yaml up --exit-code-from=frontend --attach=frontend
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          TAG: ${{ github.sha }}
+          FRONTEND_TAG: ${{ steps.changed-files-frontend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
           SANITY_DATASET: testing
           ADMIN_KEY: admin-passord
           NEXTAUTH_SECRET: very-secret-string-123
@@ -114,12 +202,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v20
+        with:
+          files: backend/src/main/resources/db/migration/*.sql
+
       - name: Pull Docker image
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
         env:
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
       - name: Download database dump
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           heroku pg:backups:capture -a $HEROKU_APP_NAME
           heroku pg:backups:download -a $HEROKU_APP_NAME
@@ -128,6 +224,7 @@ jobs:
           HEROKU_APP_NAME: 'echo-web-backend-prod'
 
       - name: Run migration tests
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           docker compose -f backend/docker-compose.yaml up database --wait
           docker cp latest.dump backend-database-1:/
