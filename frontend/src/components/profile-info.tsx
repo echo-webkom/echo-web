@@ -41,11 +41,11 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
             <Heading size="md" my="0.5rem">
                 Navn
             </Heading>
-            <Text>{user.name}</Text>
+            <Text data-cy="profile-name">{user.name}</Text>
             <Heading size="md" my="0.5rem">
                 Email
             </Heading>
-            <Text>{user.email}</Text>
+            <Text data-cy="profile-email">{user.email}</Text>
             <FormProvider {...methods}>
                 {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                 <form data-cy="profile-form" id="profile-form" onSubmit={handleSubmit(submitForm)}>
@@ -54,6 +54,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                             Studieretning
                         </Heading>
                         <Select
+                            data-cy="profile-degree"
                             onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
                             defaultValue={user.degree ?? undefined}
                             placeholder="Velg studieretning"
@@ -76,6 +77,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                     <FormControl as="fieldset" isRequired>
                         <Heading size="md">Årstrinn</Heading>
                         <Select
+                            data-cy="profile-degree-year"
                             onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
                             defaultValue={user.degreeYear ?? undefined}
                             placeholder="Velg årstrinn"

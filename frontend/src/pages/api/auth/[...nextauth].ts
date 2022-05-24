@@ -18,6 +18,7 @@ export default NextAuth({
             id: 'feide',
             name: 'Feide',
             type: 'oauth',
+            checks: process.env.SANITY_DATASET === 'testing' ? 'none' : undefined,
             wellKnown: 'https://auth.dataporten.no/.well-known/openid-configuration',
             authorization: {
                 params: {
