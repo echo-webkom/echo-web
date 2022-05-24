@@ -42,16 +42,17 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             {/* <NavLink text="Jobb" href="/job" testid="jobb" /> */}
             <NavLink text="Om echo" href="/om-echo/om-oss" testid="om-oss" />
             {isMobile && (
-                <>
-                    {status === 'authenticated' && <NavLink text="Min profil" href="/profile" testid="min-profil" />}
+                <Flex data-cy="min-profil">
+                    {status === 'authenticated' && <NavLink text="Min profil" href="/profile" />}
                     {status === 'unauthenticated' && (
                         <NavLinkButton onClick={() => void onProfileClick()}>Logg inn</NavLinkButton>
                     )}
-                </>
+                </Flex>
             )}
             <ColorModeButton />
             {!isMobile && (
                 <IconButton
+                    data-cy="min-profil"
                     ml={['.6rem', null, null, null, '2rem']}
                     aria-label={status === 'authenticated' ? 'Gå til profil' : 'Logg inn'}
                     onClick={() => void onProfileClick()}

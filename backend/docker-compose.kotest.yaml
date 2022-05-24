@@ -24,7 +24,6 @@ services:
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
 
   database:
-    # Postgres 13.6 is the version Heroku uses.
     image: postgres:13.6-alpine
     restart: always
     ports:
