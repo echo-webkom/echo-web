@@ -23,8 +23,8 @@ const HappeningsOverviewPage = ({ events, bedpresses, registrationCounts }: Prop
         <>
             <SEO title="Arrangementer" />
             <Heading>Arrangementer</Heading>
-            <SimpleGrid columns={[1, 1, 2]} gap="6">
-                <GridItem colSpan={[1, 1, 2]}>
+            <SimpleGrid columns={[1, null, null, 2]} gap="6">
+                <GridItem colSpan={[1, null, null, 1, 2]}>
                     <EventCalendar events={[...events, ...bedpresses]} />
                 </GridItem>
                 <GridItem>
