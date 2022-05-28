@@ -19,7 +19,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: |
             frontend
@@ -68,7 +68,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: backend
           files_ignore: |
@@ -106,7 +106,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: backend
           files_ignore: |
@@ -136,7 +136,7 @@ jobs:
 
       - name: Get changed files, frontend
         id: changed-files-frontend
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: |
             frontend
@@ -155,7 +155,7 @@ jobs:
 
       - name: Get changed files, backend
         id: changed-files-backend
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: backend
           files_ignore: |
@@ -210,7 +210,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v20
+        uses: tj-actions/changed-files@v21
         with:
           files: backend/src/main/resources/db/migration/*.sql
 
