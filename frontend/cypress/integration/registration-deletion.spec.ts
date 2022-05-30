@@ -2,8 +2,6 @@
 import { happenings } from '../fixtures/happening.json';
 import { waitListEmails } from '../fixtures/users.json';
 
-const registrationRoute = 'registration';
-
 describe('Happening registration', () => {
     describe('720p res', () => {
         beforeEach(() => {
@@ -14,7 +12,7 @@ describe('Happening registration', () => {
             for (let rows = 5; rows > 0; rows--) {
                 describe('Wait list registrations', () => {
                     beforeEach(() => {
-                        cy.visit(`/${registrationRoute}/${slug}`);
+                        cy.visit(`/happening/${slug}/registrations`);
                     });
 
                     it('are moved up when regular registrations are deleted', () => {
@@ -60,7 +58,7 @@ describe('Happening registration', () => {
 
         after(() => {
             for (const { slug } of happenings) {
-                cy.visit(`/${registrationRoute}/${slug}`);
+                cy.visit(`/happening/${slug}/registrations`);
                 cy.get('[data-cy=no-regs]').should('be.visible');
                 cy.get('[data-cy=no-regs]').should('contain.text', 'Ingen påmeldinger enda');
             }

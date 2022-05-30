@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Box, Heading, Text, FormControl, Button, Select } from '@chakra-ui/react';
-import { ProfileFormValues, UserWithName, UserAPI, Degree } from '../lib/api';
+import { ProfileFormValues, User, BackendAPI, Degree } from '../lib/api';
 
 enum InfoState {
     IDLE,
@@ -16,15 +16,16 @@ interface ProfileState {
     errorMessage: string | null;
 }
 
-const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
+const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const methods = useForm<ProfileFormValues>();
     const { register, handleSubmit } = methods;
     const [profileState, setProfileState] = useState<ProfileState>({ infoState: InfoState.IDLE, errorMessage: null });
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (data: ProfileFormValues) => {
         setProfileState({ infoState: InfoState.SAVING, errorMessage: null });
-        const res = await UserAPI.putUser({
+        const res = await BackendAPI.putUser({
             email: user.email,
+            name: user.name,
             degree: data.degree,
             degreeYear: +data.degreeYear,
         });

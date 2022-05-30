@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import axios from 'axios';
-import { User, UserWithName } from '../../../lib/api';
+import { BackendUser, User } from '../../../lib/api';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 return;
             }
 
-            const response = await axios.get(`${backendUrl}/user`, {
+            const response = await axios.get(`${backendUrl}/user/${session.email}`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
@@ -28,13 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             // no user in database
             if (response.status === 404) {
-                // not authenticated
-                if (!session.email || !session.name) {
-                    res.status(401);
-                    return;
-                }
-
-                const user: UserWithName = {
+                const user: User = {
                     email: session.email,
                     name: session.name,
                     degreeYear: null,
@@ -45,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 return;
             }
 
-            const user: UserWithName = {
+            const user: User = {
                 email: session.email,
                 name: session.name,
                 degree: response.data.degree ?? null,
@@ -57,13 +51,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (req.method === 'PUT') {
-            const user: User = {
-                email: req.body.email,
+            // not authenticated
+            if (!session.email) {
+                res.status(401);
+                return;
+            }
+
+            const user: BackendUser = {
                 degree: req.body.degree,
                 degreeYear: req.body.degreeYear,
             };
 
-            const response = await axios.put(`${backendUrl}/user`, user, {
+            const response = await axios.put(`${backendUrl}/user/${session.email}`, user, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                     'Content-Type': 'application/json',

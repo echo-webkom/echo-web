@@ -16,7 +16,7 @@ import {
     isErrorMessage,
     Post,
     PostAPI,
-    RegistrationAPI,
+    BackendAPI,
     RegistrationCount,
     JobAdvertAPI,
     JobAdvert,
@@ -160,7 +160,7 @@ export const getStaticProps: GetStaticProps = async () => {
         .slice(0, bedpresLimit);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
+    const registrationCountsResponse = await BackendAPI.getRegistrationCountForSlugs(
         slugs,
         process.env.BACKEND_URL ?? 'http://localhost:8080',
     );

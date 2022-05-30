@@ -19,7 +19,7 @@ import {
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { Registration, RegistrationAPI } from '../lib/api';
+import { Registration, BackendAPI } from '../lib/api';
 import { notEmptyOrNull } from '../lib/utils';
 
 interface Props {
@@ -104,7 +104,7 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                                 data-cy="confirm-delete-button"
                                 bg="green.400"
                                 onClick={async () => {
-                                    const { error } = await RegistrationAPI.deleteRegistration(
+                                    const { error } = await BackendAPI.deleteRegistration(
                                         link,
                                         registration.email,
                                         backendUrl,

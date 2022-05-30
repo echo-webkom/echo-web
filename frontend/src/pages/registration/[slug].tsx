@@ -18,7 +18,7 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import ErrorBox from '../../components/error-box';
 import ButtonLink from '../../components/button-link';
-import { isErrorMessage, RegistrationAPI, Registration, registrationRoute } from '../../lib/api';
+import { isErrorMessage, BackendAPI, Registration } from '../../lib/api';
 import Section from '../../components/section';
 import RegistrationRow from '../../components/registration-row';
 import { notEmptyOrNull } from '../../lib/utils';
@@ -60,7 +60,7 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                             colSpan={[1, null, 2]}
                         >{`Påmeldinger for '${registrations[0].slug}'`}</Heading>
                         <GridItem justifySelf={justifyBtn}>
-                            <ButtonLink linkTo={`${backendUrl}/${registrationRoute}/${link}?download=y`} mt="1.5rem">
+                            <ButtonLink linkTo={`${backendUrl}/happening/${link}/registrations?download=y`} mt="1.5rem">
                                 Last ned som CSV
                             </ButtonLink>
                         </GridItem>
@@ -158,7 +158,7 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
-    const registrations = await RegistrationAPI.getRegistrations(slug, backendUrl);
+    const registrations = await BackendAPI.getRegistrations(slug, backendUrl);
 
     if (isErrorMessage(registrations) && registrations.message === '404') {
         return {

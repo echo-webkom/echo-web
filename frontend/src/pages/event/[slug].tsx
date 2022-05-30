@@ -7,7 +7,7 @@ import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOver
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { isErrorMessage, Happening, HappeningAPI, HappeningType, HappeningInfo } from '../../lib/api';
+import { isErrorMessage, Happening, HappeningAPI, HappeningType, HappeningInfo, BackendAPI } from '../../lib/api';
 import ErrorBox from '../../components/error-box';
 import SEO from '../../components/seo';
 import Article from '../../components/article';
@@ -150,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
+    const hiddenHappeningInfo = await BackendAPI.getHappeningInfo(adminKey, slug, backendUrl);
     const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
 
     const date = Date.now();

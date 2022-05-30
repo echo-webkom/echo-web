@@ -25,7 +25,7 @@ import {
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
 import { FormProvider, useForm, SubmitHandler } from 'react-hook-form';
-import { Degree, Happening, HappeningType, RegistrationAPI, Question, RegFormValues } from '../lib/api';
+import { Degree, Happening, HappeningType, BackendAPI, Question, RegFormValues } from '../lib/api';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
 
@@ -88,14 +88,13 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        await RegistrationAPI.submitRegistration(
+        await BackendAPI.submitRegistration(
             {
                 email: data.email,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 degree: data.degree,
                 degreeYear: data.degreeYear,
-                slug: happening.slug,
                 terms: data.terms1 && data.terms2 && data.terms3,
                 answers: happening.additionalQuestions.map((q: Question, index: number) => {
                     return { question: q.questionText, answer: data.answers[index] };
@@ -103,6 +102,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
                 type: type,
                 regVerifyToken,
             },
+            happening.slug,
             backendUrl,
         ).then(({ response, statusCode }) => {
             if (statusCode === 200 || statusCode === 202) {

@@ -3,12 +3,12 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { Spinner, Center, Text, Button, useColorModeValue, Link, Flex, Spacer } from '@chakra-ui/react';
 import { IoMdHome } from 'react-icons/io';
 import SEO from '../components/seo';
-import { UserAPI, UserWithName, isErrorMessage } from '../lib/api';
+import { BackendAPI, User, isErrorMessage } from '../lib/api';
 import Section from '../components/section';
 import ProfileInfo from '../components/profile-info';
 
 const ProfilePage = (): JSX.Element => {
-    const [user, setUser] = useState<UserWithName | null>();
+    const [user, setUser] = useState<User | null>();
 
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
@@ -17,7 +17,7 @@ const ProfilePage = (): JSX.Element => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await UserAPI.getUser();
+            const result = await BackendAPI.getUser();
 
             if (!isErrorMessage(result)) {
                 setUser(result);

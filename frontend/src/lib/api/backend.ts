@@ -1,7 +1,13 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { responseDecoder, registrationDecoder, registrationCountDecoder } from './decoders';
-import { ErrorMessage, Degree, Answer, Response, Registration, RegistrationCount } from './types';
+import { array, string } from 'typescript-json-decoder';
+import {
+    userDecoder,
+    happeningInfoDecoder,
+    responseDecoder,
+    registrationDecoder,
+    registrationCountDecoder,
+} from './decoders';
+import { User, HappeningInfo, ErrorMessage, Degree, Answer, Response, Registration, RegistrationCount } from './types';
 import { HappeningType } from '.';
 
 const genericError = {
@@ -10,8 +16,14 @@ const genericError = {
     date: null,
 };
 
-// Values directly from the form (aka form fields)
-interface FormValues {
+// Values directly from the profile form (aka form fields)
+interface ProfileFormValues {
+    degree: Degree;
+    degreeYear: number;
+}
+
+// Values directly from the registration form (aka form fields)
+interface RegFormValues {
     email: string;
     firstName: string;
     lastName: string;
@@ -23,29 +35,27 @@ interface FormValues {
     answers: Array<string>;
 }
 
-// The data from the form + slug and type
+// The data from the registration form + type and regVerifyToken
 interface FormRegistration {
     email: string;
     firstName: string;
     lastName: string;
     degree: Degree;
     degreeYear: number;
-    slug: string;
     type: HappeningType;
     terms: boolean;
     answers: Array<Answer>;
     regVerifyToken: string | null;
 }
 
-const registrationRoute = 'registration';
-
-const RegistrationAPI = {
+const BackendAPI = {
     submitRegistration: async (
         registration: FormRegistration,
+        slug: string,
         backendUrl: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
+            const { data, status } = await axios.post(`${backendUrl}/happening/${slug}/registrations`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
@@ -82,7 +92,7 @@ const RegistrationAPI = {
 
     getRegistrations: async (link: string, backendUrl: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/${registrationRoute}/${link}?json=y`);
+            const { data } = await axios.get(`${backendUrl}/happening/${link}/registrations?json=y`);
 
             return array(registrationDecoder)(data);
         } catch (error) {
@@ -107,7 +117,8 @@ const RegistrationAPI = {
         backendUrl: string,
     ): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            const { data } = await axios.post(`${backendUrl}/happening/count/registrations`, { slugs });
+
             return array(registrationCountDecoder)(data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -132,7 +143,7 @@ const RegistrationAPI = {
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
             const { data } = await axios.delete(
-                `${backendUrl}/${registrationRoute}/${link}/${encodeURIComponent(email)}`,
+                `${backendUrl}/happening/${link}/registrations/${encodeURIComponent(email)}`,
             );
 
             return { response: data, error: null };
@@ -141,7 +152,58 @@ const RegistrationAPI = {
             return { response: null, error: JSON.stringify(error) };
         }
     },
+
+    getHappeningInfo: async (auth: string, slug: string, backendUrl: string): Promise<HappeningInfo | ErrorMessage> => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/happening/${slug}`, {
+                auth: {
+                    username: 'admin',
+                    password: auth,
+                },
+            });
+
+            return happeningInfoDecoder(data);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { message: JSON.stringify(error) };
+        }
+    },
+
+    getUser: async (): Promise<User | null | ErrorMessage> => {
+        try {
+            const { data, status } = await axios.get('/api/user', {
+                validateStatus: (statusCode: number) => {
+                    return statusCode < 500;
+                },
+            });
+
+            if (status === 404) {
+                return null;
+            }
+
+            return userDecoder(data);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return {
+                message: 'Fail @ getUser',
+            };
+        }
+    },
+
+    putUser: async (user: User): Promise<string | ErrorMessage> => {
+        try {
+            const { data } = await axios.put('/api/user', user, { headers: { 'Content-Type': 'application/json' } });
+
+            return string(data);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+
+            return {
+                message: 'Fail @ putUser',
+            };
+        }
+    },
 };
 
-export { RegistrationAPI, registrationRoute };
-export type { FormValues };
+export { BackendAPI };
+export type { RegFormValues, ProfileFormValues };
