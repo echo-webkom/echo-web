@@ -30,7 +30,7 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.FeatureToggles
-import no.uib.echo.Response
+import no.uib.echo.RegistrationResponse
 import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
@@ -50,7 +50,6 @@ import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
-import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationCountJson
 import no.uib.echo.schema.RegistrationJson
@@ -147,53 +146,75 @@ fun Application.configureRouting(
 }
 
 object Routing {
-    const val registrationRoute: String = "registration"
-    const val happeningRoute: String = "happening"
+    const val getStatusRoute = "/status"
+
+    const val putHappeningRoute = "/happening/{slug}"
+    const val getHappeningInfoRoute = "/happening/{slug}"
+    const val deleteHappeningRoute = "/happening/{slug}"
+
+    const val getRegistrationsRoute = "/happening/{link}/registrations"
+    const val postRegistrationRoute = "/happening/{slug}/registrations"
+
+    const val postRegistrationCountRoute = "/happening/count/registrations"
+
+    const val getUserRoute = "/user/{email}"
+    const val putUserRoute = "/user/{email}"
+
+    const val deleteRegistrationRoute = "/happening/{link}/registrations/{email}"
 
     fun Route.getStatus() {
-        get("/status") {
+        get(getStatusRoute) {
             call.respond(HttpStatusCode.OK)
         }
     }
 
     fun Route.getUser() {
-        get("/user") {
+        get(getUserRoute) {
             val principal = call.principal<JWTPrincipal>()
-            val email = principal!!.payload.getClaim("email").asString()
+            val jwtEmail = principal!!.payload.getClaim("email").asString()
+            val paramEmail = call.parameters["email"]
+
+            if (jwtEmail != paramEmail) {
+                // Can only get your own user (so where emails match)
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
 
             val user = transaction {
                 addLogger(StdOutSqlLogger)
                 User.select {
-                    User.email eq email
+                    User.email eq jwtEmail
                 }.firstOrNull()
             }
 
             if (user == null) {
-                call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
+                call.respond(HttpStatusCode.NotFound, "User with email not found (email = $jwtEmail).")
                 return@get
             }
 
-            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
+            call.respond(HttpStatusCode.OK, UserJson(user[User.degreeYear], Degree.valueOf(user[User.degree])))
         }
     }
 
     fun Route.putUser() {
-        put("/user") {
+        put(putUserRoute) {
             try {
                 val user = call.receive<UserJson>()
 
                 val principal = call.principal<JWTPrincipal>()
-                val email = principal!!.payload.getClaim("email").asString()
+                val jwtEmail = principal!!.payload.getClaim("email").asString()
+                val paramEmail = call.parameters["email"]
 
-                if (user.email != email) {
-                    call.respond(HttpStatusCode.BadRequest)
+                if (jwtEmail != paramEmail) {
+                    // Can only PUT your own user (so where emails match)
+                    call.respond(HttpStatusCode.Unauthorized)
                     return@put
                 }
 
                 val result = transaction {
                     addLogger(StdOutSqlLogger)
                     User.select {
-                        User.email eq email
+                        User.email eq jwtEmail
                     }.firstOrNull()
                 }
 
@@ -201,25 +222,29 @@ object Routing {
                     transaction {
                         addLogger(StdOutSqlLogger)
                         User.insert {
-                            it[User.email] = email
+                            it[email] = jwtEmail
                             it[degree] = user.degree.toString()
                             it[degreeYear] = user.degreeYear
                         }
                     }
-                    call.respond(HttpStatusCode.OK, "User created with email = $email")
+                    call.respond(HttpStatusCode.OK, "User created with email = $jwtEmail")
                     return@put
                 }
 
                 transaction {
                     addLogger(StdOutSqlLogger)
                     User.update({
-                        User.email eq email
+                        User.email eq jwtEmail
                     }) {
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
                     }
                 }
-                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    "User updated with email = $jwtEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
                 e.printStackTrace()
@@ -228,7 +253,7 @@ object Routing {
     }
 
     fun Route.getHappeningInfo() {
-        get("/$happeningRoute/{slug}") {
+        get(getHappeningInfoRoute) {
             val slug = call.parameters["slug"]
 
             if (slug == null) {
@@ -284,7 +309,7 @@ object Routing {
     }
 
     fun Route.getRegistrations(dev: Boolean) {
-        get("/$registrationRoute/{link}") {
+        get(getRegistrationsRoute) {
             val link = call.parameters["link"]
             val download = call.request.queryParameters["download"] != null
             val json = call.request.queryParameters["json"] != null
@@ -309,7 +334,6 @@ object Routing {
                         reg[Registration.lastName],
                         Degree.valueOf(reg[Registration.degree]),
                         reg[Registration.degreeYear],
-                        reg[Registration.happeningSlug],
                         reg[Registration.terms],
                         reg[Registration.submitDate].toString(),
                         reg[Registration.waitList],
@@ -351,7 +375,7 @@ object Routing {
             } else {
                 call.response.header(
                     HttpHeaders.Location,
-                    "https://echo.uib.no/$registrationRoute/$link"
+                    "https://echo.uib.no/registrations/$link"
                 )
                 call.respond(HttpStatusCode.MovedPermanently)
             }
@@ -359,43 +383,56 @@ object Routing {
     }
 
     fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRegs: Boolean) {
-        post("/$registrationRoute") {
+        post(postRegistrationRoute) {
             try {
                 val registration = call.receive<RegistrationJson>()
+                val slug = call.parameters["slug"]
+
+                if (slug == null) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(RegistrationResponse.HappeningDoesntExist, registration.type)
+                    )
+                    return@post
+                }
 
                 if (!isEmailValid(registration.email)) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(RegistrationResponse.InvalidEmail, registration.type)
+                    )
                     return@post
                 }
 
                 if (registration.degreeYear !in 1..5) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, registration.type))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(RegistrationResponse.InvalidDegreeYear, registration.type)
+                    )
                     return@post
                 }
 
                 if (registration.degree in bachelors && registration.degreeYear !in 1..3) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        resToJson(Response.DegreeMismatchBachelor, registration.type)
+                        resToJson(RegistrationResponse.DegreeMismatchBachelor, registration.type)
                     )
                     return@post
                 }
 
                 if (registration.degree in masters && registration.degreeYear !in 4..5) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, registration.type))
-                    return@post
-                }
-
-                if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        resToJson(Response.DegreeMismatchArmninf, registration.type)
+                        resToJson(RegistrationResponse.DegreeMismatchMaster, registration.type)
                     )
                     return@post
                 }
 
                 if (!registration.terms) {
-                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms, registration.type))
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(RegistrationResponse.InvalidTerms, registration.type)
+                    )
                     return@post
                 }
 
@@ -403,20 +440,23 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     Happening.select {
-                        Happening.slug eq registration.slug
+                        Happening.slug eq slug
                     }.firstOrNull()
                 }
 
                 if (happening == null) {
                     call.respond(
                         HttpStatusCode.Conflict,
-                        resToJson(Response.HappeningDoesntExist, registration.type)
+                        resToJson(RegistrationResponse.HappeningDoesntExist, registration.type)
                     )
                     return@post
                 }
 
                 if (happening[Happening.regVerifyToken] != registration.regVerifyToken && verifyRegs) {
-                    call.respond(HttpStatusCode.Unauthorized, resToJson(Response.NotViaForm, registration.type))
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        resToJson(RegistrationResponse.NotViaForm, registration.type)
+                    )
                     return@post
                 }
 
@@ -424,7 +464,7 @@ object Routing {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
-                            Response.TooEarly,
+                            RegistrationResponse.TooEarly,
                             registration.type,
                             regDate = happening[Happening.registrationDate].toString()
                         )
@@ -435,12 +475,12 @@ object Routing {
                 if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
                     call.respond(
                         HttpStatusCode.Forbidden,
-                        resToJson(Response.TooLate, registration.type)
+                        resToJson(RegistrationResponse.TooLate, registration.type)
                     )
                     return@post
                 }
 
-                val spotRanges = selectSpotRanges(registration.slug)
+                val spotRanges = selectSpotRanges(slug)
 
                 val correctRange = spotRanges.firstOrNull {
                     registration.degreeYear in it.minDegreeYear..it.maxDegreeYear
@@ -449,7 +489,7 @@ object Routing {
                 if (correctRange == null) {
                     call.respond(
                         HttpStatusCode.Forbidden,
-                        resToJson(Response.NotInRange, registration.type, spotRanges = spotRanges)
+                        resToJson(RegistrationResponse.NotInRange, registration.type, spotRanges = spotRanges)
                     )
                     return@post
                 }
@@ -458,7 +498,7 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     Registration.select {
-                        Registration.happeningSlug eq registration.slug and
+                        Registration.happeningSlug eq slug and
                             (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
                     }.count()
                 }
@@ -467,7 +507,7 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     Registration.select {
-                        Registration.happeningSlug eq registration.slug and
+                        Registration.happeningSlug eq slug and
                             (
                                 Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
                                     (Registration.waitList eq true)
@@ -483,14 +523,14 @@ object Routing {
 
                     Registration.select {
                         Registration.email.lowerCase() eq registration.email.lowercase() and
-                            (Registration.happeningSlug eq registration.slug)
+                            (Registration.happeningSlug eq slug)
                     }.firstOrNull()
                 }
 
                 if (oldReg != null) {
                     val responseCode = when (oldReg[Registration.waitList]) {
-                        true -> Response.AlreadySubmittedWaitList
-                        false -> Response.AlreadySubmitted
+                        true -> RegistrationResponse.AlreadySubmittedWaitList
+                        false -> RegistrationResponse.AlreadySubmitted
                     }
                     call.respond(
                         HttpStatusCode.UnprocessableEntity,
@@ -508,7 +548,7 @@ object Routing {
                         it[lastName] = registration.lastName
                         it[degree] = registration.degree.toString()
                         it[degreeYear] = registration.degreeYear
-                        it[happeningSlug] = registration.slug
+                        it[happeningSlug] = slug
                         it[terms] = true
                         it[Registration.waitList] = waitList
                     }
@@ -516,7 +556,7 @@ object Routing {
                     if (registration.answers.isNotEmpty()) {
                         Answer.batchInsert(registration.answers) { a ->
                             this[Answer.registrationEmail] = registration.email.lowercase()
-                            this[Answer.happeningSlug] = registration.slug
+                            this[Answer.happeningSlug] = slug
                             this[Answer.question] = a.question
                             this[Answer.answer] = a.answer
                         }
@@ -526,20 +566,20 @@ object Routing {
                 if (waitList) {
                     call.respond(
                         HttpStatusCode.Accepted,
-                        resToJson(Response.WaitList, registration.type, waitListSpot = waitListSpot)
+                        resToJson(RegistrationResponse.WaitList, registration.type, waitListSpot = waitListSpot)
                     )
 
                     if (sendGridApiKey == null || !sendEmail)
                         return@post
 
-                    sendConfirmationEmail(sendGridApiKey, registration, waitListSpot)
+                    sendConfirmationEmail(sendGridApiKey, registration, slug, waitListSpot)
                 } else {
-                    call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
+                    call.respond(HttpStatusCode.OK, resToJson(RegistrationResponse.OK, registration.type))
 
                     if (sendGridApiKey == null || !sendEmail)
                         return@post
 
-                    sendConfirmationEmail(sendGridApiKey, registration, null)
+                    sendConfirmationEmail(sendGridApiKey, registration, slug, null)
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
@@ -549,8 +589,9 @@ object Routing {
     }
 
     fun Route.deleteRegistration(dev: Boolean) {
-        delete("/$registrationRoute/{link}/{email}") {
+        delete(deleteRegistrationRoute) {
             val link = call.parameters["link"]
+
             val email = withContext(Dispatchers.IO) {
                 URLDecoder.decode(call.parameters["email"], "utf-8")
             }
@@ -634,10 +675,17 @@ object Routing {
     }
 
     fun Route.putHappening(sendGridApiKey: String?, sendEmail: Boolean, dev: Boolean) {
-        put("/$happeningRoute") {
+        put(putHappeningRoute) {
+            val slug = call.parameters["slug"]
+
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest, "No slug specified.")
+                return@put
+            }
+
             try {
                 val hap = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(hap, sendGridApiKey, sendEmail, dev)
+                val result = insertOrUpdateHappening(hap, slug, sendGridApiKey, sendEmail, dev)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
@@ -648,76 +696,81 @@ object Routing {
     }
 
     fun Route.deleteHappening() {
-        delete("/$happeningRoute") {
-            try {
-                val hap = call.receive<HappeningSlugJson>()
+        delete(deleteHappeningRoute) {
+            val slug = call.parameters["slug"]
 
-                val hapDeleted = transaction {
-                    addLogger(StdOutSqlLogger)
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest, "No slug specified.")
+                return@delete
+            }
 
-                    val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
-                    if (!happeningExists)
-                        return@transaction false
+            val hapDeleted = transaction {
+                addLogger(StdOutSqlLogger)
 
-                    SpotRange.deleteWhere {
-                        SpotRange.happeningSlug eq hap.slug
-                    }
+                val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
+                if (!happeningExists)
+                    return@transaction false
 
-                    Answer.deleteWhere {
-                        Answer.happeningSlug eq hap.slug
-                    }
-
-                    Registration.deleteWhere {
-                        Registration.happeningSlug eq hap.slug
-                    }
-
-                    Happening.deleteWhere {
-                        Happening.slug eq hap.slug
-                    }
-
-                    return@transaction true
+                SpotRange.deleteWhere {
+                    SpotRange.happeningSlug eq slug
                 }
 
-                if (hapDeleted)
-                    call.respond(
-                        HttpStatusCode.OK,
-                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
-                    )
-                else
-                    call.respond(
-                        HttpStatusCode.NotFound,
-                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
-                    )
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
-                e.printStackTrace()
+                Answer.deleteWhere {
+                    Answer.happeningSlug eq slug
+                }
+
+                Registration.deleteWhere {
+                    Registration.happeningSlug eq slug
+                }
+
+                Happening.deleteWhere {
+                    Happening.slug eq slug
+                }
+
+                return@transaction true
             }
+
+            if (hapDeleted)
+                call.respond(
+                    HttpStatusCode.OK,
+                    "Happening with slug = $slug deleted."
+                )
+            else
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    "Happening with slug = $slug does not exist."
+                )
         }
     }
 
     fun Route.postRegistrationCount() {
-        post("/$registrationRoute/count") {
-            val slugs = call.receive<SlugJson>().slugs
-            val registrationCounts = transaction {
-                addLogger(StdOutSqlLogger)
+        post(postRegistrationCountRoute) {
+            try {
+                val slugs = call.receive<SlugJson>().slugs
+                val registrationCounts = transaction {
+                    addLogger(StdOutSqlLogger)
 
-                slugs.map {
-                    val count = Registration.select {
-                        Registration.happeningSlug eq it
-                    }.count()
+                    slugs.map {
+                        val count = Registration.select {
+                            Registration.happeningSlug eq it and (Registration.waitList eq false)
+                        }.count()
 
-                    val waitListCount = Registration.select {
-                        Registration.happeningSlug eq it and (Registration.waitList eq true)
-                    }.count()
+                        val waitListCount = Registration.select {
+                            Registration.happeningSlug eq it and (Registration.waitList eq true)
+                        }.count()
 
-                    RegistrationCountJson(it, count, waitListCount)
+                        RegistrationCountJson(it, count, waitListCount)
+                    }
                 }
-            }
 
-            call.respond(
-                HttpStatusCode.OK,
-                registrationCounts
-            )
+                call.respond(
+                    HttpStatusCode.OK,
+                    registrationCounts
+                )
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
+            }
         }
     }
 }

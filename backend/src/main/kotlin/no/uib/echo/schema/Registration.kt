@@ -1,7 +1,6 @@
 package no.uib.echo.schema
 
 import kotlinx.serialization.Serializable
-import no.uib.echo.schema.Registration.happeningSlug
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
@@ -20,7 +19,6 @@ data class RegistrationJson(
     val lastName: String,
     val degree: Degree,
     val degreeYear: Int,
-    val slug: String,
     val terms: Boolean,
     val submitDate: String? = null,
     val waitList: Boolean? = null,
@@ -48,7 +46,7 @@ fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolea
         addLogger(StdOutSqlLogger)
 
         Registration.select {
-            happeningSlug eq slug and
+            Registration.happeningSlug eq slug and
                 (Registration.degreeYear inList range) and
                 (Registration.waitList eq waitList)
         }.count()

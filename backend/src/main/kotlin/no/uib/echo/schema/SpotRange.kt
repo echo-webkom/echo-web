@@ -1,9 +1,6 @@
 package no.uib.echo.schema
 
 import kotlinx.serialization.Serializable
-import no.uib.echo.schema.SpotRange.maxDegreeYear
-import no.uib.echo.schema.SpotRange.minDegreeYear
-import no.uib.echo.schema.SpotRange.spots
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
@@ -58,9 +55,7 @@ fun selectSpotRanges(slug: String): List<SpotRangeJson> {
         }.toList()
     }.map {
         SpotRangeJson(
-            it[spots],
-            it[minDegreeYear],
-            it[maxDegreeYear]
+            it[SpotRange.spots], it[SpotRange.minDegreeYear], it[SpotRange.maxDegreeYear]
         )
     }
 }

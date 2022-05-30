@@ -7,7 +7,7 @@ testing=false
 user=admin
 spotranges="[]"
 
-while getopts zpts:i:r:d:x:h:c: flag; do
+while getopts z:p:t:s:i:r:d:x:h:c: flag; do
   case "${flag}" in
   z) host=${OPTARG} ;;
   p) port=${OPTARG} ;;
@@ -35,8 +35,7 @@ if [ "$testing" = true ]; then
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
-    -d '{ "slug": "bedriftspresentasjon-med-bekk", 
-          "title": "Bedpres med Bekk",
+    -d '{ "title": "Bedpres med Bekk",
           "registrationDate": "2021-05-06T16:46+01:00",
           "happeningDate": "2030-03-09T16:15+01:00",
           "spotRanges":
@@ -54,14 +53,13 @@ if [ "$testing" = true ]; then
               ],
           "type": "BEDPRES",
           "organizerEmail": "test@test.com" }' \
-    "$host":"$port"/happening
+    "$host":"$port"/happening/bedriftspresentasjon-med-bekk
   curl --verbose \
     -X PUT \
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
-    -d '{ "slug": "fest-med-tilde", 
-          "title": "Fest med Tilde!",
+    -d '{ "title": "Fest med Tilde!",
           "registrationDate": "2021-05-06T16:46+01:00",
           "happeningDate": "2030-06-02T14:20+01:00",
           "spotRanges":
@@ -74,7 +72,7 @@ if [ "$testing" = true ]; then
               ],
           "type": "EVENT",
           "organizerEmail": "test@test.com" }' \
-    "$host":"$port"/happening
+    "$host":"$port"/happening/fest-med-tilde
   exit 0
 fi
 
@@ -109,19 +107,21 @@ if [ -z ${title+x} ]; then
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
+    -H "Origin: localhost" \
     -d '{ "slug": "'"${slug}"'",
           "registrationDate": "'"${regdate}"'",
           "happeningDate": "'"${hapdate}"'",
           "spotRanges": '"${spotranges}"',
           "type": "'"${happening}"'",
           "organizerEmail": "'"${organizer_email}"'" }' \
-    "$host":"$port"/happening
+    "$host":"$port"/happening/"$slug"
 else
   curl --verbose \
     -X PUT \
     -u "$user":"$secret" \
     -H "Connection: close" \
     -H "Content-Type: application/json" \
+    -H "Origin: localhost" \
     -d '{ "slug": "'"${slug}"'",
           "title": "'"${title}"'",
           "registrationDate": "'"${regdate}"'",
@@ -129,5 +129,5 @@ else
           "spotRanges": '"${spotranges}"',
           "type": "'"${happening}"'",
           "organizerEmail": "'"${organizer_email}"'" }' \
-    "$host":"$port"/happening
+    "$host":"$port"/happening/"$slug"
 fi

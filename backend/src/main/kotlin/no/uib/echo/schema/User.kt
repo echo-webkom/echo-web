@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.Table
 
 @Serializable
 data class UserJson(
-    val email: String,
     val degreeYear: Int,
     val degree: Degree,
 )

@@ -15,11 +15,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.eventOrBedpresStr
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
@@ -73,20 +73,16 @@ fun fromEmail(email: String): String? {
 suspend fun sendConfirmationEmail(
     sendGridApiKey: String,
     registration: RegistrationJson,
+    slug: String,
     waitListSpot: Long?
 ) {
-    val hapTypeLiteral = when (registration.type) {
-        HAPPENING_TYPE.EVENT ->
-            "arrangementet"
-        HAPPENING_TYPE.BEDPRES ->
-            "bedriftspresentasjonen"
-    }
+    val hapTypeLiteral = registration.type.eventOrBedpresStr("arrangementet", "bedriftspresentasjonen")
 
     val hap = transaction {
         addLogger(StdOutSqlLogger)
 
         Happening.select {
-            Happening.slug eq registration.slug
+            Happening.slug eq slug
         }.firstOrNull()
     } ?: throw Exception("Happening is null.")
 
@@ -102,7 +98,7 @@ suspend fun sendConfirmationEmail(
                 registration.email,
                 SendGridTemplate(
                     hap[Happening.title],
-                    "https://echo.uib.no/event/${registration.slug}",
+                    "https://echo.uib.no/event/$slug",
                     hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),
                     registration = registration
@@ -131,7 +127,7 @@ suspend fun sendRegsLinkEmail(sendGridApiKey: String, happening: HappeningJson, 
                 happening.organizerEmail,
                 SendGridTemplate(
                     happening.title,
-                    "https://echo.uib.no/${Routing.registrationRoute}/$regsLink",
+                    "https://echo.uib.no/registrations/$regsLink",
                     hapTypeLiteral
                 ),
                 Template.REGS_LINK,

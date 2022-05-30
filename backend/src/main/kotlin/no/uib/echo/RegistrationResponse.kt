@@ -5,9 +5,14 @@ import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.SpotRangeJson
 
 @Serializable
-data class ResponseJson(val code: Response, val title: String, val desc: String, val date: String? = null)
+data class RegistrationResponseJson(
+    val code: RegistrationResponse,
+    val title: String,
+    val desc: String,
+    val date: String? = null
+)
 
-enum class Response {
+enum class RegistrationResponse {
     InvalidEmail,
     InvalidDegreeYear,
     InvalidTerms,
@@ -26,63 +31,68 @@ enum class Response {
 }
 
 fun resToJson(
-    res: Response,
+    res: RegistrationResponse,
     regType: HAPPENING_TYPE,
     regDate: String? = null,
     spotRanges: List<SpotRangeJson>? = null,
     waitListSpot: Long? = null
-): ResponseJson {
+): RegistrationResponseJson {
     val defaultDesc = "Vennligst prøv igjen."
 
     when (res) {
-        Response.InvalidEmail ->
-            return ResponseJson(res, "Vennligst skriv inn en gyldig mail.", "", regDate)
-        Response.InvalidDegreeYear ->
-            return ResponseJson(res, "Vennligst velgt et gyldig trinn.", "", regDate)
-        Response.InvalidTerms ->
-            return ResponseJson(
+        RegistrationResponse.InvalidEmail ->
+            return RegistrationResponseJson(res, "Vennligst skriv inn en gyldig mail.", "", regDate)
+        RegistrationResponse.InvalidDegreeYear ->
+            return RegistrationResponseJson(res, "Vennligst velgt et gyldig trinn.", "", regDate)
+        RegistrationResponse.InvalidTerms ->
+            return RegistrationResponseJson(
                 res,
                 if (regType == HAPPENING_TYPE.BEDPRES) "Du må godkjenne Bedkom sine retningslinjer." else "Du må godkjenne vilkårene.",
                 defaultDesc,
                 regDate
             )
-        Response.DegreeMismatchBachelor, Response.DegreeMismatchMaster, Response.DegreeMismatchArmninf ->
-            return ResponseJson(res, "Studieretning og årstrinn stemmer ikke overens.", defaultDesc, regDate)
-        Response.AlreadySubmitted ->
-            return ResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)
-        Response.AlreadySubmittedWaitList ->
-            return ResponseJson(res, "Du er allerede påmeldt.", "Du er på ventelisten.", regDate)
-        Response.NotViaForm ->
-            return ResponseJson(
+        RegistrationResponse.DegreeMismatchBachelor, RegistrationResponse.DegreeMismatchMaster, RegistrationResponse.DegreeMismatchArmninf ->
+            return RegistrationResponseJson(res, "Studieretning og årstrinn stemmer ikke overens.", defaultDesc, regDate)
+        RegistrationResponse.AlreadySubmitted ->
+            return RegistrationResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.", regDate)
+        RegistrationResponse.AlreadySubmittedWaitList ->
+            return RegistrationResponseJson(res, "Du er allerede påmeldt.", "Du er på ventelisten.", regDate)
+        RegistrationResponse.NotViaForm ->
+            return RegistrationResponseJson(
                 res,
                 "Du må melde deg på via nettsiden.",
                 "Det ser ut som du prøve å melde deg på utenfor nettsiden. Om du mener dette ikke stemmer, ta kontakt med Webkom.",
                 regDate
             )
-        Response.TooEarly ->
-            return ResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
-        Response.TooLate ->
-            return ResponseJson(res, "Påmeldingen er stengt.", "Det er ikke mulig å melde seg på lenger.", regDate)
-        Response.WaitList -> {
+        RegistrationResponse.TooEarly ->
+            return RegistrationResponseJson(res, "Påmeldingen er ikke åpen enda.", "Vennligst vent.", regDate)
+        RegistrationResponse.TooLate ->
+            return RegistrationResponseJson(
+                res,
+                "Påmeldingen er stengt.",
+                "Det er ikke mulig å melde seg på lenger.",
+                regDate
+            )
+        RegistrationResponse.WaitList -> {
             val desc = when (waitListSpot) {
                 null -> "Du har blitt satt på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
                 else -> "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
             }
-            return ResponseJson(
+            return RegistrationResponseJson(
                 res,
                 "Alle plassene er dessverre fylt opp.",
                 desc,
                 regDate
             )
         }
-        Response.HappeningDoesntExist ->
-            return ResponseJson(
+        RegistrationResponse.HappeningDoesntExist ->
+            return RegistrationResponseJson(
                 res,
                 if (regType == HAPPENING_TYPE.BEDPRES) "Denne bedriftspresentasjonen finnes ikke." else "Dette arrangementet finnes ikke.",
                 "Om du mener dette ikke stemmer, ta kontakt med Webkom.",
                 regDate
             )
-        Response.NotInRange -> {
+        RegistrationResponse.NotInRange -> {
             val str = when (regType) {
                 HAPPENING_TYPE.BEDPRES ->
                     "Denne bedriftspresentasjonen er kun åpen for "
@@ -107,15 +117,15 @@ fun resToJson(
                 }
             }
 
-            return ResponseJson(
+            return RegistrationResponseJson(
                 res,
                 "Du kan dessverre ikke melde deg på.",
                 desc,
                 regDate
             )
         }
-        Response.OK ->
-            return ResponseJson(
+        RegistrationResponse.OK ->
+            return RegistrationResponseJson(
                 res,
                 "Påmeldingen din er registrert!",
                 if (regType == HAPPENING_TYPE.BEDPRES) "Du har fått plass på bedriftspresentasjonen." else "Du har fått plass på arrangementet.",
