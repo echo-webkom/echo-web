@@ -62,7 +62,7 @@ dependencies {
 
     implementation("org.flywaydb:flyway-core:$flyway_version")
 
-    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
     testImplementation("io.kotest:kotest-framework-engine:$kotest_version")
     testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
