@@ -30,8 +30,9 @@ interface Props {
     setState?(usedState: string): void;
 }
 
-const AnimatedTabs = ({ tabs, setState }: Props) => {
-    const [[page, direction], setPage] = useState([0, 0]);
+const AnimatedTabs = ({ tabs, state, setState }: Props) => {
+    const initialPage = tabs.findIndex((tab) => tab.value === state);
+    const [[page, direction], setPage] = useState([initialPage, 0]);
 
     return (
         <>
@@ -51,7 +52,7 @@ const AnimatedTabs = ({ tabs, setState }: Props) => {
                         return (
                             <li
                                 key={i}
-                                className={isActive ? 'active-header' : ''}
+                                style={{ cursor: 'pointer' }}
                                 onClick={() => {
                                     setPage([i, i - page]);
                                     if (setState && value) {
@@ -66,7 +67,7 @@ const AnimatedTabs = ({ tabs, setState }: Props) => {
                                             width: '100%',
                                             height: '2px',
                                             borderRadius: '2px',
-                                            background: '#99ccff',
+                                            background: '#98e5f0',
                                             position: 'relative',
                                             zIndex: 1,
                                         }}
@@ -76,16 +77,6 @@ const AnimatedTabs = ({ tabs, setState }: Props) => {
                             </li>
                         );
                     })}
-                    <div
-                        style={{
-                            width: '100%',
-                            height: '2px',
-                            borderRadius: '2px',
-                            background: 'ff9900',
-                            position: 'absolute',
-                            bottom: 0,
-                        }}
-                    />
                 </ul>
                 <AnimatePresence initial={false} custom={direction}>
                     <motion.section
