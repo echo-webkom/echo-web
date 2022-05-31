@@ -35,67 +35,65 @@ const AnimatedTabs = ({ tabs, state, setState }: Props) => {
     const [[page, direction], setPage] = useState([initialPage, 0]);
 
     return (
-        <>
-            <AnimateSharedLayout>
-                <ul
-                    style={{
-                        display: 'flex',
-                        gap: '16px',
-                        color: 'white',
-                        padding: 0,
-                        position: 'relative',
-                        listStyle: 'none',
+        <AnimateSharedLayout>
+            <ul
+                style={{
+                    display: 'flex',
+                    gap: '16px',
+                    color: 'white',
+                    padding: 0,
+                    position: 'relative',
+                    listStyle: 'none',
+                }}
+            >
+                {tabs.map(({ title, value }, i) => {
+                    const isActive = i === page;
+                    return (
+                        <li
+                            key={i}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => {
+                                setPage([i, i - page]);
+                                if (setState && value) {
+                                    setState(value);
+                                }
+                            }}
+                        >
+                            <h4>{title}</h4>
+                            {isActive && (
+                                <motion.div
+                                    style={{
+                                        width: '100%',
+                                        height: '2px',
+                                        borderRadius: '2px',
+                                        background: '#98e5f0',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    }}
+                                    layoutId="underline"
+                                />
+                            )}
+                        </li>
+                    );
+                })}
+            </ul>
+            <AnimatePresence initial={false} custom={direction}>
+                <motion.section
+                    key={page}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                        x: { type: 'spring', stiffness: 300, damping: 30, duration: 2 },
+                        opacity: { duration: 0.2 },
                     }}
                 >
-                    {tabs.map(({ title, value }, i) => {
-                        const isActive = i === page;
-                        return (
-                            <li
-                                key={i}
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                    setPage([i, i - page]);
-                                    if (setState && value) {
-                                        setState(value);
-                                    }
-                                }}
-                            >
-                                <h4>{title}</h4>
-                                {isActive && (
-                                    <motion.div
-                                        style={{
-                                            width: '100%',
-                                            height: '2px',
-                                            borderRadius: '2px',
-                                            background: '#98e5f0',
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        }}
-                                        layoutId="underline"
-                                    />
-                                )}
-                            </li>
-                        );
-                    })}
-                </ul>
-                <AnimatePresence initial={false} custom={direction}>
-                    <motion.section
-                        key={page}
-                        custom={direction}
-                        variants={variants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{
-                            x: { type: 'spring', stiffness: 300, damping: 30, duration: 2 },
-                            opacity: { duration: 0.2 },
-                        }}
-                    >
-                        {tabs[page].tabBody}
-                    </motion.section>
-                </AnimatePresence>
-            </AnimateSharedLayout>
-        </>
+                    {tabs[page].tabBody}
+                </motion.section>
+            </AnimatePresence>
+        </AnimateSharedLayout>
     );
 };
 
