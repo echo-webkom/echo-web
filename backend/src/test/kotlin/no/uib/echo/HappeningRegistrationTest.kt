@@ -894,7 +894,7 @@ class HappeningRegistrationTest : StringSpec({
                     }
 
                 getHappeningInfoCall.response.status() shouldBe HttpStatusCode.NotFound
-                getHappeningInfoCall.response.content!! shouldBe "Happening doesn't exist."
+                getHappeningInfoCall.response.content!! shouldBe "\"Happening doesn't exist.\""
             }
         }
     }
@@ -1034,8 +1034,8 @@ class HappeningRegistrationTest : StringSpec({
 
                     deleteRegCall.response.status() shouldBe HttpStatusCode.OK
                     deleteRegCall.response.content!! shouldBe
-                        "Registration with email = ${regEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted, " +
-                        "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list."
+                        "\"Registration with email = ${regEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted, " +
+                        "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list.\""
                 }
 
                 // Delete the registrations that were moved off the wait list in the previous for-loop.
@@ -1049,7 +1049,7 @@ class HappeningRegistrationTest : StringSpec({
 
                     deleteWaitListRegCall.response.status() shouldBe HttpStatusCode.OK
                     deleteWaitListRegCall.response.content!! shouldBe
-                        "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted."
+                        "\"Registration with email = ${waitListRegEmail.lowercase()} and slug = ${exampleHappening9(t).slug} deleted.\""
                 }
             }
         }
