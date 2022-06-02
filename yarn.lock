@@ -2412,7 +2412,19 @@
   resolved "https://registry.yarnpkg.com/@sanity/cli/-/cli-2.30.0.tgz#8b94448397da3ddc01617c4e3d1ce99d32ca6742"
   integrity sha512-+VelHk/Rnr+zIfbKf+60erVUEINth1om37PVRNDtKQRVqKAjtGCRqOoDym9I3a0oAJEMHzvzWP9Q1RPxi7qkcA==
 
-"@sanity/client@3.3.0", "@sanity/client@^3.2.0":
+"@sanity/client@3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-3.3.1.tgz#d07ff73557be2eef35ecc5b09e0347d0bdfe859a"
+  integrity sha512-kSnOSQaiCpdP0JnfC0MXebuQ/jM6/HCqyMdQ+/nxeqnbxHgXEWovcTP6x5Aom7485/vFdzL7NPsUrCOvye+rcA==
+  dependencies:
+    "@sanity/eventsource" "^4.0.0"
+    "@sanity/generate-help-url" "^3.0.0"
+    get-it "^6.0.1"
+    make-error "^1.3.0"
+    object-assign "^4.1.1"
+    rxjs "^6.0.0"
+
+"@sanity/client@^3.2.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-3.3.0.tgz#0b01b1ee25f9d12e0fd9d119fe752f0aeb18843a"
   integrity sha512-ecIRsV+IncI1P9I6ZdB3xKLBpWVggqtiY0RLWeT3RWaP4cX6lXzD5fPknaXaBnCxtIr9ZhqZVqpRkyjrUlHe0Q==
@@ -2587,6 +2599,14 @@
   dependencies:
     event-source-polyfill "1.0.25"
     eventsource "^1.0.6"
+
+"@sanity/eventsource@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@sanity/eventsource/-/eventsource-4.0.0.tgz#ec9c352e87a2f79db8d25eedbb009ced21ec2e97"
+  integrity sha512-W0AD141JILOySJ177j2+HTr5k4tWNyXjGsr0dDXJzpqlwZ09J/uPHI73hMe5XtoFumPa9Bj6jy8uu2qdZX84NQ==
+  dependencies:
+    event-source-polyfill "1.0.25"
+    eventsource "^2.0.2"
 
 "@sanity/export@2.29.3":
   version "2.29.3"
@@ -6869,6 +6889,11 @@ eventsource@^1.0.6:
   integrity sha512-qV5ZC0h7jYIAOhArFJgSfdyz6rALJyb270714o7ZtNnw2WSJ+eexhKtE0O8LYPRsHZHf2osHKZBxGPvm3kPkCA==
   dependencies:
     original "^1.0.0"
+
+eventsource@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/eventsource/-/eventsource-2.0.2.tgz#76dfcc02930fb2ff339520b6d290da573a9e8508"
+  integrity sha512-IzUmBGPR3+oUG9dUeXynyNmf91/3zUSJg1lCktzKw47OXuhco54U3r9B7O4XX+Rb1Itm9OZ2b0RkTs10bICOxA==
 
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   version "1.0.3"
