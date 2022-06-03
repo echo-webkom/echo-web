@@ -1,7 +1,5 @@
-import React from 'react';
 import HappeningMetaInfo, { Props } from '../happening-meta-info';
 import { HappeningType } from '../../lib/api';
-import { render } from './testing-utils';
 
 const date = new Date();
 
@@ -207,108 +205,106 @@ const happeningMetaInfoProps: Array<Props> = [
     },
 ];
 
+const compId = '[data-cy=happening-meta-info]';
+
 describe('HappeningMetaInfo', () => {
-    test('renders without crashing', () => {
-        const { getByTestId } = render(<HappeningMetaInfo {...happeningMetaInfoProps[0]} />);
-
-        expect(getByTestId(/happening-meta-info/i)).toBeInTheDocument();
+    it('renders without crashing', () => {
+        cy.mount(<HappeningMetaInfo {...happeningMetaInfoProps[0]} />);
+        cy.get(compId).should('exist');
     });
 
-    test('renders correctly 1', () => {
+    it('renders correctly 1', () => {
         const props = happeningMetaInfoProps[0];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].spots ?? 'feil'} plasser`))).toBeInTheDocument();
+        cy.get(compId).should('contain.text', `${props.spotRangeCounts?.[0].spots ?? 'feil'} plasser`);
     });
 
-    test('renders correctly 2', () => {
+    it('renders correctly 2', () => {
         const props = happeningMetaInfoProps[1];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
-        expect(
-            getByText(
-                new RegExp(
-                    `${props.spotRangeCounts?.[0].regCount ?? 'feil'}/${
-                        props.spotRangeCounts?.[0].spots ?? 'feil'
-                    } påmeldt`,
-                ),
-            ),
-        ).toBeInTheDocument();
+        cy.get(compId).should(
+            'contain.text',
+            `${props.spotRangeCounts?.[0].regCount ?? 'feil'}/${props.spotRangeCounts?.[0].spots ?? 'feil'} påmeldt`,
+        );
     });
 
-    test('renders correctly 3', () => {
+    it('renders correctly 3', () => {
         const props = happeningMetaInfoProps[2];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp('∞ plasser'))).toBeInTheDocument();
+        cy.get(compId).should('contain.text', '∞ plasser');
     });
 
-    test('renders correctly 4', () => {
+    it('renders correctly 4', () => {
         const props = happeningMetaInfoProps[3];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp(`${props.spotRangeCounts?.[0].regCount ?? 'feil'}/∞ påmeldt`))).toBeInTheDocument();
+        cy.get(compId).should('contain.text', `${props.spotRangeCounts?.[0].regCount ?? 'feil'}/∞ påmeldt`);
     });
 
-    test('renders correctly 5', () => {
+    it('renders correctly 5', () => {
         const props = happeningMetaInfoProps[4];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
+        const happeningMetaInfo = cy.get(compId);
 
         props.spotRangeCounts?.map((sr) => {
-            return expect(
-                getByText(new RegExp(`${sr.spots} plasser for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`)),
-            ).toBeInTheDocument();
+            happeningMetaInfo.should(
+                'contain.text',
+                `${sr.spots} plasser for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+            );
         });
 
         const combinedWaitList =
             props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
 
-        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
+        happeningMetaInfo.should('contain.text', `${combinedWaitList} på venteliste`);
     });
 
-    test('renders correctly 6', () => {
+    it('renders correctly 6', () => {
         const props = happeningMetaInfoProps[5];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
+        const happeningMetaInfo = cy.get(compId);
 
         props.spotRangeCounts?.map((sr) => {
-            return expect(
-                getByText(new RegExp(`Fullt for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`)),
-            ).toBeInTheDocument();
+            happeningMetaInfo.should('contain.text', `Fullt for ${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`);
         });
 
         const combinedWaitList =
             props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
 
-        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
+        happeningMetaInfo.should('contain.text', `${combinedWaitList} på venteliste`);
     });
 
-    test('renders correctly 7', () => {
+    it('renders correctly 7', () => {
         const props = happeningMetaInfoProps[6];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
-        expect(getByText(new RegExp('∞ plasser'))).toBeInTheDocument();
+        cy.get(compId).should('contain.text', '∞ plasser');
     });
 
-    test('renders correctly 8', () => {
+    it('renders correctly 8', () => {
         const props = happeningMetaInfoProps[7];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
 
         props.spotRangeCounts?.map((sr) => {
-            return expect(getByText(new RegExp(`${sr.regCount}/∞ påmeldt`))).toBeInTheDocument();
+            cy.get(compId).should('contain.text', `${sr.regCount}/∞ påmeldt`);
         });
     });
 
-    test('renders correctly 9', () => {
+    it('renders correctly 9', () => {
         const props = happeningMetaInfoProps[8];
-        const { getByText } = render(<HappeningMetaInfo {...props} />);
+        cy.mount(<HappeningMetaInfo {...props} />);
+        const happeningMetaInfo = cy.get(compId);
 
         props.spotRangeCounts?.map((sr) => {
-            return expect(getByText(new RegExp(`Fullt for ${sr.minDegreeYear}. trinn`))).toBeInTheDocument();
+            happeningMetaInfo.should('contain.text', `Fullt for ${sr.minDegreeYear}. trinn`);
         });
 
         const combinedWaitList =
             props.spotRangeCounts?.map((sr) => sr.waitListCount)?.reduce((prev, curr) => prev + curr) ?? 0;
 
-        expect(getByText(new RegExp(`${combinedWaitList} på venteliste`))).toBeInTheDocument();
+        happeningMetaInfo.should('contain.text', `${combinedWaitList} på venteliste`);
     });
 });

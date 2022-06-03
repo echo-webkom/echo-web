@@ -10,7 +10,7 @@ const ColorModeButton = (): JSX.Element => {
     const label = 'colormode-button';
 
     return (
-        <HStack data-testid={label}>
+        <HStack data-cy={label}>
             <Box color={sunBg}>
                 <BsSun />
             </Box>

@@ -38,9 +38,9 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             justify="flex-end"
             alignItems="center"
         >
-            <NavLink text="Hjem" href="/" testid="hjem" />
-            {/* <NavLink text="Jobb" href="/job" testid="jobb" /> */}
-            <NavLink text="Om echo" href="/om-echo/om-oss" testid="om-oss" />
+            <NavLink text="Hjem" href="/" data-cy="hjem" />
+            {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
+            <NavLink text="Om echo" href="/om-echo/om-oss" data-cy="om-oss" />
             {isMobile && (
                 <Flex data-cy="min-profil">
                     {status === 'authenticated' && <NavLink text="Min profil" href="/profile" />}
@@ -77,12 +77,7 @@ interface Props {
 const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
     return (
         <>
-            <Box
-                flex="2 1 auto"
-                data-testid="navbar-standard"
-                pb="1rem"
-                pl={['0.5rem', null, null, null, '3rem', '4rem']}
-            >
+            <Box flex="2 1 auto" data-cy="navbar-standard" pb="1rem" pl={['0.5rem', null, null, null, '3rem', '4rem']}>
                 <Flex
                     display={['none', null, null, 'flex']}
                     align="center"
@@ -95,13 +90,13 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
             </Box>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 <DrawerOverlay>
-                    <DrawerContent data-testid="navbar-drawer">
+                    <DrawerContent data-cy="navbar-drawer">
                         <DrawerCloseButton size="lg" />
                         <DrawerHeader fontSize="2xl" as={Heading}>
                             Navigasjon
                         </DrawerHeader>
                         <DrawerBody>
-                            <Box onClick={onClose}>
+                            <Box onClick={onClose} data-cy="nav-links">
                                 <NavLinks isMobile />
                             </Box>
                         </DrawerBody>

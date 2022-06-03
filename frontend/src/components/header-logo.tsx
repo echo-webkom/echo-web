@@ -72,7 +72,7 @@ const HeaderLogo = () => {
             p="1.05rem"
             bg={bg}
             shadow="lg"
-            data-testid="header-logo"
+            data-cy="header-logo"
             borderRadius="0.5rem"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
             mr="0rem"
