@@ -3,18 +3,7 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
-import {
-    useTimeout,
-    Center,
-    Divider,
-    Grid,
-    GridItem,
-    Heading,
-    LinkBox,
-    LinkOverlay,
-    Text,
-    Box,
-} from '@chakra-ui/react';
+import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
@@ -39,7 +28,6 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
-    const happeningDate = parseISO(happening.date) ?? formatISO(new Date());
     const time =
         !happening ||
         differenceInMilliseconds(regDate, date) < 0 ||
@@ -122,8 +110,9 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                         backendUrl={backendUrl}
                                                         regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                                     />
-                                                    {format(happeningDate, 'dd. MMM, HH:mm', { locale: nb }) !=
-                                                        format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
+                                                    {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
+                                                        locale: nb,
+                                                    }) !== format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
                                                         <Center>
                                                             <Text fontSize="md">
                                                                 Stenger{' '}
