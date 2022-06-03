@@ -46,6 +46,24 @@ export default {
             type: 'datetime',
         },
         {
+            name: 'registrationDate',
+            title: 'Påmelding åpner',
+            type: 'datetime',
+            validation: (Rule) =>
+                Rule.custom((registrationDate, context) =>
+                    typeof context.document.spotRanges !== 'undefined' && typeof registrationDate === 'undefined'
+                        ? 'Må ha dato for påmelding om det er definert arrangementsplasser.'
+                        : true,
+                ),
+        },
+        {
+            name: 'registrationDeadline',
+            title: 'Påmelding stenger',
+            type: 'datetime',
+            validation: (Rule) =>
+                Rule.required().min(Rule.valueOfField('registrationDate')).max(Rule.valueOfField('date')),
+        },
+        {
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
@@ -94,17 +112,6 @@ export default {
                         : true,
                 ),
             type: 'url',
-        },
-        {
-            name: 'registrationDate',
-            title: 'Dato for påmelding',
-            type: 'datetime',
-            validation: (Rule) =>
-                Rule.custom((registrationDate, context) =>
-                    typeof context.document.spotRanges !== 'undefined' && typeof registrationDate === 'undefined'
-                        ? 'Må ha dato for påmelding om det er definert arrangementsplasser.'
-                        : true,
-                ),
         },
         {
             name: 'contactEmail',
