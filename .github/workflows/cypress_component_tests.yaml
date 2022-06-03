@@ -1,11 +1,11 @@
-name: Jest
+name: Cypress component tests
 on:
   pull_request:
     branches: [master]
     paths: ['frontend/**']
 
 jobs:
-  jest_tests:
+  cypress_component_tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -17,8 +17,14 @@ jobs:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-      - name: Install dependencies
-        run: yarn --frozen-lockfile --ignore-scripts
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: '~/.cache/Cypress'
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package.json') }}
 
-      - name: Run API & component tests
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Run Cypress component tests
         run: yarn --cwd frontend test

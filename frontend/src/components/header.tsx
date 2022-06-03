@@ -10,7 +10,7 @@ const Header = (): JSX.Element => {
     const borderBg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
     return (
-        <Center borderColor={borderBg} data-testid="header-standard" m="2rem auto">
+        <Center borderColor={borderBg} data-cy="header" m="2rem auto">
             <Flex w="90%" h="120px" alignItems="flex-end" maxW="1300" px={['0', '5%', '50']}>
                 <HeaderLogo />
                 <NavBar isOpen={isOpen} onClose={onClose} btnRef={menuButtonRef} />
@@ -25,7 +25,7 @@ const Header = (): JSX.Element => {
                             <Icon as={IoIosMenu} boxSize={10} />
                         </Center>
                     }
-                    data-testid="drawer-button"
+                    data-cy="drawer-button"
                 />
             </Flex>
         </Center>

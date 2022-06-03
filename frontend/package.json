@@ -10,7 +10,7 @@
         "dev": "next dev",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest"
+        "test": "cypress run --component --config video=false,screenshotOnRunFailure=false"
     },
     "eslintConfig": {
         "parser": "@typescript-eslint/parser",
@@ -94,24 +94,6 @@
         "printWidth": 120,
         "tabWidth": 4
     },
-    "jest": {
-        "setupFilesAfterEnv": [
-            "<rootDir>/jest.setup.js"
-        ],
-        "testEnvironment": "jsdom",
-        "testPathIgnorePatterns": [
-            "<rootDir>/.next/",
-            "<rootDir>/node_modules/",
-            "<rootDir>/cypress/",
-            "testing-utils.ts",
-            "testing-wrapper.tsx"
-        ]
-    },
-    "babel": {
-        "presets": [
-            "next/babel"
-        ]
-    },
     "dependencies": {
         "@chakra-ui/react": "2.1.2",
         "@emotion/react": "11.9.0",
@@ -135,24 +117,18 @@
         "typescript-json-decoder": "1.0.7"
     },
     "devDependencies": {
-        "@testing-library/dom": "8.13.0",
-        "@testing-library/jest-dom": "5.16.4",
-        "@testing-library/react": "13.3.0",
-        "@testing-library/user-event": "14.2.0",
         "@types/node": "14.18.20",
         "@types/react": "18.0.11",
         "@types/react-dom": "18.0.5",
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "5.27.0",
         "@typescript-eslint/parser": "5.27.0",
-        "cypress": "9.7.0",
+        "cypress": "10.0.2",
         "eslint": "8.16.0",
         "eslint-config-next": "12.1.6",
         "eslint-config-prettier": "8.5.0",
         "eslint-plugin-prettier": "4.0.0",
         "eslint-plugin-unicorn": "42.0.0",
-        "jest": "28.1.0",
-        "jest-environment-jsdom": "28.1.0",
         "typescript": "4.7.2"
     }
 }
