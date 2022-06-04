@@ -13452,10 +13452,10 @@ sanity-plugin-markdown@2.1.1:
     react-mde "^11.5.0"
     remark-gfm "^1.0.0"
 
-sanity-plugin-media@1.4.8:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-1.4.8.tgz#fa97ea2b00ddebbe3767c749e8b0849c727a68b7"
-  integrity sha512-kTEkq4YH8GVVbt2nnyqApkHtUcEbQfA2/i1fI4YYo2feFY6Fwkl4KY31EzJqiui7B8olN0D4Ql0PwvUXSY4++A==
+sanity-plugin-media@1.4.10:
+  version "1.4.10"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-1.4.10.tgz#4240888498c06ad7a3e69e78950a9af66fec1861"
+  integrity sha512-biJx3X7ou7pJ0/a7io2zzmuyDEUcqMgQNDPY6VnOnAQ8m8EWtBwoXkfmSGZicmqVWOaqPDayLpntAFidmKldSw==
   dependencies:
     "@hookform/resolvers" "2.0.0-beta.3"
     "@reduxjs/toolkit" "^1.8.1"
@@ -13476,6 +13476,7 @@ sanity-plugin-media@1.4.8:
     react-virtuoso "^2.11.0"
     redux "^4.0.5"
     redux-observable "^1.2.0"
+    rxjs "^6.5.3"
     theme-ui "0.3.5"
     yup "^0.32.11"
 
