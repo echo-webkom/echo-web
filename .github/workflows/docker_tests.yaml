@@ -212,7 +212,9 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v22
         with:
-          files: backend/src/main/resources/db/migration/*.sql
+          files: |
+            backend/src/main/resources/db/migration/*.sql
+            backend/gradle.properties
 
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
