@@ -50,7 +50,6 @@ export default {
         {
             name: 'info',
             title: 'Brødtekst',
-            validation: (Rule) => Rule.required(),
             type: 'markdown',
         },
         {
