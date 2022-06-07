@@ -60,7 +60,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
 };
 
 const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await StudentGroupAPI.getPathsByType('subgroup');
+    const paths = await StudentGroupAPI.getPaths();
 
     if (isErrorMessage(paths)) {
         throw new Error(paths.message);
