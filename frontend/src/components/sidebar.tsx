@@ -89,6 +89,14 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
             name: 'For Studenter',
             items: [
                 {
+                    name: 'Hovedstyret',
+                    items: [
+                        { name: '2022-2023', href: '/om-echo/studentgrupper/2022-2023' },
+                        { name: '2021-2022', href: '/om-echo/studentgrupper/2021-2022' },
+                        { name: '2020-2021', href: '/om-echo/studentgrupper/2020-2021' },
+                    ],
+                },
+                {
                     name: 'Undergrupper',
                     items: [
                         { name: 'Bedkom 👔', href: '/om-echo/studentgrupper/bedkom' },
