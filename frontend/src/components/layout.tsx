@@ -3,6 +3,7 @@ import React from 'react';
 import Footer from './footer';
 import Header from './header';
 import AnimatedIcons from './animated-icons';
+import FeedbackButton from './feedback-button';
 
 interface Props {
     children: React.ReactNode;
@@ -25,6 +26,7 @@ const Layout = ({ children }: Props): JSX.Element => {
                 </Box>
                 <Footer />
             </AnimatedIcons>
+            <FeedbackButton />
         </Box>
     );
 };
