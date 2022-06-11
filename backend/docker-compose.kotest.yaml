@@ -28,6 +28,8 @@ services:
     restart: always
     ports:
       - '5432:5432'
+    volumes:
+      - ./src/main/resources/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
     # Check if database is ready.
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']

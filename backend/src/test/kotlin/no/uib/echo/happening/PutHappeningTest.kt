@@ -2,9 +2,7 @@ package no.uib.echo.happening
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -15,49 +13,51 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.uib.echo.DatabaseHandler
 import no.uib.echo.be
 import no.uib.echo.everyoneSpotRange
 import no.uib.echo.hap1
 import no.uib.echo.plugins.Routing.putHappeningRoute
+import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.User
 import no.uib.echo.schema.removeSlug
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.net.URI
 
 class PutHappeningTest : StringSpec({
-    val client = HttpClient {
-        install(Logging)
-        install(ContentNegotiation) {
-            json()
-        }
-    }
-
-    beforeSpec {
-        DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init()
-    }
-    afterSpec {
-        client.close()
-    }
-
     beforeTest {
         transaction {
             SchemaUtils.drop(
-                Happening, SpotRange
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User
             )
             SchemaUtils.create(
-                Happening, SpotRange
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User
             )
         }
     }
 
     "When trying to submit a happening, server should respond with OK." {
         testApplication {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
             for (t in be) {
                 val testCall = client.put(routeWithSlug(hap1(t).slug)) {
                     contentType(ContentType.Application.Json)
+                    basicAuth("admin", System.getenv("ADMIN_KEY"))
                     setBody(Json.encodeToString(removeSlug(hap1(t))))
                 }
 
@@ -68,9 +68,16 @@ class PutHappeningTest : StringSpec({
 
     "Whe trying to update happening spots, server should respond with OK." {
         testApplication {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
             for (t in be) {
                 val submitHappeningCall = client.put(routeWithSlug(hap1(t).slug)) {
                     contentType(ContentType.Application.Json)
+                    basicAuth("admin", System.getenv("ADMIN_KEY"))
                     setBody(Json.encodeToString(removeSlug(hap1(t))))
                 }
 
@@ -99,28 +106,40 @@ class PutHappeningTest : StringSpec({
 
     "When trying to update a happening with the exact same values, server should respond with ACCEPTED." {
         testApplication {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
             for (t in be) {
-                val submitBedpresCall = client.put(routeWithSlug(hap1(t).slug)) {
+                val submitHappeningCall = client.put(routeWithSlug(hap1(t).slug)) {
                     contentType(ContentType.Application.Json)
                     basicAuth("admin", System.getenv("ADMIN_KEY"))
                     setBody(Json.encodeToString(removeSlug(hap1(t))))
                 }
 
-                submitBedpresCall.status shouldBe HttpStatusCode.OK
+                submitHappeningCall.status shouldBe HttpStatusCode.OK
 
-                val updateBedpresCall = client.put(routeWithSlug(hap1(t).slug)) {
+                val updateHappeningCall = client.put(routeWithSlug(hap1(t).slug)) {
                     contentType(ContentType.Application.Json)
                     basicAuth("admin", System.getenv("ADMIN_KEY"))
                     setBody(Json.encodeToString(removeSlug(hap1(t))))
                 }
 
-                updateBedpresCall.status shouldBe HttpStatusCode.Accepted
+                updateHappeningCall.status shouldBe HttpStatusCode.Accepted
             }
         }
     }
 
     "When trying to submit a happening with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         testApplication {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
             for (t in be) {
                 val testCall = client.put(routeWithSlug(hap1(t).slug)) {
                     contentType(ContentType.Application.Json)

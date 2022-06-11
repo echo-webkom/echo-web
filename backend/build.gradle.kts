@@ -64,7 +64,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
-    testImplementation("io.kotest:kotest-framework-engine:$kotest_version")
+    testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
     testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
 }
 
@@ -80,7 +80,7 @@ tasks.withType<Jar> {
 }
 
 // Make tests accessible to Gradle.
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 

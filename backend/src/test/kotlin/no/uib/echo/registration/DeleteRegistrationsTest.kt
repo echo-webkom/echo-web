@@ -3,10 +3,8 @@ package no.uib.echo.registration
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -16,11 +14,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import no.uib.echo.DatabaseHandler
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
@@ -30,47 +25,48 @@ import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.User
 import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.removeSlug
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.net.URI
 
 class DeleteRegistrationsTest : StringSpec({
-    val client = HttpClient {
-        install(Logging)
-        install(ContentNegotiation) {
-            json()
-        }
-    }
-
     beforeSpec {
-        DatabaseHandler(true, URI(System.getenv("DATABASE_URL")), null).init()
         for (t in be) {
-            withContext(Dispatchers.IO) {
-                insertOrUpdateHappening(
-                    removeSlug(hap9(t)), hap9(t).slug, null, sendEmail = false, dev = true
-                )
-            }
+            insertOrUpdateHappening(
+                removeSlug(hap9(t)), hap9(t).slug, null, sendEmail = false, dev = true
+            )
         }
-    }
-    afterSpec {
-        client.close()
     }
 
     beforeTest {
         transaction {
             SchemaUtils.drop(
-                Happening, SpotRange, Registration, Answer
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User
             )
             SchemaUtils.create(
-                Happening, SpotRange, Registration, Answer
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User
             )
         }
     }
 
     "Should delete registrations properly" {
         testApplication {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
             val waitListAmount = 3
 
             for (t in be) {

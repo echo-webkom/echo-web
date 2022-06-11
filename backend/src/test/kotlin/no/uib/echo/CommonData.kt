@@ -17,10 +17,6 @@ val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
 val fewSpotRange = listOf(SpotRangeJson(5, 1, 5))
 
-val adminKey = System.getenv("ADMIN_KEY")
-val featureToggles =
-    FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false, verifyRegs = false)
-
 val hap1: (type: HAPPENING_TYPE) -> HappeningWithSlugJson = { type ->
     HappeningWithSlugJson(
         "$type-med-noen",

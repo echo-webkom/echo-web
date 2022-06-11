@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     install(CORS) {
         anyHost()
+        allowNonSimpleContentTypes = true
 
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Put)

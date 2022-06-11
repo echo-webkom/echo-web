@@ -12,6 +12,7 @@ data class RegistrationResponseJson(
     val date: String? = null
 )
 
+@Serializable
 enum class RegistrationResponse {
     InvalidEmail,
     InvalidDegreeYear,
