@@ -105,7 +105,7 @@
         "framer-motion": "6.3.11",
         "markdown-to-jsx": "7.1.7",
         "next": "12.1.6",
-        "next-auth": "4.3.4",
+        "next-auth": "4.5.0",
         "next-pwa": "5.5.4",
         "nextjs-progressbar": "0.0.14",
         "react": "18.1.0",
