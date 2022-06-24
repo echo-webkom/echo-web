@@ -100,7 +100,6 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                     name: 'Undergrupper',
                     items: [
                         { name: 'Bedkom 👔', href: '/om-echo/studentgrupper/bedkom' },
-                        { name: 'Bryggelaget 🍺', href: '/om-echo/studentgrupper/bryggelaget' },
                         { name: 'Gnist ✨', href: '/om-echo/studentgrupper/gnist' },
                         { name: 'Makerspace 🛠️', href: '/om-echo/studentgrupper/makerspace' },
                         { name: 'Tilde 🥳', href: '/om-echo/studentgrupper/tilde' },
@@ -121,6 +120,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                         { name: 'buldring 🧗', href: '/om-echo/studentgrupper/echo-klatring-buldring' },
                         { name: 'squash 🎾', href: '/om-echo/studentgrupper/echo-squash' },
                         { name: 'kaffeslabberas ☕', href: '/om-echo/studentgrupper/echo-kaffeslabberas' },
+                        { name: 'bryggelaget 🍺', href: '/om-echo/studentgrupper/bryggelaget' },
                     ],
                 },
                 { name: 'Masterinfo', href: '/om-echo/masterinfo' },
