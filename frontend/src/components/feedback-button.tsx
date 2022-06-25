@@ -1,74 +1,119 @@
 import {
-    useColorModeValue,
-    Popover,
-    Text,
-    PopoverTrigger,
     Button,
-    PopoverContent,
-    PopoverHeader,
-    PopoverBody,
-    PopoverArrow,
-    PopoverCloseButton,
+    useDisclosure,
+    Center,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalFooter,
+    ModalBody,
+    useColorModeValue,
+    VStack,
+    FormControl,
+    FormLabel,
+    Input,
+    useToast,
     Textarea,
-    Stack,
 } from '@chakra-ui/react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
+import { FeedbackAPI, FormValues } from '../lib/api/feedback';
 
-type FormValues = {
-    email: string;
-    message: string;
-};
-
-const onSubmit: SubmitHandler<FormValues> = (data) => {
-    alert(data);
-};
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 const FeedbackButton = () => {
-    const btnBgColor = useColorModeValue('button.light.primary', 'button.dark.primary');
-    // const btnTextColor = useColorModeValue('button.light.text', 'button.dark.text');
-    const { register, handleSubmit } = useForm<FormValues>();
+    const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
+    const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
+    const textColor = useColorModeValue('button.light.text', 'button.dark.text');
+
+    const { onOpen, isOpen, onClose } = useDisclosure();
+
+    const toast = useToast();
+
+    const methods = useForm<FormValues>();
+    const { register, handleSubmit } = methods;
+
+    const submitForm: SubmitHandler<FormValues> = async (data) => {
+        await FeedbackAPI.sendFeedback(
+            {
+                email: data.email,
+                name: data.name,
+                message: data.message,
+            },
+            BACKEND_URL,
+        ).then(({ response, statusCode }) => {
+            if (statusCode === 200 || statusCode === 202) {
+                onClose();
+            }
+            toast.closeAll();
+            toast({
+                title: response.title,
+                description: response.desc,
+                duration: 8000,
+                isClosable: true,
+            });
+        });
+    };
 
     return (
         <>
-            <Popover>
-                <PopoverTrigger>
-                    <Button
-                        bg={btnBgColor}
-                        borderRadius="full"
-                        pos="fixed"
-                        bottom={['5', '10']}
-                        right={['5', '10']}
-                        h="60px"
-                        w="60px"
-                        _hover={{ cursor: 'pointer' }}
-                    >
-                        <MdOutlineFeedback size={40} color="black" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent mx={['4', '8']}>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>Din tilbakemelding er viktig for oss!</PopoverHeader>
-                    <PopoverBody>
-                        <form onSubmit={void handleSubmit(onSubmit)}>
-                            {/* <Stack>
-                                <Text fontSize="md">
-                                    Gjerne fortell oss på bugs du har funnet, funksjoner du ønsker eller vil fjerne.
-                                </Text>
-                                <Textarea {...register('message')} placeholder="Skriv her" />
-                                <Button type="submit" bg={btnBgColor} textColor={btnTextColor}>
-                                    Send
-                                </Button>
-                            </Stack> */}
-                            <input type="email" {...register('email')} />
-                            <input type="text" {...register('message')} />
+            <Button
+                pos="fixed"
+                bottom={[3, null, 5]}
+                right={[3, null, 5]}
+                colorScheme="button"
+                onClick={onOpen}
+                bg={bg}
+                color={textColor}
+                _hover={{ bg: hover }}
+                borderRadius="full"
+                w="14"
+                h="14"
+            >
+                <Center>
+                    <MdOutlineFeedback size={25} />
+                </Center>
+            </Button>
 
-                            <input type="submit" />
-                        </form>
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Send inn tilbakemelding</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormProvider {...methods}>
+                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                            <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
+                                <VStack spacing={4}>
+                                    <FormControl id="email" isRequired>
+                                        <FormLabel>Email</FormLabel>
+                                        <Input type="email" placeholder="Email" {...register('email')} />
+                                    </FormControl>
+                                    <FormControl id="name" isRequired>
+                                        <FormLabel>Navn</FormLabel>
+                                        <Input placeholder="name" {...register('name')} />
+                                    </FormControl>
+                                    <FormControl id="message" isRequired>
+                                        <FormLabel>Tilbakemelding</FormLabel>
+                                        <Textarea placeholder="Din tilbakemelding..." {...register('message')} />
+                                    </FormControl>
+                                </VStack>
+                            </form>
+                        </FormProvider>
+                    </ModalBody>
+
+                    <ModalFooter justifyContent={['center', 'right']} flexWrap="wrap" gap="3">
+                        <Button bg={bg} color={textColor} _hover={{ bg: hover }}>
+                            Send inn
+                        </Button>
+                        <Button variant="ghost" onClick={onClose}>
+                            Lukk
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     );
 };
