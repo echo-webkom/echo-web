@@ -1,6 +1,5 @@
 import {
     useColorModeValue,
-    Box,
     Popover,
     Text,
     PopoverTrigger,
@@ -10,22 +9,25 @@ import {
     PopoverBody,
     PopoverArrow,
     PopoverCloseButton,
-    FormControl,
     Textarea,
-    Input,
     Stack,
-    FormLabel,
-    FormHelperText,
 } from '@chakra-ui/react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
+
+type FormValues = {
+    email: string;
+    message: string;
+};
+
+const onSubmit: SubmitHandler<FormValues> = (data) => {
+    alert(data);
+};
 
 const FeedbackButton = () => {
     const btnBgColor = useColorModeValue('button.light.primary', 'button.dark.primary');
-    const btnTextColor = useColorModeValue('button.light.text', 'button.dark.text');
-
-    const handleSubmit = (e: HTMLFormElement) => {
-        console.log(e);
-    };
+    // const btnTextColor = useColorModeValue('button.light.text', 'button.dark.text');
+    const { register, handleSubmit } = useForm<FormValues>();
 
     return (
         <>
@@ -49,16 +51,20 @@ const FeedbackButton = () => {
                     <PopoverCloseButton />
                     <PopoverHeader>Din tilbakemelding er viktig for oss!</PopoverHeader>
                     <PopoverBody>
-                        <form onSubmit={handleSubmit(submitForm)}>
-                            <Stack>
+                        <form onSubmit={void handleSubmit(onSubmit)}>
+                            {/* <Stack>
                                 <Text fontSize="md">
                                     Gjerne fortell oss på bugs du har funnet, funksjoner du ønsker eller vil fjerne.
                                 </Text>
-                                <Textarea placeholder="Skriv her" />
+                                <Textarea {...register('message')} placeholder="Skriv her" />
                                 <Button type="submit" bg={btnBgColor} textColor={btnTextColor}>
                                     Send
                                 </Button>
-                            </Stack>
+                            </Stack> */}
+                            <input type="email" {...register('email')} />
+                            <input type="text" {...register('message')} />
+
+                            <input type="submit" />
                         </form>
                     </PopoverBody>
                 </PopoverContent>
