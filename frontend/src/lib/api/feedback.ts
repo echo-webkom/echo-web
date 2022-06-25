@@ -17,7 +17,7 @@ const errorResponse = {
 
 const FeedbackAPI = {
     sendFeedback: async (
-        values: FeedbackForm,
+        values: FormValues,
         backendUrl: string,
     ): Promise<{ response: Response; statusCode: number}> => {
         try {
