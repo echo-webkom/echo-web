@@ -1,6 +1,7 @@
 import {
     Button,
     useDisclosure,
+    Text,
     Center,
     Modal,
     ModalOverlay,
@@ -79,25 +80,29 @@ const FeedbackButton = () => {
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent>
+                <ModalContent mx="5">
                     <ModalHeader>Send inn tilbakemelding</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
+                        <Text fontSize="md" mb="3">
+                            Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på nettsiden
+                            eller hva vi kan gjøre bedre.
+                        </Text>
                         <FormProvider {...methods}>
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                             <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
                                 <VStack spacing={4}>
                                     <FormControl id="email" isRequired>
                                         <FormLabel>Email</FormLabel>
-                                        <Input type="email" placeholder="Email" {...register('email')} />
+                                        <Input type="email" {...register('email')} />
                                     </FormControl>
                                     <FormControl id="name" isRequired>
                                         <FormLabel>Navn</FormLabel>
-                                        <Input placeholder="name" {...register('name')} />
+                                        <Input {...register('name')} />
                                     </FormControl>
                                     <FormControl id="message" isRequired>
                                         <FormLabel>Tilbakemelding</FormLabel>
-                                        <Textarea placeholder="Din tilbakemelding..." {...register('message')} />
+                                        <Textarea {...register('message')} />
                                     </FormControl>
                                 </VStack>
                             </form>
