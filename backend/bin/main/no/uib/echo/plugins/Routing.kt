@@ -38,12 +38,34 @@ import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
-import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningInfoJson
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.User
+import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.masters
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
+import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -152,10 +174,7 @@ object Routing {
                 return@get
             }
 
-            call.respond(
-                HttpStatusCode.OK,
-                UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree]))
-            )
+            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
         }
     }
 
@@ -201,10 +220,7 @@ object Routing {
                         it[degreeYear] = user.degreeYear
                     }
                 }
-                call.respond(
-                    HttpStatusCode.OK,
-                    "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
-                )
+                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
                 e.printStackTrace()
@@ -708,24 +724,13 @@ object Routing {
 
     fun Route.postFeedback() {
         post("/feedback") {
-            val feedback = call.receive<FeedbackJson>()
+            val feedback = call.receive<RegistrationJson>()
 
             if (!isEmailValid(feedback.email)) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
 
-            transaction {
-                addLogger(StdOutSqlLogger)
-
-                Feedback.insert {
-                    it[email] = feedback.email
-                    it[name] = feedback.name
-                    it[message] = feedback.message
-                }
-            }
-
-            call.respond(HttpStatusCode.OK, "Feedback received.")
         }
     }
 }

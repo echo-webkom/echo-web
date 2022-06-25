@@ -1,6 +1,4 @@
-import axios from "axios";
-import { responseDecoder } from "./decoders";
-import { Response } from "./types";
+import axios from 'axios';
 
 interface FormValues {
     email: string;
@@ -8,54 +6,42 @@ interface FormValues {
     message: string;
 }
 
-const errorResponse = {
-    title: 'Det har skjedd en feil.',
-    desc: 'Vennligst prøv igjen',
-    date: null,
-};
-
-
-const FeedbackAPI = {
-    sendFeedback: async (
-        values: FormValues,
-        backendUrl: string,
-    ): Promise<{ response: Response; statusCode: number}> => {
-        try {
-            const { data, status } = await axios.post(`${backendUrl}/feedback`, values, {
-                headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode: number) => {
-                    return statusCode < 500;
-                }
-            });
-
-            return {
-                response: responseDecoder(data),
-                statusCode: status,
-            };
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response) {
-                    return {
-                        response: { ...errorResponse, code: 'InternalServerError' },
-                        statusCode: error.response.status,
-                    };
-                }
-                if (error.request) {
-                    return {
-                        response: { ...errorResponse, code: 'NoResponseError' },
-                        statusCode: 500,
-                    };
-                }
-            }
-
-            return {
-                response: { ...errorResponse, code: 'RequestError' },
-                statusCode: 500,
-            };
-        }
-    }
+interface FeedbackResponse {
+    isSuccess: boolean;
+    title: string;
+    description: string;
 }
 
-export { FeedbackAPI };
-export type { FormValues };
+const successResponse: FeedbackResponse = {
+    isSuccess: true,
+    title: 'Tilbakemelding sendt',
+    description: 'Tusen takk for din tilbakemelding!',
+};
 
+const errorResponse: FeedbackResponse = {
+    isSuccess: false,
+    title: 'Noe gikk galt',
+    description: 'Vi kunne ikke sende tilbakemeldingen din. Prøv igjen senere.',
+};
+
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
+
+const FeedbackAPI = {
+    sendFeedback: async (values: FormValues): Promise<FeedbackResponse> => {
+        try {
+            await axios.post(`${BACKEND_URL}/feedback`, values, {
+                headers: { 'Content-Type': 'application/json' },
+                validateStatus: (statusCode: number) => {
+                    return statusCode === 200;
+                },
+            });
+
+            return successResponse;
+        } catch {
+            return errorResponse;
+        }
+    },
+};
+
+export { FeedbackAPI };
+export type { FormValues, FeedbackResponse };

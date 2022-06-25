@@ -20,9 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
-import { FeedbackAPI, FormValues } from '../lib/api/feedback';
-
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
+import { FeedbackAPI, FeedbackResponse, FormValues } from '../lib/api/feedback';
 
 const FeedbackButton = () => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
@@ -37,21 +35,17 @@ const FeedbackButton = () => {
     const { register, handleSubmit } = methods;
 
     const submitForm: SubmitHandler<FormValues> = async (data) => {
-        await FeedbackAPI.sendFeedback(
-            {
-                email: data.email,
-                name: data.name,
-                message: data.message,
-            },
-            BACKEND_URL,
-        ).then(({ response, statusCode }) => {
-            if (statusCode === 200 || statusCode === 202) {
-                onClose();
-            }
+        await FeedbackAPI.sendFeedback({
+            email: data.email,
+            name: data.name,
+            message: data.message,
+        }).then((message: FeedbackResponse) => {
+            onClose();
             toast.closeAll();
             toast({
-                title: response.title,
-                description: response.desc,
+                title: message.title,
+                description: message.description,
+                status: message.isSuccess ? 'success' : 'error',
                 duration: 8000,
                 isClosable: true,
             });
@@ -83,14 +77,14 @@ const FeedbackButton = () => {
                 <ModalContent mx="5">
                     <ModalHeader>Send inn tilbakemelding</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>
-                        <Text fontSize="md" mb="3">
-                            Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på nettsiden
-                            eller hva vi kan gjøre bedre.
-                        </Text>
-                        <FormProvider {...methods}>
-                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                            <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
+                    <FormProvider {...methods}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                        <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
+                            <ModalBody>
+                                <Text fontSize="md" mb="3">
+                                    Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på
+                                    nettsiden eller hva vi kan gjøre bedre.
+                                </Text>
                                 <VStack spacing={4}>
                                     <FormControl id="email" isRequired>
                                         <FormLabel>Email</FormLabel>
@@ -102,21 +96,21 @@ const FeedbackButton = () => {
                                     </FormControl>
                                     <FormControl id="message" isRequired>
                                         <FormLabel>Tilbakemelding</FormLabel>
-                                        <Textarea {...register('message')} />
+                                        <Textarea />
                                     </FormControl>
                                 </VStack>
-                            </form>
-                        </FormProvider>
-                    </ModalBody>
+                            </ModalBody>
 
-                    <ModalFooter justifyContent={['center', 'right']} flexWrap="wrap" gap="3">
-                        <Button bg={bg} color={textColor} _hover={{ bg: hover }}>
-                            Send inn
-                        </Button>
-                        <Button variant="ghost" onClick={onClose}>
-                            Lukk
-                        </Button>
-                    </ModalFooter>
+                            <ModalFooter justifyContent={['center', 'right']} flexWrap="wrap" gap="3">
+                                <Button type="submit" bg={bg} color={textColor} _hover={{ bg: hover }}>
+                                    Send inn
+                                </Button>
+                                <Button variant="ghost" onClick={onClose}>
+                                    Lukk
+                                </Button>
+                            </ModalFooter>
+                        </form>
+                    </FormProvider>
                 </ModalContent>
             </Modal>
         </>
