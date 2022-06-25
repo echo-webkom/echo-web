@@ -22,7 +22,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
 import { FeedbackAPI, FormValues } from '../lib/api/feedback';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
 const FeedbackButton = () => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
