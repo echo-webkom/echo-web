@@ -31,9 +31,7 @@ const FeedbackAPI = {
         try {
             await axios.post(`${BACKEND_URL}/feedback`, values, {
                 headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode: number) => {
-                    return statusCode === 200;
-                },
+                validateStatus: (statusCode: number) => statusCode >= 200 && statusCode < 300,
             });
 
             return successResponse;

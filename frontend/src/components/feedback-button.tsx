@@ -31,7 +31,9 @@ const FeedbackButton = () => {
 
     const toast = useToast();
 
-    const methods = useForm<FormValues>();
+    const methods = useForm<FormValues>({
+        defaultValues: {},
+    });
     const { register, handleSubmit } = methods;
 
     const submitForm: SubmitHandler<FormValues> = async (data) => {
@@ -96,7 +98,7 @@ const FeedbackButton = () => {
                                     </FormControl>
                                     <FormControl id="message" isRequired>
                                         <FormLabel>Tilbakemelding</FormLabel>
-                                        <Textarea />
+                                        <Textarea {...register('message')} />
                                     </FormControl>
                                 </VStack>
                             </ModalBody>
