@@ -11,16 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Cache dependencies
+      - name: Cache Cypress binary and yarn dependencies
         uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Cache Cypress binary
-        uses: actions/cache@v3
-        with:
-          path: '~/.cache/Cypress'
+          path: '~/.cache'
           key: ${{ runner.os }}-cypress-${{ hashFiles('**/package.json') }}
 
       - name: Install dependencies
