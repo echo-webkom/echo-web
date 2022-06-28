@@ -5,7 +5,6 @@ import {
     literal,
     nil,
     number,
-    Pojo,
     record,
     string,
     union,
@@ -30,7 +29,7 @@ const slugDecoder = record({
     slug: string,
 });
 
-const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
+const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: unknown): Array<decodeType<T>> =>
     union(array(decoder), nil)(value) ?? [];
 
 const profileDecoder = record({
@@ -57,7 +56,7 @@ const staticInfoDecoder = record({
     info: string,
 });
 
-const degreeDecoder = (value: Pojo): Degree => {
+const degreeDecoder = (value: unknown): Degree => {
     const str: string = string(value);
 
     switch (str) {
@@ -162,7 +161,7 @@ const jobAdvertDecoder = record({
     weight: number,
 });
 
-const happeningTypeDecoder = (value: Pojo): HappeningType => {
+const happeningTypeDecoder = (value: unknown): HappeningType => {
     const str: string = string(value);
 
     switch (str) {
