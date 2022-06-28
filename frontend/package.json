@@ -114,7 +114,7 @@
         "react-icons": "4.4.0",
         "react-snowfall": "1.1.2",
         "remove-markdown": "0.5.0",
-        "typescript-json-decoder": "1.0.7"
+        "typescript-json-decoder": "1.0.10"
     },
     "devDependencies": {
         "@types/node": "14.18.21",
