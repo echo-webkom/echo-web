@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import axios from 'axios';
 
 interface FormValues {
@@ -24,14 +25,14 @@ const errorResponse: FeedbackResponse = {
     description: 'Vi kunne ikke sende tilbakemeldingen din. Prøv igjen senere.',
 };
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
+const BACKEND_URL = process.env.BACKEND_URL;
 
 const FeedbackAPI = {
     sendFeedback: async (values: FormValues): Promise<FeedbackResponse> => {
         try {
             await axios.post(`${BACKEND_URL}/feedback`, values, {
                 headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode: number) => statusCode >= 200 && statusCode < 300,
+                validateStatus: (statusCode: number) => statusCode === 200,
             });
 
             return successResponse;

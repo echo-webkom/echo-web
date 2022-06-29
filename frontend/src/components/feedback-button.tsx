@@ -18,7 +18,7 @@ import {
     useToast,
     Textarea,
 } from '@chakra-ui/react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
 import { FeedbackAPI, FeedbackResponse, FormValues } from '../lib/api/feedback';
 
@@ -31,10 +31,7 @@ const FeedbackButton = () => {
 
     const toast = useToast();
 
-    const methods = useForm<FormValues>({
-        defaultValues: {},
-    });
-    const { register, handleSubmit } = methods;
+    const { register, handleSubmit, reset } = useForm<FormValues>();
 
     const submitForm: SubmitHandler<FormValues> = async (data) => {
         await FeedbackAPI.sendFeedback({
@@ -50,6 +47,11 @@ const FeedbackButton = () => {
                 status: message.isSuccess ? 'success' : 'error',
                 duration: 8000,
                 isClosable: true,
+            });
+            reset({
+                email: '',
+                name: '',
+                message: '',
             });
         });
     };
@@ -79,40 +81,38 @@ const FeedbackButton = () => {
                 <ModalContent mx="5">
                     <ModalHeader>Send inn tilbakemelding</ModalHeader>
                     <ModalCloseButton />
-                    <FormProvider {...methods}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                        <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
-                            <ModalBody>
-                                <Text fontSize="md" mb="3">
-                                    Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på
-                                    nettsiden eller hva vi kan gjøre bedre.
-                                </Text>
-                                <VStack spacing={4}>
-                                    <FormControl id="email" isRequired>
-                                        <FormLabel>Email</FormLabel>
-                                        <Input type="email" {...register('email')} />
-                                    </FormControl>
-                                    <FormControl id="name" isRequired>
-                                        <FormLabel>Navn</FormLabel>
-                                        <Input {...register('name')} />
-                                    </FormControl>
-                                    <FormControl id="message" isRequired>
-                                        <FormLabel>Tilbakemelding</FormLabel>
-                                        <Textarea {...register('message')} />
-                                    </FormControl>
-                                </VStack>
-                            </ModalBody>
+                    {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                    <form onSubmit={handleSubmit(submitForm)}>
+                        <ModalBody>
+                            <Text fontSize="md" mb="3">
+                                Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på nettsiden
+                                eller hva vi kan gjøre bedre.
+                            </Text>
+                            <VStack spacing={4}>
+                                <FormControl id="email" isRequired>
+                                    <FormLabel>Email</FormLabel>
+                                    <Input type="email" {...register('email')} />
+                                </FormControl>
+                                <FormControl id="name" isRequired>
+                                    <FormLabel>Navn</FormLabel>
+                                    <Input {...register('name')} />
+                                </FormControl>
+                                <FormControl id="message" isRequired>
+                                    <FormLabel>Tilbakemelding</FormLabel>
+                                    <Textarea {...register('message')} />
+                                </FormControl>
+                            </VStack>
+                        </ModalBody>
 
-                            <ModalFooter justifyContent={['center', 'right']} flexWrap="wrap" gap="3">
-                                <Button type="submit" bg={bg} color={textColor} _hover={{ bg: hover }}>
-                                    Send inn
-                                </Button>
-                                <Button variant="ghost" onClick={onClose}>
-                                    Lukk
-                                </Button>
-                            </ModalFooter>
-                        </form>
-                    </FormProvider>
+                        <ModalFooter justifyContent={['center', 'right']} flexWrap="wrap" gap="3">
+                            <Button type="submit" bg={bg} color={textColor} _hover={{ bg: hover }}>
+                                Send inn
+                            </Button>
+                            <Button variant="ghost" onClick={onClose}>
+                                Lukk
+                            </Button>
+                        </ModalFooter>
+                    </form>
                 </ModalContent>
             </Modal>
         </>
