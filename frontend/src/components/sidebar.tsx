@@ -158,7 +158,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
             const isFocused = item.items?.some((item) => item.href === asPath);
 
             return (
-                <MenuDropdown title={item.name} isOpen={isFocused ? isFocused : false}>
+                <MenuDropdown title={item.name} isOpen={isFocused ?? false}>
                     {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         item.items?.map((item) => renderMenuItem(item, onClick))
