@@ -40,17 +40,18 @@ const HappeningMetaInfo = ({
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
     // This means spots from CMS will be displayed if backend does not respond.
-    const trueSpotRanges: Array<SpotRangeCount> = spotRangeCounts
-        ? spotRangeCounts
-        : spotRangesFromCms?.map((sr: SpotRange) => {
-              return {
-                  spots: sr.spots,
-                  minDegreeYear: sr.minDegreeYear,
-                  maxDegreeYear: sr.maxDegreeYear,
-                  regCount: 0,
-                  waitListCount: 0,
-              };
-          }) ?? [];
+    const trueSpotRanges: Array<SpotRangeCount> =
+        spotRangeCounts ??
+        spotRangesFromCms?.map((sr: SpotRange) => {
+            return {
+                spots: sr.spots,
+                minDegreeYear: sr.minDegreeYear,
+                maxDegreeYear: sr.maxDegreeYear,
+                regCount: 0,
+                waitListCount: 0,
+            };
+        }) ??
+        [];
 
     const minDegreeYear =
         trueSpotRanges.length === 0 ? 1 : Math.min(...trueSpotRanges.map((sr: SpotRange) => sr.minDegreeYear));
