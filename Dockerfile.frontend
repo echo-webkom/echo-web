@@ -1,6 +1,6 @@
 # Install dependencies with yarn.
-# Node 14 is the version Vercel uses.
-FROM node:14-alpine AS deps
+# Node 16 is the version Vercel uses.
+FROM node:16-alpine AS deps
 
 WORKDIR /opt/build
 COPY package.json yarn.lock /opt/build/
