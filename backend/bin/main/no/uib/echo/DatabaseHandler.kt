@@ -3,6 +3,7 @@ package no.uib.echo
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.uib.echo.schema.Answer
+import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
@@ -16,7 +17,12 @@ import java.net.URI
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
 
-class DatabaseHandler(private val dev: Boolean, private val testMigration: Boolean, dbUrl: URI, mbMaxPoolSize: String?) {
+class DatabaseHandler(
+    private val dev: Boolean,
+    private val testMigration: Boolean,
+    dbUrl: URI,
+    mbMaxPoolSize: String?
+) {
     private val dbPort = if (dbUrl.port == -1) 5432 else dbUrl.port
     private val dbUrl = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
     private val dbUsername = dbUrl.userInfo.split(":")[0]
@@ -61,7 +67,8 @@ class DatabaseHandler(private val dev: Boolean, private val testMigration: Boole
                         Registration,
                         Answer,
                         SpotRange,
-                        User
+                        User,
+                        Feedback
                     )
                 }
             } catch (e: Exception) {

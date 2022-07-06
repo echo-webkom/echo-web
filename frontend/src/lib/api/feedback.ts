@@ -25,7 +25,7 @@ const errorResponse: FeedbackResponse = {
     description: 'Vi kunne ikke sende tilbakemeldingen din. Prøv igjen senere.',
 };
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
 
 const FeedbackAPI = {
     sendFeedback: async (values: FormValues): Promise<FeedbackResponse> => {

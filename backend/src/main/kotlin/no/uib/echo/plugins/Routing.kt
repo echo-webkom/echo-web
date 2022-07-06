@@ -735,8 +735,8 @@ object Routing {
         post("/feedback") {
             val feedback = call.receive<FeedbackJson>()
 
-            if (!isEmailValid(feedback.email)) {
-                call.respond(HttpStatusCode.BadRequest)
+            if (feedback.message.isEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "Message cannot be empty.")
                 return@post
             }
 

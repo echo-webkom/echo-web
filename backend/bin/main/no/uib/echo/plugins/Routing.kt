@@ -38,6 +38,7 @@ import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
+import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
@@ -46,6 +47,8 @@ import no.uib.echo.resToJson
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Feedback
+import no.uib.echo.schema.FeedbackJson
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
@@ -174,7 +177,10 @@ object Routing {
                 return@get
             }
 
-            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
+            call.respond(
+                HttpStatusCode.OK,
+                UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree]))
+            )
         }
     }
 
@@ -220,7 +226,10 @@ object Routing {
                         it[degreeYear] = user.degreeYear
                     }
                 }
-                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
+                call.respond(
+                    HttpStatusCode.OK,
+                    "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
                 e.printStackTrace()
@@ -724,13 +733,24 @@ object Routing {
 
     fun Route.postFeedback() {
         post("/feedback") {
-            val feedback = call.receive<RegistrationJson>()
+            val feedback = call.receive<FeedbackJson>()
 
-            if (!isEmailValid(feedback.email)) {
-                call.respond(HttpStatusCode.BadRequest)
+            if (feedback.message.isEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "Message cannot be empty.")
                 return@post
             }
 
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.insert {
+                    it[email] = feedback.email
+                    it[name] = feedback.name
+                    it[message] = feedback.message
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, "Feedback received.")
         }
     }
 }

@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.Table
 
 object Feedback : Table() {
     private val id: Column<Int> = integer("id").uniqueIndex().autoIncrement()
-    val email: Column<String> = text("email")
-    val name: Column<String> = text("name")
+    val email: Column<String?> = text("email").nullable()
+    val name: Column<String?> = text("name").nullable()
     val message: Column<String> = text("message")
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)

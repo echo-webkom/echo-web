@@ -89,18 +89,22 @@ const FeedbackButton = () => {
                                 eller hva vi kan gjøre bedre.
                             </Text>
                             <VStack spacing={4}>
-                                <FormControl id="email" isRequired>
-                                    <FormLabel>Email</FormLabel>
+                                <FormControl id="email">
+                                    <FormLabel fontWeight="bold">E-post</FormLabel>
                                     <Input type="email" {...register('email')} />
                                 </FormControl>
-                                <FormControl id="name" isRequired>
-                                    <FormLabel>Navn</FormLabel>
+                                <FormControl id="name">
+                                    <FormLabel fontWeight="bold">Navn</FormLabel>
                                     <Input {...register('name')} />
                                 </FormControl>
                                 <FormControl id="message" isRequired>
-                                    <FormLabel>Tilbakemelding</FormLabel>
+                                    <FormLabel fontWeight="bold">Tilbakemelding</FormLabel>
                                     <Textarea {...register('message')} />
                                 </FormControl>
+                                <Text fontSize="sm" fontStyle="italic">
+                                    Feltene for navn og e-post er ikke påkrevd, men fylles ut dersom du tillater at vi
+                                    kontakter deg om tilbakemeldingen.
+                                </Text>
                             </VStack>
                         </ModalBody>
 
