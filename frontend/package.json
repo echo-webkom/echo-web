@@ -119,7 +119,7 @@
     "devDependencies": {
         "@types/node": "16.11.43",
         "@types/react": "18.0.14",
-        "@types/react-dom": "18.0.5",
+        "@types/react-dom": "18.0.6",
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "5.30.5",
         "@typescript-eslint/parser": "5.30.5",
