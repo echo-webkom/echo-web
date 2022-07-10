@@ -9,6 +9,7 @@ import {
     WrapItem,
     Image,
     Center,
+    Flex,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
@@ -47,7 +48,7 @@ const Footer = (): JSX.Element => {
                     <Center>
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
                     </Center>
-                    <SimpleGrid columns={[4, 4, 2, 4, 4]} spacing="4">
+                    <Flex justify="space-between">
                         <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <NextLink href="https://facebook.com/groups/informatikk" passHref>
                                 <LinkOverlay isExternal aria-label="Link til Facebook">
@@ -63,23 +64,13 @@ const Footer = (): JSX.Element => {
                             </NextLink>
                         </LinkBox>
                         <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink
-                                href="https://docs.google.com/forms/d/e/1FAIpQLSey2XfQijRQNvoc8-y3DaufbPaN33SdRBrITrcq87s7DyG6pg/viewform"
-                                passHref
-                            >
-                                <LinkOverlay isExternal aria-label="Tilbakemeldingsskjema">
-                                    <Icon as={FaCommentDots} w={10} h={10} />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <NextLink href="https://instagram.com/echo_uib" passHref>
                                 <LinkOverlay isExternal aria-label="Link til Instagram">
                                     <Icon as={FaInstagram} w={10} h={10} />
                                 </LinkOverlay>
                             </NextLink>
                         </LinkBox>
-                    </SimpleGrid>
+                    </Flex>
                 </SimpleGrid>
 
                 <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
