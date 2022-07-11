@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
-import { FaFacebook, FaGithub, FaInstagram, FaCommentDots } from 'react-icons/fa';
+import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';

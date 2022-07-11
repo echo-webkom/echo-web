@@ -2,7 +2,6 @@ import {
     Button,
     useDisclosure,
     Text,
-    Center,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -17,6 +16,7 @@ import {
     Input,
     useToast,
     Textarea,
+    IconButton,
 } from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
@@ -58,23 +58,21 @@ const FeedbackButton = () => {
 
     return (
         <>
-            <Button
+            <IconButton
+                icon={<MdOutlineFeedback size={24} />}
+                aria-label="Åpne tilbakemeldings skjema"
+                borderRadius="full"
                 pos="fixed"
-                bottom={[3, null, 5]}
-                right={[3, null, 5]}
-                colorScheme="button"
+                bottom={5}
+                right={5}
+                p="3"
                 onClick={onOpen}
                 bg={bg}
                 color={textColor}
                 _hover={{ bg: hover }}
-                borderRadius="full"
-                w="14"
-                h="14"
-            >
-                <Center>
-                    <MdOutlineFeedback size={25} />
-                </Center>
-            </Button>
+                w="12"
+                h="12"
+            />
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
