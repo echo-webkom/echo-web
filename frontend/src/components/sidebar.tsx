@@ -94,6 +94,8 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                         { name: '2022-2023', href: '/om-echo/studentgrupper/2022-2023' },
                         { name: '2021-2022', href: '/om-echo/studentgrupper/2021-2022' },
                         { name: '2020-2021', href: '/om-echo/studentgrupper/2020-2021' },
+                        { name: '2019-2020', href: '/om-echo/studentgrupper/2019-2020' },
+                        { name: '2018-2019', href: '/om-echo/studentgrupper/2018-2019' },
                     ],
                 },
                 {
