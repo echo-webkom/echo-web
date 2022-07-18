@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@chakra-ui/react';
 
 const LanguageMenu = (): JSX.Element => {

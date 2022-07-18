@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { signOut } from 'next-auth/react';
-import React, { useState } from 'react';
-import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import { Box, Heading, Text, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
-import { isErrorMessage, ProfileFormValues, UserWithName, UserAPI } from '../lib/api';
-import FormDegree from './form-degree';
-import FormDegreeYear from './form-degree-year';
+import type { SubmitHandler } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { Box, Input, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
+import type { ProfileFormValues, UserWithName } from '@api/user';
+import { UserAPI } from '@api/user';
+import { isErrorMessage } from '@utils/error';
+import FormDegree from '@components/form-degree';
+import FormDegreeYear from '@components/form-degree-year';
 
 interface ProfileState {
     infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error';

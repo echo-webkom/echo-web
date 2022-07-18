@@ -1,13 +1,14 @@
-import { ParsedUrlQuery } from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 import { Center, Spinner } from '@chakra-ui/react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
 import Markdown from 'markdown-to-jsx';
-import SEO from '../../components/seo';
-import { isErrorMessage, StaticInfoAPI, StaticInfo } from '../../lib/api';
-import SidebarWrapper from '../../components/sidebar-wrapper';
-import MapMarkdownChakra from '../../markdown';
+import SEO from '@components/seo';
+import type { StaticInfo } from '@api/static-info';
+import { StaticInfoAPI } from '@api/static-info';
+import { isErrorMessage } from '@utils/error';
+import SidebarWrapper from '@components/sidebar-wrapper';
+import MapMarkdownChakra from '@utils/markdown';
 
 interface Props {
     staticInfo: StaticInfo;
@@ -75,4 +76,4 @@ const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default StaticInfoPage;
-export { getStaticPaths, getStaticProps };
+export { getStaticProps, getStaticPaths };

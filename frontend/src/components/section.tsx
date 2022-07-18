@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import { Box, BoxProps, useColorModeValue } from '@chakra-ui/react';
-import React from 'react';
+import type { BoxProps } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 
 const Section = (props: BoxProps): JSX.Element => {
     const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');

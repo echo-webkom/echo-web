@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import NavBar from '../navbar';
+import NavBar from '@components/navbar';
 
 describe('NavBar', () => {
     it('renders without crashing', () => {

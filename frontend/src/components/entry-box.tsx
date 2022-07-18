@@ -1,9 +1,12 @@
-import { BoxProps, Flex, Heading, Spacer, Text, useBreakpointValue } from '@chakra-ui/react';
-import React from 'react';
-import { Happening, Post, JobAdvert, RegistrationCount } from '../lib/api';
-import ButtonLink from './button-link';
-import EntryList from './entry-list';
-import Section from './section';
+import type { BoxProps } from '@chakra-ui/react';
+import { Flex, Heading, Spacer, Text, useBreakpointValue } from '@chakra-ui/react';
+import type { Happening } from '@api/happening';
+import type { Post } from '@api/post';
+import type { JobAdvert } from '@api/job-advert';
+import type { RegistrationCount } from '@api/registration';
+import ButtonLink from '@components/button-link';
+import EntryList from '@components/entry-list';
+import Section from '@components/section';
 
 interface Props extends BoxProps {
     title?: string;

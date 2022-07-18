@@ -2,27 +2,23 @@ import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore, isFuture } from 'date-fns';
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import NextLink from 'next/link';
-import React from 'react';
-import EntryBox from '../components/entry-box';
-import SEO from '../components/seo';
-import Section from '../components/section';
-import {
-    Banner,
-    BannerAPI,
-    Happening,
-    HappeningAPI,
-    HappeningType,
-    isErrorMessage,
-    Post,
-    PostAPI,
-    RegistrationAPI,
-    RegistrationCount,
-    JobAdvertAPI,
-    JobAdvert,
-} from '../lib/api';
-import getRssXML from '../lib/generate-rss-feed';
+import EntryBox from '@components/entry-box';
+import SEO from '@components/seo';
+import Section from '@components/section';
+import type { Happening } from '@api/happening';
+import { HappeningAPI } from '@api/happening';
+import type { Banner } from '@api/banner';
+import { BannerAPI } from '@api/banner';
+import type { Post } from '@api/post';
+import { PostAPI } from '@api/post';
+import type { RegistrationCount } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
+import type { JobAdvert } from '@api/job-advert';
+import { JobAdvertAPI } from '@api/job-advert';
+import { isErrorMessage } from '@utils/error';
+import getRssXML from '@utils/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,
@@ -132,8 +128,8 @@ const IndexPage = ({
 
 export const getStaticProps: GetStaticProps = async () => {
     const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
-        HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES),
-        HappeningAPI.getHappeningsByType(0, HappeningType.EVENT),
+        HappeningAPI.getHappeningsByType(0, 'BEDPRES'),
+        HappeningAPI.getHappeningsByType(0, 'EVENT'),
         PostAPI.getPosts(0),
         JobAdvertAPI.getJobAdverts(3),
         BannerAPI.getBanner(),

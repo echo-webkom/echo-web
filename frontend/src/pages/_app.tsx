@@ -4,11 +4,10 @@ import { getMonth } from 'date-fns';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
-import React from 'react';
 import Snowfall from 'react-snowfall';
-import Fonts from '../styles/fonts';
-import theme from '../styles/theme';
-import Layout from '../components/layout';
+import Fonts from '@styles/fonts';
+import theme from '@styles/theme';
+import Layout from '@components/layout';
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element => {
     const router = useRouter();

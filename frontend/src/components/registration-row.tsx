@@ -1,3 +1,4 @@
+import type { TableRowProps } from '@chakra-ui/react';
 import {
     Heading,
     Text,
@@ -14,13 +15,13 @@ import {
     ModalBody,
     ModalFooter,
     SimpleGrid,
-    TableRowProps,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { Registration, RegistrationAPI } from '../lib/api';
-import { notEmptyOrNull } from '../lib/utils';
+import type { Registration } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
+import notEmptyOrNull from '@utils/not-empty-or-null';
 
 interface Props {
     registration: Registration;

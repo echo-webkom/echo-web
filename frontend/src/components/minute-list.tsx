@@ -2,9 +2,8 @@ import { Flex, Heading, Icon, Link, List, ListItem, Text, useColorModeValue } fr
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import NextLink from 'next/link';
-import React from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { Minute } from '../lib/api';
+import type { Minute } from '@api/minute';
 
 interface Props {
     minutes: Array<Minute>;

@@ -1,8 +1,9 @@
-import React from 'react';
-import { GetStaticProps } from 'next';
-import { JobAdvert, JobAdvertAPI, isErrorMessage } from '../../lib/api';
-import JobAdvertOverview from '../../components/job-advert-overview';
-import Section from '../../components/section';
+import type { GetStaticProps } from 'next';
+import type { JobAdvert } from '@api/job-advert';
+import { JobAdvertAPI } from '@api/job-advert';
+import { isErrorMessage } from '@utils/error';
+import JobAdvertOverview from '@components/job-advert-overview';
+import Section from '@components/section';
 
 interface Props {
     jobAdverts: Array<JobAdvert>;

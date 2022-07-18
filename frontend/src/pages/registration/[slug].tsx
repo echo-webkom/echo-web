@@ -1,4 +1,4 @@
-import { ParsedUrlQuery } from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 import {
     useBreakpointValue,
     useToast,
@@ -14,14 +14,15 @@ import {
     Tr,
     Th,
 } from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
-import React from 'react';
-import ErrorBox from '../../components/error-box';
-import ButtonLink from '../../components/button-link';
-import { isErrorMessage, RegistrationAPI, Registration, registrationRoute } from '../../lib/api';
-import Section from '../../components/section';
-import RegistrationRow from '../../components/registration-row';
-import { notEmptyOrNull } from '../../lib/utils';
+import type { GetServerSideProps } from 'next';
+import ErrorBox from '@components/error-box';
+import ButtonLink from '@components/button-link';
+import type { Registration } from '@api/registration';
+import { RegistrationAPI, registrationRoute } from '@api/registration';
+import { isErrorMessage } from '@utils/error';
+import Section from '@components/section';
+import RegistrationRow from '@components/registration-row';
+import notEmptyOrNull from '@utils/not-empty-or-null';
 
 interface Props {
     registrations: Array<Registration> | null;

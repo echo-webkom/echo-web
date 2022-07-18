@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import NextLink from 'next/link';
-import React from 'react';
-import { JobAdvert } from '../lib/api';
+import type { JobAdvert } from '@api/job-advert';
 
 const translateJobType = (jobType: 'fulltime' | 'parttime' | 'internship' | 'summerjob'): string => {
     switch (jobType) {

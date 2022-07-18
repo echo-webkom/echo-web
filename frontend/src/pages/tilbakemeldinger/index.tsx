@@ -1,13 +1,14 @@
 import { Heading, Text, SimpleGrid, GridItem, Divider, Spacer, Flex, Icon, Link } from '@chakra-ui/react';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { AiOutlineMail } from 'react-icons/ai';
 // eslint-disable-next-line camelcase
 import { unstable_getServerSession } from 'next-auth/next';
-import { authOptions } from '../api/auth/[...nextauth]';
-import Section from '../../components/section';
-import SEO from '../../components/seo';
-import { FeedbackAPI } from '../../lib/api/feedback';
-import { Feedback, isErrorMessage } from '../../lib/api/types';
+import { authOptions } from '@pages/api/auth/[...nextauth]';
+import Section from '@components/section';
+import SEO from '@components/seo';
+import { FeedbackAPI } from '@api/feedback';
+import type { Feedback } from '@api/feedback';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     feedbacks: Array<Feedback>;

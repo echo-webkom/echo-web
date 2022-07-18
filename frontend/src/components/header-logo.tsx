@@ -1,10 +1,9 @@
-import React from 'react';
 import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import LogoAccesory from './logo-accesory';
+import LogoAccesory from '@components/logo-accesory';
 
 const randomHeaderMessage = () => {
     const now = new Date();

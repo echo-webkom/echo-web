@@ -1,7 +1,6 @@
 import { Center, Wrap } from '@chakra-ui/react';
-import React from 'react';
-import { Post } from '../lib/api';
-import PostPreview from './post-preview';
+import type { Post } from '@api/post';
+import PostPreview from '@components/post-preview';
 
 interface Props {
     posts: Array<Post>;

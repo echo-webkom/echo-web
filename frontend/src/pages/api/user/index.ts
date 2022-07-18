@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import axios from 'axios';
-import { User, UserWithName } from '../../../lib/api';
+import type { User, UserWithName } from '@api/user';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });

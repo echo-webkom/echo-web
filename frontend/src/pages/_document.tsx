@@ -1,7 +1,7 @@
 import { ColorModeScript } from '@chakra-ui/react';
-import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from 'next/document';
-import React from 'react';
-import theme from '../styles/theme';
+import type { DocumentContext, DocumentInitialProps } from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
+import theme from '@styles/theme';
 
 const getInitialProps = async (ctx: DocumentContext): Promise<DocumentInitialProps> => {
     const initialProps = await Document.getInitialProps(ctx);

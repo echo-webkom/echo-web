@@ -1,8 +1,26 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import SanityAPI from './api';
-import { slugDecoder, jobAdvertDecoder } from './decoders';
-import { ErrorMessage, Slug, JobAdvert } from './types';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, string, record, literal, union, number } from 'typescript-json-decoder';
+import SanityAPI from '@api/sanity';
+import { slugDecoder } from '@utils/decoders';
+import type { ErrorMessage } from '@utils/error';
+
+const jobAdvertDecoder = record({
+    slug: string,
+    body: string,
+    companyName: string,
+    title: string,
+    logoUrl: string,
+    deadline: string,
+    locations: array(string),
+    advertLink: string,
+    jobType: union(literal('fulltime'), literal('parttime'), literal('internship'), literal('summerjob')),
+    degreeYears: array(number),
+    _createdAt: string,
+    weight: number,
+});
+
+type JobAdvert = decodeType<typeof jobAdvertDecoder>;
 
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -10,7 +28,7 @@ const JobAdvertAPI = {
             const query = `*[_type == "jobAdvert"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug: Slug) => nestedSlug.slug);
+            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -71,5 +89,4 @@ const JobAdvertAPI = {
     },
 };
 
-/* eslint-disable import/prefer-default-export */
-export { JobAdvertAPI };
+export { JobAdvertAPI, type JobAdvert };

@@ -1,6 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { getMonth } from 'date-fns';
-import { mainTheme, halloweenTheme, christmasTheme } from './themes';
+import { mainTheme, halloweenTheme, christmasTheme } from '@styles/themes';
 
 // global config
 const config = {

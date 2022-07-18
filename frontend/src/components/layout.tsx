@@ -1,9 +1,8 @@
 import { Box } from '@chakra-ui/react';
-import React from 'react';
-import Footer from './footer';
-import Header from './header';
-import AnimatedIcons from './animated-icons';
-import FeedbackButton from './feedback-button';
+import Footer from '@components/footer';
+import Header from '@components/header';
+import AnimatedIcons from '@components/animated-icons';
+import FeedbackButton from '@components/feedback-button';
 
 interface Props {
     children: React.ReactNode;

@@ -20,9 +20,11 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
-import { FeedbackAPI, FeedbackResponse, FormValues } from '../lib/api/feedback';
+import type { FeedbackResponse, FeedbackFormValues } from '@api/feedback';
+import { FeedbackAPI } from '@api/feedback';
 
 const FeedbackButton = () => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
@@ -35,9 +37,9 @@ const FeedbackButton = () => {
 
     const toast = useToast();
 
-    const { register, handleSubmit, reset } = useForm<FormValues>();
+    const { register, handleSubmit, reset } = useForm<FeedbackFormValues>();
 
-    const submitForm: SubmitHandler<FormValues> = async (data) => {
+    const submitForm: SubmitHandler<FeedbackFormValues> = async (data) => {
         const message: FeedbackResponse = await FeedbackAPI.sendFeedback(backendUrl, data);
 
         onClose();

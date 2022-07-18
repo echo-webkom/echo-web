@@ -1,14 +1,15 @@
 import { formatISO, isPast, parseISO, sub } from 'date-fns';
-import { Happening, Post } from './api';
+import type { Happening } from '@api/happening';
+import type { Post } from '@api/post';
 
-type GenericEntry = {
+interface GenericEntry {
     slug: string;
     title: string;
     publishedAt: string;
     author: string;
     body: string | { no: string; en: string } | { no: string; en: null };
     route: string;
-};
+}
 
 const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPostDate: Date } => {
     let latestPostDate = new Date(0);

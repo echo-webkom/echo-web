@@ -1,4 +1,5 @@
-import { Button, ButtonProps, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
+import type { ButtonProps } from '@chakra-ui/react';
+import { Button, LinkBox, LinkOverlay, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 interface Props extends ButtonProps {

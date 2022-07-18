@@ -15,10 +15,10 @@ import {
     useColorModeValue,
     Heading,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
-import Section from './section';
-import Sidebar from './sidebar';
+import Section from '@components/section';
+import Sidebar from '@components/sidebar';
 
 interface Props {
     children: React.ReactNode;
@@ -30,6 +30,7 @@ const SidebarWrapper = ({ children }: Props): JSX.Element => {
     const bgColor = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
     const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <>
             <Section>

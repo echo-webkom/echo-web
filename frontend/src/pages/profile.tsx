@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { Spinner, Center, Text, Button, useColorModeValue, Link, Flex, Spacer } from '@chakra-ui/react';
 import { IoMdHome } from 'react-icons/io';
-import SEO from '../components/seo';
-import { UserAPI, UserWithName, isErrorMessage } from '../lib/api';
-import Section from '../components/section';
-import ProfileInfo from '../components/profile-info';
+import type { UserWithName } from '@api/user';
+import { UserAPI } from '@api/user';
+import { isErrorMessage } from '@utils/error';
+import Section from '@components/section';
+import ProfileInfo from '@components/profile-info';
+import SEO from '@components/seo';
 
 const ProfilePage = (): JSX.Element => {
     const [user, setUser] = useState<UserWithName | null>();

@@ -1,5 +1,5 @@
 import { Box, HStack, Switch, useColorMode, useColorModeValue } from '@chakra-ui/react';
-import React, { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { BsSun } from 'react-icons/bs';
 import { BiMoon } from 'react-icons/bi';
 import Head from 'next/head';

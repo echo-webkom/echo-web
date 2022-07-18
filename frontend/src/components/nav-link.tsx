@@ -1,7 +1,7 @@
 import { Button, Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface Props {
     href: string;

@@ -1,28 +1,24 @@
-import { ParsedUrlQuery } from 'querystring';
-import { GetServerSideProps } from 'next';
+import type { ParsedUrlQuery } from 'querystring';
+import type { GetServerSideProps } from 'next';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import {
-    UserAPI,
-    UserWithName,
-    isErrorMessage,
-    Happening,
-    HappeningAPI,
-    HappeningType,
-    HappeningInfo,
-} from '../../lib/api';
-import ErrorBox from '../../components/error-box';
-import SEO from '../../components/seo';
-import Article from '../../components/article';
-import Countdown from '../../components/countdown';
-import HappeningMetaInfo from '../../components/happening-meta-info';
-import RegistrationForm from '../../components/registration-form';
-import Section from '../../components/section';
+import type { UserWithName } from '@api/user';
+import { UserAPI } from '@api/user';
+import type { Happening, HappeningInfo } from '@api/happening';
+import { HappeningAPI } from '@api/happening';
+import { isErrorMessage } from '@utils/error';
+import ErrorBox from '@components/error-box';
+import SEO from '@components/seo';
+import Article from '@components/article';
+import Countdown from '@components/countdown';
+import HappeningMetaInfo from '@components/happening-meta-info';
+import RegistrationForm from '@components/registration-form';
+import Section from '@components/section';
 
 interface Props {
     happening: Happening | null;
@@ -85,24 +81,22 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} as={Section}>
                             <>
-                                {happening.happeningType === HappeningType.BEDPRES &&
-                                    happening.companyLink &&
-                                    happening.logoUrl && (
-                                        <LinkBox mb="1em">
-                                            <NextLink href={happening.companyLink} passHref>
-                                                <LinkOverlay href={happening.companyLink} isExternal>
-                                                    <Center>
-                                                        <Image
-                                                            src={happening.logoUrl}
-                                                            alt="Bedriftslogo"
-                                                            width={300}
-                                                            height={300}
-                                                        />
-                                                    </Center>
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    )}
+                                {happening.happeningType === 'BEDPRES' && happening.companyLink && happening.logoUrl && (
+                                    <LinkBox mb="1em">
+                                        <NextLink href={happening.companyLink} passHref>
+                                            <LinkOverlay href={happening.companyLink} isExternal>
+                                                <Center>
+                                                    <Image
+                                                        src={happening.logoUrl}
+                                                        alt="Bedriftslogo"
+                                                        width={300}
+                                                        height={300}
+                                                    />
+                                                </Center>
+                                            </LinkOverlay>
+                                        </NextLink>
+                                    </LinkBox>
+                                )}
                                 <HappeningMetaInfo
                                     date={parseISO(happening.date)}
                                     location={happening.location}

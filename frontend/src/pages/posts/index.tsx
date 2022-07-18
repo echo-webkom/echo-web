@@ -1,11 +1,12 @@
 import { Center, Divider } from '@chakra-ui/react';
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
-import ButtonLink from '../../components/button-link';
-import PostList from '../../components/post-list';
-import SEO from '../../components/seo';
-import { isErrorMessage, Post, PostAPI } from '../../lib/api';
+import ButtonLink from '@components/button-link';
+import PostList from '@components/post-list';
+import SEO from '@components/seo';
+import type { Post } from '@api/post';
+import { PostAPI } from '@api/post';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     posts: Array<Post>;

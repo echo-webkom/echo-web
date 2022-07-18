@@ -1,8 +1,17 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { slugDecoder, staticInfoDecoder } from './decoders';
-import { ErrorMessage, StaticInfo } from './types';
-import { SanityAPI } from '.';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, record, string } from 'typescript-json-decoder';
+import { slugDecoder } from '@utils/decoders';
+import type { ErrorMessage } from '@utils/error';
+import SanityAPI from '@api/sanity';
+
+const staticInfoDecoder = record({
+    name: string,
+    slug: string,
+    info: string,
+});
+
+type StaticInfo = decodeType<typeof staticInfoDecoder>;
 
 const StaticInfoAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -49,5 +58,4 @@ const StaticInfoAPI = {
     },
 };
 
-/* eslint-disable import/prefer-default-export */
-export { StaticInfoAPI };
+export { StaticInfoAPI, type StaticInfo };

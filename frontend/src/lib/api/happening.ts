@@ -1,12 +1,65 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { happeningDecoder, happeningInfoDecoder } from './decoders';
-import { ErrorMessage, Happening, HappeningInfo, HappeningType } from './types';
-import handleError from './errors';
-import { SanityAPI } from '.';
+import type { decodeType } from 'typescript-json-decoder';
+import { number, array, string, literal, union, nil, record } from 'typescript-json-decoder';
+import type { ErrorMessage } from '@utils/error';
+import { handleError } from '@utils/error';
+import { emptyArrayOnNilDecoder } from '@utils/decoders';
+import SanityAPI from '@api/sanity';
 
-// Automatically creates the Happening type with the
-// fields we specify in our happeningDecoder.
+const happeningTypeDecoder = union(literal('BEDPRES'), literal('EVENT'));
+type HappeningType = decodeType<typeof happeningTypeDecoder>;
+
+const questionDecoder = record({
+    questionText: string,
+    inputType: union(literal('radio'), literal('textbox')),
+    alternatives: union(nil, array(string)),
+});
+type Question = decodeType<typeof questionDecoder>;
+
+const spotRangeCountDecoder = record({
+    spots: number,
+    minDegreeYear: number,
+    maxDegreeYear: number,
+    regCount: number,
+    waitListCount: number,
+});
+type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
+
+const spotRangeDecoder = record({
+    spots: number,
+    minDegreeYear: number,
+    maxDegreeYear: number,
+});
+type SpotRange = decodeType<typeof spotRangeDecoder>;
+
+const happeningDecoder = record({
+    _createdAt: string,
+    author: string,
+    title: string,
+    slug: string,
+    date: string,
+    registrationDate: union(string, nil),
+    registrationDeadline: union(string, nil),
+    body: (value) =>
+        typeof value === 'string'
+            ? { no: string(value), en: string(value) }
+            : record({ no: string, en: union(string, nil) })(value),
+    location: string,
+    locationLink: union(string, nil),
+    companyLink: union(string, nil),
+    logoUrl: union(string, nil),
+    contactEmail: union(string, nil),
+    additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),
+    spotRanges: (value) => emptyArrayOnNilDecoder(spotRangeDecoder, value),
+    happeningType: happeningTypeDecoder,
+});
+type Happening = decodeType<typeof happeningDecoder>;
+
+const happeningInfoDecoder = record({
+    spotRanges: array(spotRangeCountDecoder),
+    regVerifyToken: (value) => (value === undefined ? null : string(value)),
+});
+type HappeningInfo = decodeType<typeof happeningInfoDecoder>;
 
 const HappeningAPI = {
     /**
@@ -137,5 +190,12 @@ const HappeningAPI = {
     },
 };
 
-/* eslint-disable import/prefer-default-export */
-export { HappeningAPI };
+export {
+    HappeningAPI,
+    type SpotRange,
+    type SpotRangeCount,
+    type HappeningType,
+    type Question,
+    type Happening,
+    type HappeningInfo,
+};

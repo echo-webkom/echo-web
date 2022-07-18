@@ -1,4 +1,4 @@
-import Header from '../header';
+import Header from '@components/header';
 
 const headerId = '[data-cy=header]';
 const drawerButtonId = '[data-cy=drawer-button]';

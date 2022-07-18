@@ -1,10 +1,9 @@
-import React from 'react';
 import { Box, Divider, Heading } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
-import Section from '../../components/section';
-import SEO from '../../components/seo';
-import MapMarkdownChakra from '../../markdown';
-import valg from '../../../public/static/valg.md';
+import valg from '@static/valg.md';
+import Section from '@components/section';
+import SEO from '@components/seo';
+import MapMarkdownChakra from '@utils/markdown';
 
 const ValgPage = () => {
     return (

@@ -1,11 +1,12 @@
 import { Center, Spinner } from '@chakra-ui/react';
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
-import SEO from '../../../components/seo';
-import MinuteList from '../../../components/minute-list';
-import { isErrorMessage, MinuteAPI, Minute } from '../../../lib/api';
-import SidebarWrapper from '../../../components/sidebar-wrapper';
+import SidebarWrapper from '@components/sidebar-wrapper';
+import SEO from '@components/seo';
+import MinuteList from '@components/minute-list';
+import type { Minute } from '@api/minute';
+import { MinuteAPI } from '@api/minute';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     minutes: Array<Minute>;
@@ -33,7 +34,7 @@ const MinutesPage = ({ minutes }: Props): JSX.Element => {
     );
 };
 
-const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
     const minutes = await MinuteAPI.getMinutes();
 
     if (isErrorMessage(minutes)) throw new Error(minutes.message);
@@ -44,4 +45,3 @@ const getStaticProps: GetStaticProps = async () => {
 };
 
 export default MinutesPage;
-export { getStaticProps };

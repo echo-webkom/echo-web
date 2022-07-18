@@ -1,24 +1,25 @@
-import { ParsedUrlQuery } from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Spinner, VStack } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { BiCategory } from 'react-icons/bi';
 import { ImLocation } from 'react-icons/im';
 import { FaUniversity } from 'react-icons/fa';
 import { RiTimeLine, RiGalleryUploadLine } from 'react-icons/ri';
-import Section from '../../components/section';
-import SEO from '../../components/seo';
-import { isErrorMessage, JobAdvert, JobAdvertAPI } from '../../lib/api';
-import MapMarkdownChakra from '../../markdown';
-import IconText from '../../components/icon-text';
-import { translateJobType } from '../../components/job-advert-preview';
-import ButtonLink from '../../components/button-link';
+import Section from '@components/section';
+import SEO from '@components/seo';
+import type { JobAdvert } from '@api/job-advert';
+import { JobAdvertAPI } from '@api/job-advert';
+import { isErrorMessage } from '@utils/error';
+import MapMarkdownChakra from '@utils/markdown';
+import IconText from '@components/icon-text';
+import { translateJobType } from '@components/job-advert-preview';
+import ButtonLink from '@components/button-link';
 
 interface Props {
     jobAdvert: JobAdvert | null;

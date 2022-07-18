@@ -1,14 +1,13 @@
 import { VStack, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import React from 'react';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
-import { HappeningType, SpotRange, SpotRangeCount } from '../lib/api';
-import IconText from './icon-text';
-import CalendarPopup from './calendar-popup';
+import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
+import IconText from '@components/icon-text';
+import CalendarPopup from '@components/calendar-popup';
 
 interface Props {
     date: Date;

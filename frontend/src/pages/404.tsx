@@ -1,6 +1,5 @@
 import { Box, Center, Heading, Text } from '@chakra-ui/react';
-import React from 'react';
-import SEO from '../components/seo';
+import SEO from '@components/seo';
 
 const NotFoundPage = (): JSX.Element => (
     <>

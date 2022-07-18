@@ -1,8 +1,8 @@
 import { Center, Flex, Icon, IconButton, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import React, { memo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
-import NavBar from './navbar';
-import HeaderLogo from './header-logo';
+import NavBar from '@components/navbar';
+import HeaderLogo from '@components/header-logo';
 
 const Header = (): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer
