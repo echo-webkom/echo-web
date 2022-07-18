@@ -12,12 +12,12 @@ import {
     Icon,
     IconButton,
 } from '@chakra-ui/react';
+import type { RefObject } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import React, { RefObject } from 'react';
-import ColorModeButton from './color-mode-button';
-import NavLink, { NavLinkButton } from './nav-link';
+import ColorModeButton from '@components/color-mode-button';
+import NavLink, { NavLinkButton } from '@components/nav-link';
 
 const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
     const { status } = useSession();

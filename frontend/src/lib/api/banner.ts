@@ -1,8 +1,17 @@
 import axios from 'axios';
-import { array, union, nil } from 'typescript-json-decoder';
-import { bannerDecoder } from './decoders';
-import { ErrorMessage, Banner } from './types';
-import { SanityAPI } from '.';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, union, nil, record, string, boolean } from 'typescript-json-decoder';
+import SanityAPI from '@api/sanity';
+import type { ErrorMessage } from '@utils/error';
+
+const bannerDecoder = record({
+    color: string,
+    text: string,
+    linkTo: union(string, nil),
+    isExternal: boolean,
+});
+
+type Banner = decodeType<typeof bannerDecoder>;
 
 const BannerAPI = {
     getBanner: async (): Promise<Banner | null | ErrorMessage> => {
@@ -31,5 +40,4 @@ const BannerAPI = {
     },
 };
 
-/* eslint-disable import/prefer-default-export */
-export { BannerAPI };
+export { BannerAPI, type Banner };

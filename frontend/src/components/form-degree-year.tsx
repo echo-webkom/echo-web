@@ -1,4 +1,5 @@
-import { SelectProps, Heading, FormControl, FormLabel, Select } from '@chakra-ui/react';
+import type { SelectProps } from '@chakra-ui/react';
+import { Heading, FormControl, FormLabel, Select } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
 
 interface Props extends SelectProps {

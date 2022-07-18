@@ -1,13 +1,21 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { minuteDecoder } from './decoders';
-import { ErrorMessage, Minute } from './types';
-import { SanityAPI } from '.';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, record, string, boolean } from 'typescript-json-decoder';
+import SanityAPI from '@api/sanity';
+import type { ErrorMessage } from '@utils/error';
+
+const minuteDecoder = record({
+    date: string,
+    allmote: boolean,
+    title: string,
+    document: (value) => record({ asset: record({ url: string }) })(value).asset.url,
+});
+
+type Minute = decodeType<typeof minuteDecoder>;
 
 const MinuteAPI = {
     /**
-     * Get the n last meeting minutes.
-     * @param n how many meeting minutes to retrieve
+     * Get all meeting minutes.
      */
     getMinutes: async (): Promise<Array<Minute> | ErrorMessage> => {
         try {
@@ -33,5 +41,4 @@ const MinuteAPI = {
     },
 };
 
-/* eslint-disable import/prefer-default-export */
-export { MinuteAPI };
+export { MinuteAPI, type Minute };

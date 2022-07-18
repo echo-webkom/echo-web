@@ -3,7 +3,8 @@ import { format, isPast } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import { BiCalendar } from 'react-icons/bi';
-import { Happening, RegistrationCount, SpotRange } from '../lib/api';
+import type { Happening, SpotRange } from '@api/happening';
+import type { RegistrationCount } from '@api/registration';
 
 interface Props {
     event: Happening;

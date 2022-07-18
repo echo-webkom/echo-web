@@ -1,3 +1,11 @@
+interface ErrorMessage {
+    message: string;
+}
+
+const isErrorMessage = (object: any): object is ErrorMessage => {
+    return 'message' in object;
+};
+
 const handleError = (code: number): string => {
     switch (code) {
         case 400:
@@ -13,4 +21,4 @@ const handleError = (code: number): string => {
     }
 };
 
-export default handleError;
+export { isErrorMessage, type ErrorMessage, handleError };

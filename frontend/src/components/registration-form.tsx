@@ -19,15 +19,19 @@ import {
     VStack,
     Wrap,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import NextLink from 'next/link';
-import { FormProvider, useForm, SubmitHandler } from 'react-hook-form';
-import { UserWithName, Happening, HappeningType, RegistrationAPI, Question, RegFormValues } from '../lib/api';
-import { fullNameToSplitName } from '../lib/utils';
-import FormTerm from './form-term';
-import FormQuestion from './form-question';
-import FormDegree from './form-degree';
-import FormDegreeYear from './form-degree-year';
+import type { SubmitHandler } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
+import type { Happening, HappeningType, Question } from '@api/happening';
+import type { RegFormValues } from '@api/registration';
+import type { UserWithName } from '@api/user';
+import { RegistrationAPI } from '@api/registration';
+import FormTerm from '@components/form-term';
+import FormQuestion from '@components/form-question';
+import FormDegree from '@components/form-degree';
+import FormDegreeYear from '@components/form-degree-year';
+import fullNameToSplitName from '@utils/full-name-to-split-name';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -175,16 +179,12 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                         <Text ml="0.5rem" fontWeight="bold">
                                             {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
                                                 utestengt fra fremtidige 
-                                                ${
-                                                    type === HappeningType.BEDPRES
-                                                        ? 'bedriftspresentasjoner'
-                                                        : 'arrangementer'
-                                                }.`}
+                                                ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`}
                                         </Text>
                                     </FormTerm>
                                     <FormTerm id="terms3">
                                         <Text ml="0.5rem" fontWeight="bold">
-                                            {type === HappeningType.BEDPRES ? (
+                                            {type === 'BEDPRES' ? (
                                                 <Wrap spacing={0}>
                                                     <Text ml="0.5rem" fontWeight="bold">
                                                         Jeg har lest gjennom og forstått

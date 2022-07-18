@@ -15,7 +15,17 @@
         "jsx": "preserve",
         "strictNullChecks": true,
         "alwaysStrict": true,
-        "incremental": true
+        "incremental": true,
+        "baseUrl": "./src",
+        "paths": {
+            "@components/*": ["./components/*"],
+            "@styles/*": ["./styles/*"],
+            "@api/*": ["./lib/api/*"],
+            "@hooks/*": ["./lib/hooks/*"],
+            "@utils/*": ["./lib/utils/*"],
+            "@static/*": ["../public/static/*"],
+            "@pages/*": ["./pages/*"]
+        }
     },
     "include": [
         "next-env.d.ts",

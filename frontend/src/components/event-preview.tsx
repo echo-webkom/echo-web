@@ -1,8 +1,8 @@
 import { Box, Center, Flex, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import React from 'react';
-import { Happening, RegistrationCount } from '../lib/api';
-import HappeningKeyInfo from './happening-key-info';
+import type { Happening } from '@api/happening';
+import type { RegistrationCount } from '@api/registration';
+import HappeningKeyInfo from '@components/happening-key-info';
 
 interface Props {
     event: Happening;

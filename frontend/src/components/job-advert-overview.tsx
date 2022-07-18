@@ -1,8 +1,8 @@
 import { Text, Stack, StackDivider } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
-import React, { useState } from 'react';
-import { JobAdvert } from '../lib/api';
-import JobAdvertPreview from './job-advert-preview';
+import { useState } from 'react';
+import type { JobAdvert } from '@api/job-advert';
+import JobAdvertPreview from '@components/job-advert-preview';
 
 interface Props {
     jobAdverts: Array<JobAdvert>;

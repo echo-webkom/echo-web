@@ -1,5 +1,5 @@
-import HappeningMetaInfo, { Props } from '../happening-meta-info';
-import { HappeningType } from '../../lib/api';
+import type { Props } from '@components/happening-meta-info';
+import HappeningMetaInfo from '@components/happening-meta-info';
 
 const date = new Date();
 
@@ -8,7 +8,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'no-ls-oe',
         slug: 'no-ls-oe',
         contactEmail: 'test@test.com',
@@ -28,7 +28,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'io-ls-oe',
         slug: 'io-ls-oe',
         contactEmail: 'test@test.com',
@@ -48,7 +48,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'no-us-oe',
         slug: 'no-us-oe',
         contactEmail: 'test@test.com',
@@ -66,7 +66,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'io-us-oe',
         slug: 'io-us-oe',
         contactEmail: 'test@test.com',
@@ -86,7 +86,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'no-ls-ne',
         slug: 'no-ls-ne',
         contactEmail: 'test@test.com',
@@ -113,7 +113,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'io-ls-ne',
         slug: 'io-ls-ne',
         contactEmail: 'test@test.com',
@@ -140,7 +140,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'no-us-ne',
         slug: 'no-us-ne',
         contactEmail: 'test@test.com',
@@ -160,7 +160,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'io-us-ne',
         slug: 'io-us-ne',
         contactEmail: 'test@test.com',
@@ -180,7 +180,7 @@ const happeningMetaInfoProps: Array<Props> = [
         date: date,
         location: 'Lesesal1',
         locationLink: null,
-        type: HappeningType.EVENT,
+        type: 'EVENT',
         title: 'same-deg-year',
         slug: 'same-deg-year',
         contactEmail: 'test@test.com',

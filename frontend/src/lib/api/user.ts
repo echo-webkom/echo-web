@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { number, string } from 'typescript-json-decoder';
-import { Degree, User, UserWithName, ErrorMessage } from './types';
-import { userWithNameDecoder } from './decoders';
+import type { decodeType } from 'typescript-json-decoder';
+import { string, record, union, nil, number } from 'typescript-json-decoder';
+import type { ErrorMessage } from '@utils/error';
+import type { Degree } from '@utils/decoders';
+import { degreeDecoder } from '@utils/decoders';
 
 // Values directly from the form (aka form fields)
 interface FormValues {
@@ -9,6 +11,23 @@ interface FormValues {
     degree: Degree;
     degreeYear: number;
 }
+
+const userWithNameDecoder = record({
+    email: string,
+    alternateEmail: union(string, nil),
+    name: string,
+    degree: union(degreeDecoder, nil),
+    degreeYear: union(number, nil),
+});
+type UserWithName = decodeType<typeof userWithNameDecoder>;
+
+const userDecoder = record({
+    email: string,
+    alternateEmail: union(string, nil),
+    degree: union(degreeDecoder, nil),
+    degreeYear: union(number, nil),
+});
+type User = decodeType<typeof userDecoder>;
 
 const UserAPI = {
     getUser: async (): Promise<UserWithName | null | ErrorMessage> => {
@@ -51,6 +70,12 @@ const UserAPI = {
         }
     },
 };
-/* eslint-disable import/prefer-default-export */
-export { UserAPI };
-export type { FormValues };
+
+export {
+    UserAPI,
+    userDecoder,
+    userWithNameDecoder,
+    type FormValues as ProfileFormValues,
+    type User,
+    type UserWithName,
+};

@@ -1,8 +1,44 @@
 import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { responseDecoder, registrationDecoder, registrationCountDecoder } from './decoders';
-import { ErrorMessage, Degree, Answer, Response, Registration, RegistrationCount } from './types';
-import { HappeningType } from '.';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
+import type { HappeningType } from '@api/happening';
+import { type Degree, degreeDecoder } from '@utils/decoders';
+import type { ErrorMessage } from '@utils/error';
+
+const responseDecoder = record({
+    code: string,
+    title: string,
+    desc: string,
+    date: optional(union(string, nil)),
+});
+type Response = decodeType<typeof responseDecoder>;
+
+const answerDecoder = record({
+    question: string,
+    answer: string,
+});
+type Answer = decodeType<typeof answerDecoder>;
+
+const registrationDecoder = record({
+    email: string,
+    firstName: string,
+    lastName: string,
+    degree: degreeDecoder,
+    degreeYear: number,
+    slug: string,
+    terms: boolean,
+    submitDate: string,
+    waitList: boolean,
+    answers: array(answerDecoder),
+});
+type Registration = decodeType<typeof registrationDecoder>;
+
+const registrationCountDecoder = record({
+    slug: string,
+    count: number,
+    waitListCount: number,
+});
+type RegistrationCount = decodeType<typeof registrationCountDecoder>;
 
 const genericError = {
     title: 'Det har skjedd en feil.',
@@ -143,5 +179,10 @@ const RegistrationAPI = {
     },
 };
 
-export { RegistrationAPI, registrationRoute };
-export type { FormValues };
+export {
+    RegistrationAPI,
+    registrationRoute,
+    type FormValues as RegFormValues,
+    type RegistrationCount,
+    type Registration,
+};

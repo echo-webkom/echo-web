@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Input, Radio, RadioGroup, VStack } from '@chakra-ui/react';
-import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegFormValues, Question } from '../lib/api';
+import type { Question } from '@api/happening';
+import type { RegFormValues } from '@api/registration';
 
 interface Props {
     q: Question;

@@ -1,7 +1,7 @@
-import { ColorProps, Grid, Icon, Link, Text, TextProps } from '@chakra-ui/react';
+import type { ColorProps, TextProps } from '@chakra-ui/react';
+import { Grid, Icon, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import React from 'react';
-import { IconType } from 'react-icons';
+import type { IconType } from 'react-icons';
 
 interface Props extends TextProps {
     icon: IconType;

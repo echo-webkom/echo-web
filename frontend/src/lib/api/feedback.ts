@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { ErrorMessage, Feedback } from './types';
+import type { decodeType } from 'typescript-json-decoder';
+import { union, string, nil, record } from 'typescript-json-decoder';
+import type { ErrorMessage } from '@utils/error';
 
 interface FormValues {
     email: string;
@@ -33,6 +35,14 @@ const VERIFIED_EMAILS: Set<string> = new Set([
     'bo.aanes@student.uib.no',
     'alvar.honsi@student.uib.no',
 ]);
+
+const feedbackDecoder = record({
+    email: union(string, nil),
+    name: union(string, nil),
+    message: string,
+    sent: string,
+});
+type Feedback = decodeType<typeof feedbackDecoder>;
 
 const FeedbackAPI = {
     sendFeedback: async (backendUrl: string, data: FormValues): Promise<FeedbackResponse> => {
@@ -80,5 +90,4 @@ const FeedbackAPI = {
     },
 };
 
-export { FeedbackAPI };
-export type { FormValues, FeedbackResponse };
+export { FeedbackAPI, type FormValues as FeedbackFormValues, type FeedbackResponse, type Feedback };

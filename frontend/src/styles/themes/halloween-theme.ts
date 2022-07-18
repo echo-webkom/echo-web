@@ -1,4 +1,4 @@
-import mainTheme, { defaultPalette } from './main-theme';
+import mainTheme, { defaultPalette } from '@styles/themes/main-theme';
 
 const halloweenPalette = {
     ...defaultPalette,

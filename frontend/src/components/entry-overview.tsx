@@ -1,8 +1,7 @@
 import { GridItem, SimpleGrid } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
-import React from 'react';
-import { Happening } from '../lib/api';
-import EntryBox from './entry-box';
+import type { Happening } from '@api/happening';
+import EntryBox from '@components/entry-box';
 
 interface Props {
     entries: Array<Happening>;

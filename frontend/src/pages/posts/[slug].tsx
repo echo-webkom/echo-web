@@ -1,17 +1,18 @@
-import { ParsedUrlQuery } from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 import { Box, Center, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { BiCalendar } from 'react-icons/bi';
-import IconText from '../../components/icon-text';
-import Section from '../../components/section';
-import SEO from '../../components/seo';
-import { isErrorMessage, Post, PostAPI } from '../../lib/api';
-import MapMarkdownChakra from '../../markdown';
+import IconText from '@components/icon-text';
+import Section from '@components/section';
+import SEO from '@components/seo';
+import type { Post } from '@api/post';
+import { PostAPI } from '@api/post';
+import { isErrorMessage } from '@utils/error';
+import MapMarkdownChakra from '@utils/markdown';
 
 interface Props {
     post: Post;

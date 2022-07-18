@@ -1,9 +1,9 @@
-import { BoxProps, Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
+import type { BoxProps } from '@chakra-ui/react';
+import { Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import React from 'react';
 import removeMD from 'remove-markdown';
-import { Post } from '../lib/api';
-import { hasLongWord } from '../lib/utils';
+import type { Post } from '@api/post';
+import hasLongWord from '@utils/has-long-word';
 
 interface Props extends BoxProps {
     post: Post;

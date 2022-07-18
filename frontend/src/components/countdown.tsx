@@ -1,6 +1,5 @@
 import { Center, Text } from '@chakra-ui/react';
-import React from 'react';
-import { useCountdown } from '../lib/hooks';
+import useCountdown from '@hooks/use-countdown';
 
 interface Props {
     date: Date;

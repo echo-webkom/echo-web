@@ -1,10 +1,12 @@
 import { Stack, StackDivider } from '@chakra-ui/react';
-import React from 'react';
-import { Happening, Post, JobAdvert, RegistrationCount } from '../lib/api';
-import BedpresPreview from './bedpres-preview';
-import EventPreview from './event-preview';
-import PostPreview from './post-preview';
-import JobAdvertPreview from './job-advert-preview';
+import type { Happening } from '@api/happening';
+import type { Post } from '@api/post';
+import type { JobAdvert } from '@api/job-advert';
+import type { RegistrationCount } from '@api/registration';
+import BedpresPreview from '@components/bedpres-preview';
+import EventPreview from '@components/event-preview';
+import PostPreview from '@components/post-preview';
+import JobAdvertPreview from '@components/job-advert-preview';
 
 interface Props {
     entries: Array<Happening | Post | JobAdvert>;

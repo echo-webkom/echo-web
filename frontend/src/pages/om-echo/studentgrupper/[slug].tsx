@@ -1,14 +1,15 @@
-import { ParsedUrlQuery } from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
 import Markdown from 'markdown-to-jsx';
-import SEO from '../../../components/seo';
-import { isErrorMessage, StudentGroup, StudentGroupAPI, Member } from '../../../lib/api';
-import SidebarWrapper from '../../../components/sidebar-wrapper';
-import MapMarkdownChakra from '../../../markdown';
-import MemberProfile from '../../../components/member-profile';
+import SEO from '@components/seo';
+import type { StudentGroup, Member } from '@api/student-group';
+import { StudentGroupAPI } from '@api/student-group';
+import { isErrorMessage } from '@utils/error';
+import SidebarWrapper from '@components/sidebar-wrapper';
+import MapMarkdownChakra from '@utils/markdown';
+import MemberProfile from '@components/member-profile';
 
 interface Props {
     studentGroup: StudentGroup;

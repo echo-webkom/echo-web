@@ -1,7 +1,6 @@
 import { Checkbox, FormControl, FormLabel } from '@chakra-ui/react';
-import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegFormValues } from '../lib/api';
+import type { RegFormValues } from '@api/registration';
 
 interface Props {
     id: 'terms1' | 'terms2' | 'terms3';

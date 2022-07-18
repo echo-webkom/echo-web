@@ -1,4 +1,4 @@
-import mainTheme from './main-theme';
+import mainTheme from '@styles/themes/main-theme';
 
 /*
  * Add own colors for a Christmas theme here later.

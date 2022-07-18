@@ -1,9 +1,9 @@
 import { Box, LinkBox, LinkOverlay, Spacer, useColorModeValue, Heading, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import React from 'react';
-import { Happening, RegistrationCount } from '../lib/api';
-import HappeningKeyInfo from './happening-key-info';
+import HappeningKeyInfo from '@components/happening-key-info';
+import type { Happening } from '@api/happening';
+import type { RegistrationCount } from '@api/registration';
 
 interface Props {
     bedpres: Happening;

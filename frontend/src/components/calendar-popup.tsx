@@ -14,14 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { google, outlook, yahoo, ics } from 'calendar-link';
 import { addHours, format } from 'date-fns';
-import React from 'react';
 import NextLink from 'next/link';
 import { FaFileDownload, FaGoogle, FaYahoo } from 'react-icons/fa';
 import { SiMicrosoftoutlook } from 'react-icons/si';
 import { BiCalendar } from 'react-icons/bi';
 import { nb } from 'date-fns/locale';
-import { HappeningType } from '../lib/api';
-import IconText from './icon-text';
+import type { HappeningType } from '@api/happening';
+import IconText from '@components/icon-text';
 
 interface Props {
     date: Date;

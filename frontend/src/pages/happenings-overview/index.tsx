@@ -1,10 +1,10 @@
+import type { IconProps } from '@chakra-ui/react';
 import {
     Divider,
     Flex,
     Heading,
     HStack,
     Icon,
-    IconProps,
     LinkBox,
     Popover,
     PopoverArrow,
@@ -20,14 +20,16 @@ import {
 } from '@chakra-ui/react';
 import { addWeeks, getISOWeek, lastDayOfWeek, startOfWeek, subWeeks } from 'date-fns';
 import Markdown from 'markdown-to-jsx';
-import { GetStaticProps } from 'next';
+import type { GetStaticProps } from 'next';
 import NextLink from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
-import Button from '../../components/button';
-import Section from '../../components/section';
-import SEO from '../../components/seo';
-import { Happening, HappeningAPI, HappeningType, isErrorMessage } from '../../lib/api';
+import Button from '@components/button';
+import Section from '@components/section';
+import SEO from '@components/seo';
+import type { Happening, HappeningType } from '@api/happening';
+import { HappeningAPI } from '@api/happening';
+import { isErrorMessage } from '@utils/error';
 
 interface EventsStackProps {
     events: Array<Happening>;
@@ -54,7 +56,7 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
 
     return (
         <LinkBox
-            bg={type === HappeningType.BEDPRES ? bedpresColor : otherColor}
+            bg={type === 'BEDPRES' ? bedpresColor : otherColor}
             p="2"
             borderRadius="0.25rem"
             _hover={{ cursor: 'pointer' }}
@@ -69,7 +71,7 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
                     <PopoverContent>
                         <PopoverArrow />
                         <PopoverHeader>
-                            {type === HappeningType.BEDPRES ? (
+                            {type === 'BEDPRES' ? (
                                 <Text as="em" fontWeight="bold" fontSize="sm">
                                     Bedpres
                                 </Text>
@@ -191,8 +193,8 @@ const HappeningsOverviewPage = ({ events }: Props): JSX.Element => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    const eventsResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.EVENT);
-    const bedpressesResponse = await HappeningAPI.getHappeningsByType(0, HappeningType.BEDPRES);
+    const eventsResponse = await HappeningAPI.getHappeningsByType(0, 'EVENT');
+    const bedpressesResponse = await HappeningAPI.getHappeningsByType(0, 'BEDPRES');
 
     if (isErrorMessage(eventsResponse)) throw new Error(eventsResponse.message);
     if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);

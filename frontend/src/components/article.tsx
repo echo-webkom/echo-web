@@ -1,7 +1,7 @@
 import { Divider, Flex, Heading, Spacer } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
-import MapMarkdownChakra from '../markdown';
-import LanguageMenu from './language-menu';
+import LanguageMenu from '@components/language-menu';
+import MapMarkdownChakra from '@utils/markdown';
 
 interface Props {
     heading: string;
