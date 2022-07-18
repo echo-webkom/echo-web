@@ -30,7 +30,6 @@ const IndexPage = ({
     banner,
     registrationCounts,
     jobs,
-    enableJobAdverts,
 }: {
     bedpreses: Array<Happening>;
     posts: Array<Post>;
@@ -38,8 +37,9 @@ const IndexPage = ({
     banner: Banner | null;
     registrationCounts: Array<RegistrationCount>;
     jobs: Array<JobAdvert>;
-    enableJobAdverts: boolean;
 }): JSX.Element => {
+    const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
+
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
 
@@ -65,7 +65,6 @@ const IndexPage = ({
             altText="Ingen innlegg :("
             linkTo="/posts"
             type="post"
-            enableJobAdverts={enableJobAdverts}
         />
     );
 
@@ -116,7 +115,6 @@ const IndexPage = ({
                                 altText="Ingen stillingsannonser :("
                                 linkTo="/job"
                                 type="job-advert"
-                                enableJobAdverts={enableJobAdverts}
                             />
                         </GridItem>
                         <GridItem>
@@ -165,8 +163,6 @@ export const getStaticProps: GetStaticProps = async () => {
         process.env.BACKEND_URL ?? 'http://localhost:8080',
     );
 
-    const enableJobAdverts = process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
-
     return {
         props: {
             bedpreses,
@@ -175,7 +171,6 @@ export const getStaticProps: GetStaticProps = async () => {
             jobs: jobsResponse,
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
-            enableJobAdverts,
         },
         revalidate: 60,
     };

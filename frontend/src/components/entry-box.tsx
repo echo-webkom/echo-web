@@ -14,7 +14,6 @@ interface Props extends BoxProps {
     linkTo?: string;
     type: 'event' | 'bedpres' | 'post' | 'job-advert';
     registrationCounts?: Array<RegistrationCount>;
-    enableJobAdverts?: boolean;
 }
 
 const EntryBox = ({
@@ -26,7 +25,6 @@ const EntryBox = ({
     linkTo,
     type,
     registrationCounts,
-    enableJobAdverts = false,
     ...props
 }: Props): JSX.Element => {
     const choices = titles ?? [title];
@@ -43,7 +41,6 @@ const EntryBox = ({
                         entryLimit={entryLimit}
                         type={type}
                         registrationCounts={registrationCounts}
-                        enableJobAdverts={enableJobAdverts}
                     />
                 )}
                 <Spacer />

@@ -11,10 +11,11 @@ interface Props {
     entryLimit?: number;
     type: 'event' | 'bedpres' | 'post' | 'job-advert';
     registrationCounts?: Array<RegistrationCount>;
-    enableJobAdverts?: boolean;
 }
 
-const EntryList = ({ entries, entryLimit, type, registrationCounts, enableJobAdverts = false }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JSX.Element => {
+    const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
+
     if (entryLimit) {
         entries = entries.length > entryLimit ? entries.slice(0, entryLimit) : entries;
     }
