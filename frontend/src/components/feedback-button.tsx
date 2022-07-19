@@ -34,25 +34,23 @@ const FeedbackButton = () => {
     const { register, handleSubmit, reset } = useForm<FormValues>();
 
     const submitForm: SubmitHandler<FormValues> = async (data) => {
-        await FeedbackAPI.sendFeedback({
-            email: data.email,
-            name: data.name,
-            message: data.message,
-        }).then((message: FeedbackResponse) => {
-            onClose();
-            toast.closeAll();
-            toast({
-                title: message.title,
-                description: message.description,
-                status: message.isSuccess ? 'success' : 'error',
-                duration: 8000,
-                isClosable: true,
-            });
-            reset({
-                email: '',
-                name: '',
-                message: '',
-            });
+        const message: FeedbackResponse = await FeedbackAPI.sendFeedback(data);
+
+        onClose();
+        toast.closeAll();
+
+        toast({
+            title: message.title,
+            description: message.description,
+            status: message.isSuccess ? 'success' : 'error',
+            duration: 8000,
+            isClosable: true,
+        });
+
+        reset({
+            email: '',
+            name: '',
+            message: '',
         });
     };
 
