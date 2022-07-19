@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence, AnimateSharedLayout } from 'framer-motion';
+import { ListItem, Text, UnorderedList } from '@chakra-ui/react';
 
 const variants = {
     enter: (direction: number) => {
@@ -36,22 +37,13 @@ const AnimatedTabs = ({ tabs, state, setState }: Props) => {
 
     return (
         <AnimateSharedLayout>
-            <ul
-                style={{
-                    display: 'flex',
-                    gap: '16px',
-                    color: 'white',
-                    padding: 0,
-                    position: 'relative',
-                    listStyle: 'none',
-                }}
-            >
+            <UnorderedList listStyleType="none" display="flex" gap="1.5rem" p="0" m="0" position="relative">
                 {tabs.map(({ title, value }, i) => {
                     const isActive = i === page;
                     return (
-                        <li
+                        <ListItem
                             key={i}
-                            style={{ cursor: 'pointer' }}
+                            _hover={{ cursor: 'pointer' }}
                             onClick={() => {
                                 setPage([i, i - page]);
                                 if (setState && value) {
@@ -59,7 +51,7 @@ const AnimatedTabs = ({ tabs, state, setState }: Props) => {
                                 }
                             }}
                         >
-                            <h4>{title}</h4>
+                            <Text>{title}</Text>
                             {isActive && (
                                 <motion.div
                                     style={{
@@ -73,10 +65,10 @@ const AnimatedTabs = ({ tabs, state, setState }: Props) => {
                                     layoutId="underline"
                                 />
                             )}
-                        </li>
+                        </ListItem>
                     );
                 })}
-            </ul>
+            </UnorderedList>
             <AnimatePresence initial={false} custom={direction}>
                 <motion.section
                     key={page}
