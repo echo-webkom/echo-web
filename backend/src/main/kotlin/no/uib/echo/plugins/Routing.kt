@@ -38,6 +38,7 @@ import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
+import no.uib.echo.plugins.Routing.postApplication
 import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
@@ -62,6 +63,8 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.WebkomApplication
+import no.uib.echo.schema.WebkomApplicationJson
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.insertOrUpdateHappening
@@ -102,10 +105,11 @@ fun Application.configureRouting(
         basic("auth-$admin") {
             realm = "Access to registrations and happenings."
             validate { credentials ->
-                if (credentials.name == admin && credentials.password == adminKey)
+                if (credentials.name == admin && credentials.password == adminKey) {
                     UserIdPrincipal(credentials.name)
-                else
+                } else {
                     null
+                }
             }
         }
 
@@ -147,6 +151,7 @@ fun Application.configureRouting(
         deleteRegistration(dev)
         postRegistrationCount()
         postFeedback()
+        postApplication()
     }
 }
 
@@ -539,15 +544,17 @@ object Routing {
                         resToJson(Response.WaitList, registration.type, waitListSpot = waitListSpot)
                     )
 
-                    if (sendGridApiKey == null || !sendEmail)
+                    if (sendGridApiKey == null || !sendEmail) {
                         return@post
+                    }
 
                     sendConfirmationEmail(sendGridApiKey, registration, waitListSpot)
                 } else {
                     call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
 
-                    if (sendGridApiKey == null || !sendEmail)
+                    if (sendGridApiKey == null || !sendEmail) {
                         return@post
+                    }
 
                     sendConfirmationEmail(sendGridApiKey, registration, null)
                 }
@@ -666,8 +673,9 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
-                    if (!happeningExists)
+                    if (!happeningExists) {
                         return@transaction false
+                    }
 
                     SpotRange.deleteWhere {
                         SpotRange.happeningSlug eq hap.slug
@@ -688,16 +696,17 @@ object Routing {
                     return@transaction true
                 }
 
-                if (hapDeleted)
+                if (hapDeleted) {
                     call.respond(
                         HttpStatusCode.OK,
                         "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
                     )
-                else
+                } else {
                     call.respond(
                         HttpStatusCode.NotFound,
                         "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
                     )
+                }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()
@@ -751,6 +760,26 @@ object Routing {
             }
 
             call.respond(HttpStatusCode.OK, "Feedback received.")
+        }
+    }
+
+    fun Route.postApplication() {
+        post("/webkom-application") {
+            val application = call.receive<WebkomApplicationJson>()
+
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                WebkomApplication.insert {
+                    it[email] = application.email
+                    it[name] = application.name
+                    it[degree_year] = application.degree_year
+                    it[degree] = application.degree.toString()
+                    it[message] = application.message
+                }
+            }
+
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
