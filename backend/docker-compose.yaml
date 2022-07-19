@@ -26,8 +26,7 @@ services:
       TEST_MIGRATION:
 
   database:
-    # Postgres 13.6 is the version Heroku uses.
-    image: postgres:13.6-alpine
+    image: postgres:13.7-alpine
     restart: always
     ports:
       - '5432:5432'

@@ -21,7 +21,7 @@ import ButtonLink from '../../components/button-link';
 import { isErrorMessage, RegistrationAPI, Registration, registrationRoute } from '../../lib/api';
 import Section from '../../components/section';
 import RegistrationRow from '../../components/registration-row';
-import notEmptyOrNull from '../../lib/utils';
+import { notEmptyOrNull } from '../../lib/utils';
 
 interface Props {
     registrations: Array<Registration> | null;

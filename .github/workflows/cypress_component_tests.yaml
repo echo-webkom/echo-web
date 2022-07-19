@@ -1,0 +1,24 @@
+name: Cypress component tests
+on:
+  pull_request:
+    branches: [master]
+    paths: ['frontend/**']
+
+jobs:
+  cypress_component_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache Cypress binary and yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: '~/.cache'
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package.json') }}
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Run Cypress component tests
+        run: yarn --cwd frontend test

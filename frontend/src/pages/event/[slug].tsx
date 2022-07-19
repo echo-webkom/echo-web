@@ -27,6 +27,7 @@ interface Props {
 const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props): JSX.Element => {
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
+    const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const time =
         !happening ||
         differenceInMilliseconds(regDate, date) < 0 ||
@@ -93,21 +94,35 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             (differenceInHours(regDate, date) > 23 ? (
                                                 <Center>
                                                     <Text fontSize="2xl">
-                                                        Åpner {format(regDate, 'dd. MMM yyyy, HH:mm', { locale: nb })}
+                                                        Åpner {format(regDate, 'dd. MMM, HH:mm', { locale: nb })}
                                                     </Text>
                                                 </Center>
                                             ) : (
                                                 <Countdown date={regDate} />
                                             ))}
-                                        {isBefore(date, parseISO(happening.date)) && isAfter(date, regDate) && (
-                                            <RegistrationForm
-                                                happening={happening}
-                                                type={happening.happeningType}
-                                                backendUrl={backendUrl}
-                                                regVerifyToken={happeningInfo?.regVerifyToken ?? null}
-                                            />
-                                        )}
-                                        {isAfter(date, parseISO(happening.date)) && (
+                                        {isBefore(date, parseISO(happening.date)) &&
+                                            isAfter(date, regDate) &&
+                                            isBefore(date, regDeadline) && (
+                                                <>
+                                                    <RegistrationForm
+                                                        happening={happening}
+                                                        type={happening.happeningType}
+                                                        backendUrl={backendUrl}
+                                                        regVerifyToken={happeningInfo?.regVerifyToken ?? null}
+                                                    />
+                                                    {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
+                                                        locale: nb,
+                                                    }) !== format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
+                                                        <Center>
+                                                            <Text fontSize="md">
+                                                                Stenger{' '}
+                                                                {format(regDeadline, 'dd. MMM, HH:mm', { locale: nb })}
+                                                            </Text>
+                                                        </Center>
+                                                    )}
+                                                </>
+                                            )}
+                                        {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
                                             <Center my="3" data-testid="bedpres-has-been">
                                                 <Text>Påmeldingen er stengt.</Text>
                                             </Center>

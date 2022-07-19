@@ -56,7 +56,7 @@ const Footer = (): JSX.Element => {
                             </NextLink>
                         </LinkBox>
                         <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink href="https://github.com/echo-webkom/echo.uib.no" passHref>
+                            <NextLink href="https://github.com/echo-webkom/echo-web" passHref>
                                 <LinkOverlay isExternal aria-label="Link til GitHub">
                                     <Icon as={FaGithub} w={10} h={10} />
                                 </LinkOverlay>

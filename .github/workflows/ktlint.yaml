@@ -2,6 +2,7 @@ name: ktlint
 on:
   pull_request:
     branches: [master]
+    paths: ['backend/**']
 
 jobs:
   ktlint_checks:

@@ -1,0 +1,12 @@
+name: Build CMS
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore: ['cms/**']
+
+jobs:
+  build_cms:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: echo 'Nothing to be done, passing checks.'

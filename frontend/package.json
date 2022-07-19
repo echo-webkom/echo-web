@@ -10,7 +10,7 @@
         "dev": "next dev",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest"
+        "test": "cypress run --component --config video=false,screenshotOnRunFailure=false"
     },
     "eslintConfig": {
         "parser": "@typescript-eslint/parser",
@@ -94,64 +94,38 @@
         "printWidth": 120,
         "tabWidth": 4
     },
-    "jest": {
-        "setupFilesAfterEnv": [
-            "<rootDir>/jest.setup.js"
-        ],
-        "testEnvironment": "jsdom",
-        "testPathIgnorePatterns": [
-            "<rootDir>/.next/",
-            "<rootDir>/node_modules/",
-            "<rootDir>/cypress/",
-            "testing-utils.ts",
-            "testing-wrapper.tsx"
-        ]
-    },
-    "babel": {
-        "presets": [
-            "next/babel"
-        ]
-    },
     "dependencies": {
-        "@chakra-ui/react": "1.8.8",
-        "@emotion/react": "11.9.0",
-        "@emotion/styled": "11.8.1",
-        "@sanity/client": "3.3.0",
+        "@chakra-ui/react": "2.2.1",
+        "@emotion/react": "11.9.3",
+        "@emotion/styled": "11.9.3",
+        "@sanity/client": "3.3.2",
         "axios": "0.27.2",
-        "calendar-link": "2.1.1",
+        "calendar-link": "2.2.0",
         "date-fns": "2.28.0",
-        "framer-motion": "6.3.3",
+        "framer-motion": "6.3.16",
         "markdown-to-jsx": "7.1.7",
-        "next": "12.1.6",
-        "next-auth": "4.3.4",
-        "next-pwa": "5.5.2",
+        "next": "12.2.0",
+        "next-auth": "4.8.0",
+        "next-pwa": "5.5.4",
         "nextjs-progressbar": "0.0.14",
-        "react": "17.0.2",
-        "react-dom": "17.0.2",
-        "react-hook-form": "7.30.0",
-        "react-icons": "4.3.1",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-hook-form": "7.33.1",
+        "react-icons": "4.4.0",
         "react-snowfall": "1.1.2",
         "remove-markdown": "0.5.0",
-        "typescript-json-decoder": "1.0.6"
+        "typescript-json-decoder": "1.0.10"
     },
     "devDependencies": {
-        "@testing-library/dom": "8.13.0",
-        "@testing-library/jest-dom": "5.16.4",
-        "@testing-library/react": "12.1.5",
-        "@testing-library/user-event": "13.5.0",
-        "@types/node": "14.18.16",
-        "@types/react": "17.0.45",
+        "@types/node": "14.18.21",
+        "@types/react": "18.0.14",
+        "@types/react-dom": "18.0.5",
         "@types/remove-markdown": "0.3.1",
-        "@typescript-eslint/eslint-plugin": "5.23.0",
-        "@typescript-eslint/parser": "5.23.0",
-        "cypress": "9.6.1",
-        "eslint": "8.15.0",
-        "eslint-config-next": "12.1.6",
-        "eslint-config-prettier": "8.5.0",
-        "eslint-plugin-prettier": "4.0.0",
+        "@typescript-eslint/eslint-plugin": "5.30.0",
+        "@typescript-eslint/parser": "5.30.0",
+        "cypress": "10.3.0",
+        "eslint-config-next": "12.2.0",
         "eslint-plugin-unicorn": "42.0.0",
-        "jest": "28.1.0",
-        "jest-environment-jsdom": "28.1.0",
-        "typescript": "4.6.4"
+        "typescript": "4.7.4"
     }
 }

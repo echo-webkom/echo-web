@@ -22,19 +22,22 @@ const randomHeaderMessage = (): string => {
             'Mye å gjøre? SUCK IT UP!',
         ];
 
+        // Month-based messages
         if (getMonth(now) === 9) return [...baseMessages, 'BØ!', 'UuUuuUuuUuUu'];
-
         if (getMonth(now) === 11) return [...baseMessages, 'Ho, ho, ho!'];
 
+        // Day-based messages
         if (isThursday(now)) return [...baseMessages, 'Vaffeltorsdag 🧇'];
-
         if (isFriday(now)) return [...baseMessages, 'Tacofredag 🌯'];
 
         return baseMessages;
     };
 
+    // Messages that override baseMessages
     if (getMonth(now) === 4 && getDate(now) === 17) {
         return 'Gralla 🇳🇴';
+    } else if ([5, 6].includes(getMonth(now))) {
+        return 'God sommer 🌞';
     } else if (isThursday(now) && getHours(now) < 12) {
         return 'Husk bedpres kl. 12:00!';
     } else if (getMonth(now) === 11 && getDate(now) >= 24) {
@@ -72,7 +75,7 @@ const HeaderLogo = () => {
             p="1.05rem"
             bg={bg}
             shadow="lg"
-            data-testid="header-logo"
+            data-cy="header-logo"
             borderRadius="0.5rem"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
             mr="0rem"

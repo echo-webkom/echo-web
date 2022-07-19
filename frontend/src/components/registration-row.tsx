@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Registration, RegistrationAPI } from '../lib/api';
-import notEmptyOrNull from '../lib/utils';
+import { notEmptyOrNull } from '../lib/utils';
 
 interface Props {
     registration: Registration;

@@ -1,8 +1,9 @@
-import { BoxProps, Heading, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { BoxProps, Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import removeMD from 'remove-markdown';
 import { Post } from '../lib/api';
+import { hasLongWord } from '../lib/utils';
 
 interface Props extends BoxProps {
     post: Post;
@@ -13,6 +14,7 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
+    const isMobile = useBreakpointValue([true, false]);
 
     return (
         <LinkBox
@@ -35,7 +37,7 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                        {post.title}
+                        {isMobile && hasLongWord(post.title) ? [...post.title.slice(0, 27), '...'] : post.title}
                     </Heading>
                     <Text fontStyle="italic">{`«${removeMD(post.body.slice(0, 100))} ...»`}</Text>
                 </LinkOverlay>

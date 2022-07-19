@@ -89,10 +89,17 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
             name: 'For Studenter',
             items: [
                 {
+                    name: 'Hovedstyret',
+                    items: [
+                        { name: '2022-2023', href: '/om-echo/studentgrupper/2022-2023' },
+                        { name: '2021-2022', href: '/om-echo/studentgrupper/2021-2022' },
+                        { name: '2020-2021', href: '/om-echo/studentgrupper/2020-2021' },
+                    ],
+                },
+                {
                     name: 'Undergrupper',
                     items: [
                         { name: 'Bedkom 👔', href: '/om-echo/studentgrupper/bedkom' },
-                        { name: 'Bryggelaget 🍺', href: '/om-echo/studentgrupper/bryggelaget' },
                         { name: 'Gnist ✨', href: '/om-echo/studentgrupper/gnist' },
                         { name: 'Makerspace 🛠️', href: '/om-echo/studentgrupper/makerspace' },
                         { name: 'Tilde 🥳', href: '/om-echo/studentgrupper/tilde' },
@@ -113,6 +120,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                         { name: 'buldring 🧗', href: '/om-echo/studentgrupper/echo-klatring-buldring' },
                         { name: 'squash 🎾', href: '/om-echo/studentgrupper/echo-squash' },
                         { name: 'kaffeslabberas ☕', href: '/om-echo/studentgrupper/echo-kaffeslabberas' },
+                        { name: 'bryggelaget 🍺', href: '/om-echo/studentgrupper/bryggelaget' },
                     ],
                 },
                 { name: 'Masterinfo', href: '/om-echo/masterinfo' },

@@ -63,7 +63,7 @@ const HappeningMetaInfo = ({
     const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
 
     return (
-        <VStack alignItems="left" spacing={3} data-testid={`happening-meta-info-${title}`}>
+        <VStack alignItems="left" spacing={3} data-cy="happening-meta-info">
             {companyLink && (
                 <IconText
                     icon={CgOrganisation}

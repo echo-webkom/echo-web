@@ -5,7 +5,6 @@ import {
     literal,
     nil,
     number,
-    Pojo,
     record,
     string,
     union,
@@ -30,7 +29,7 @@ const slugDecoder = record({
     slug: string,
 });
 
-const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: Pojo): Array<decodeType<T>> =>
+const emptyArrayOnNilDecoder = <T>(decoder: DecoderFunction<T>, value: unknown): Array<decodeType<T>> =>
     union(array(decoder), nil)(value) ?? [];
 
 const profileDecoder = record({
@@ -46,7 +45,7 @@ const memberDecoder = record({
 const studentGroupDecoder = record({
     name: string,
     slug: string,
-    info: string,
+    info: union(string, nil),
     imageUrl: union(string, nil),
     members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
 });
@@ -57,7 +56,7 @@ const staticInfoDecoder = record({
     info: string,
 });
 
-const degreeDecoder = (value: Pojo): Degree => {
+const degreeDecoder = (value: unknown): Degree => {
     const str: string = string(value);
 
     switch (str) {
@@ -162,7 +161,7 @@ const jobAdvertDecoder = record({
     weight: number,
 });
 
-const happeningTypeDecoder = (value: Pojo): HappeningType => {
+const happeningTypeDecoder = (value: unknown): HappeningType => {
     const str: string = string(value);
 
     switch (str) {
@@ -179,11 +178,12 @@ const happeningDecoder = record({
     title: string,
     slug: string,
     date: string,
+    registrationDate: union(string, nil),
+    registrationDeadline: union(string, nil),
     body: string,
     location: string,
     locationLink: union(string, nil),
     companyLink: union(string, nil),
-    registrationDate: union(string, nil),
     logoUrl: union(string, nil),
     contactEmail: union(string, nil),
     additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),

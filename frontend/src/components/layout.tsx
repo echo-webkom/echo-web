@@ -15,7 +15,7 @@ const Layout = ({ children }: Props): JSX.Element => {
                 <Header />
                 <Box
                     maxW="1500"
-                    w="90%"
+                    w={['97%', null, null, '90%']}
                     m="auto"
                     px={['0', '5%', '50']}
                     pb={['610px', '370px', '250px', '200px', '200px']}

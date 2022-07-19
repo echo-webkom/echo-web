@@ -32,19 +32,26 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                             {studentGroup.name}
                         </Heading>
                         <Divider mb="1rem" />
-                        <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
-                        {studentGroup.imageUrl && (
-                            <Center>
-                                <Image
-                                    src={studentGroup.imageUrl}
-                                    alt=""
-                                    objectFit="cover"
-                                    maxHeight="570px"
-                                    minWidth="100%"
-                                />
-                            </Center>
+                        {studentGroup.info && (
+                            <>
+                                <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
+                                <Divider my="5" />
+                            </>
                         )}
-                        <Divider my="5" />
+                        {studentGroup.imageUrl && (
+                            <>
+                                <Center>
+                                    <Image
+                                        src={studentGroup.imageUrl}
+                                        alt=""
+                                        objectFit="cover"
+                                        maxHeight="570px"
+                                        minWidth="100%"
+                                    />
+                                </Center>
+                                <Divider my="5" />
+                            </>
+                        )}
                         <Wrap spacing={['1em', null, '2.5em']} justify="center">
                             {studentGroup.members.map((member: Member) => (
                                 <WrapItem key={member.profile.name}>
@@ -60,7 +67,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
 };
 
 const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await StudentGroupAPI.getPathsByType('subgroup');
+    const paths = await StudentGroupAPI.getPaths();
 
     if (isErrorMessage(paths)) {
         throw new Error(paths.message);
