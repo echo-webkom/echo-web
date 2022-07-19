@@ -8,6 +8,7 @@ import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.User
+import no.uib.echo.schema.WebkomApplication
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -68,7 +69,7 @@ class DatabaseHandler(
                         Answer,
                         SpotRange,
                         User,
-                        Feedback
+                        Feedback,
                     )
                 }
             } catch (e: Exception) {
