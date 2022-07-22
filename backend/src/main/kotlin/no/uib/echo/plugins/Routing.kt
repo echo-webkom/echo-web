@@ -34,6 +34,7 @@ import no.uib.echo.Response
 import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
+import no.uib.echo.plugins.Routing.getFeedback
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
@@ -79,6 +80,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
@@ -136,6 +138,7 @@ fun Application.configureRouting(
             putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
             deleteHappening()
             getHappeningInfo()
+            getFeedback()
         }
 
         authenticate("auth-jwt") {
@@ -756,6 +759,24 @@ object Routing {
             }
 
             call.respond(HttpStatusCode.OK, "Feedback received.")
+        }
+    }
+
+    fun Route.getFeedback() {
+        get("/feedback") {
+            val feedback = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.selectAll().map {
+                    FeedbackJson(
+                        it[Feedback.email],
+                        it[Feedback.name],
+                        it[Feedback.message]
+                    )
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, feedback)
         }
     }
 }
