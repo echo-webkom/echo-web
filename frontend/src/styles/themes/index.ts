@@ -1,5 +1,3 @@
-import christmasTheme from './christmas-theme';
-import halloweenTheme from './halloween-theme';
-import mainTheme from './main-theme';
-
-export { christmasTheme, halloweenTheme, mainTheme };
+export { default as christmasTheme } from './christmas-theme';
+export { default as mainTheme } from './main-theme';
+export { default as halloweenTheme } from './halloween-theme';
