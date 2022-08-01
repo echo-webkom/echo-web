@@ -1,6 +1,6 @@
 const withPWA = require('next-pwa');
 
-const pwaConfig = withPWA({
+module.exports = withPWA({
     pwa: {
         dest: 'public',
         disable: process.env.NODE_ENV === 'development',
@@ -31,7 +31,3 @@ const pwaConfig = withPWA({
     },
     reactStrictMode: true,
 });
-
-delete pwaConfig.pwa;
-
-module.exports = pwaConfig;
