@@ -25,6 +25,7 @@ const UserAPI = {
             return userWithNameDecoder(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
+
             return {
                 message: 'Fail @ getUser',
             };

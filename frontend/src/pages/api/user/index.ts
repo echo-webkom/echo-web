@@ -4,7 +4,7 @@ import axios from 'axios';
 import { User, UserWithName } from '../../../lib/api';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const session = await getToken({ req });
 
     if (session) {
         const idToken = session.idToken as string;
@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     degree: null,
                 };
 
-                res.status(200).send(user);
+                res.status(200).json(user);
                 return;
             }
 
@@ -52,7 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 degreeYear: response.data.degreeYear ?? null,
             };
 
-            res.status(200).send(user);
+            res.status(200).json(user);
             return;
         }
 
