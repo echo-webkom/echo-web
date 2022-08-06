@@ -1,13 +1,21 @@
 import { ParsedUrlQuery } from 'querystring';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { isErrorMessage, Happening, HappeningAPI, HappeningType, HappeningInfo } from '../../lib/api';
+import {
+    UserAPI,
+    UserWithName,
+    isErrorMessage,
+    Happening,
+    HappeningAPI,
+    HappeningType,
+    HappeningInfo,
+} from '../../lib/api';
 import ErrorBox from '../../components/error-box';
 import SEO from '../../components/seo';
 import Article from '../../components/article';
@@ -34,10 +42,22 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
         differenceInMilliseconds(regDate, date) > 172_800_000
             ? null
             : differenceInMilliseconds(regDate, date);
+    const [user, setUser] = useState<UserWithName | null>(null);
 
     useTimeout(() => {
         if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
     }, time);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const result = await UserAPI.getUser();
+
+            if (!isErrorMessage(result)) {
+                setUser(result);
+            }
+        };
+        void fetchUser();
+    }, []);
 
     return (
         <>
@@ -109,6 +129,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                         type={happening.happeningType}
                                                         backendUrl={backendUrl}
                                                         regVerifyToken={happeningInfo?.regVerifyToken ?? null}
+                                                        user={user}
                                                     />
                                                     {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
                                                         locale: nb,

@@ -12,9 +12,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Radio,
-    RadioGroup,
-    Select,
     Text,
     useColorModeValue,
     useDisclosure,
@@ -25,9 +22,12 @@ import {
 import React, { useRef } from 'react';
 import NextLink from 'next/link';
 import { FormProvider, useForm, SubmitHandler } from 'react-hook-form';
-import { Degree, Happening, HappeningType, RegistrationAPI, Question, RegFormValues } from '../lib/api';
+import { UserWithName, Happening, HappeningType, RegistrationAPI, Question, RegFormValues } from '../lib/api';
+import { fullNameToSplitName } from '../lib/utils';
 import FormTerm from './form-term';
 import FormQuestion from './form-question';
+import FormDegree from './form-degree';
+import FormDegreeYear from './form-degree-year';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -74,9 +74,10 @@ interface Props {
     regVerifyToken: string | null;
     type: HappeningType;
     backendUrl: string;
+    user: UserWithName | null;
 }
 
-const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm<RegFormValues>();
@@ -86,6 +87,8 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
 
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
+
+    const [firstName, lastName] = user ? fullNameToSplitName(user.name) : [undefined, undefined];
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         await RegistrationAPI.submitRegistration(
@@ -139,7 +142,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
                                         <FormLabel>E-post</FormLabel>
                                         <Input
                                             type="email"
-                                            placeholder="E-post"
+                                            defaultValue={user?.email}
                                             {...rest}
                                             // using multiple refs
                                             ref={(e) => {
@@ -150,49 +153,14 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl }: Props
                                     </FormControl>
                                     <FormControl id="firstName" isRequired>
                                         <FormLabel>Fornavn</FormLabel>
-                                        <Input placeholder="Fornavn" {...register('firstName')} />
+                                        <Input defaultValue={firstName} {...register('firstName')} />
                                     </FormControl>
                                     <FormControl id="lastName" isRequired>
                                         <FormLabel>Etternavn</FormLabel>
-                                        <Input placeholder="Etternavn" {...register('lastName')} />
+                                        <Input defaultValue={lastName} {...register('lastName')} />
                                     </FormControl>
-                                    <FormControl id="degree" isRequired>
-                                        <FormLabel>Studieretning</FormLabel>
-                                        <Select placeholder="Velg studieretning" {...register('degree')}>
-                                            <option value={Degree.DTEK}>Datateknologi</option>
-                                            <option value={Degree.DSIK}>Datasikkerhet</option>
-                                            <option value={Degree.DVIT}>Data Science/Datavitenskap</option>
-                                            <option value={Degree.BINF}>Bioinformatikk</option>
-                                            <option value={Degree.IMO}>Informatikk-matematikk-økonomi</option>
-                                            <option value={Degree.INF}>Master i informatikk</option>
-                                            <option value={Degree.PROG}>Felles master i programvareutvikling</option>
-                                            <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
-                                            <option value={Degree.POST}>Postbachelor</option>
-                                            <option value={Degree.MISC}>Annet studieløp</option>
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl as="fieldset" isRequired>
-                                        <FormLabel as="legend">Hvilket trinn går du på?</FormLabel>
-                                        <RadioGroup defaultValue="1">
-                                            <VStack align="left">
-                                                <Radio value="1" {...register('degreeYear')}>
-                                                    1. trinn
-                                                </Radio>
-                                                <Radio value="2" {...register('degreeYear')}>
-                                                    2. trinn
-                                                </Radio>
-                                                <Radio value="3" {...register('degreeYear')}>
-                                                    3. trinn
-                                                </Radio>
-                                                <Radio value="4" {...register('degreeYear')}>
-                                                    4. trinn
-                                                </Radio>
-                                                <Radio value="5" {...register('degreeYear')}>
-                                                    5. trinn
-                                                </Radio>
-                                            </VStack>
-                                        </RadioGroup>
-                                    </FormControl>
+                                    <FormDegree defaultValue={user?.degree?.toString()} />
+                                    <FormDegreeYear defaultValue={user?.degreeYear ?? undefined} />
                                     {happening.additionalQuestions.map((q: Question, index: number) => {
                                         return (
                                             <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
