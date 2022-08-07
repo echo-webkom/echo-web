@@ -98,7 +98,7 @@
         "@chakra-ui/react": "2.2.4",
         "@emotion/react": "11.10.0",
         "@emotion/styled": "11.10.0",
-        "@sanity/client": "3.3.2",
+        "@sanity/client": "3.3.3",
         "axios": "0.27.2",
         "calendar-link": "2.2.0",
         "date-fns": "2.29.1",
