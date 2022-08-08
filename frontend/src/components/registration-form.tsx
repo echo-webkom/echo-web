@@ -142,7 +142,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                         <FormLabel>E-post</FormLabel>
                                         <Input
                                             type="email"
-                                            defaultValue={user?.email}
+                                            defaultValue={user?.alternateEmail ?? user?.email}
                                             {...rest}
                                             // using multiple refs
                                             ref={(e) => {

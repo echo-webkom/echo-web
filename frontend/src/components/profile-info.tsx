@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import { Box, Heading, Text, Button } from '@chakra-ui/react';
+import { Box, Heading, Text, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { ProfileFormValues, UserWithName, UserAPI } from '../lib/api';
 import FormDegree from './form-degree';
 import FormDegreeYear from './form-degree-year';
@@ -20,13 +20,14 @@ interface ProfileState {
 
 const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
     const methods = useForm<ProfileFormValues>();
-    const { handleSubmit } = methods;
+    const { handleSubmit, register } = methods;
     const [profileState, setProfileState] = useState<ProfileState>({ infoState: InfoState.IDLE, errorMessage: null });
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (data: ProfileFormValues) => {
         setProfileState({ infoState: InfoState.SAVING, errorMessage: null });
         const res = await UserAPI.putUser({
             email: user.email,
+            alternateEmail: data.alternateEmail,
             degree: data.degree,
             degreeYear: +data.degreeYear,
         });
@@ -45,14 +46,30 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
             </Heading>
             <Text data-cy="profile-name">{user.name}</Text>
             <Heading size="md" my="0.5rem">
-                Email
+                E-post
             </Heading>
-            <Text data-cy="profile-email" mb="1rem">
+            <Text data-cy="profile-email" my="0.5rem">
                 {user.email}
             </Text>
             <FormProvider {...methods}>
                 {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                 <form data-cy="profile-form" id="profile-form" onSubmit={handleSubmit(submitForm)}>
+                    <FormControl>
+                        <FormLabel>
+                            <Heading size="md" display="inline">
+                                Alternativ e-post
+                            </Heading>
+                            <Text>Denne vil bli brukt i stedet for studentmailen din.</Text>
+                        </FormLabel>
+                        <Input
+                            type="email"
+                            placeholder="E-post"
+                            onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
+                            defaultValue={user.alternateEmail ?? undefined}
+                            mb="1rem"
+                            {...register('alternateEmail')}
+                        />
+                    </FormControl>
                     <FormDegree
                         isHeading
                         data-cy="profile-degree"

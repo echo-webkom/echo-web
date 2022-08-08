@@ -189,7 +189,7 @@ object Routing {
 
             call.respond(
                 HttpStatusCode.OK,
-                UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree]))
+                UserJson(user[User.email], user[User.alternateEmail], user[User.degreeYear], Degree.valueOf(user[User.degree]))
             )
         }
     }
@@ -219,6 +219,7 @@ object Routing {
                         addLogger(StdOutSqlLogger)
                         User.insert {
                             it[User.email] = email
+                            it[alternateEmail] = user.alternateEmail
                             it[degree] = user.degree.toString()
                             it[degreeYear] = user.degreeYear
                         }
@@ -232,13 +233,14 @@ object Routing {
                     User.update({
                         User.email eq email
                     }) {
+                        it[alternateEmail] = user.alternateEmail
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
                     }
                 }
                 call.respond(
                     HttpStatusCode.OK,
-                    "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                    "User updated with email = $email, alternateEmail = ${user.alternateEmail}, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
                 )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
