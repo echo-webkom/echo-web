@@ -37,6 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 const user: UserWithName = {
                     email: session.email,
                     name: session.name,
+                    alternateEmail: null,
                     degreeYear: null,
                     degree: null,
                 };
@@ -48,6 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const user: UserWithName = {
                 email: session.email,
                 name: session.name,
+                alternateEmail: response.data.alternateEmail ?? null,
                 degree: response.data.degree ?? null,
                 degreeYear: response.data.degreeYear ?? null,
             };
@@ -59,6 +61,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'PUT') {
             const user: User = {
                 email: req.body.email,
+                alternateEmail: req.body.alternateEmail,
                 degree: req.body.degree,
                 degreeYear: req.body.degreeYear,
             };

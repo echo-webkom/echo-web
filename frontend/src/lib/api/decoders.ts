@@ -204,6 +204,7 @@ const bannerDecoder = record({
 
 const userDecoder = record({
     email: string,
+    alternateEmail: union(string, nil),
     degree: union(degreeDecoder, nil),
     degreeYear: union(number, nil),
 });
@@ -211,6 +212,7 @@ const userDecoder = record({
 const userWithNameDecoder = record({
     email: string,
     name: string,
+    alternateEmail: union(string, nil),
     degree: union(degreeDecoder, nil),
     degreeYear: union(number, nil),
 });

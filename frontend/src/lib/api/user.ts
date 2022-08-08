@@ -5,6 +5,7 @@ import { userWithNameDecoder } from './decoders';
 
 // Values directly from the form (aka form fields)
 interface FormValues {
+    alternateEmail: string;
     degree: Degree;
     degreeYear: number;
 }
