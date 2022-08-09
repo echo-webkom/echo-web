@@ -34,10 +34,12 @@ import no.uib.echo.Response
 import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
+import no.uib.echo.plugins.Routing.getFeedback
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
+import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
@@ -46,6 +48,12 @@ import no.uib.echo.resToJson
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Feedback
+import no.uib.echo.schema.Feedback.dateTime
+import no.uib.echo.schema.Feedback.email
+import no.uib.echo.schema.Feedback.message
+import no.uib.echo.schema.Feedback.name
+import no.uib.echo.schema.FeedbackJson
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
@@ -76,11 +84,13 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
@@ -99,10 +109,11 @@ fun Application.configureRouting(
         basic("auth-$admin") {
             realm = "Access to registrations and happenings."
             validate { credentials ->
-                if (credentials.name == admin && credentials.password == adminKey)
+                if (credentials.name == admin && credentials.password == adminKey) {
                     UserIdPrincipal(credentials.name)
-                else
+                } else {
                     null
+                }
             }
         }
 
@@ -132,6 +143,7 @@ fun Application.configureRouting(
             putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
             deleteHappening()
             getHappeningInfo()
+            getFeedback()
         }
 
         authenticate("auth-jwt") {
@@ -143,6 +155,7 @@ fun Application.configureRouting(
         postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
         deleteRegistration(dev)
         postRegistrationCount()
+        postFeedback()
     }
 }
 
@@ -173,7 +186,10 @@ object Routing {
                 return@get
             }
 
-            call.respond(HttpStatusCode.OK, UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree])))
+            call.respond(
+                HttpStatusCode.OK,
+                UserJson(user[User.email], user[User.degreeYear], Degree.valueOf(user[User.degree]))
+            )
         }
     }
 
@@ -219,7 +235,10 @@ object Routing {
                         it[degreeYear] = user.degreeYear
                     }
                 }
-                call.respond(HttpStatusCode.OK, "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}")
+                call.respond(
+                    HttpStatusCode.OK,
+                    "User updated with email = $email, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
                 e.printStackTrace()
@@ -529,15 +548,17 @@ object Routing {
                         resToJson(Response.WaitList, registration.type, waitListSpot = waitListSpot)
                     )
 
-                    if (sendGridApiKey == null || !sendEmail)
+                    if (sendGridApiKey == null || !sendEmail) {
                         return@post
+                    }
 
                     sendConfirmationEmail(sendGridApiKey, registration, waitListSpot)
                 } else {
                     call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
 
-                    if (sendGridApiKey == null || !sendEmail)
+                    if (sendGridApiKey == null || !sendEmail) {
                         return@post
+                    }
 
                     sendConfirmationEmail(sendGridApiKey, registration, null)
                 }
@@ -656,8 +677,9 @@ object Routing {
                     addLogger(StdOutSqlLogger)
 
                     val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
-                    if (!happeningExists)
+                    if (!happeningExists) {
                         return@transaction false
+                    }
 
                     SpotRange.deleteWhere {
                         SpotRange.happeningSlug eq hap.slug
@@ -678,16 +700,17 @@ object Routing {
                     return@transaction true
                 }
 
-                if (hapDeleted)
+                if (hapDeleted) {
                     call.respond(
                         HttpStatusCode.OK,
                         "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
                     )
-                else
+                } else {
                     call.respond(
                         HttpStatusCode.NotFound,
                         "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
                     )
+                }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
                 e.printStackTrace()
@@ -718,6 +741,49 @@ object Routing {
                 HttpStatusCode.OK,
                 registrationCounts
             )
+        }
+    }
+
+    fun Route.postFeedback() {
+        post("/feedback") {
+            val feedback = call.receive<FeedbackJson>()
+
+            if (feedback.message.isEmpty()) {
+                call.respond(HttpStatusCode.BadRequest, "Message cannot be empty.")
+                return@post
+            }
+
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.insert {
+                    it[email] = feedback.email
+                    it[name] = feedback.name
+                    it[message] = feedback.message
+                    it[dateTime] = LocalDateTime.now().toString()
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, "Feedback received.")
+        }
+    }
+
+    fun Route.getFeedback() {
+        get("/feedback") {
+            val feedback = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.selectAll().map {
+                    FeedbackJson(
+                        it[email],
+                        it[name],
+                        it[message],
+                        it[dateTime]
+                    )
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, feedback)
         }
     }
 }
