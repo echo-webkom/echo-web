@@ -1,23 +1,24 @@
 import {
     Button,
-    useDisclosure,
-    Text,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalFooter,
-    ModalBody,
-    useColorModeValue,
-    VStack,
     FormControl,
     FormLabel,
-    Input,
-    useToast,
-    Textarea,
     IconButton,
+    Input,
+    Link,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    Textarea,
     Tooltip,
+    useColorModeValue,
+    useDisclosure,
+    useToast,
+    VStack,
 } from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
@@ -72,6 +73,7 @@ const FeedbackButton = () => {
                     _hover={{ bg: hover }}
                     w="12"
                     h="12"
+                    zIndex="100"
                 />
             </Tooltip>
 
@@ -85,7 +87,11 @@ const FeedbackButton = () => {
                         <ModalBody>
                             <Text fontSize="md" mb="3">
                                 Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på nettsiden
-                                eller hva vi kan gjøre bedre.
+                                eller hva vi kan gjøre bedre. Alternativt kan du også opprette en{' '}
+                                <Link color="blue" href="https://github.com/echo-webkom/echo-web/issues/new/choose">
+                                    issue på GitHub
+                                </Link>{' '}
+                                for å rapportere en feil.
                             </Text>
                             <VStack spacing={4}>
                                 <FormControl id="email">
