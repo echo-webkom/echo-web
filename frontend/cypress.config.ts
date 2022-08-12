@@ -7,6 +7,7 @@ export default defineConfig({
         baseUrl: 'http://localhost:3000',
         supportFile: false,
         specPattern: '**/*.spec.ts',
+        excludeSpecPattern: '**/registration-deletion.spec.ts',
         experimentalSessionAndOrigin: true,
     },
 
