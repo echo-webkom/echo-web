@@ -49,11 +49,13 @@ import no.uib.echo.schema.Answer
 import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.Feedback.dateTime
 import no.uib.echo.schema.Feedback.email
 import no.uib.echo.schema.Feedback.message
 import no.uib.echo.schema.Feedback.name
+import no.uib.echo.schema.Feedback.sent
 import no.uib.echo.schema.FeedbackJson
+import no.uib.echo.schema.FeedbackResponse
+import no.uib.echo.schema.FeedbackResponseJson
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
@@ -749,7 +751,7 @@ object Routing {
             val feedback = call.receive<FeedbackJson>()
 
             if (feedback.message.isEmpty()) {
-                call.respond(HttpStatusCode.BadRequest, "Message cannot be empty.")
+                call.respond(HttpStatusCode.BadRequest, FeedbackResponse.EMPTY)
                 return@post
             }
 
@@ -760,11 +762,11 @@ object Routing {
                     it[email] = feedback.email
                     it[name] = feedback.name
                     it[message] = feedback.message
-                    it[dateTime] = LocalDateTime.now().toString()
+                    it[sent] = LocalDateTime.now().toString()
                 }
             }
 
-            call.respond(HttpStatusCode.OK, "Feedback received.")
+            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
         }
     }
 
@@ -774,11 +776,11 @@ object Routing {
                 addLogger(StdOutSqlLogger)
 
                 Feedback.selectAll().map {
-                    FeedbackJson(
+                    FeedbackResponseJson(
                         it[email],
                         it[name],
                         it[message],
-                        it[dateTime]
+                        it[sent]
                     )
                 }
             }
