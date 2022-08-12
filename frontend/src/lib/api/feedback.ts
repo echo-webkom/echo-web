@@ -21,7 +21,7 @@ const successResponse: FeedbackResponse = {
 const errorResponse: FeedbackResponse = {
     isSuccess: false,
     title: 'Noe gikk galt',
-    description: 'Vi kunne ikke sende tilbakemeldingen din. Prøv igjen senere.',
+    description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
