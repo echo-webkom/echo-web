@@ -92,7 +92,6 @@ import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
-import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
@@ -762,7 +761,6 @@ object Routing {
                     it[email] = feedback.email
                     it[name] = feedback.name
                     it[message] = feedback.message
-                    it[sent] = LocalDateTime.now().toString()
                 }
             }
 
@@ -780,7 +778,7 @@ object Routing {
                         it[email],
                         it[name],
                         it[message],
-                        it[sent]
+                        it[sent].toString()
                     )
                 }
             }
