@@ -102,7 +102,7 @@
         "axios": "0.27.2",
         "calendar-link": "2.2.0",
         "date-fns": "2.29.1",
-        "framer-motion": "7.0.0",
+        "framer-motion": "7.1.0",
         "markdown-to-jsx": "7.1.7",
         "next": "12.2.4",
         "next-auth": "4.10.3",
