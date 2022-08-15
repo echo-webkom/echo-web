@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 data class FeedbackJson(val email: String?, val name: String?, val message: String)
 
 @Serializable
-data class FeedbackResponseJson(val email: String?, val name: String?, val message: String, val sent: String? = null)
+data class FeedbackResponseJson(val email: String?, val name: String?, val message: String, val sent: String)
 
 enum class FeedbackResponse {
     EMPTY,

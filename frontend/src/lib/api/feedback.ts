@@ -24,12 +24,10 @@ const errorResponse: FeedbackResponse = {
     description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
-
 const FeedbackAPI = {
-    sendFeedback: async (values: FormValues): Promise<FeedbackResponse> => {
+    sendFeedback: async (backendUrl: string, data: FormValues): Promise<FeedbackResponse> => {
         try {
-            await axios.post(`${BACKEND_URL}/feedback`, values, {
+            await axios.post(`${backendUrl}/feedback`, data, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => statusCode === 200,
             });
