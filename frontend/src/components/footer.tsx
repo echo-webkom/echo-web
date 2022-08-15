@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
-import { FaFacebook, FaGithub, FaInstagram, FaCommentDots } from 'react-icons/fa';
+import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
@@ -47,7 +47,7 @@ const Footer = (): JSX.Element => {
                     <Center>
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
                     </Center>
-                    <SimpleGrid columns={[4, 4, 2, 4, 4]} spacing="4">
+                    <SimpleGrid columns={3} pt="0.5rem" spacing="3rem">
                         <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <NextLink href="https://facebook.com/groups/informatikk" passHref>
                                 <LinkOverlay isExternal aria-label="Link til Facebook">
@@ -59,16 +59,6 @@ const Footer = (): JSX.Element => {
                             <NextLink href="https://github.com/echo-webkom/echo-web" passHref>
                                 <LinkOverlay isExternal aria-label="Link til GitHub">
                                     <Icon as={FaGithub} w={10} h={10} />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink
-                                href="https://docs.google.com/forms/d/e/1FAIpQLSey2XfQijRQNvoc8-y3DaufbPaN33SdRBrITrcq87s7DyG6pg/viewform"
-                                passHref
-                            >
-                                <LinkOverlay isExternal aria-label="Tilbakemeldingsskjema">
-                                    <Icon as={FaCommentDots} w={10} h={10} />
                                 </LinkOverlay>
                             </NextLink>
                         </LinkBox>
