@@ -25,6 +25,8 @@ import { MdOutlineFeedback } from 'react-icons/md';
 import { FeedbackAPI, FeedbackResponse, FormValues } from '../lib/api/feedback';
 
 const FeedbackButton = () => {
+    const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
+
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
@@ -36,7 +38,7 @@ const FeedbackButton = () => {
     const { register, handleSubmit, reset } = useForm<FormValues>();
 
     const submitForm: SubmitHandler<FormValues> = async (data) => {
-        const message: FeedbackResponse = await FeedbackAPI.sendFeedback(data);
+        const message: FeedbackResponse = await FeedbackAPI.sendFeedback(backendUrl, data);
 
         onClose();
         toast.closeAll();
