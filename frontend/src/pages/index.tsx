@@ -160,7 +160,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
     const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
         slugs,
-        process.env.BACKEND_URL ?? 'http://localhost:8080',
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080',
     );
 
     return {

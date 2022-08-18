@@ -14,7 +14,7 @@ services:
     ports:
       - '3000:3000'
     environment:
-      BACKEND_URL: http://backend:8080
+      NEXT_PUBLIC_BACKEND_URL: http://backend:8080
       # Values from .env file.
       SANITY_DATASET: ${SANITY_DATASET:?Must specify SANITY_DATASET in .env file or environment.}
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}

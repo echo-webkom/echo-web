@@ -160,7 +160,7 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
-    const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');

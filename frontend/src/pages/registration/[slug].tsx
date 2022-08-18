@@ -157,7 +157,7 @@ interface Params extends ParsedUrlQuery {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
-    const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
     const registrations = await RegistrationAPI.getRegistrations(slug, backendUrl);
 
     if (isErrorMessage(registrations) && registrations.message === '404') {
