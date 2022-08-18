@@ -117,7 +117,7 @@
         "typescript-json-decoder": "1.0.10"
     },
     "devDependencies": {
-        "@types/node": "16.11.48",
+        "@types/node": "16.11.49",
         "@types/react": "18.0.17",
         "@types/react-dom": "18.0.6",
         "@types/remove-markdown": "0.3.1",
