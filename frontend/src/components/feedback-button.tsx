@@ -25,7 +25,7 @@ import { MdOutlineFeedback } from 'react-icons/md';
 import { FeedbackAPI, FeedbackResponse, FormValues } from '../lib/api/feedback';
 
 const FeedbackButton = () => {
-    const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8080';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
