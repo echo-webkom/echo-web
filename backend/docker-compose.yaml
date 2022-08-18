@@ -13,7 +13,7 @@ services:
     links:
       - database
     ports:
-      - '8080:8080'
+      - '${PORT:-8080}:${PORT:-8080}'
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
       # Value of DEV doesn't matter, only that it's defined.
@@ -24,6 +24,7 @@ services:
       SEND_EMAIL_REGISTRATION:
       SEND_EMAIL_HAPPENING:
       TEST_MIGRATION:
+      PORT:
 
   database:
     image: postgres:13.7-alpine
