@@ -11,7 +11,7 @@ const FormDegreeYear = ({ isHeading = false, defaultValue, ...props }: Props) =>
     const headingText = 'Årstrinn';
 
     return (
-        <FormControl as="fieldset" isRequired>
+        <FormControl isRequired>
             <FormLabel>
                 {isHeading ? (
                     <Heading size="md" display="inline">
