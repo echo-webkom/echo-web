@@ -12,7 +12,7 @@ const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studi
     const headingText = 'Studieretining';
 
     return (
-        <FormControl id="degree" isRequired>
+        <FormControl isRequired>
             <FormLabel>
                 {isHeading ? (
                     <Heading size="md" display="inline">
