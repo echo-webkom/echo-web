@@ -1,6 +1,7 @@
 import React from 'react';
 import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
-import { isFriday, isThursday, getDate, getHours, getMonth, isMonday } from 'date-fns';
+import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import LogoAccesory from './logo-accesory';
@@ -26,6 +27,11 @@ const randomHeaderMessage = (): string => {
         if (getMonth(now) === 9) return [...baseMessages, 'BØ!', 'UuUuuUuuUuUu'];
         if (getMonth(now) === 11) return [...baseMessages, 'Ho, ho, ho!'];
 
+        // Week-bases messages
+        const currentWeek = getWeek(now, { locale: nb });
+        if (currentWeek === 34 || currentWeek === 35)
+            return [...baseMessages, 'Velkommen (tilbake)!', 'New semester, new me?'];
+
         // Day-based messages
         if (isThursday(now)) return [...baseMessages, 'Vaffeltorsdag 🧇'];
         if (isFriday(now)) return [...baseMessages, 'Tacofredag 🌯'];
@@ -33,7 +39,7 @@ const randomHeaderMessage = (): string => {
         return baseMessages;
     };
 
-    // Messages that override baseMessages
+    // Messages that override stdMessages
     if (getMonth(now) === 4 && getDate(now) === 17) {
         return 'Gralla 🇳🇴';
     } else if ([5, 6].includes(getMonth(now))) {
