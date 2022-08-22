@@ -27,7 +27,7 @@ const randomHeaderMessage = (): string => {
         if (getMonth(now) === 9) return [...baseMessages, 'BØ!', 'UuUuuUuuUuUu'];
         if (getMonth(now) === 11) return [...baseMessages, 'Ho, ho, ho!'];
 
-        // Week-bases messages
+        // Week-based messages
         const currentWeek = getWeek(now, { locale: nb });
         if (currentWeek === 34 || currentWeek === 35)
             return [...baseMessages, 'Velkommen (tilbake)!', 'New semester, new me?'];
