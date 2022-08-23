@@ -60,8 +60,15 @@ export default {
             name: 'registrationDeadline',
             title: 'Påmelding stenger',
             type: 'datetime',
-            validation: (Rule) =>
-                Rule.required().min(Rule.valueOfField('registrationDate')).max(Rule.valueOfField('date')),
+            validation: (Rule) => [
+                Rule.custom((registrationDeadline, context) =>
+                    typeof context.document.registrationDate !== 'undefined' &&
+                    typeof registrationDeadline === 'undefined'
+                        ? 'Mangler deadline!'
+                        : true,
+                ),
+                Rule.optional().min(Rule.valueOfField('registrationDate')).max(Rule.valueOfField('date')),
+            ],
         },
         {
             name: 'body',
