@@ -62,6 +62,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                             <Text>Denne vil bli brukt i stedet for studentmailen din.</Text>
                         </FormLabel>
                         <Input
+                            data-cy="profile-alt-email"
                             type="email"
                             placeholder="E-post"
                             onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
