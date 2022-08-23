@@ -15,6 +15,7 @@ describe('Feide sign in', () => {
             });
 
             it('Can submit profile info', () => {
+                cy.get('[data-cy="profile-alt-email"]').type(feide.alternateEmail);
                 cy.get('[data-cy="profile-degree"]').select(feide.degree);
                 cy.get('[data-cy="profile-degree-year"]').select(feide.degreeYear);
 
@@ -23,6 +24,7 @@ describe('Feide sign in', () => {
             });
 
             it('Profile info should be persisted', () => {
+                cy.get('[data-cy="profile-alt-email"]').should('contain', feide.alternateEmail);
                 cy.get('[data-cy="profile-degree"]').should('contain', feide.degree);
                 cy.get('[data-cy="profile-degree-year"]').should('contain', feide.degreeYear);
             });
