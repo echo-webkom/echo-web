@@ -538,7 +538,7 @@ class HappeningRegistrationTest : StringSpec({
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
                 val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.InvalidDegreeYear
-                res.title shouldBe "Vennligst velgt et gyldig trinn."
+                res.title shouldBe "Vennligst velg et gyldig trinn."
                 res.desc shouldBe ""
             }
         }
@@ -559,7 +559,7 @@ class HappeningRegistrationTest : StringSpec({
                 testCall.response.status() shouldBe HttpStatusCode.BadRequest
                 val res = Json.decodeFromString<ResponseJson>(testCall.response.content!!)
                 res.code shouldBe Response.InvalidDegreeYear
-                res.title shouldBe "Vennligst velgt et gyldig trinn."
+                res.title shouldBe "Vennligst velg et gyldig trinn."
                 res.desc shouldBe ""
             }
         }
