@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { string } from 'typescript-json-decoder';
+import { number, string } from 'typescript-json-decoder';
 import { Degree, User, UserWithName, ErrorMessage } from './types';
 import { userWithNameDecoder } from './decoders';
 
@@ -33,16 +33,20 @@ const UserAPI = {
         }
     },
 
-    putUser: async (user: User): Promise<string | ErrorMessage> => {
+    putUser: async (user: User): Promise<{ status: number; response: string } | ErrorMessage> => {
         try {
-            const { data } = await axios.put('/api/user', user, { headers: { 'Content-Type': 'application/json' } });
+            const { data, status } = await axios.put('/api/user', user, {
+                headers: { 'Content-Type': 'application/json' },
+                validateStatus: (statusCode) => statusCode < 500,
+            });
 
-            return string(data);
+            return { status: number(status), response: string(data) };
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
-                message: 'Fail @ putUser',
+                status: 500,
+                message: 'Det har skjedd en feil. Du kan prøve å logge inn og ut, og sende inn skjemaet på nytt.',
             };
         }
     },

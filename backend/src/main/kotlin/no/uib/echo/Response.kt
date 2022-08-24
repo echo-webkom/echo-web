@@ -38,7 +38,7 @@ fun resToJson(
         Response.InvalidEmail ->
             return ResponseJson(res, "Vennligst skriv inn en gyldig mail.", "", regDate)
         Response.InvalidDegreeYear ->
-            return ResponseJson(res, "Vennligst velgt et gyldig trinn.", "", regDate)
+            return ResponseJson(res, "Vennligst velg et gyldig trinn.", "", regDate)
         Response.InvalidTerms ->
             return ResponseJson(
                 res,
