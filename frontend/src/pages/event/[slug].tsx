@@ -43,6 +43,22 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
             ? null
             : differenceInMilliseconds(regDate, date);
     const [user, setUser] = useState<UserWithName | null>(null);
+    const [isNorwegian, setIsNorwegian] = useState(true);
+    useEffect(() => {
+        function checkLanguageData() {
+            const lang = localStorage.getItem('language');
+            if (lang === 'en') {
+                setIsNorwegian(false);
+            } else {
+                setIsNorwegian(true);
+            }
+        }
+        checkLanguageData();
+        window.addEventListener('storage', checkLanguageData);
+        return () => {
+            window.removeEventListener('storage', checkLanguageData);
+        };
+    }, []);
 
     useTimeout(() => {
         if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
@@ -164,7 +180,16 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                             minW="0"
                         >
                             <Section>
-                                <Article heading={happening.title} body={happening.body} />
+                                <Article
+                                    heading={happening.title}
+                                    body={
+                                        isNorwegian
+                                            ? happening.body.no
+                                            : happening.body.en
+                                            ? happening.body.en
+                                            : '(No english version avalible) \n\n' + happening.body.no
+                                    }
+                                />
                             </Section>
                         </GridItem>
                     </Grid>
