@@ -9,7 +9,7 @@ interface Props extends SelectProps {
 
 const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studieretning', ...props }: Props) => {
     const { register } = useFormContext();
-    const headingText = 'Studieretining';
+    const headingText = 'Studieretning';
 
     return (
         <FormControl isRequired>
