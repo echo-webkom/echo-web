@@ -23,7 +23,11 @@ const HappeningAPI = {
                     date,
                     registrationDate,
                     registrationDeadline,
-                    body,
+                    "body": select(
+                        body.en != null => {"no": body.no, "en": body.en},
+                        body.no != null => {"no": body.no, "en": null},
+                        body
+                      ),
                     location,
                     locationLink,
                     companyLink,
@@ -67,7 +71,11 @@ const HappeningAPI = {
                     date,
                     registrationDate,
                     registrationDeadline,
-                    body,
+                    "body": select(
+                        body.en != null => {"no": body.no, "en": body.en},
+                        body.no != null => {"no": body.no, "en": null},
+                        body
+                      ),
                     location,
                     locationLink,
                     companyLink,
