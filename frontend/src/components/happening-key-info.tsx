@@ -15,6 +15,9 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
     const isMainPage = router.pathname === '/';
 
     const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
+    const waitListCount =
+        registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.waitListCount ?? 0;
+    const totalRegWithoutWaitList = totalReg - waitListCount;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
     return (
@@ -30,7 +33,9 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 <Flex alignItems="center" justifyContent="flex-end">
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
-                            {totalReg >= totalSpots ? `Fullt` : `${totalReg} av ${totalSpots === 0 ? '∞' : totalSpots}`}
+                            {totalRegWithoutWaitList >= totalSpots
+                                ? `Fullt`
+                                : `${totalRegWithoutWaitList} av ${totalSpots === 0 ? '∞' : totalSpots}`}
                         </Text>
                     ) : (
                         <Text ml="1" fontSize="1rem">
