@@ -1,5 +1,6 @@
-//import fs from 'fs';
+import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore, isFuture } from 'date-fns';
 import { GetStaticProps } from 'next';
 import NextLink from 'next/link';
@@ -21,7 +22,7 @@ import {
     JobAdvertAPI,
     JobAdvert,
 } from '../lib/api';
-//import getRssXML from '../lib/generate-rss-feed';
+import getRssXML from '../lib/generate-rss-feed';
 
 const IndexPage = ({
     bedpreses,
@@ -144,9 +145,11 @@ export const getStaticProps: GetStaticProps = async () => {
     if (bannerResponse && isErrorMessage(bannerResponse)) throw new Error(bannerResponse.message);
     if (isErrorMessage(jobsResponse)) throw new Error(jobsResponse.message);
 
-    //const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
-
-    //fs.writeFileSync('./public/rss.xml', rss);
+    // Only run on build, not revalidate
+    if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+        const rss = getRssXML(postsResponse, [...eventsResponse, ...bedpresesResponse]);
+        fs.writeFileSync('./public/rss.xml', rss);
+    }
 
     const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
     const [bedpresLimit, eventLimit] = events.length > 3 ? [4, 8] : [2, 4];
