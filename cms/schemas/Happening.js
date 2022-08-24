@@ -76,7 +76,20 @@ export default {
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
-            type: 'markdown',
+            type: 'object',
+            fields: [
+                {
+                    title: 'Norsk',
+                    name: 'no',
+                    type: 'markdown',
+                    validation: (Rule) => Rule.required(),
+                },
+                {
+                    title: 'Engelsk',
+                    name: 'en',
+                    type: 'markdown',
+                },
+            ],
         },
         {
             name: 'logo',
