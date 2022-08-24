@@ -1,30 +1,22 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Box, Heading, Text, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
-import { ProfileFormValues, UserWithName, UserAPI } from '../lib/api';
+import { isErrorMessage, ProfileFormValues, UserWithName, UserAPI } from '../lib/api';
 import FormDegree from './form-degree';
 import FormDegreeYear from './form-degree-year';
 
-enum InfoState {
-    IDLE,
-    EDITED,
-    SAVING,
-    SAVED,
-    ERROR,
-}
-
 interface ProfileState {
-    infoState: InfoState;
+    infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error';
     errorMessage: string | null;
 }
 
 const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
     const methods = useForm<ProfileFormValues>();
     const { handleSubmit, register } = methods;
-    const [profileState, setProfileState] = useState<ProfileState>({ infoState: InfoState.IDLE, errorMessage: null });
+    const [profileState, setProfileState] = useState<ProfileState>({ infoState: 'idle', errorMessage: null });
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (data: ProfileFormValues) => {
-        setProfileState({ infoState: InfoState.SAVING, errorMessage: null });
+        setProfileState({ infoState: 'saving', errorMessage: null });
         const res = await UserAPI.putUser({
             email: user.email,
             alternateEmail: data.alternateEmail,
@@ -32,15 +24,20 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
             degreeYear: +data.degreeYear,
         });
 
-        if (typeof res !== 'string') {
-            setProfileState({ infoState: InfoState.ERROR, errorMessage: res.message });
+        if (isErrorMessage(res)) {
+            setProfileState({ infoState: 'error', errorMessage: res.message });
+            return;
+        }
+
+        if (res.status === 200) {
+            setProfileState({ infoState: 'saved', errorMessage: null });
         } else {
-            setProfileState({ infoState: InfoState.SAVED, errorMessage: null });
+            setProfileState({ infoState: 'error', errorMessage: res.response });
         }
     };
 
     return (
-        <Box>
+        <Box w="35%">
             <Heading size="md" my="0.5rem">
                 Navn
             </Heading>
@@ -65,7 +62,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                             data-cy="profile-alt-email"
                             type="email"
                             placeholder="E-post"
-                            onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
+                            onInput={() => setProfileState({ infoState: 'edited', errorMessage: null })}
                             defaultValue={user.alternateEmail ?? undefined}
                             mb="1rem"
                             {...register('alternateEmail')}
@@ -74,29 +71,31 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                     <FormDegree
                         isHeading
                         data-cy="profile-degree"
-                        onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
+                        onInput={() => setProfileState({ infoState: 'edited', errorMessage: null })}
                         defaultValue={user.degree ?? undefined}
                         py="1rem"
                     />
                     <FormDegreeYear
                         isHeading
                         data-cy="profile-degree-year"
-                        onInput={() => setProfileState({ infoState: InfoState.EDITED, errorMessage: null })}
+                        onInput={() => setProfileState({ infoState: 'edited', errorMessage: null })}
                         defaultValue={user.degreeYear ?? undefined}
                         py="1rem"
                     />
                     <Button
-                        disabled={profileState.infoState !== InfoState.EDITED}
-                        isLoading={profileState.infoState === InfoState.SAVING}
+                        disabled={profileState.infoState !== 'edited'}
+                        isLoading={profileState.infoState === 'saving'}
                         type="submit"
                         form="profile-form"
                         mr={3}
                         colorScheme="teal"
                     >
-                        {profileState.infoState === InfoState.SAVED ? 'Endringer lagret!' : 'Lagre endringer'}
+                        {profileState.infoState === 'saved' ? 'Endringer lagret!' : 'Lagre endringer'}
                     </Button>
                     {profileState.errorMessage && (
-                        <Text color="red">Det har skjedd en feil. Prøv å logg inn og ut, og prøv igjen.</Text>
+                        <Text fontWeight="bold" color="red">
+                            {profileState.errorMessage}
+                        </Text>
                     )}
                 </form>
             </FormProvider>

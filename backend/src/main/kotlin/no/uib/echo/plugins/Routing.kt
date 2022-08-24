@@ -203,7 +203,29 @@ object Routing {
                 val email = principal!!.payload.getClaim("email").asString()
 
                 if (user.email != email) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.Unauthorized, "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen.")
+                    return@put
+                }
+
+                if (user.alternateEmail != null) {
+                    if (!isEmailValid(user.alternateEmail)) {
+                        call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gydlig e-post.")
+                        return@put
+                    }
+                }
+
+                if (user.degreeYear !in 1..5) {
+                    call.respond(HttpStatusCode.BadRequest, "Vennligst velg et gyldig trinn.")
+                    return@put
+                }
+
+                val degreeMismatch = "Studieretning og årstrinn stemmer ikke overens."
+
+                if ((user.degree in bachelors && user.degreeYear !in 1..3) ||
+                    (user.degree in masters && user.degreeYear !in 4..5) ||
+                    (user.degree == Degree.ARMNINF && user.degreeYear != 1)
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, degreeMismatch)
                     return@put
                 }
 

@@ -13,49 +13,52 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'GET') {
             // not authenticated
             if (!session.email || !session.name) {
-                res.status(401);
+                res.status(401).end();
                 return;
             }
 
-            const response = await axios.get(`${backendUrl}/user`, {
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-                validateStatus: (statusCode: number) => {
-                    return statusCode < 500;
-                },
-            });
+            try {
+                const response = await axios.get(`${backendUrl}/user`, {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                    validateStatus: (statusCode: number) => statusCode < 500,
+                });
 
-            // no user in database
-            if (response.status === 404) {
-                // not authenticated
-                if (!session.email || !session.name) {
-                    res.status(401);
+                // no user in database
+                if (response.status === 404) {
+                    // not authenticated
+                    if (!session.email || !session.name) {
+                        res.status(401).end();
+                        return;
+                    }
+
+                    const user: UserWithName = {
+                        email: session.email,
+                        name: session.name,
+                        alternateEmail: null,
+                        degreeYear: null,
+                        degree: null,
+                    };
+
+                    res.status(200).end(JSON.stringify(user));
                     return;
                 }
 
                 const user: UserWithName = {
                     email: session.email,
                     name: session.name,
-                    alternateEmail: null,
-                    degreeYear: null,
-                    degree: null,
+                    alternateEmail: response.data.alternateEmail ?? null,
+                    degree: response.data.degree ?? null,
+                    degreeYear: response.data.degreeYear ?? null,
                 };
 
-                res.status(200).json(user);
+                res.status(200).end(JSON.stringify(user));
+                return;
+            } catch (error) {
+                res.status(500).end(JSON.stringify(error));
                 return;
             }
-
-            const user: UserWithName = {
-                email: session.email,
-                name: session.name,
-                alternateEmail: response.data.alternateEmail ?? null,
-                degree: response.data.degree ?? null,
-                degreeYear: response.data.degreeYear ?? null,
-            };
-
-            res.status(200).json(user);
-            return;
         }
 
         if (req.method === 'PUT') {
@@ -66,30 +69,42 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 degreeYear: req.body.degreeYear,
             };
 
-            const response = await axios.put(`${backendUrl}/user`, user, {
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            try {
+                const response = await axios.put(`${backendUrl}/user`, user, {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    validateStatus: (statusCode) => statusCode < 500,
+                });
 
-            // not authenticated
-            if (response.status === 401) {
-                res.status(401);
+                // not authenticated
+                if (response.status === 401) {
+                    res.status(401).end();
+                    return;
+                }
+
+                // bad request
+                if (response.status === 400) {
+                    res.status(400).end(JSON.stringify(response.data));
+                    return;
+                }
+
+                res.status(200).end(JSON.stringify(response.data));
+                return;
+            } catch (error) {
+                res.status(500).end(JSON.stringify(error));
                 return;
             }
-
-            res.status(200).send(response.data);
-            return;
         }
 
         // method not valid
-        res.status(400);
+        res.status(400).end();
         return;
     }
 
     // not authenticated
-    res.status(401);
+    res.status(401).end();
 };
 
 export default handler;
