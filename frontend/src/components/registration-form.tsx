@@ -88,7 +88,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
-    const [firstName, lastName] = user ? fullNameToSplitName(user.name) : [undefined, undefined];
+    const [firstName, lastName] = user && user.name !== '' ? fullNameToSplitName(user.name) : [undefined, undefined];
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         await RegistrationAPI.submitRegistration(

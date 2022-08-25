@@ -412,6 +412,11 @@ object Routing {
                     return@post
                 }
 
+                if (registration.firstName.isBlank() || registration.lastName.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidName, registration.type))
+                    return@post
+                }
+
                 if (registration.degreeYear !in 1..5) {
                     call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, registration.type))
                     return@post
