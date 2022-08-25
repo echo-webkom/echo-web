@@ -9,6 +9,7 @@ data class ResponseJson(val code: Response, val title: String, val desc: String,
 
 enum class Response {
     InvalidEmail,
+    InvalidName,
     InvalidDegreeYear,
     InvalidTerms,
     DegreeMismatchBachelor,
@@ -37,6 +38,8 @@ fun resToJson(
     when (res) {
         Response.InvalidEmail ->
             return ResponseJson(res, "Vennligst skriv inn en gyldig mail.", "", regDate)
+        Response.InvalidName ->
+            return ResponseJson(res, "Vennligst skriv inn ditt navn.", "", regDate)
         Response.InvalidDegreeYear ->
             return ResponseJson(res, "Vennligst velg et gyldig trinn.", "", regDate)
         Response.InvalidTerms ->
