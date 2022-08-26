@@ -40,7 +40,7 @@ interface HappeningBoxProps {
     slug: string;
     location: string;
     author: string;
-    body: string;
+    body: string | { no: string; en: string } | { no: string; en: null };
 }
 
 const datesAreOnSameDay = (first: Date, second: Date) =>
@@ -82,7 +82,7 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
                             <Text>@ {location}</Text>
                             <Divider />
                             <Text noOfLines={5}>
-                                <Markdown>{body}</Markdown>
+                                <Markdown>{typeof body === 'string' ? body : body.no}</Markdown>
                             </Text>
                             <Text as="em" fontSize="sm">
                                 {author}

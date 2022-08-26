@@ -181,14 +181,12 @@ const happeningDecoder = record({
     registrationDate: union(string, nil),
     registrationDeadline: union(string, nil),
     body: (value) => {
-        if (typeof value === 'string') {
-            return { no: string(value), en: string(value) };
-        } else {
-            return record({
-                no: string,
-                en: union(string, nil),
-            })(value);
-        }
+        return typeof value === 'string'
+            ? { no: string(value), en: string(value) }
+            : record({
+                  no: string,
+                  en: union(string, nil),
+              })(value);
     },
     location: string,
     locationLink: union(string, nil),
