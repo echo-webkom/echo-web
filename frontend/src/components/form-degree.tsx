@@ -32,7 +32,6 @@ const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studi
                 <option value={Degree.PROG}>Felles master i programvareutvikling</option>
                 <option value={Degree.ARMNINF}>Årsstudium i informatikk</option>
                 <option value={Degree.POST}>Postbachelor</option>
-                <option value={Degree.MISC}>Annet studieløp</option>
             </Select>
         </FormControl>
     );

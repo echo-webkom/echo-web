@@ -82,6 +82,8 @@ enum Degree {
     PROG = 'PROG',
     ARMNINF = 'ARMNINF',
     POST = 'POST',
+    // MISC should not be used,
+    // is only here for backwards compatibility.
     MISC = 'MISC',
 }
 
