@@ -6,7 +6,7 @@ type GenericEntry = {
     title: string;
     publishedAt: string;
     author: string;
-    body: string;
+    body: string | { no: string; en: string } | { no: string; en: null };
     route: string;
 };
 
@@ -27,10 +27,13 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
                 <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
                 <guid isPermalink="false">https://echo.uib.no/posts/${post.slug}</guid>
                 <description>
-                    <![CDATA[${post.body.slice(0, 70)} ...]]>
+                
+                    <![CDATA[${
+                        typeof post.body === 'string' ? post.body.slice(0, 70) : post.body.no.slice(0, 70)
+                    } ...]]>
                 </description>
                 <content>
-                    <![CDATA[${post.body}]]>
+                    <![CDATA[${typeof post.body === 'string' ? post.body : post.body.no}]]>
                 </content>
             </item>
         `;

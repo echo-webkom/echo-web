@@ -13,7 +13,6 @@ const LanguageMenu = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if (language === '' || language === null) return;
         localStorage.setItem('language', language);
         // setItem only dispatches the storage event to other tabs on the same site, not the one that sendt it.
         // so we need to dispatch an event manually to get it on the current tab.
@@ -29,11 +28,9 @@ const LanguageMenu = (): JSX.Element => {
     };
 
     return (
-        <>
-            <Button bg="none" fontSize="xxl" onClick={clicked}>
-                {language === 'en' ? '🇬🇧' : '🇳🇴'}
-            </Button>
-        </>
+        <Button bg="none" fontSize="xxl" onClick={clicked} marginRight="1rem">
+            {language === 'en' ? '🇬🇧' : '🇳🇴'}
+        </Button>
     );
 };
 
