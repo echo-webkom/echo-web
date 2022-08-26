@@ -1,6 +1,6 @@
 {
     "extends": ["config:base"],
-    "labels": ["dependencies :handshake:"],
+    "labels": ["build :handshake:"],
     "commitMessagePrefix": "⬆️",
     "prHourlyLimit": 0,
     "stabilityDays": 3,
