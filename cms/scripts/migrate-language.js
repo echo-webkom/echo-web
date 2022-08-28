@@ -19,11 +19,10 @@ const client = sanityClient.withConfig({ apiVersion: '2021-08-21' });
 // Fetching documents that matches the precondition for the migration.
 // NOTE: This query should eventually return an empty set of documents to mark the migration
 // as complete
-const type = 'BEDPRES';
 
 const fetchDocuments = () =>
     client.fetch(
-        `*[_type == 'happening' && happeningType == "${type}" && !(_id in path('drafts.**'))][0...100] | order(date asc)  {_id, _rev, title, body, date}`,
+        `*[_type == 'happening' && !(_id in path('drafts.**'))][0...100] | order(date asc)  {_id, _rev, title, body, date}`,
     );
 
 const buildPatches = (docs) =>
