@@ -11904,10 +11904,10 @@ react-select@^4.1.0:
     react-input-autosize "^3.0.0"
     react-transition-group "^4.3.0"
 
-react-snowfall@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-snowfall/-/react-snowfall-1.1.2.tgz#fbe66968268a8976d2f18e6da50f3e866cefd7fc"
-  integrity sha512-dSu4y7YpNE8nybBwbDLSlRBHIZ3N3F3Hbd16f14pd2B5cGsncNf93gb+B8wvGlFMuVQcvoCg5ecq2YAFbsDYdQ==
+react-snowfall@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-snowfall/-/react-snowfall-1.2.1.tgz#68cab6a1d05aa7c3211bce96a3a97977ca7dc57f"
+  integrity sha512-d2UR3nDq3F0DJGaTfJ0QNbBo76UZHtT9wHFj+ePxAl4FgSxWBhxB/Bjn06f5iDBwhgwiZ7CZmv3lwfNvjo6a+w==
   dependencies:
     react-fast-compare "^3.2.0"
 
