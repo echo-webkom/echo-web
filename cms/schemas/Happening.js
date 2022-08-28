@@ -51,7 +51,9 @@ export default {
             type: 'datetime',
             validation: (Rule) =>
                 Rule.custom((registrationDate, context) =>
-                    typeof context.document.spotRanges !== 'undefined' && typeof registrationDate === 'undefined'
+                    typeof context.document.spotRanges !== 'undefined' &&
+                    context.document.spotRanges.length > 0 &&
+                    typeof registrationDate === 'undefined'
                         ? 'Må ha dato for påmelding om det er definert arrangementsplasser.'
                         : true,
                 ),
@@ -157,7 +159,8 @@ export default {
             type: 'array',
             validation: (Rule) =>
                 Rule.custom((spotRanges, context) =>
-                    typeof context.document.registrationDate !== 'undefined' && typeof spotRanges === 'undefined'
+                    typeof context.document.registrationDate !== 'undefined' &&
+                    (typeof spotRanges === 'undefined' || spotRanges?.length === 0)
                         ? 'Må ha arrangementsplasser om det er definert en påmeldingsdato.'
                         : true,
                 ),
