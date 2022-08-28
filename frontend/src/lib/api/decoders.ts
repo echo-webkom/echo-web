@@ -217,6 +217,13 @@ const userWithNameDecoder = record({
     degreeYear: union(number, nil),
 });
 
+const feedbackDecoder = record({
+    email: union(string, nil),
+    name: union(string, nil),
+    message: string,
+    sent: string,
+});
+
 export {
     emptyArrayOnNilDecoder,
     slugDecoder,
@@ -241,4 +248,5 @@ export {
     registrationCountDecoder,
     userDecoder,
     userWithNameDecoder,
+    feedbackDecoder,
 };
