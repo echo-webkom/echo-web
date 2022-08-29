@@ -45,6 +45,9 @@ const migrateNextBatch = async () => {
     const rawDocuments = await fetchDocuments();
 
     const documents = rawDocuments.filter((doc) => {
+        if (doc.body === null) {
+            throw new Error('the body was null, maybe handle this manually!', doc, doc.body);
+        }
         return !(typeof doc.body === 'object' && doc.body !== null && Object.keys(doc.body).includes('no'));
     });
     const patches = buildPatches(documents);
