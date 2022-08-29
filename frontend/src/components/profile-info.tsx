@@ -1,3 +1,4 @@
+import { signOut } from 'next-auth/react';
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Box, Heading, Text, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
@@ -37,7 +38,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
     };
 
     return (
-        <Box w="35%">
+        <Box maxW="xl">
             <Heading size="md" my="0.5rem">
                 Navn
             </Heading>
@@ -92,8 +93,11 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                     >
                         {profileState.infoState === 'saved' ? 'Endringer lagret!' : 'Lagre endringer'}
                     </Button>
+                    <Button onClick={() => void signOut()} colorScheme="red">
+                        Logg ut
+                    </Button>
                     {profileState.errorMessage && (
-                        <Text fontWeight="bold" color="red">
+                        <Text fontWeight="bold" color="red" pt="3">
                             {profileState.errorMessage}
                         </Text>
                     )}
