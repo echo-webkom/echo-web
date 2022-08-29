@@ -33,18 +33,20 @@ const ProfilePage = (): JSX.Element => {
             <SEO title={user?.name ?? status === 'unauthenticated' ? 'Profilside' : 'Logg inn'} />
             {status === 'authenticated' && (
                 <>
-                    <Section position="relative">
-                        <Button
-                            onClick={() => {
-                                void signOut();
-                            }}
-                            position="absolute"
-                            left="0.5em"
-                            top="0.5em"
-                        >
-                            Logg ut
-                        </Button>
-                        <Center mt="1.5em">{user && <ProfileInfo user={user} />}</Center>
+                    <Section>
+                        <Center>
+                            {user ? (
+                                <ProfileInfo user={user} />
+                            ) : (
+                                <Flex direction="column" maxW="400px" my="20" gap="3">
+                                    <Text fontWeight="bold" fontSize="xl">
+                                        Får ikke til å laste inn brukeren din.
+                                    </Text>
+                                    <Text>Prøv å logge inn på nytt, eller ta kontakt med noen i Webkom.</Text>
+                                    <Button onClick={() => void signOut()}>Logg ut</Button>
+                                </Flex>
+                            )}
+                        </Center>
                     </Section>
                 </>
             )}
