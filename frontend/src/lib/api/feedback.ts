@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
-import { ErrorMessage, Feedback, isErrorMessage } from './types';
-import { UserAPI } from './user';
+import { ErrorMessage, Feedback } from './types';
 
 interface FormValues {
     email: string;
@@ -27,7 +25,7 @@ const errorResponse: FeedbackResponse = {
     description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
-const VERIFIED_EMAILS: Set<string> = new Set(['ole.m.johnsen@student.uib.no']);
+const VERIFIED_EMAILS: Set<string> = new Set(['ole.m.johnsen@student.uib.no', 'andreas.bakseter@student.uib.no']);
 
 const FeedbackAPI = {
     sendFeedback: async (backendUrl: string, data: FormValues): Promise<FeedbackResponse> => {
