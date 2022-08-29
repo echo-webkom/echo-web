@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { ErrorMessage, Feedback } from './types';
+import { useSession } from 'next-auth/react';
+import { ErrorMessage, Feedback, isErrorMessage } from './types';
+import { UserAPI } from './user';
 
 interface FormValues {
     email: string;
@@ -43,14 +45,21 @@ const FeedbackAPI = {
     getFeedback: async (backendUrl: string, auth: string, email: string): Promise<Array<Feedback> | ErrorMessage> => {
         try {
             if (VERIFIED_EMAILS.has(email)) {
-                const { data }: { data: Array<Feedback> } = await axios.get(`${backendUrl}/feedback`, {
-                    headers: { 'Content-Type': 'application/json' },
-                    auth: {
-                        username: 'admin',
-                        password: auth,
+                const { data, status }: { data: Array<Feedback>; status: number } = await axios.get(
+                    `${backendUrl}/feedback`,
+                    {
+                        headers: { 'Content-Type': 'application/json' },
+                        auth: {
+                            username: 'admin',
+                            password: auth,
+                        },
+                        validateStatus: (statusCode: number) => statusCode === 200,
                     },
-                    validateStatus: (statusCode: number) => statusCode === 200,
-                });
+                );
+
+                if (status === 404) {
+                    return { message: 'Ingen tilbakemeldinger funent.' };
+                }
 
                 return data;
             }
