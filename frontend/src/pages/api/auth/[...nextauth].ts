@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
     session: {
         maxAge: 3600,
     },
@@ -41,4 +42,6 @@ export default NextAuth({
             },
         },
     ],
-});
+};
+
+export default NextAuth(authOptions);
