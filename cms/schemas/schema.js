@@ -11,6 +11,7 @@ import Happening from './Happening';
 import JobAdvert from './JobAdvert';
 import Banner from './Banner';
 import StaticInfo from './StaticInfo';
+import { localeMarkdown, localeString } from './localeSchemas';
 
 export default createSchema({
     name: 'default',
@@ -26,5 +27,7 @@ export default createSchema({
         JobAdvert,
         Banner,
         StaticInfo,
+        localeMarkdown,
+        localeString,
     ]),
 });
