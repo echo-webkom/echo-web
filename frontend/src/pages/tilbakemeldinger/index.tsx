@@ -70,7 +70,7 @@ const FeedbackPage = ({ feedbacks }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACEND_URL ?? 'http://localhost:8080';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
