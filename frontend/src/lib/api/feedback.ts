@@ -25,7 +25,14 @@ const errorResponse: FeedbackResponse = {
     description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
-const VERIFIED_EMAILS: Set<string> = new Set(['ole.m.johnsen@student.uib.no', 'andreas.bakseter@student.uib.no']);
+const VERIFIED_EMAILS: Set<string> = new Set([
+    'ole.m.johnsen@student.uib.no',
+    'andreas.bakseter@student.uib.no',
+    'thea.kolnes@student.uib.no',
+    'felix.kaasa@student.uib.no',
+    'bo.aanes@student.uib.no',
+    'alvar.honsi@student.uib.no',
+]);
 
 const FeedbackAPI = {
     sendFeedback: async (backendUrl: string, data: FormValues): Promise<FeedbackResponse> => {
