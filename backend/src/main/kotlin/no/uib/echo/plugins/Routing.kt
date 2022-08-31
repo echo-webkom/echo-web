@@ -173,7 +173,7 @@ object Routing {
     fun Route.getUser() {
         get("/user") {
             val principal = call.principal<JWTPrincipal>()
-            val email = principal!!.payload.getClaim("email").asString()
+            val email = principal!!.payload.getClaim("email").asString().lowercase()
 
             val user = transaction {
                 addLogger(StdOutSqlLogger)
