@@ -198,17 +198,19 @@ object Routing {
         put("/user") {
             try {
                 val user = call.receive<UserJson>()
-
                 val principal = call.principal<JWTPrincipal>()
-                val email = principal!!.payload.getClaim("email").asString()
 
-                if (user.email != email) {
+                val userEmail = user.email.lowercase()
+                val alternateEmail = user.alternateEmail?.lowercase()
+                val tokenEmail = principal!!.payload.getClaim("email").asString().lowercase()
+
+                if (userEmail != tokenEmail) {
                     call.respond(HttpStatusCode.Unauthorized, "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen.")
                     return@put
                 }
 
-                if (user.alternateEmail != null) {
-                    if (!isEmailValid(user.alternateEmail)) {
+                if (alternateEmail != null) {
+                    if (!isEmailValid(alternateEmail)) {
                         call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gydlig e-post.")
                         return@put
                     }
@@ -232,7 +234,7 @@ object Routing {
                 val result = transaction {
                     addLogger(StdOutSqlLogger)
                     User.select {
-                        User.email eq email
+                        User.email.lowerCase() eq tokenEmail
                     }.firstOrNull()
                 }
 
@@ -240,29 +242,29 @@ object Routing {
                     transaction {
                         addLogger(StdOutSqlLogger)
                         User.insert {
-                            it[User.email] = email
-                            it[alternateEmail] = user.alternateEmail
+                            it[email] = tokenEmail
+                            it[User.alternateEmail] = alternateEmail
                             it[degree] = user.degree.toString()
                             it[degreeYear] = user.degreeYear
                         }
                     }
-                    call.respond(HttpStatusCode.OK, "User created with email = $email")
+                    call.respond(HttpStatusCode.OK, "User created with email = $tokenEmail")
                     return@put
                 }
 
                 transaction {
                     addLogger(StdOutSqlLogger)
                     User.update({
-                        User.email eq email
+                        User.email.lowerCase() eq tokenEmail
                     }) {
-                        it[alternateEmail] = user.alternateEmail
+                        it[User.alternateEmail] = alternateEmail
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
                     }
                 }
                 call.respond(
                     HttpStatusCode.OK,
-                    "User updated with email = $email, alternateEmail = ${user.alternateEmail}, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                    "User updated with email = $tokenEmail, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
                 )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
