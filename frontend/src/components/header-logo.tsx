@@ -6,7 +6,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import LogoAccesory from './logo-accesory';
 
-const randomHeaderMessage = (): string => {
+const randomHeaderMessage = () => {
     const now = new Date();
 
     const stdMessages = () => {
@@ -21,6 +21,8 @@ const randomHeaderMessage = (): string => {
             'For ei skjønnas 😍',
             'Vim eller forsvinn',
             'Mye å gjøre? SUCK IT UP!',
+            '@echo_webkom',
+            '@echo_uib',
         ];
 
         // Month-based messages
