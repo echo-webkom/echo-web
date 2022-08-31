@@ -18,7 +18,6 @@ import { useRouter } from 'next/router';
 import React, { RefObject } from 'react';
 import ColorModeButton from './color-mode-button';
 import NavLink, { NavLinkButton } from './nav-link';
-import LanguageMenu from './language-menu';
 
 const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
     const { status } = useSession();
@@ -42,7 +41,6 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             <NavLink text="Hjem" href="/" data-cy="hjem" />
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
             <NavLink text="Om echo" href="/om-echo/om-oss" data-cy="om-oss" />
-            <LanguageMenu />
             {isMobile && (
                 <Flex data-cy="min-profil">
                     {status === 'authenticated' && <NavLink text="Min profil" href="/profile" />}
