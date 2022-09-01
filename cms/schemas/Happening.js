@@ -1,3 +1,5 @@
+import sanityClient from 'part:@sanity/base/client';
+
 export default {
     name: 'happening',
     title: 'Arrangement',
@@ -21,9 +23,19 @@ export default {
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
+            description: 'Unik identifikator for arrangementet. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
             type: 'slug',
+            readOnly: ({ document }) => document?.publishedOnce,
             options: {
                 source: 'title',
+                slugify: (input) => {
+                    const slug = input.toLowerCase().replace(/\s+/g, '-').replaceAll('/', '-').slice(0, 200);
+                    const query = 'count(*[_type == "happening" && slug.current == $slug]{_id})';
+                    const params = { slug };
+                    return sanityClient
+                        .fetch(query, params)
+                        .then((count) => (count > 0 ? `${slug}-${count + 1}` : slug));
+                },
             },
         },
         {

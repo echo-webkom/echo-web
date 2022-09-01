@@ -25,6 +25,10 @@
         {
             "name": "part:@sanity/base/schema",
             "path": "./schemas/schema"
+        },
+        {
+            "implements": "part:@sanity/base/document-actions/resolver",
+            "path": "./src/resolveDocumentActions.js"
         }
     ]
 }
