@@ -1,5 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { Box, Center, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
+import { useContext } from 'react';
+import { Box, Center, Divider, Flex, Heading, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
@@ -13,6 +14,8 @@ import type { Post } from '@api/post';
 import { PostAPI } from '@api/post';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
+import LanguageMenu from '@components/language-menu';
+import LanguageContext from 'language-context';
 
 interface Props {
     post: Post;
@@ -20,6 +23,13 @@ interface Props {
 
 const PostPage = ({ post }: Props): JSX.Element => {
     const router = useRouter();
+    const isNorwegian = useContext(LanguageContext);
+    const localeTitle = (): string => {
+        /* eslint-disable */
+        const output = isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;
+        return output;
+        /* eslint-enable */
+    };
 
     return (
         <>
@@ -30,12 +40,16 @@ const PostPage = ({ post }: Props): JSX.Element => {
             )}
             {!router.isFallback && (
                 <>
-                    <SEO title={post.title} />
+                    <SEO title={post.title.no} />
                     <Box>
                         <Section>
-                            <Heading mb="0.2em" size="2xl">
-                                {post.title}
-                            </Heading>
+                            <Flex direction="row" alignItems="center">
+                                <Heading mb="0.2em" size="2xl">
+                                    {localeTitle()}
+                                </Heading>
+                                <Spacer />
+                                <LanguageMenu />
+                            </Flex>
 
                             <Divider mb="0.5em" />
 
@@ -49,7 +63,18 @@ const PostPage = ({ post }: Props): JSX.Element => {
 
                             <Divider my="0.5em" />
 
-                            <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
+                            <Markdown options={{ overrides: MapMarkdownChakra }}>
+                                {
+                                    /* eslint-disable */
+                                    isNorwegian
+                                        ? post.body.no
+                                        : post.body.en
+                                        ? post.body.en
+                                        : '(No english version avalible) \n\n' + post.body.no
+
+                                    /* eslint-enable */
+                                }
+                            </Markdown>
                         </Section>
                     </Box>
                 </>

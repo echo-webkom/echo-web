@@ -1,6 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
@@ -19,6 +19,7 @@ import Countdown from '@components/countdown';
 import HappeningMetaInfo from '@components/happening-meta-info';
 import RegistrationForm from '@components/registration-form';
 import Section from '@components/section';
+import LanguageContext from 'language-context';
 
 interface Props {
     happening: Happening | null;
@@ -39,22 +40,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
             ? null
             : differenceInMilliseconds(regDate, date);
     const [user, setUser] = useState<UserWithName | null>(null);
-    const [isNorwegian, setIsNorwegian] = useState(true);
-    useEffect(() => {
-        function checkLanguageData() {
-            const lang = localStorage.getItem('language');
-            if (lang === 'en') {
-                setIsNorwegian(false);
-            } else {
-                setIsNorwegian(true);
-            }
-        }
-        checkLanguageData();
-        window.addEventListener('storage', checkLanguageData);
-        return () => {
-            window.removeEventListener('storage', checkLanguageData);
-        };
-    }, []);
+    const isNorwegian = useContext(LanguageContext);
 
     useTimeout(() => {
         if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
