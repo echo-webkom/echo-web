@@ -13,6 +13,7 @@ import type { Post } from '@api/post';
 import { PostAPI } from '@api/post';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
+import { useEffect, useState } from 'react';
 
 interface Props {
     post: Post;
@@ -20,6 +21,32 @@ interface Props {
 
 const PostPage = ({ post }: Props): JSX.Element => {
     const router = useRouter();
+    const [isNorwegian, setIsNorwegian] = useState(true);
+    useEffect(() => {
+        function checkLanguageData() {
+            const lang = localStorage.getItem('language');
+            if (lang === 'en') {
+                setIsNorwegian(false);
+            } else {
+                setIsNorwegian(true);
+            }
+        }
+        checkLanguageData();
+        window.addEventListener('storage', checkLanguageData);
+        return () => {
+            window.removeEventListener('storage', checkLanguageData);
+        };
+    }, []);
+    const localeTitle = (): string => {
+        /* eslint-disable */
+        const output = isNorwegian
+            ? post.title.no
+            : post.title.en
+            ? post.title.en
+            : '(No english version avalible) \n\n' + post.title.no;
+        return output;
+        /* eslint-enable */
+    };
 
     return (
         <>
@@ -30,11 +57,11 @@ const PostPage = ({ post }: Props): JSX.Element => {
             )}
             {!router.isFallback && (
                 <>
-                    <SEO title={post.title} />
+                    <SEO title={post.title.no} />
                     <Box>
                         <Section>
                             <Heading mb="0.2em" size="2xl">
-                                {post.title}
+                                {localeTitle()}
                             </Heading>
 
                             <Divider mb="0.5em" />
@@ -49,7 +76,18 @@ const PostPage = ({ post }: Props): JSX.Element => {
 
                             <Divider my="0.5em" />
 
-                            <Markdown options={{ overrides: MapMarkdownChakra }}>{post.body}</Markdown>
+                            <Markdown options={{ overrides: MapMarkdownChakra }}>
+                                {
+                                    /* eslint-disable */
+                                    isNorwegian
+                                        ? post.body.no
+                                        : post.body.en
+                                        ? post.body.en
+                                        : '(No english version avalible) \n\n' + post.body.no
+
+                                    /* eslint-enable */
+                                }
+                            </Markdown>
                         </Section>
                     </Box>
                 </>

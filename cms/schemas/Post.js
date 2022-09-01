@@ -13,7 +13,7 @@ export default {
             name: 'title',
             title: 'Tittel',
             validation: (Rule) => Rule.required(),
-            type: 'string',
+            type: 'localeString',
         },
         {
             name: 'slug',
@@ -28,7 +28,7 @@ export default {
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
-            type: 'markdown',
+            type: 'localeMarkdown',
         },
         {
             name: 'author',
