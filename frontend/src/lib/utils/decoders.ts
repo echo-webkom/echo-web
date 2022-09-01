@@ -22,7 +22,7 @@ const degreeDecoder = union(
     //
     literal('INF'),
     literal('PROG'),
-    literal('ARMINF'),
+    literal('ARMNINF'),
     literal('POST'),
     literal('MISC'),
 );
