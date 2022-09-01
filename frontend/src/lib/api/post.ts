@@ -1,13 +1,20 @@
 import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
+import { decodeType, nil, union } from 'typescript-json-decoder';
 import { array, record, string } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
 import { slugDecoder } from '@utils/decoders';
 import type { ErrorMessage } from '@utils/error';
 
 const postDecoder = record({
-    title: string,
-    body: string,
+    title: (value) =>
+        typeof value === 'string'
+            ? { no: string(value), en: string(value) }
+            : record({ no: string, en: union(string, nil) })(value),
+    slug: string,
+    body: (value) =>
+        typeof value === 'string'
+            ? { no: string(value), en: string(value) }
+            : record({ no: string, en: union(string, nil) })(value),
     slug: string,
     author: (value) => record({ name: string })(value).name,
     _createdAt: string,
@@ -40,9 +47,17 @@ const PostAPI = {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
                 *[_type == "post" && !(_id in path('drafts.**'))] | order(_createdAt desc) {
-                    title,
+                    "title": select(
+                        title.en != null => {"no": title.no, "en": title.en},
+                        title.no != null => {"no": title.no, "en": null},
+                        title
+                    ),
                     "slug": slug.current,
-                    body,
+                    "body": select(
+                        body.en != null => {"no": body.no, "en": body.en},
+                        body.no != null => {"no": body.no, "en": null},
+                        body
+                      ),
                     author -> {name},
                     _createdAt,
                     thumbnail
@@ -65,9 +80,17 @@ const PostAPI = {
         try {
             const query = `
                 *[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
-                    title,
+                    "title": select(
+                        title.en != null => {"no": title.no, "en": title.en},
+                        title.no != null => {"no": title.no, "en": null},
+                        title
+                    ),
                     "slug": slug.current,
-                    body,
+                    "body": select(
+                        body.en != null => {"no": body.no, "en": body.en},
+                        body.no != null => {"no": body.no, "en": null},
+                        body
+                      ),
                     author -> {name},
                     _createdAt,
                     thumbnail

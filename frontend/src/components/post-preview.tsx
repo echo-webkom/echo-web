@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import removeMD from 'remove-markdown';
 import type { Post } from '@api/post';
 import hasLongWord from '@utils/has-long-word';
+import { useEffect, useState } from 'react';
 
 interface Props extends BoxProps {
     post: Post;
@@ -15,6 +16,32 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
     const isMobile = useBreakpointValue([true, false]);
+    const [isNorwegian, setIsNorwegian] = useState(true);
+    useEffect(() => {
+        function checkLanguageData() {
+            const lang = localStorage.getItem('language');
+            if (lang === 'en') {
+                setIsNorwegian(false);
+            } else {
+                setIsNorwegian(true);
+            }
+        }
+        checkLanguageData();
+        window.addEventListener('storage', checkLanguageData);
+        return () => {
+            window.removeEventListener('storage', checkLanguageData);
+        };
+    }, []);
+    const localeTitle = (): string => {
+        /* eslint-disable */
+        const output = isNorwegian
+            ? post.title.no
+            : post.title.en
+            ? post.title.en
+            : '(No english version avalible) \n\n' + post.title.no;
+        return output;
+        /* eslint-enable */
+    };
 
     return (
         <LinkBox
@@ -37,9 +64,17 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                        {isMobile && hasLongWord(post.title) ? [...post.title.slice(0, 27), '...'] : post.title}
+                        {isMobile && hasLongWord(localeTitle())
+                            ? [...localeTitle().slice(0, 27), '...']
+                            : localeTitle()}
                     </Heading>
-                    <Text fontStyle="italic">{`«${removeMD(post.body.slice(0, 100))} ...»`}</Text>
+                    <Text fontStyle="italic">{`«${removeMD(
+                        isNorwegian
+                            ? post.body.no.slice(0, 100)
+                            : post.body.en
+                            ? post.body.en.slice(0, 100)
+                            : post.body.no.slice(0, 100),
+                    )} ...»`}</Text>
                 </LinkOverlay>
             </NextLink>
             <Text
