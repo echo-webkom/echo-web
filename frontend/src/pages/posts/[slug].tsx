@@ -38,17 +38,10 @@ const PostPage = ({ post }: Props): JSX.Element => {
             window.removeEventListener('storage', checkLanguageData);
         };
     }, []);
-    const localeTitle = (): string => {
+    const localeTitle: string =
         /* eslint-disable */
-        const output = isNorwegian
-            ? post.title.no
-            : post.title.en
-            ? post.title.en
-            : '(No english version avalible) \n\n' + post.title.no;
-        return output;
-        /* eslint-enable */
-    };
-
+        isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;
+    /* eslint-enable */
     return (
         <>
             {router.isFallback && (
@@ -63,7 +56,7 @@ const PostPage = ({ post }: Props): JSX.Element => {
                         <Section>
                             <Flex direction="row" alignItems="center">
                                 <Heading mb="0.2em" size="2xl">
-                                    {localeTitle()}
+                                    {localeTitle}
                                 </Heading>
                                 <Spacer />
                                 <LanguageMenu />

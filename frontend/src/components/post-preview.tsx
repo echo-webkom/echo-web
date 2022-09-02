@@ -32,16 +32,10 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
             window.removeEventListener('storage', checkLanguageData);
         };
     }, []);
-    const localeTitle = (): string => {
+    const localeTitle: string =
         /* eslint-disable */
-        const output = isNorwegian
-            ? post.title.no
-            : post.title.en
-            ? post.title.en
-            : '(No english version avalible) \n\n' + post.title.no;
-        return output;
-        /* eslint-enable */
-    };
+        isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;
+    /* eslint-enable */
 
     return (
         <LinkBox
@@ -64,9 +58,7 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
             <NextLink href={`/posts/${post.slug}`} passHref>
                 <LinkOverlay>
                     <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                        {isMobile && hasLongWord(localeTitle())
-                            ? [...localeTitle().slice(0, 27), '...']
-                            : localeTitle()}
+                        {isMobile && hasLongWord(localeTitle) ? [...localeTitle.slice(0, 27), '...'] : localeTitle}
                     </Heading>
                     <Text fontStyle="italic">{`«${removeMD(
                         isNorwegian
