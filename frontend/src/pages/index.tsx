@@ -3,6 +3,7 @@ import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VSta
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore, isFuture } from 'date-fns';
 import type { GetStaticProps } from 'next';
+import { useContext } from 'react';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
 import SEO from '@components/seo';
@@ -19,6 +20,7 @@ import type { JobAdvert } from '@api/job-advert';
 import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import getRssXML from '@utils/generate-rss-feed';
+import LanguageContext from 'language-context';
 
 const IndexPage = ({
     bedpreses,
@@ -36,6 +38,7 @@ const IndexPage = ({
     jobs: Array<JobAdvert>;
 }): JSX.Element => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
+    const isNorwegian = useContext(LanguageContext);
 
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
@@ -56,10 +59,10 @@ const IndexPage = ({
 
     const PostEntryBox = () => (
         <EntryBox
-            titles={['Innlegg']}
+            titles={isNorwegian ? ['Innlegg'] : ['Posts']}
             entries={posts}
             entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
-            altText="Ingen innlegg :("
+            altText={isNorwegian ? 'Ingen innlegg :(' : 'No posts :('}
             linkTo="/posts"
             type="post"
         />
@@ -84,9 +87,9 @@ const IndexPage = ({
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
                         <EntryBox
-                            title="Arrangementer"
+                            title={isNorwegian ? 'Arrangementer' : 'Events'}
                             entries={events}
-                            altText="Ingen kommende arrangementer :("
+                            altText={isNorwegian ? 'Ingen kommende arrangementer :(' : 'No coming events :('}
                             linkTo="/event"
                             type="event"
                             registrationCounts={registrationCounts}
@@ -94,9 +97,17 @@ const IndexPage = ({
                     </GridItem>
                     <GridItem>
                         <EntryBox
-                            titles={['Bedpres', 'Bedpresolini', 'Bedriftspresentasjoner']}
+                            titles={
+                                isNorwegian
+                                    ? ['Bedpres', 'Bedpresolini', 'Bedriftspresentasjoner']
+                                    : ['Bedpres', 'Company presentations']
+                            }
                             entries={bedpreses}
-                            altText="Ingen kommende bedriftspresentasjoner :("
+                            altText={
+                                isNorwegian
+                                    ? 'Ingen kommende bedriftspresentasjoner :('
+                                    : 'No coming Company presentations :('
+                            }
                             linkTo="/bedpres"
                             type="bedpres"
                             registrationCounts={registrationCounts}
@@ -107,9 +118,13 @@ const IndexPage = ({
                     <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                         <GridItem>
                             <EntryBox
-                                titles={['Jobb', 'Annonser', 'Jobbannonser', 'Stillingsannonser']}
+                                titles={
+                                    isNorwegian
+                                        ? ['Jobb', 'Annonser', 'Jobbannonser', 'Stillingsannonser']
+                                        : ['Job', 'Advertisements', 'Job advertisements']
+                                }
                                 entries={jobs}
-                                altText="Ingen stillingsannonser :("
+                                altText={isNorwegian ? 'Ingen stillingsannonser :(' : 'No job advertisements :('}
                                 linkTo="/job"
                                 type="job-advert"
                             />

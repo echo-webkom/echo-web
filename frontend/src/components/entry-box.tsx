@@ -1,4 +1,5 @@
 import type { BoxProps } from '@chakra-ui/react';
+import { useContext } from 'react';
 import { Flex, Heading, Spacer, Text, useBreakpointValue } from '@chakra-ui/react';
 import type { Happening } from '@api/happening';
 import type { Post } from '@api/post';
@@ -7,6 +8,7 @@ import type { RegistrationCount } from '@api/registration';
 import ButtonLink from '@components/button-link';
 import EntryList from '@components/entry-list';
 import Section from '@components/section';
+import LanguageContext from 'language-context';
 
 interface Props extends BoxProps {
     title?: string;
@@ -30,6 +32,7 @@ const EntryBox = ({
     registrationCounts,
     ...props
 }: Props): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
 
@@ -54,7 +57,7 @@ const EntryBox = ({
                         marginTop="7"
                         _hover={{ transform: 'scale(1.05)' }}
                     >
-                        Se mer
+                        {isNorwegian ? 'Se mer' : 'See more'}
                     </ButtonLink>
                 )}
             </Flex>

@@ -13,13 +13,16 @@ import {
     IconButton,
 } from '@chakra-ui/react';
 import type { RefObject } from 'react';
+import { useContext } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import ColorModeButton from '@components/color-mode-button';
 import NavLink, { NavLinkButton } from '@components/nav-link';
+import LanguageContext from 'language-context';
 
 const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     const { status } = useSession();
     const router = useRouter();
     const onProfileClick = () => {
@@ -38,14 +41,18 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             justify="flex-end"
             alignItems="center"
         >
-            <NavLink text="Hjem" href="/" data-cy="hjem" />
+            <NavLink text={isNorwegian ? 'Hjem' : 'Home'} href="/" data-cy="hjem" />
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
-            <NavLink text="Om echo" href="/om-echo/om-oss" data-cy="om-oss" />
+            <NavLink text={isNorwegian ? 'Om echo' : 'About echo'} href="/om-echo/om-oss" data-cy="om-oss" />
             {isMobile && (
                 <Flex data-cy="min-profil">
-                    {status === 'authenticated' && <NavLink text="Min profil" href="/profile" />}
+                    {status === 'authenticated' && (
+                        <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />
+                    )}
                     {status === 'unauthenticated' && (
-                        <NavLinkButton onClick={() => void onProfileClick()}>Logg inn</NavLinkButton>
+                        <NavLinkButton onClick={() => void onProfileClick()}>
+                            {isNorwegian ? 'Logg inn' : 'Log in'}
+                        </NavLinkButton>
                     )}
                 </Flex>
             )}
@@ -75,6 +82,7 @@ interface Props {
 }
 
 const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     return (
         <>
             <Box flex="2 1 auto" data-cy="navbar-standard" pb="1rem" pl={['0.5rem', null, null, null, '3rem', '4rem']}>
@@ -93,7 +101,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                     <DrawerContent data-cy="navbar-drawer">
                         <DrawerCloseButton size="lg" />
                         <DrawerHeader fontSize="2xl" as={Heading}>
-                            Navigasjon
+                            {isNorwegian ? 'Navigasjon' : 'Navigation'}
                         </DrawerHeader>
                         <DrawerBody>
                             <Box onClick={onClose} data-cy="nav-links">
