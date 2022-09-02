@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { decodeType, nil, union } from 'typescript-json-decoder';
-import { array, record, string } from 'typescript-json-decoder';
+import type { decodeType } from 'typescript-json-decoder';
+import { nil, union, array, record, string } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
 import { slugDecoder } from '@utils/decoders';
 import type { ErrorMessage } from '@utils/error';

@@ -4,7 +4,7 @@ import type { Post } from '@api/post';
 
 interface GenericEntry {
     slug: string;
-    title: string;
+    title: string | { no: string; en: string } | { no: string; en: null };
     publishedAt: string;
     author: string;
     body: string | { no: string; en: string } | { no: string; en: null };
@@ -17,24 +17,24 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
 
     for (const post of posts) {
         const date = new Date(post.publishedAt);
+        const title = typeof post.title === 'string' ? post.title : post.title.no;
+        const body = typeof post.body === 'string' ? post.body : post.body.no;
 
         if (date > latestPostDate) latestPostDate = date;
 
         postsXML += `
             <item>
-                <title><![CDATA[${post.title}]]></title>
+                <title><![CDATA[${title}]]></title>
                 <link>https://echo.uib.no/${post.route}/${post.slug}</link>
                 <dc:creator><![CDATA[${post.author}]]></dc:creator>
                 <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
                 <guid isPermalink="false">https://echo.uib.no/posts/${post.slug}</guid>
                 <description>
                 
-                    <![CDATA[${
-                        typeof post.body === 'string' ? post.body.slice(0, 70) : post.body.no.slice(0, 70)
-                    } ...]]>
+                    <![CDATA[${body.slice(0, 70)} ...]]>
                 </description>
                 <content>
-                    <![CDATA[${typeof post.body === 'string' ? post.body : post.body.no}]]>
+                    <![CDATA[${body}]]>
                 </content>
             </item>
         `;
@@ -51,10 +51,10 @@ const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | nul
         ? posts.map((post) => {
               return {
                   slug: post.slug,
-                  title: post.title,
+                  title: typeof post.title === 'string' ? post.title : post.title.no,
                   publishedAt: post._createdAt,
                   author: post.author,
-                  body: post.body,
+                  body: typeof post.body === 'string' ? post.body : post.body.no,
                   route: 'posts',
               };
           })

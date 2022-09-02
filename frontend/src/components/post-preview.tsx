@@ -1,10 +1,10 @@
+import { useEffect, useState } from 'react';
 import type { BoxProps } from '@chakra-ui/react';
 import { Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import removeMD from 'remove-markdown';
 import type { Post } from '@api/post';
 import hasLongWord from '@utils/has-long-word';
-import { useEffect, useState } from 'react';
 
 interface Props extends BoxProps {
     post: Post;
