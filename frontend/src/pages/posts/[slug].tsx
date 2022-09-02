@@ -1,5 +1,5 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { Box, Center, Divider, Heading, HStack, Spinner } from '@chakra-ui/react';
+import { Box, Center, Divider, Flex, Heading, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
@@ -14,6 +14,7 @@ import { PostAPI } from '@api/post';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
 import { useEffect, useState } from 'react';
+import LanguageMenu from '@components/language-menu';
 
 interface Props {
     post: Post;
@@ -60,9 +61,13 @@ const PostPage = ({ post }: Props): JSX.Element => {
                     <SEO title={post.title.no} />
                     <Box>
                         <Section>
-                            <Heading mb="0.2em" size="2xl">
-                                {localeTitle()}
-                            </Heading>
+                            <Flex direction="row" alignItems="center">
+                                <Heading mb="0.2em" size="2xl">
+                                    {localeTitle()}
+                                </Heading>
+                                <Spacer />
+                                <LanguageMenu />
+                            </Flex>
 
                             <Divider mb="0.5em" />
 
