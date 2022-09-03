@@ -89,7 +89,7 @@ const IndexPage = ({
                         <EntryBox
                             title={isNorwegian ? 'Arrangementer' : 'Events'}
                             entries={events}
-                            altText={isNorwegian ? 'Ingen kommende arrangementer :(' : 'No coming events :('}
+                            altText={isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}
                             linkTo="/event"
                             type="event"
                             registrationCounts={registrationCounts}
@@ -106,7 +106,7 @@ const IndexPage = ({
                             altText={
                                 isNorwegian
                                     ? 'Ingen kommende bedriftspresentasjoner :('
-                                    : 'No coming Company presentations :('
+                                    : 'No upcoming company presentations :('
                             }
                             linkTo="/bedpres"
                             type="bedpres"
