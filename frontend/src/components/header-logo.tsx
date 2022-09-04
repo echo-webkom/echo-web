@@ -3,6 +3,7 @@ import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } 
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import LogoAccesory from '@components/logo-accesory';
 
 const randomHeaderMessage = () => {
@@ -59,6 +60,22 @@ const randomHeaderMessage = () => {
 };
 
 const HeaderLogo = () => {
+    const [headerMessage, setHeaderMessage] = useState<string>();
+
+    useEffect(() => {
+        setHeaderMessage(randomHeaderMessage());
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'h') {
+                setHeaderMessage(randomHeaderMessage());
+            }
+
+            if (e.key === 'e') {
+                setHeaderMessage('Easter egg! 🗿');
+            }
+        });
+    }, []);
+
     // Logo without any text
     const smallLogo = '/android-chrome-512x512.png';
 
@@ -110,7 +127,7 @@ const HeaderLogo = () => {
                             borderRadius="0.5rem"
                             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
                         >
-                            {randomHeaderMessage()}
+                            {headerMessage}
                         </Text>
                     </Flex>
                 </LinkOverlay>
