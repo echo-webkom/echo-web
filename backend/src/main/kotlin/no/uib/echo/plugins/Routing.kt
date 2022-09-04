@@ -40,7 +40,6 @@ import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
-import no.uib.echo.plugins.Routing.isAdmin
 import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
@@ -149,9 +148,8 @@ fun Application.configureRouting(
             "alvar.honsi@student.uib.no"
         )
 
-        // Install an authentication provider that validates the user's credentials
         jwt("auth-webkom") {
-            realm = "Verify jwt"
+            realm = "Verify user is Webkom"
             verifier(jwkProvider, issuer) {
                 acceptLeeway(3)
                 withIssuer("https://auth.dataporten.no")
@@ -183,7 +181,6 @@ fun Application.configureRouting(
 
         authenticate("auth-webkom") {
             feedback()
-            isAdmin()
         }
 
         getRegistrations(dev)
@@ -893,15 +890,6 @@ object Routing {
             }
 
             call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
-        }
-    }
-
-    fun Route.isAdmin() {
-        get("/isAdmin") {
-            call.respond(
-                HttpStatusCode.OK,
-                "yes you are"
-            )
         }
     }
 }
