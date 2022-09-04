@@ -1,95 +1,192 @@
-import { Heading, Text, SimpleGrid, GridItem, Divider, Spacer, Flex, Icon, Link } from '@chakra-ui/react';
-import type { GetServerSideProps } from 'next';
-import { AiOutlineMail } from 'react-icons/ai';
-// eslint-disable-next-line camelcase
-import { unstable_getServerSession } from 'next-auth/next';
-import { authOptions } from '@pages/api/auth/[...nextauth]';
+import {
+    Heading,
+    Text,
+    SimpleGrid,
+    GridItem,
+    Divider,
+    Spacer,
+    Flex,
+    Icon,
+    Button,
+    Center,
+    IconButton,
+    Spinner,
+    useToast,
+} from '@chakra-ui/react';
+import { AiOutlineCheck, AiOutlineClose, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
+import { IoMdPerson } from 'react-icons/io';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Section from '@components/section';
 import SEO from '@components/seo';
-import { FeedbackAPI } from '@api/feedback';
 import type { Feedback } from '@api/feedback';
-import { isErrorMessage } from '@utils/error';
+import { FeedbackAPI } from '@api/feedback';
+import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
-interface Props {
-    feedbacks: Array<Feedback>;
-}
+const FeedbackPage = () => {
+    const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
+    const [error, setError] = useState<ErrorMessage>();
+    const [loading, setLoading] = useState<boolean>(true);
 
-const FeedbackPage = ({ feedbacks }: Props) => {
-    const gridColumns = [1, null, 2, null, 3];
+    const toast = useToast();
+
+    const gridColumns = [1, null, null, null, 2];
+
+    useEffect(() => {
+        const getFeedbacks = async () => {
+            const result = await FeedbackAPI.getFeedback();
+
+            if (isErrorMessage(result)) {
+                setError(result);
+            } else {
+                setFeedbacks(result.reverse());
+            }
+
+            setLoading(false);
+        };
+
+        void getFeedbacks();
+    }, []);
+
+    const handleDelete = async (id: number) => {
+        await FeedbackAPI.deleteFeedback(id);
+
+        toast({
+            title: 'Tilbakemeldingen ble slettet!',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+        });
+
+        setFeedbacks(feedbacks?.filter((feedback) => feedback.id !== id));
+    };
+
+    const handleMarkAsRead = async (feedback: Feedback) => {
+        const id = feedback.id;
+        await FeedbackAPI.updateFeedback(id);
+
+        toast({
+            title: feedback.isRead ? 'Markert som ulest' : 'Markert som lest',
+            description: feedback.isRead
+                ? 'Tilbakemeldingen er nå markert som ulest'
+                : 'Tilbakemeldingen er nå markert som lest',
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+        });
+
+        setFeedbacks(
+            feedbacks?.map((feedback) =>
+                feedback.id === feedback.id ? { ...feedback, isRead: !feedback.isRead } : feedback,
+            ),
+        );
+    };
 
     return (
         <>
             <SEO title="Tilbakemeldinger" />
             <Section>
-                <Heading>Tilbakemeldinger</Heading>
-                <Text fontWeight="bold" decoration="underline">
-                    Antall tilbakemeldinger: {feedbacks.length}
-                </Text>
-                <Divider my="2" />
-                <SimpleGrid columns={gridColumns}>
-                    {feedbacks.length > 0 ? (
-                        feedbacks.reverse().map((feedback, i) => {
-                            const formattedDate = (date: Date) => {
-                                const year = date.getFullYear();
-                                const month = date.getMonth() + 1;
-                                const day = date.getDate();
-                                const hour = date.getHours();
-                                const minute = date.getMinutes();
+                {error && (
+                    <Center flexDirection="column" gap="5" py="10">
+                        <Heading>En feil har skjedd.</Heading>
+                        <Text>{error.message}</Text>
+                        <Button>
+                            <Link href="/" passHref>
+                                <Text>Tilbake til forsiden</Text>
+                            </Link>
+                        </Button>
+                    </Center>
+                )}
+                {loading && (
+                    <Center flexDirection="column" gap="5" py="10">
+                        <Heading>Laster inn...</Heading>
+                        <Spinner size="xl" mx="auto" />
+                    </Center>
+                )}
+                {feedbacks && (
+                    <>
+                        <Heading mb="5">Tilbakemeldinger</Heading>
+                        {feedbacks.length > 0 && (
+                            <Text fontWeight="bold">Antall tilbakemeldinger: {feedbacks.length}</Text>
+                        )}
+                        <Divider my="2" />
+                        <SimpleGrid columns={gridColumns} gap="3">
+                            {feedbacks.length > 0 ? (
+                                feedbacks.map((feedback) => {
+                                    const formattedDate = (date: Date) => {
+                                        const year = date.getFullYear();
+                                        const month = date.getMonth() + 1;
+                                        const day = date.getDate();
+                                        const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+                                        const minute =
+                                            date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
 
-                                return `${year}-${month}-${day} ${hour}:${minute}`;
-                            };
+                                        return `${year}-${month}-${day} ${hour}:${minute}`;
+                                    };
 
-                            const name = feedback.name !== '' ? feedback.name : 'Ukjent';
+                                    const name = feedback.name !== '' ? feedback.name : 'Ukjent';
 
-                            return (
-                                <Flex key={i} p={4} shadow="md" borderWidth="1px" direction="column">
-                                    <Text fontWeight="bold" decoration="underline">
-                                        {name}
-                                    </Text>
-                                    {feedback.email && (
-                                        <Flex direction="row" alignItems="center" gap="2">
-                                            <Icon as={AiOutlineMail} />
-                                            <Link href={`mailto:${feedback.email}`}>{feedback.email}</Link>
+                                    return (
+                                        <Flex
+                                            key={feedback.id}
+                                            p={4}
+                                            shadow="md"
+                                            borderWidth="1px"
+                                            direction="column"
+                                            _hover={{ borderColor: 'gray.400' }}
+                                        >
+                                            <Flex gap="2">
+                                                <Flex direction="row" alignItems="center" gap="2">
+                                                    <Icon as={IoMdPerson} />
+                                                    <Text fontWeight="bold">{name}</Text>
+                                                </Flex>
+                                                <Spacer />
+                                                <IconButton
+                                                    colorScheme={feedback.isRead ? 'green' : 'gray'}
+                                                    aria-label="Marker tilbakemelding som lest/ulest"
+                                                    icon={feedback.isRead ? <AiOutlineClose /> : <AiOutlineCheck />}
+                                                    onClick={() => void handleMarkAsRead(feedback)}
+                                                />
+                                                {feedback.email && (
+                                                    <Link href={`mailto:${feedback.email}`}>
+                                                        <IconButton
+                                                            colorScheme="blue"
+                                                            aria-label="Send epost"
+                                                            icon={<AiOutlineMail />}
+                                                        />
+                                                    </Link>
+                                                )}
+                                                <IconButton
+                                                    colorScheme="red"
+                                                    aria-label="Slett tilbakemelding"
+                                                    icon={<AiOutlineDelete />}
+                                                    onClick={() => void handleDelete(feedback.id)}
+                                                />
+                                            </Flex>
+                                            <Divider my="2" />
+                                            <Text>{feedback.message}</Text>
+                                            <Spacer my="3" />
+                                            <Flex fontFamily="mono" direction="row" gap="3" fontSize="md">
+                                                <Text>ID: {feedback.id}</Text>
+                                                <Divider orientation="vertical" />
+                                                <Text>Dato: {formattedDate(new Date(feedback.sentAt))}</Text>
+                                            </Flex>
                                         </Flex>
-                                    )}
-                                    <Divider my="2" />
-                                    <Text>{feedback.message}</Text>
-                                    <Spacer />
-                                    <Text fontSize="md" mt="1">
-                                        {formattedDate(new Date(feedback.sent))}
-                                    </Text>
-                                </Flex>
-                            );
-                        })
-                    ) : (
-                        <GridItem colSpan={gridColumns}>Ingen tilbakemeldinger</GridItem>
-                    )}
-                </SimpleGrid>
+                                    );
+                                })
+                            ) : (
+                                <GridItem colSpan={gridColumns}>
+                                    <Center py="10">
+                                        <Text fontSize="3xl">Det er ingen tilbakemeldinger ;(</Text>
+                                    </Center>
+                                </GridItem>
+                            )}
+                        </SimpleGrid>
+                    </>
+                )}
             </Section>
         </>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-    const adminKey = process.env.ADMIN_KEY;
-    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
-
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-
-    if (session?.user?.email) {
-        const feedbacks = await FeedbackAPI.getFeedback(backendUrl, adminKey, session.user.email);
-        if (!isErrorMessage(feedbacks)) {
-            return { props: { feedbacks } };
-        }
-    }
-
-    return {
-        redirect: {
-            destination: '/profile',
-            permanent: false,
-        },
-    };
 };
 
 export default FeedbackPage;

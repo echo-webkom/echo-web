@@ -27,8 +27,6 @@ import type { FeedbackResponse, FeedbackFormValues } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
 
 const FeedbackButton = () => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
@@ -40,7 +38,7 @@ const FeedbackButton = () => {
     const { register, handleSubmit, reset } = useForm<FeedbackFormValues>();
 
     const submitForm: SubmitHandler<FeedbackFormValues> = async (data) => {
-        const message: FeedbackResponse = await FeedbackAPI.sendFeedback(backendUrl, data);
+        const message: FeedbackResponse = await FeedbackAPI.sendFeedback(data);
 
         onClose();
         toast.closeAll();
@@ -92,7 +90,7 @@ const FeedbackButton = () => {
                             <Text fontSize="md" mb="3">
                                 Din tilbakemelding betyr mye for oss. Gjerne fortell oss hva du ønsker å se på nettsiden
                                 eller hva vi kan gjøre bedre. Alternativt kan du også opprette en{' '}
-                                <Link color="blue" href="https://github.com/echo-webkom/echo-web/issues/new/choose">
+                                <Link color="#008eea" href="https://github.com/echo-webkom/echo-web/issues/new/choose">
                                     issue på GitHub
                                 </Link>{' '}
                                 for å rapportere en feil.
