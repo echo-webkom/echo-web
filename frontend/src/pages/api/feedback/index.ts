@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import axios from 'axios';
-import type { Feedback } from '@api/feedback';
+import { array } from 'typescript-json-decoder';
+import { type Feedback, feedbackDecoder } from '@api/feedback';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
@@ -25,9 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 });
 
                 if (status === 200) {
-                    const feedbacks: Array<Feedback> = data;
-
-                    res.status(200).json(feedbacks);
+                    res.status(200).json(array(feedbackDecoder)(data));
                     return;
                 }
 
