@@ -30,7 +30,7 @@ object Feedback : Table() {
     val email: Column<String?> = text("email").nullable()
     val name: Column<String?> = text("name").nullable()
     val message: Column<String> = text("message")
-    val sentAt: Column<DateTime> = datetime("sentAt").defaultExpression(CurrentDateTime)
+    val sentAt: Column<DateTime> = datetime("sent_at").defaultExpression(CurrentDateTime)
     val isRead: Column<Boolean> = bool("is_read").default(false)
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
