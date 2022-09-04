@@ -25,7 +25,7 @@ import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
-    const [error, setError] = useState<ErrorMessage>();
+    const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
     const toast = useToast();
@@ -61,9 +61,8 @@ const FeedbackPage = () => {
         setFeedbacks(feedbacks?.filter((feedback) => feedback.id !== id));
     };
 
-    const handleMarkAsRead = async (feedback: Feedback) => {
-        const id = feedback.id;
-        await FeedbackAPI.updateFeedback(id);
+    const handleUpdate = async (feedback: Feedback) => {
+        await FeedbackAPI.updateFeedback(feedback);
 
         toast({
             title: feedback.isRead ? 'Markert som ulest' : 'Markert som lest',
@@ -145,7 +144,9 @@ const FeedbackPage = () => {
                                                     colorScheme={feedback.isRead ? 'green' : 'gray'}
                                                     aria-label="Marker tilbakemelding som lest/ulest"
                                                     icon={feedback.isRead ? <AiOutlineClose /> : <AiOutlineCheck />}
-                                                    onClick={() => void handleMarkAsRead(feedback)}
+                                                    onClick={() =>
+                                                        void handleUpdate({ ...feedback, isRead: !feedback.isRead })
+                                                    }
                                                 />
                                                 {feedback.email && (
                                                     <Link href={`mailto:${feedback.email}`}>

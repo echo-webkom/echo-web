@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
         if (!session.email || !session.name) {
-            res.status(401).end();
+            res.status(401).json({ message: 'Du må være logget inn for å se denne siden.' });
             return;
         }
 
@@ -69,16 +69,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (req.method === 'PUT') {
             try {
-                const id = req.body as number;
+                const feedback: Feedback = {
+                    id: req.body.id,
+                    name: req.body.name,
+                    email: req.body.email,
+                    message: req.body.message,
+                    sentAt: req.body.sentAt,
+                    isRead: req.body.isRead,
+                };
 
-                const { data, status } = await axios({
-                    method: 'put',
-                    url: `${BACKEND_URL}/feedback`,
+                const { data, status } = await axios.put(`${BACKEND_URL}/feedback`, feedback, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
-                    },
-                    data: {
-                        id,
                     },
                     validateStatus: (statusCode: number) => statusCode < 500,
                 });
@@ -99,7 +101,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 
-    res.status(401).end();
+    res.status(401).json({ message: 'Du har ikke tilgang til denne siden.' });
 };
 
 export default handler;
