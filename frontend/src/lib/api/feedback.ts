@@ -65,11 +65,10 @@ const FeedbackAPI = {
             };
         }
     },
-    updateFeedback: async (id: number): Promise<string | ErrorMessage> => {
+    updateFeedback: async (feedback: Feedback): Promise<string | ErrorMessage> => {
         try {
-            const { data }: { data: string | ErrorMessage } = await axios.put('/api/feedback', {
+            const { data }: { data: string | ErrorMessage } = await axios.put('/api/feedback', feedback, {
                 headers: { 'Content-Type': 'application/json' },
-                data: id,
                 validateStatus: (status: number) => status < 500,
             });
 
