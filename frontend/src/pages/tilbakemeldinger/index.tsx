@@ -65,20 +65,16 @@ const FeedbackPage = () => {
         await FeedbackAPI.updateFeedback(feedback);
 
         toast({
-            title: feedback.isRead ? 'Markert som ulest' : 'Markert som lest',
+            title: feedback.isRead ? 'Markert som lest' : 'Markert som ulest',
             description: feedback.isRead
-                ? 'Tilbakemeldingen er nå markert som ulest'
-                : 'Tilbakemeldingen er nå markert som lest',
+                ? 'Tilbakemeldingen er nå markert som lest'
+                : 'Tilbakemeldingen er nå markert som ulest',
             status: 'success',
             duration: 2000,
             isClosable: true,
         });
 
-        setFeedbacks(
-            feedbacks?.map((feedback) =>
-                feedback.id === feedback.id ? { ...feedback, isRead: !feedback.isRead } : feedback,
-            ),
-        );
+        setFeedbacks(feedbacks?.map((f) => (f.id === feedback.id ? feedback : f)));
     };
 
     return (
