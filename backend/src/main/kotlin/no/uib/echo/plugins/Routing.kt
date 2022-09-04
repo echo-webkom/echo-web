@@ -29,16 +29,18 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.isEmailValid
 import no.uib.echo.plugins.Routing.deleteHappening
 import no.uib.echo.plugins.Routing.deleteRegistration
-import no.uib.echo.plugins.Routing.getFeedback
+import no.uib.echo.plugins.Routing.feedback
 import no.uib.echo.plugins.Routing.getHappeningInfo
 import no.uib.echo.plugins.Routing.getRegistrations
 import no.uib.echo.plugins.Routing.getStatus
 import no.uib.echo.plugins.Routing.getUser
+import no.uib.echo.plugins.Routing.isAdmin
 import no.uib.echo.plugins.Routing.postFeedback
 import no.uib.echo.plugins.Routing.postRegistration
 import no.uib.echo.plugins.Routing.postRegistrationCount
@@ -50,9 +52,11 @@ import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.Feedback.email
+import no.uib.echo.schema.Feedback.id
+import no.uib.echo.schema.Feedback.isRead
 import no.uib.echo.schema.Feedback.message
 import no.uib.echo.schema.Feedback.name
-import no.uib.echo.schema.Feedback.sent
+import no.uib.echo.schema.Feedback.sentAt
 import no.uib.echo.schema.FeedbackJson
 import no.uib.echo.schema.FeedbackResponse
 import no.uib.echo.schema.FeedbackResponseJson
@@ -135,6 +139,32 @@ fun Application.configureRouting(
                 JWTPrincipal(jwtCredential.payload)
             }
         }
+
+        val admins = listOf(
+            "ole.m.johnsen@student.uib.no",
+            "andreas.bakseter@student.uib.no",
+            "thea.kolnes@student.uib.no",
+            "felix.kaasa@student.uib.no",
+            "bo.aanes@student.uib.no",
+            "alvar.honsi@student.uib.no"
+        )
+
+        // Install an authentication provider that validates the user's credentials
+        jwt("auth-webkom") {
+            realm = "Verify jwt"
+            verifier(jwkProvider, issuer) {
+                acceptLeeway(3)
+                withIssuer("https://auth.dataporten.no")
+            }
+            validate { jwtCredential ->
+                val email = jwtCredential.payload.getClaim("email").asString()
+                if (email in admins) {
+                    JWTPrincipal(jwtCredential.payload)
+                } else {
+                    null
+                }
+            }
+        }
     }
 
     routing {
@@ -144,12 +174,16 @@ fun Application.configureRouting(
             putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
             deleteHappening()
             getHappeningInfo()
-            getFeedback()
         }
 
         authenticate("auth-jwt") {
             getUser()
             putUser()
+        }
+
+        authenticate("auth-webkom") {
+            feedback()
+            isAdmin()
         }
 
         getRegistrations(dev)
@@ -189,7 +223,12 @@ object Routing {
 
             call.respond(
                 HttpStatusCode.OK,
-                UserJson(user[User.email], user[User.alternateEmail], user[User.degreeYear], Degree.valueOf(user[User.degree]))
+                UserJson(
+                    user[User.email],
+                    user[User.alternateEmail],
+                    user[User.degreeYear],
+                    Degree.valueOf(user[User.degree])
+                )
             )
         }
     }
@@ -205,7 +244,10 @@ object Routing {
                 val tokenEmail = principal!!.payload.getClaim("email").asString().lowercase()
 
                 if (userEmail != tokenEmail) {
-                    call.respond(HttpStatusCode.Unauthorized, "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen.")
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen."
+                    )
                     return@put
                 }
 
@@ -799,22 +841,75 @@ object Routing {
         }
     }
 
-    fun Route.getFeedback() {
+    fun Route.feedback() {
         get("/feedback") {
             val feedback = transaction {
                 addLogger(StdOutSqlLogger)
 
                 Feedback.selectAll().map {
                     FeedbackResponseJson(
+                        it[Feedback.id],
                         it[email],
                         it[name],
                         it[message],
-                        it[sent].toString()
+                        it[sentAt].toString(),
+                        it[isRead]
                     )
                 }
             }
 
             call.respond(HttpStatusCode.OK, feedback)
+        }
+
+        delete("/feedback") {
+            @Serializable
+            data class ReqJson(val id: Int)
+
+            val req = call.receive<ReqJson>()
+
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.deleteWhere {
+                    Feedback.id eq req.id
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+        }
+
+        put("/feedback") {
+            @Serializable
+            data class ReqJson(val id: Int)
+
+            val req = call.receive<ReqJson>()
+
+            val feedback = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.select {
+                    Feedback.id eq req.id
+                }.firstOrNull()
+            }
+
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.update({ Feedback.id eq req.id }) {
+                    it[isRead] = !feedback?.get(isRead)!!
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+        }
+    }
+
+    fun Route.isAdmin() {
+        get("/isAdmin") {
+            call.respond(
+                HttpStatusCode.OK,
+                "yes you are"
+            )
         }
     }
 }
