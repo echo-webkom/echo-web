@@ -7,14 +7,14 @@ import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.StudentGroup
+import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
-import no.uib.echo.schema.StudentGroup
-import no.uib.echo.schema.StudentGroupMembership
 
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
