@@ -46,39 +46,6 @@ import no.uib.echo.plugins.Routing.postRegistrationCount
 import no.uib.echo.plugins.Routing.putHappening
 import no.uib.echo.plugins.Routing.putUser
 import no.uib.echo.resToJson
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.AnswerJson
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.Feedback.email
-import no.uib.echo.schema.Feedback.id
-import no.uib.echo.schema.Feedback.isRead
-import no.uib.echo.schema.Feedback.message
-import no.uib.echo.schema.Feedback.name
-import no.uib.echo.schema.Feedback.sentAt
-import no.uib.echo.schema.FeedbackJson
-import no.uib.echo.schema.FeedbackResponse
-import no.uib.echo.schema.FeedbackResponseJson
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.HappeningInfoJson
-import no.uib.echo.schema.HappeningJson
-import no.uib.echo.schema.HappeningSlugJson
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.RegistrationCountJson
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.SlugJson
-import no.uib.echo.schema.SpotRange
-import no.uib.echo.schema.SpotRangeWithCountJson
-import no.uib.echo.schema.User
-import no.uib.echo.schema.UserJson
-import no.uib.echo.schema.bachelors
-import no.uib.echo.schema.countRegistrationsDegreeYear
-import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.schema.masters
-import no.uib.echo.schema.selectSpotRanges
-import no.uib.echo.schema.toCsv
-import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -96,6 +63,34 @@ import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.TimeUnit
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Feedback
+import no.uib.echo.schema.FeedbackJson
+import no.uib.echo.schema.FeedbackResponse
+import no.uib.echo.schema.FeedbackResponseJson
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningInfoJson
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.StudentGroupMembership
+import no.uib.echo.schema.User
+import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.masters
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
+import no.uib.echo.schema.validateLink
 
 fun Application.configureRouting(
     adminKey: String,
@@ -139,15 +134,6 @@ fun Application.configureRouting(
             }
         }
 
-        val admins = listOf(
-            "ole.m.johnsen@student.uib.no",
-            "andreas.bakseter@student.uib.no",
-            "thea.kolnes@student.uib.no",
-            "felix.kaasa@student.uib.no",
-            "bo.aanes@student.uib.no",
-            "alvar.honsi@student.uib.no"
-        )
-
         jwt("auth-webkom") {
             realm = "Verify user is Webkom"
             verifier(jwkProvider, issuer) {
@@ -156,6 +142,15 @@ fun Application.configureRouting(
             }
             validate { jwtCredential ->
                 val email = jwtCredential.payload.getClaim("email").asString().lowercase()
+
+                val admins = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    StudentGroupMembership.select {
+                        StudentGroupMembership.studentGroupName eq "webkom"
+                    }.toList().map { it[StudentGroupMembership.userEmail] }
+                }
+
                 if (email in admins) {
                     JWTPrincipal(jwtCredential.payload)
                 } else {
@@ -846,11 +841,11 @@ object Routing {
                 Feedback.selectAll().map {
                     FeedbackResponseJson(
                         it[Feedback.id],
-                        it[email],
-                        it[name],
-                        it[message],
-                        it[sentAt].toString(),
-                        it[isRead]
+                        it[Feedback.email],
+                        it[Feedback.name],
+                        it[Feedback.message],
+                        it[Feedback.sentAt].toString(),
+                        it[Feedback.isRead]
                     )
                 }
             }
