@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { number, union, record, string, type decodeType, nil, boolean, array } from 'typescript-json-decoder';
-import type { ErrorMessage } from '@utils/error';
+import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
 interface FormValues {
     email: string;
@@ -60,6 +60,10 @@ const FeedbackAPI = {
                 },
                 validateStatus: (status: number) => status < 500,
             });
+
+            if (isErrorMessage(data)) {
+                return data;
+            }
 
             return array(union(feedbackDecoder))(data);
         } catch {

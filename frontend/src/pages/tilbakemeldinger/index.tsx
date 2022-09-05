@@ -12,11 +12,13 @@ import {
     IconButton,
     Spinner,
     useToast,
+    Tag,
 } from '@chakra-ui/react';
 import { AiOutlineCheck, AiOutlineClose, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
 import { IoMdPerson } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { MdOutlineContentCopy } from 'react-icons/md';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
@@ -39,7 +41,7 @@ const FeedbackPage = () => {
             if (isErrorMessage(result)) {
                 setError(result);
             } else {
-                setFeedbacks(result.reverse());
+                setFeedbacks(result.sort((a, b) => (new Date(a.sentAt) > new Date(b.sentAt) ? -1 : 1)));
             }
 
             setLoading(false);
@@ -75,6 +77,17 @@ const FeedbackPage = () => {
         });
 
         setFeedbacks(feedbacks?.map((f) => (f.id === feedback.id ? feedback : f)));
+    };
+
+    const copyToClipboard = async (title: string, text: string) => {
+        await navigator.clipboard.writeText(text);
+
+        toast({
+            title: `${title} ble kopiert til utklippstavlen!`,
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+        });
     };
 
     return (
@@ -128,6 +141,7 @@ const FeedbackPage = () => {
                                             shadow="md"
                                             borderWidth="1px"
                                             direction="column"
+                                            transition="all 0.3s ease"
                                             _hover={{ borderColor: 'gray.400' }}
                                         >
                                             <Flex gap="2">
@@ -164,9 +178,31 @@ const FeedbackPage = () => {
                                             <Text>{feedback.message}</Text>
                                             <Spacer my="3" />
                                             <Flex fontFamily="mono" direction="row" gap="3" fontSize="md">
-                                                <Text>ID: {feedback.id}</Text>
-                                                <Divider orientation="vertical" />
-                                                <Text>Dato: {formattedDate(new Date(feedback.sentAt))}</Text>
+                                                <Tag
+                                                    onClick={() =>
+                                                        void copyToClipboard('Tilbakemelding', feedback.message)
+                                                    }
+                                                    _hover={{ cursor: 'pointer' }}
+                                                >
+                                                    <Icon as={MdOutlineContentCopy} />
+                                                </Tag>
+                                                <Tag
+                                                    onClick={() => void copyToClipboard('ID', feedback.id.toString())}
+                                                    _hover={{ cursor: 'pointer' }}
+                                                >
+                                                    #{feedback.id}
+                                                </Tag>
+                                                <Tag
+                                                    onClick={() =>
+                                                        void copyToClipboard(
+                                                            'Dato',
+                                                            formattedDate(new Date(feedback.sentAt)),
+                                                        )
+                                                    }
+                                                    _hover={{ cursor: 'pointer' }}
+                                                >
+                                                    {formattedDate(new Date(feedback.sentAt))}
+                                                </Tag>
                                             </Flex>
                                         </Flex>
                                     );
