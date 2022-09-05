@@ -155,7 +155,7 @@ fun Application.configureRouting(
                 withIssuer("https://auth.dataporten.no")
             }
             validate { jwtCredential ->
-                val email = jwtCredential.payload.getClaim("email").asString()
+                val email = jwtCredential.payload.getClaim("email").asString().lowercase()
                 if (email in admins) {
                     JWTPrincipal(jwtCredential.payload)
                 } else {
