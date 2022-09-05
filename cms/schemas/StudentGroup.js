@@ -1,3 +1,5 @@
+import slugify from 'slugify';
+
 export default {
     name: 'studentGroup',
     title: 'Studentgruppe',
@@ -20,9 +22,11 @@ export default {
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
+            description: 'Unik identifikator for studentgruppen. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
             type: 'slug',
             options: {
                 source: 'name',
+                slugify: (input) => slugify(input),
             },
         },
         {

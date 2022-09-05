@@ -1,4 +1,5 @@
 import sanityClient from 'part:@sanity/base/client';
+import slugify from 'slugify';
 
 export default {
     name: 'happening',
@@ -29,7 +30,7 @@ export default {
             options: {
                 source: 'title',
                 slugify: (input) => {
-                    const slug = input.toLowerCase().replace(/\s+/g, '-').replaceAll('/', '-').slice(0, 200);
+                    const slug = slugify(input);
                     const query = 'count(*[_type == "happening" && slug.current == $slug]{_id})';
                     const params = { slug };
                     return sanityClient

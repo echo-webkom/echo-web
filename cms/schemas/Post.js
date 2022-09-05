@@ -1,3 +1,5 @@
+import slugify from 'slugify';
+
 export default {
     name: 'post',
     title: 'Innlegg',
@@ -19,9 +21,11 @@ export default {
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
+            description: 'Unik identifikator for innlegget. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
             type: 'slug',
             options: {
                 source: 'title',
+                slugify: (input) => slugify(input),
             },
         },
         {
