@@ -6,7 +6,7 @@ export default {
     type: 'document',
     preview: {
         select: {
-            title: 'title',
+            title: 'title.no',
             subtitle: 'author.name',
         },
     },
