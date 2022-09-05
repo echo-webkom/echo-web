@@ -28,10 +28,9 @@ CREATE TABLE IF NOT EXISTS student_group_membership
 );
 
 INSERT INTO student_group_membership
-VALUES ('andreas.bakseter@echo.uib.no', 'webkom'),
+VALUES ('andreas.bakseter@student.uib.no', 'webkom'),
        ('ole.m.johnsen@student.uib.no', 'webkom'),
        ('thea.kolnes@student.uib.no', 'webkom'),
        ('felix.kaasa@student.uib.no', 'webkom'),
        ('bo.aanes@student.uib.no', 'webkom'),
-       ('alvar.honsi@student.uib.no', 'webkom'),
-       ('nikolaus.engh@student.uib.no', 'webkom');
+       ('alvar.honsi@student.uib.no', 'webkom');
