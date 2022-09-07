@@ -12,7 +12,6 @@ import kotlin.Exception
 
 data class FeatureToggles(
     val sendEmailReg: Boolean,
-    val sendEmailHap: Boolean,
     val rateLimit: Boolean,
     val verifyRegs: Boolean
 )
@@ -40,7 +39,6 @@ fun Application.module() {
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
     val sendEmailReg = environment.config.property("ktor.sendEmailRegistration").getString().toBooleanStrict()
-    val sendEmailHap = environment.config.property("ktor.sendEmailHappening").getString().toBooleanStrict()
     val verifyRegs = environment.config.property("ktor.verifyRegs").getString().toBooleanStrict()
     val maybeSendGridApiKey = environment.config.propertyOrNull("ktor.sendGridApiKey")?.getString()
     val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
@@ -48,8 +46,8 @@ fun Application.module() {
         false -> maybeSendGridApiKey
     }
 
-    if (sendGridApiKey == null && !dev && (sendEmailReg || sendEmailHap))
-        throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg and SEND_EMAIL_HAPPENING = $sendEmailHap.")
+    if (sendGridApiKey == null && !dev && sendEmailReg)
+        throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg.")
 
     DatabaseHandler(dev, testMigration, databaseUrl, mbMaxPoolSize).init()
 
@@ -57,6 +55,6 @@ fun Application.module() {
         adminKey,
         sendGridApiKey,
         dev,
-        FeatureToggles(sendEmailReg = sendEmailReg, sendEmailHap = sendEmailHap, rateLimit = true, verifyRegs = verifyRegs)
+        FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs)
     )
 }

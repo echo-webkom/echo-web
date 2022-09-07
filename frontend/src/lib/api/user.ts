@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
-import { string, record, union, nil, number } from 'typescript-json-decoder';
+import { string, record, union, nil, number, array } from 'typescript-json-decoder';
 import type { ErrorMessage } from '@utils/error';
 import type { Degree } from '@utils/decoders';
 import { degreeDecoder } from '@utils/decoders';
@@ -18,6 +18,7 @@ const userWithNameDecoder = record({
     name: string,
     degree: union(degreeDecoder, nil),
     degreeYear: union(number, nil),
+    memberships: array(string),
 });
 type UserWithName = decodeType<typeof userWithNameDecoder>;
 
@@ -26,6 +27,7 @@ const userDecoder = record({
     alternateEmail: union(string, nil),
     degree: union(degreeDecoder, nil),
     degreeYear: union(number, nil),
+    memberships: array(string),
 });
 type User = decodeType<typeof userDecoder>;
 

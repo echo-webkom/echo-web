@@ -2,7 +2,8 @@ import { useState, useContext } from 'react';
 import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
-import { Box, Input, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
+import { Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
+import firstUpper from '@utils/first-upper';
 import type { ProfileFormValues, UserWithName } from '@api/user';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
@@ -28,6 +29,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
             alternateEmail: data.alternateEmail,
             degree: data.degree,
             degreeYear: +data.degreeYear,
+            memberships: [],
         });
 
         if (isErrorMessage(res)) {
@@ -92,30 +94,38 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                         defaultValue={user.degreeYear ?? undefined}
                         py="1rem"
                     />
-                    <Button
-                        disabled={profileState.infoState !== 'edited'}
-                        isLoading={profileState.infoState === 'saving'}
-                        type="submit"
-                        form="profile-form"
-                        mr={3}
-                        colorScheme="teal"
-                    >
-                        {profileState.infoState === 'saved'
-                            ? isNorwegian
-                                ? 'Endringer lagret!'
-                                : 'Changes saved!'
-                            : isNorwegian
-                            ? 'Lagre endringer'
-                            : 'Save changes'}
-                    </Button>
-                    <Button onClick={() => void signOut()} colorScheme="red">
-                        {isNorwegian ? 'Logg ut' : 'Log out'}
-                    </Button>
-                    {profileState.errorMessage && (
-                        <Text fontWeight="bold" color="red" pt="3">
-                            {profileState.errorMessage}
-                        </Text>
-                    )}
+                    <Heading size="md" my="0.5rem">
+                        Studentgrupper
+                    </Heading>
+                    <Text data-cy="profile-email" my="0.5rem">
+                        {user.memberships.map((m: string) => firstUpper(m)).join(', ')}
+                    </Text>
+                    <HStack mt={4}>
+                        <Button
+                            disabled={profileState.infoState !== 'edited'}
+                            isLoading={profileState.infoState === 'saving'}
+                            type="submit"
+                            form="profile-form"
+                            mr={3}
+                            colorScheme="teal"
+                        >
+                            {profileState.infoState === 'saved'
+                                ? isNorwegian
+                                    ? 'Endringer lagret!'
+                                    : 'Changes saved!'
+                                : isNorwegian
+                                ? 'Lagre endringer'
+                                : 'Save changes'}
+                        </Button>
+                        <Button onClick={() => void signOut()} colorScheme="red">
+                            {isNorwegian ? 'Logg ut' : 'Log out'}
+                        </Button>
+                        {profileState.errorMessage && (
+                            <Text fontWeight="bold" color="red" pt="3">
+                                {profileState.errorMessage}
+                            </Text>
+                        )}
+                    </HStack>
                 </form>
             </FormProvider>
         </Box>

@@ -39,6 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         alternateEmail: null,
                         degreeYear: null,
                         degree: null,
+                        memberships: [],
                     };
 
                     res.status(200).end(JSON.stringify(user));
@@ -51,6 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     alternateEmail: response.data.alternateEmail ?? null,
                     degree: response.data.degree ?? null,
                     degreeYear: response.data.degreeYear ?? null,
+                    memberships: response.data.memberships ?? [],
                 };
 
                 res.status(200).end(JSON.stringify(user));
@@ -67,6 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 alternateEmail: req.body.alternateEmail,
                 degree: req.body.degree,
                 degreeYear: req.body.degreeYear,
+                memberships: [],
             };
 
             try {

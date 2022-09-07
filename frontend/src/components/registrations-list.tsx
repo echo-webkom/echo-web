@@ -1,4 +1,3 @@
-import type { ParsedUrlQuery } from 'querystring';
 import {
     useBreakpointValue,
     useToast,
@@ -14,24 +13,18 @@ import {
     Tr,
     Th,
 } from '@chakra-ui/react';
-import type { GetServerSideProps } from 'next';
 import ErrorBox from '@components/error-box';
 import ButtonLink from '@components/button-link';
 import type { Registration } from '@api/registration';
-import { RegistrationAPI, registrationRoute } from '@api/registration';
-import { isErrorMessage } from '@utils/error';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
-import notEmptyOrNull from '@utils/not-empty-or-null';
 
 interface Props {
     registrations: Array<Registration> | null;
     error: string | null;
-    link: string;
-    backendUrl: string;
 }
 
-const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): JSX.Element => {
+const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
     const questions =
         registrations
             ?.flatMap((reg) => reg.answers)
@@ -41,12 +34,11 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
     const toast = useToast();
 
     const tableSize = useBreakpointValue({ base: 'sm', lg: 'md' });
-    const headingSize = useBreakpointValue({ base: 'lg', lg: 'xl' });
+    const headingSize = 'md';
     const justifyHeading = useBreakpointValue({ base: 'center', lg: 'left' });
-    const justifyBtn = useBreakpointValue({ base: 'center', lg: 'right' });
 
     return (
-        <Section overflowX="scroll">
+        <Section minW="100%" overflowX="scroll">
             {error && !registrations && <ErrorBox error={error} />}
             {registrations && registrations.length === 0 && !error && (
                 <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>
@@ -60,12 +52,13 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                             justifySelf={justifyHeading}
                             colSpan={[1, null, 2]}
                         >{`Påmeldinger for '${registrations[0].slug}'`}</Heading>
-                        <GridItem justifySelf={justifyBtn}>
-                            <ButtonLink linkTo={`${backendUrl}/${registrationRoute}/${link}?download=y`} mt="1.5rem">
+                        <GridItem>
+                            {/* TODO: Fix correct linkTo here */}
+                            <ButtonLink linkTo="/" mt="1.5rem" fontSize="sm">
                                 Last ned som CSV
                             </ButtonLink>
                         </GridItem>
-                        <GridItem justifySelf={justifyBtn}>
+                        <GridItem>
                             <Button
                                 onClick={() => {
                                     toast({
@@ -107,6 +100,7 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                                     });
                                 }}
                                 mt="1.5rem"
+                                fontSize="sm"
                             >
                                 Hvordan funker denne listen?
                             </Button>
@@ -120,8 +114,6 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                                 <Th>Fornavn</Th>
                                 <Th>Etternavn</Th>
                                 <Th>Årstrinn</Th>
-                                {notEmptyOrNull(questions) &&
-                                    questions?.map((q, index) => <Th key={`question-${index}`}>{q}</Th>)}
                                 <Th>På venteliste?</Th>
                                 <Th>Slett påmelding</Th>
                             </Tr>
@@ -134,15 +126,7 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
                                     else return 0;
                                 })
                                 .map((reg) => {
-                                    return (
-                                        <RegistrationRow
-                                            key={reg.email}
-                                            registration={reg}
-                                            questions={questions}
-                                            link={link}
-                                            backendUrl={backendUrl}
-                                        />
-                                    );
+                                    return <RegistrationRow key={reg.email} registration={reg} questions={questions} />;
                                 })}
                         </Tbody>
                     </Table>
@@ -152,31 +136,4 @@ const RegistrationsPage = ({ registrations, error, link, backendUrl }: Props): J
     );
 };
 
-interface Params extends ParsedUrlQuery {
-    slug: string;
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { slug } = context.params as Params;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-    const registrations = await RegistrationAPI.getRegistrations(slug, backendUrl);
-
-    if (isErrorMessage(registrations) && registrations.message === '404') {
-        return {
-            notFound: true,
-        };
-    }
-
-    const props: Props = {
-        registrations: isErrorMessage(registrations) ? null : registrations,
-        error: isErrorMessage(registrations) ? registrations.message : null,
-        link: slug,
-        backendUrl,
-    };
-
-    return {
-        props,
-    };
-};
-
-export default RegistrationsPage;
+export default RegistrationsList;

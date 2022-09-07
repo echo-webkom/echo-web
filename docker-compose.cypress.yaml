@@ -40,7 +40,7 @@ services:
       - '8080:8080'
     # Check if backend is ready, and insert bedpres for testing.
     healthcheck:
-      test: ['CMD-SHELL', './scripts/submit_happening -t -x $$ADMIN_KEY || exit 1']
+      test: ['CMD-SHELL', 'curl -v http://localhost:8080/status || exit 1']
       interval: 5s
       timeout: 5s
       retries: 5

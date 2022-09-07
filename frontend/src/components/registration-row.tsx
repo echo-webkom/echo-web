@@ -26,13 +26,11 @@ import notEmptyOrNull from '@utils/not-empty-or-null';
 interface Props {
     registration: Registration;
     questions: Array<string> | null;
-    link: string;
-    backendUrl: string;
 }
 
 const MotionTr = motion<TableRowProps>(Tr);
 
-const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) => {
+const RegistrationRow = ({ registration, questions }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
@@ -49,28 +47,32 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                 data-cy={`reg-row-${registration.email}`}
                 key={JSON.stringify(registration)}
             >
-                <Td>{registration.email}</Td>
-                <Td>{registration.firstName}</Td>
-                <Td>{registration.lastName}</Td>
-                <Td>{registration.degreeYear}</Td>
+                <Td fontSize="md">{registration.email}</Td>
+                <Td fontSize="md">{registration.firstName}</Td>
+                <Td fontSize="md">{registration.lastName}</Td>
+                <Td fontSize="md">{registration.degreeYear}</Td>
                 {notEmptyOrNull(registration.answers) &&
                     registration.answers.map((ans, index) => (
-                        <Td key={`answer-${index}-${JSON.stringify(ans)}`}>{ans.answer}</Td>
+                        <Td fontSize="md" key={`answer-${index}-${JSON.stringify(ans)}`}>
+                            {ans.answer}
+                        </Td>
                     ))}
                 {!notEmptyOrNull(registration.answers) && notEmptyOrNull(questions) && (
-                    <Td fontStyle="italic">ikke besvart</Td>
+                    <Td fontSize="md" fontStyle="italic">
+                        ikke besvart
+                    </Td>
                 )}
                 {registration.waitList ? (
-                    <Td data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
+                    <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
                         Ja
                     </Td>
                 ) : (
-                    <Td data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
+                    <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
                         Nei
                     </Td>
                 )}
                 <Td>
-                    <Button data-cy="delete-button" onClick={onOpen} bg="red.400">
+                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} bg="red.400">
                         Slett påmelding
                     </Button>
                 </Td>
@@ -106,9 +108,8 @@ const RegistrationRow = ({ registration, questions, link, backendUrl }: Props) =
                                 bg="green.400"
                                 onClick={async () => {
                                     const { error } = await RegistrationAPI.deleteRegistration(
-                                        link,
+                                        registration.slug,
                                         registration.email,
-                                        backendUrl,
                                     );
 
                                     onClose();

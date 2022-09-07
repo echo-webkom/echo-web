@@ -22,7 +22,6 @@ services:
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
       SENDGRID_API_KEY:
       SEND_EMAIL_REGISTRATION:
-      SEND_EMAIL_HAPPENING:
       TEST_MIGRATION:
       PORT:
 
