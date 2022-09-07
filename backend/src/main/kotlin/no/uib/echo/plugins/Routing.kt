@@ -69,11 +69,11 @@ import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.masters
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
-import no.uib.echo.schema.validateLink
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -133,38 +133,13 @@ fun Application.configureRouting(
                 JWTPrincipal(jwtCredential.payload)
             }
         }
-
-        jwt("auth-webkom") {
-            realm = "Verify user is Webkom"
-            verifier(jwkProvider, issuer) {
-                acceptLeeway(3)
-                withIssuer("https://auth.dataporten.no")
-            }
-            validate { jwtCredential ->
-                val email = jwtCredential.payload.getClaim("email").asString().lowercase()
-
-                val admins = transaction {
-                    addLogger(StdOutSqlLogger)
-
-                    StudentGroupMembership.select {
-                        StudentGroupMembership.studentGroupName eq "webkom"
-                    }.toList().map { it[StudentGroupMembership.userEmail] }
-                }
-
-                if (email in admins) {
-                    JWTPrincipal(jwtCredential.payload)
-                } else {
-                    null
-                }
-            }
-        }
     }
 
     routing {
         getStatus()
 
         authenticate("auth-$admin") {
-            putHappening(sendGridApiKey, featureToggles.sendEmailHap, dev)
+            putHappening(dev)
             deleteHappening()
             getHappeningInfo()
         }
@@ -172,15 +147,12 @@ fun Application.configureRouting(
         authenticate("auth-jwt") {
             getUser()
             putUser()
-        }
-
-        authenticate("auth-webkom") {
             feedback()
+            getRegistrations()
+            deleteRegistration()
         }
 
-        getRegistrations(dev)
         postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
-        deleteRegistration(dev)
         postRegistrationCount()
         postFeedback()
     }
@@ -198,8 +170,12 @@ object Routing {
 
     fun Route.getUser() {
         get("/user") {
-            val principal = call.principal<JWTPrincipal>()
-            val email = principal!!.payload.getClaim("email").asString().lowercase()
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
 
             val user = transaction {
                 addLogger(StdOutSqlLogger)
@@ -213,13 +189,24 @@ object Routing {
                 return@get
             }
 
+            val memberships = transaction {
+                addLogger(StdOutSqlLogger)
+
+                StudentGroupMembership.select {
+                    StudentGroupMembership.userEmail eq email
+                }.toList().map {
+                    it[StudentGroupMembership.studentGroupName]
+                }
+            }
+
             call.respond(
                 HttpStatusCode.OK,
                 UserJson(
                     user[User.email],
                     user[User.alternateEmail],
                     user[User.degreeYear],
-                    Degree.valueOf(user[User.degree])
+                    Degree.valueOf(user[User.degree]),
+                    memberships.ifEmpty { emptyList() }
                 )
             )
         }
@@ -227,25 +214,23 @@ object Routing {
 
     fun Route.putUser() {
         put("/user") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen."
+                )
+                return@put
+            }
+
             try {
                 val user = call.receive<UserJson>()
-                val principal = call.principal<JWTPrincipal>()
-
-                val userEmail = user.email.lowercase()
                 val alternateEmail = user.alternateEmail?.lowercase()
-                val tokenEmail = principal!!.payload.getClaim("email").asString().lowercase()
-
-                if (userEmail != tokenEmail) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen."
-                    )
-                    return@put
-                }
 
                 if (alternateEmail != null) {
                     if (!isEmailValid(alternateEmail)) {
-                        call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gydlig e-post.")
+                        call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gyldig e-post.")
                         return@put
                     }
                 }
@@ -268,7 +253,7 @@ object Routing {
                 val result = transaction {
                     addLogger(StdOutSqlLogger)
                     User.select {
-                        User.email.lowerCase() eq tokenEmail
+                        User.email.lowerCase() eq email
                     }.firstOrNull()
                 }
 
@@ -276,20 +261,20 @@ object Routing {
                     transaction {
                         addLogger(StdOutSqlLogger)
                         User.insert {
-                            it[email] = tokenEmail
+                            it[User.email] = email
                             it[User.alternateEmail] = alternateEmail
                             it[degree] = user.degree.toString()
                             it[degreeYear] = user.degreeYear
                         }
                     }
-                    call.respond(HttpStatusCode.OK, "User created with email = $tokenEmail")
+                    call.respond(HttpStatusCode.OK, "User created with email = $email")
                     return@put
                 }
 
                 transaction {
                     addLogger(StdOutSqlLogger)
                     User.update({
-                        User.email.lowerCase() eq tokenEmail
+                        User.email.lowerCase() eq email
                     }) {
                         it[User.alternateEmail] = alternateEmail
                         it[degree] = user.degree.toString()
@@ -298,7 +283,7 @@ object Routing {
                 }
                 call.respond(
                     HttpStatusCode.OK,
-                    "User updated with email = $tokenEmail, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                    "User updated with email = $email, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
                 )
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.InternalServerError)
@@ -363,17 +348,39 @@ object Routing {
         }
     }
 
-    fun Route.getRegistrations(dev: Boolean) {
-        get("/$registrationRoute/{link}") {
-            val link = call.parameters["link"]
+    fun Route.getRegistrations() {
+        get("/$registrationRoute/{slug}") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
+
+            val slug = call.parameters["slug"]
+
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+
             val download = call.request.queryParameters["download"] != null
             val json = call.request.queryParameters["json"] != null
             val testing = call.request.queryParameters["testing"] != null
 
-            val hap = validateLink(link, dev)
+            val hap = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select { Happening.slug eq slug }.firstOrNull()
+            }
 
             if (hap == null) {
                 call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
+
+            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                call.respond(HttpStatusCode.Forbidden)
                 return@get
             }
 
@@ -431,7 +438,7 @@ object Routing {
             } else {
                 call.response.header(
                     HttpHeaders.Location,
-                    "https://echo.uib.no/$registrationRoute/$link"
+                    "https://echo.uib.no/$registrationRoute/$slug"
                 )
                 call.respond(HttpStatusCode.MovedPermanently)
             }
@@ -635,17 +642,46 @@ object Routing {
         }
     }
 
-    fun Route.deleteRegistration(dev: Boolean) {
-        delete("/$registrationRoute/{link}/{email}") {
-            val link = call.parameters["link"]
-            val email = withContext(Dispatchers.IO) {
-                URLDecoder.decode(call.parameters["email"], "utf-8")
+    fun Route.deleteRegistration() {
+        delete("/$registrationRoute/{slug}/{email}") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@delete
             }
 
-            val hap = validateLink(link, dev)
+            val slug = call.parameters["slug"]
 
-            if (hap == null || email == null) {
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+
+            val paramEmail = call.parameters["email"]
+
+            if (paramEmail == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+
+            val decodedParamEmail = withContext(Dispatchers.IO) {
+                URLDecoder.decode(paramEmail, "utf-8")
+            }.lowercase()
+
+            val hap = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select { Happening.slug eq slug }.firstOrNull()
+            }
+
+            if (hap == null) {
                 call.respond(HttpStatusCode.NotFound)
+                return@delete
+            }
+
+            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                call.respond(HttpStatusCode.Forbidden)
                 return@delete
             }
 
@@ -655,7 +691,7 @@ object Routing {
 
                     Registration.select {
                         Registration.happeningSlug eq hap[Happening.slug] and
-                            (Registration.email.lowerCase() eq email.lowercase())
+                            (Registration.email.lowerCase() eq decodedParamEmail)
                     }.firstOrNull()
                 }
 
@@ -669,19 +705,19 @@ object Routing {
 
                     Answer.deleteWhere {
                         Answer.happeningSlug eq hap[Happening.slug] and
-                            (Answer.registrationEmail.lowerCase() eq email.lowercase())
+                            (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
                     }
 
                     Registration.deleteWhere {
                         Registration.happeningSlug eq hap[Happening.slug] and
-                            (Registration.email.lowerCase() eq email.lowercase())
+                            (Registration.email.lowerCase() eq decodedParamEmail)
                     }
                 }
 
                 if (reg[Registration.waitList]) {
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted."
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
                     )
                     return@delete
                 }
@@ -697,7 +733,7 @@ object Routing {
                 if (highestOnWaitList == null) {
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted."
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
                     )
                 } else {
                     transaction {
@@ -709,7 +745,7 @@ object Routing {
                     }
                     call.respond(
                         HttpStatusCode.OK,
-                        "Registration with email = ${email.lowercase()} and slug = ${hap[Happening.slug]} deleted, " +
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " +
                             "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
                     )
                 }
@@ -720,11 +756,11 @@ object Routing {
         }
     }
 
-    fun Route.putHappening(sendGridApiKey: String?, sendEmail: Boolean, dev: Boolean) {
+    fun Route.putHappening(dev: Boolean) {
         put("/$happeningRoute") {
             try {
                 val hap = call.receive<HappeningJson>()
-                val result = insertOrUpdateHappening(hap, sendGridApiKey, sendEmail, dev)
+                val result = insertOrUpdateHappening(hap, dev)
 
                 call.respond(result.first, result.second)
             } catch (e: Exception) {
@@ -812,29 +848,46 @@ object Routing {
 
     fun Route.postFeedback() {
         post("/feedback") {
-            val feedback = call.receive<FeedbackJson>()
+            try {
+                val feedback = call.receive<FeedbackJson>()
 
-            if (feedback.message.isEmpty()) {
-                call.respond(HttpStatusCode.BadRequest, FeedbackResponse.EMPTY)
-                return@post
-            }
-
-            transaction {
-                addLogger(StdOutSqlLogger)
-
-                Feedback.insert {
-                    it[email] = feedback.email
-                    it[name] = feedback.name
-                    it[message] = feedback.message
+                if (feedback.message.isEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, FeedbackResponse.EMPTY)
+                    return@post
                 }
-            }
 
-            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Feedback.insert {
+                        it[email] = feedback.email
+                        it[name] = feedback.name
+                        it[message] = feedback.message
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting feedback.")
+                e.printStackTrace()
+            }
         }
     }
 
     fun Route.feedback() {
         get("/feedback") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
+
+            if (email !in getGroupMembers("webkom")) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@get
+            }
+
             val feedback = transaction {
                 addLogger(StdOutSqlLogger)
 
@@ -857,34 +910,56 @@ object Routing {
             @Serializable
             data class ReqJson(val id: Int)
 
-            val req = call.receive<ReqJson>()
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-            transaction {
-                addLogger(StdOutSqlLogger)
-
-                Feedback.deleteWhere {
-                    Feedback.id eq req.id
-                }
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@delete
             }
 
-            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            if (email !in getGroupMembers("webkom")) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@delete
+            }
+
+            try {
+                val req = call.receive<ReqJson>()
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Feedback.deleteWhere {
+                        Feedback.id eq req.id
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting feedback.")
+                e.printStackTrace()
+            }
         }
 
         put("/feedback") {
-            val feedback = call.receive<FeedbackResponseJson>()
+            try {
+                val feedback = call.receive<FeedbackResponseJson>()
 
-            transaction {
-                addLogger(StdOutSqlLogger)
+                transaction {
+                    addLogger(StdOutSqlLogger)
 
-                Feedback.update({ Feedback.id eq feedback.id }) {
-                    it[email] = feedback.email
-                    it[name] = feedback.name
-                    it[message] = feedback.message
-                    it[isRead] = feedback.isRead
+                    Feedback.update({ Feedback.id eq feedback.id }) {
+                        it[email] = feedback.email
+                        it[name] = feedback.name
+                        it[message] = feedback.message
+                        it[isRead] = feedback.isRead
+                    }
                 }
-            }
 
-            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error putting feedback.")
+                e.printStackTrace()
+            }
         }
     }
 }

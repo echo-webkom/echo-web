@@ -3,6 +3,7 @@ import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
 import type { HappeningType } from '@api/happening';
 import { type Degree, degreeDecoder } from '@utils/decoders';
+import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
 const responseDecoder = record({
@@ -116,25 +117,33 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrations: async (link: string, backendUrl: string): Promise<Array<Registration> | ErrorMessage> => {
+    getRegistrations: async (slug: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/${registrationRoute}/${link}?json=y`);
+            const { data } = await axios.get(`/api/registration?slug=${slug}`);
 
-            return array(registrationDecoder)(data);
-        } catch (error) {
-            console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error)) {
-                if (!error.response) {
-                    return { message: '404' };
-                }
-                return {
-                    message: error.response.status === 404 ? '404' : 'Fail @ getRegistrations',
-                };
+            if (isErrorMessage(data)) {
+                return data;
             }
 
+            return array(registrationDecoder)(data);
+        } catch {
             return {
                 message: 'Fail @ getRegistrations',
             };
+        }
+    },
+
+    deleteRegistration: async (
+        slug: string,
+        email: string,
+    ): Promise<{ response: string | null; error: string | null }> => {
+        try {
+            const { data } = await axios.delete(`/api/registration?slug=${slug}&email=${email}`);
+
+            return { response: data, error: null };
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { response: null, error: JSON.stringify(error) };
         }
     },
 
@@ -160,27 +169,11 @@ const RegistrationAPI = {
             };
         }
     },
-
-    deleteRegistration: async (
-        link: string,
-        email: string,
-        backendUrl: string,
-    ): Promise<{ response: string | null; error: string | null }> => {
-        try {
-            const { data } = await axios.delete(
-                `${backendUrl}/${registrationRoute}/${link}/${encodeURIComponent(email)}`,
-            );
-
-            return { response: data, error: null };
-        } catch (error) {
-            console.log(error); // eslint-disable-line
-            return { response: null, error: JSON.stringify(error) };
-        }
-    },
 };
 
 export {
     RegistrationAPI,
+    registrationDecoder,
     registrationRoute,
     type FormValues as RegFormValues,
     type RegistrationCount,

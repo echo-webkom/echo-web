@@ -2,9 +2,7 @@ package no.uib.echo.schema
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
-import no.uib.echo.sendRegsLinkEmail
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
@@ -17,7 +15,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
-private const val REG_LINK_LENGTH = 128
 private const val REG_VERIFY_TOKEN_LENGTH = 16
 
 enum class HAPPENING_TYPE {
@@ -33,7 +30,8 @@ data class HappeningJson(
     val happeningDate: String,
     val spotRanges: List<SpotRangeJson>,
     val type: HAPPENING_TYPE,
-    val organizerEmail: String
+    val organizerEmail: String,
+    val studentGroupName: String
 )
 
 @Serializable
@@ -45,9 +43,6 @@ data class HappeningInfoJson(
 @Serializable
 data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
 
-@Serializable
-data class HappeningResponseJson(val registrationsLink: String?, val message: String)
-
 object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
     val title: Column<String> = text("title")
@@ -55,22 +50,20 @@ object Happening : Table() {
     val registrationDate: Column<DateTime> = datetime("registration_date")
     val happeningDate: Column<DateTime> = datetime("happening_date")
     val organizerEmail: Column<String> = text("organizer_email")
-    val registrationsLink: Column<String?> = text("registrations_link").nullable()
     val regVerifyToken: Column<String?> = text("reg_verify_token").nullable()
+    val studentGroupName: Column<String> = text("student_group_name") references StudentGroup.name
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
 
-suspend fun insertOrUpdateHappening(
+fun insertOrUpdateHappening(
     newHappening: HappeningJson,
-    sendGridApiKey: String?,
-    sendEmail: Boolean,
-    dev: Boolean,
-): Pair<HttpStatusCode, HappeningResponseJson> {
+    dev: Boolean
+): Pair<HttpStatusCode, String> {
     if (newHappening.spotRanges.isEmpty()) {
         return Pair(
             HttpStatusCode.BadRequest,
-            HappeningResponseJson(null, "No spot range given for happening with slug ${newHappening.slug}.")
+            "No spot range given for happening with slug ${newHappening.slug}."
         )
     }
 
@@ -83,12 +76,6 @@ suspend fun insertOrUpdateHappening(
     }
 
     val spotRanges = selectSpotRanges(newHappening.slug)
-
-    val registrationsLink =
-        if (dev)
-            newHappening.slug
-        else
-            randomString(REG_LINK_LENGTH)
 
     val regVerifyToken =
         if (dev)
@@ -107,8 +94,8 @@ suspend fun insertOrUpdateHappening(
                 it[registrationDate] = DateTime(newHappening.registrationDate)
                 it[happeningDate] = DateTime(newHappening.happeningDate)
                 it[organizerEmail] = newHappening.organizerEmail.lowercase()
-                it[Happening.registrationsLink] = registrationsLink
                 it[Happening.regVerifyToken] = regVerifyToken
+                it[studentGroupName] = newHappening.studentGroupName.lowercase()
             }
             SpotRange.batchInsert(newHappening.spotRanges) { sr ->
                 this[SpotRange.spots] = sr.spots
@@ -118,16 +105,9 @@ suspend fun insertOrUpdateHappening(
             }
         }
 
-        if (sendEmail && sendGridApiKey != null) {
-            sendRegsLinkEmail(sendGridApiKey, newHappening, registrationsLink)
-        }
-
         return Pair(
             HttpStatusCode.OK,
-            HappeningResponseJson(
-                registrationsLink,
-                "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
-            )
+            "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
         )
     }
 
@@ -136,19 +116,18 @@ suspend fun insertOrUpdateHappening(
         DateTime(happening[Happening.registrationDate]) == DateTime(newHappening.registrationDate) &&
         DateTime(happening[Happening.happeningDate]) == DateTime(newHappening.happeningDate) &&
         spotRanges == newHappening.spotRanges &&
-        happening[Happening.organizerEmail].lowercase() == newHappening.organizerEmail.lowercase()
+        happening[Happening.organizerEmail].lowercase() == newHappening.organizerEmail.lowercase() &&
+        happening[Happening.studentGroupName].lowercase() == newHappening.studentGroupName.lowercase()
     ) {
         return Pair(
             HttpStatusCode.Accepted,
-            HappeningResponseJson(
-                registrationsLink,
-                "Happening with slug = ${newHappening.slug}, " +
-                    "title = ${newHappening.title}, " +
-                    "registrationDate = ${newHappening.registrationDate}, " +
-                    "happeningDate = ${newHappening.happeningDate}, " +
-                    "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                    "and organizerEmail = ${newHappening.organizerEmail.lowercase()} has already been submitted."
-            )
+            "Happening with slug = ${newHappening.slug}, " +
+                "title = ${newHappening.title}, " +
+                "registrationDate = ${newHappening.registrationDate}, " +
+                "happeningDate = ${newHappening.happeningDate}, " +
+                "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
+                "organizerEmail = ${newHappening.organizerEmail.lowercase()}, " +
+                "and studentGroupName = ${newHappening.studentGroupName} has already been submitted."
         )
     }
 
@@ -160,6 +139,7 @@ suspend fun insertOrUpdateHappening(
             it[registrationDate] = DateTime(newHappening.registrationDate)
             it[happeningDate] = DateTime(newHappening.happeningDate)
             it[organizerEmail] = newHappening.organizerEmail.lowercase()
+            it[studentGroupName] = newHappening.studentGroupName.lowercase()
         }
 
         SpotRange.deleteWhere {
@@ -180,25 +160,12 @@ suspend fun insertOrUpdateHappening(
             "registrationDate = ${newHappening.registrationDate}, " +
             "happeningDate = ${newHappening.happeningDate}, " +
             "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-            "and organizerEmail = ${newHappening.organizerEmail.lowercase()}."
-
-    if (happening[Happening.organizerEmail].lowercase() != newHappening.organizerEmail.lowercase() && sendEmail && sendGridApiKey != null) {
-        sendRegsLinkEmail(sendGridApiKey, newHappening, registrationsLink)
-        return Pair(
-            HttpStatusCode.OK,
-            HappeningResponseJson(
-                registrationsLink,
-                message + "Sent mail to new address: ${newHappening.organizerEmail.lowercase()}."
-            )
-        )
-    }
+            "organizerEmail = ${newHappening.organizerEmail.lowercase()}, " +
+            "and studentGroupName = ${newHappening.studentGroupName}"
 
     return Pair(
         HttpStatusCode.OK,
-        HappeningResponseJson(
-            registrationsLink,
-            message
-        )
+        message
     )
 }
 
@@ -208,19 +175,6 @@ fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
         "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
     }
     } ]"
-}
-
-fun validateLink(link: String?, dev: Boolean): ResultRow? {
-    if (link == null || (link.length != 128 && !dev))
-        return null
-
-    return transaction {
-        addLogger(StdOutSqlLogger)
-
-        Happening.select {
-            Happening.registrationsLink eq link
-        }.firstOrNull()
-    }
 }
 
 fun randomString(length: Int): String {
