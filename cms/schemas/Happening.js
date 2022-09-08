@@ -30,7 +30,7 @@ export default {
             options: {
                 source: 'title',
                 slugify: (input) => {
-                    const slug = slugify(input);
+                    const slug = slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true });
                     const query = 'count(*[_type == "happening" && slug.current == $slug]{_id})';
                     const params = { slug };
                     return sanityClient
