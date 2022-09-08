@@ -26,7 +26,7 @@ export default {
             type: 'slug',
             options: {
                 source: 'name',
-                slugify: (input) => slugify(input),
+                slugify: (input) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true }),
             },
         },
         {
