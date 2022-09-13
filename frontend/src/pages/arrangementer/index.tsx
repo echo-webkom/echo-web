@@ -1,4 +1,5 @@
 import { GridItem, Heading, SimpleGrid } from '@chakra-ui/react';
+import { useContext } from 'react';
 import { type Happening, HappeningAPI } from '@api/happening';
 import { RegistrationAPI, type RegistrationCount } from '@api/registration';
 import SEO from '@components/seo';
@@ -6,7 +7,6 @@ import { isErrorMessage } from '@utils/error';
 import EventOverview from '@components/event-overview';
 import EventCalendar from '@components/event-calendar';
 import LanguageContext from 'language-context';
-import { useContext } from 'react';
 
 interface Props {
     events: Array<Happening>;
