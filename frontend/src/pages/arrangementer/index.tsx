@@ -12,7 +12,7 @@ interface Props {
     registrationCounts: Array<RegistrationCount>;
 }
 
-const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props): JSX.Element => {
+const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
     const breakpoints = [1, null, null, null, 2];
     const happenings = [...events, ...bedpresses];
 
