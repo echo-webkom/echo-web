@@ -1,4 +1,3 @@
-import type { IconProps } from '@chakra-ui/react';
 import {
     Button,
     Divider,
@@ -8,10 +7,13 @@ import {
     HStack,
     Icon,
     SimpleGrid,
+    GridItem,
+    Center,
     Spacer,
     Stack,
     useColorModeValue,
     useBreakpointValue,
+    type IconProps,
 } from '@chakra-ui/react';
 import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekYear } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -20,22 +22,23 @@ import HappeningCalendarBox from './happening-calendar-box';
 import Section from './section';
 import type { Happening } from '@api/happening';
 
+interface CalendarDay {
+    date: Date;
+    happenings: Array<Happening>;
+}
+
 interface Props {
     happenings: Array<Happening>;
 }
 
-const capitalize = (s: string) => {
-    return s.charAt(0).toUpperCase() + s.slice(1);
-};
-
 const EventCalendar = ({ happenings }: Props) => {
     const [date, setDate] = useState<Date>(new Date());
-    const [datesInWeek, setDatesInWeek] = useState<Array<Date>>([]);
+    const [calendarDays, setCalendarDays] = useState<Array<CalendarDay>>([]);
 
     const daysAtaTime = useBreakpointValue({
         base: 1,
-        md: 7,
-        // '2xl': 7,
+        md: 3,
+        '2xl': 7,
     });
 
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
@@ -49,12 +52,16 @@ const EventCalendar = ({ happenings }: Props) => {
 
         const current = new Date(start.getTime());
         while (current <= end) {
-            dates.push(new Date(current));
+            dates.push({
+                date: new Date(current),
+                happenings: happenings.filter((happening) => datesAreOnSameDay(new Date(happening.date), current)),
+            });
+
             current.setDate(current.getDate() + 1);
         }
 
-        setDatesInWeek(dates);
-    }, [date]);
+        setCalendarDays(dates);
+    }, [date, happenings]);
 
     return (
         <>
@@ -84,8 +91,9 @@ const EventCalendar = ({ happenings }: Props) => {
                     Annet
                 </Flex>
             </HStack>
+
             <SimpleGrid as={Section} padding="1rem" columns={daysAtaTime} gridGap="1rem">
-                {datesInWeek.map((date) => {
+                {calendarDays.map((today) => {
                     const formatDate = (date: Date): string => {
                         return date.toLocaleDateString('nb-NO', {
                             weekday: 'long',
@@ -95,37 +103,35 @@ const EventCalendar = ({ happenings }: Props) => {
                     };
 
                     return (
-                        <Stack key={date.toISOString()}>
+                        <Stack key={today.date.toISOString()}>
                             <Text
                                 fontWeight="light"
                                 fontSize="lg"
                                 borderRadius="0.25rem"
-                                bg={datesAreOnSameDay(date, new Date()) ? 'gray.700' : 'transparent'}
+                                bg={datesAreOnSameDay(today.date, new Date()) ? 'gray.700' : 'transparent'}
                                 px="3"
                                 py="1"
                             >
-                                {datesAreOnSameDay(date, new Date()) ? 'Idag' : capitalize(formatDate(date))}
+                                {datesAreOnSameDay(today.date, new Date())
+                                    ? 'Idag'
+                                    : capitalize(formatDate(today.date))}
                             </Text>
                             <Divider />
-                            {happenings.map((happening) => {
-                                const happeningDate = new Date(happening.date);
-                                if (datesAreOnSameDay(date, happeningDate)) {
-                                    return (
-                                        <HappeningCalendarBox
-                                            key={happening.slug}
-                                            type={happening.happeningType}
-                                            title={happening.title}
-                                            slug={happening.slug}
-                                            location={happening.location}
-                                            body={happening.body.no}
-                                            author={happening.author}
-                                        />
-                                    );
-                                }
-                            })}
+                            {today.happenings.map((happening) => (
+                                <HappeningCalendarBox key={happening.slug} happening={happening} />
+                            ))}
                         </Stack>
                     );
                 })}
+                {calendarDays.every((day) => day.happenings.length === 0) && (
+                    <GridItem colSpan={daysAtaTime}>
+                        <Center>
+                            <Text fontSize="4xl" fontWeight="extrabold" py="5">
+                                Ingen arrangementer denne uken
+                            </Text>
+                        </Center>
+                    </GridItem>
+                )}
             </SimpleGrid>
         </>
     );
@@ -135,6 +141,10 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
     first.getFullYear() === second.getFullYear() &&
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
+
+const capitalize = (s: string) => {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
 
 const CircleIcon = (props: IconProps) => (
     <Icon viewBox="0 0 200 200" {...props}>
