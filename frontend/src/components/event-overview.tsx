@@ -1,8 +1,10 @@
-import { Box, Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { Box, Heading, Tab, TabList, TabPanels, Tabs } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
-import EntryBox from './entry-box';
+import { useContext } from 'react';
+import EventOverviewTab from './event-overview-tab';
 import type { RegistrationCount } from '@api/registration';
 import type { Happening } from '@api/happening';
+import LanguageContext from 'language-context';
 
 interface Props {
     events: Array<Happening>;
@@ -12,8 +14,13 @@ interface Props {
 }
 
 const EventOverview = ({ title, events, type, registrationCounts }: Props) => {
-    const upcoming = events.filter((entry: Happening) => isFuture(new Date(entry.date)));
-    const past = events.filter((entry: Happening) => isPast(new Date(entry.date))).reverse();
+    const isNorwegian = useContext(LanguageContext);
+
+    // Amount of previews to be diplayed in each tab
+    const n = type === 'bedpres' ? 3 : 5;
+
+    const upcomingEvents = events.filter((event) => isFuture(new Date(event.date)));
+    const pastEvents = events.filter((event) => isPast(new Date(event.date))).reverse();
 
     return (
         <Box>
@@ -21,35 +28,23 @@ const EventOverview = ({ title, events, type, registrationCounts }: Props) => {
 
             <Tabs defaultIndex={1} isFitted isLazy>
                 <TabList>
-                    <Tab>Tidligere</Tab>
-                    <Tab>Kommende</Tab>
+                    <Tab>{isNorwegian ? 'Tidligere' : 'Past'}</Tab>
+                    <Tab>{isNorwegian ? 'Kommende' : 'Upcoming'}</Tab>
                 </TabList>
 
                 <TabPanels>
-                    <TabPanel px="0">
-                        <EntryBox
-                            entries={past}
-                            type={type}
-                            altText={
-                                type === 'bedpres'
-                                    ? 'Ingen flere bedriftpresentasjoner :('
-                                    : 'Ingen flere arrangement :('
-                            }
-                            registrationCounts={registrationCounts}
-                        />
-                    </TabPanel>
-                    <TabPanel px="0">
-                        <EntryBox
-                            entries={upcoming}
-                            type={type}
-                            altText={
-                                type === 'bedpres'
-                                    ? 'Ingen flere bedriftpresentasjoner :('
-                                    : 'Ingen flere arrangement :('
-                            }
-                            registrationCounts={registrationCounts}
-                        />
-                    </TabPanel>
+                    <EventOverviewTab
+                        happenings={pastEvents}
+                        type={type}
+                        registrationCounts={registrationCounts}
+                        previewPerPage={n}
+                    />
+                    <EventOverviewTab
+                        happenings={upcomingEvents}
+                        type={type}
+                        registrationCounts={registrationCounts}
+                        previewPerPage={n}
+                    />
                 </TabPanels>
             </Tabs>
         </Box>

@@ -31,7 +31,7 @@ const EntryBox = ({
     type,
     registrationCounts,
     ...props
-}: Props): JSX.Element => {
+}: Props) => {
     const isNorwegian = useContext(LanguageContext);
     const choices = titles ?? [title];
     const heading = useBreakpointValue(choices); // cannot call hooks conditionally
