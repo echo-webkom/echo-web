@@ -5,6 +5,8 @@ import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';
 import EventOverview from '@components/event-overview';
 import EventCalendar from '@components/event-calendar';
+import LanguageContext from 'language-context';
+import { useContext } from 'react';
 
 interface Props {
     events: Array<Happening>;
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
+    const isNorwegian = useContext(LanguageContext);
     const breakpoints = [1, null, null, null, 2];
     const happenings = [...events, ...bedpresses];
 
@@ -26,7 +29,7 @@ const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
                 </GridItem>
                 <GridItem>
                     <EventOverview
-                        title="Arrangement"
+                        title={isNorwegian ? 'Arrangementer' : 'Events'}
                         events={events}
                         registrationCounts={registrationCounts}
                         type="event"
@@ -34,7 +37,7 @@ const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
                 </GridItem>
                 <GridItem>
                     <EventOverview
-                        title="Bedriftspresentasjon"
+                        title={isNorwegian ? 'Bedriftspresentasjoner' : 'Company Presentations'}
                         events={bedpresses}
                         registrationCounts={registrationCounts}
                         type="bedpres"
