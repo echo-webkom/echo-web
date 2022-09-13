@@ -16,11 +16,12 @@ import {
     type IconProps,
 } from '@chakra-ui/react';
 import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekYear } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import HappeningCalendarBox from './happening-calendar-box';
 import Section from './section';
 import type { Happening } from '@api/happening';
+import LanguageContext from 'language-context';
 
 interface CalendarDay {
     date: Date;
@@ -32,6 +33,8 @@ interface Props {
 }
 
 const EventCalendar = ({ happenings }: Props) => {
+    const isNorwegian = useContext(LanguageContext);
+
     const [date, setDate] = useState<Date>(new Date());
     const [calendarDays, setCalendarDays] = useState<Array<CalendarDay>>([]);
 
@@ -43,6 +46,7 @@ const EventCalendar = ({ happenings }: Props) => {
 
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
+    const todayHighlightColor = useColorModeValue('gray.100', 'gray.700');
 
     useEffect(() => {
         const start = startOfWeek(date, { weekStartsOn: 1 });
@@ -67,16 +71,16 @@ const EventCalendar = ({ happenings }: Props) => {
         <>
             <Flex direction={['column', null, 'row']} mb="1rem">
                 <Heading size="lg" marginBottom="1rem">
-                    Uke {getISOWeek(date)} - {getISOWeekYear(date)}
+                    {isNorwegian ? 'Uke' : 'Week'} {getISOWeek(date)} - {getISOWeekYear(date)}
                 </Heading>
                 <Spacer />
                 <Flex justifyContent="center" gap="3">
                     <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subWeeks(date, 1))}>
-                        Forrige uke
+                        {isNorwegian ? 'Forrige uke' : 'Previous week'}
                     </Button>
-                    <Button onClick={() => setDate(new Date())}>Idag</Button>
+                    <Button onClick={() => setDate(new Date())}>{isNorwegian ? 'Idag' : 'Today'}</Button>
                     <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))}>
-                        Neste uke
+                        {isNorwegian ? 'Neste uke' : 'Next week'}
                     </Button>
                 </Flex>
             </Flex>
@@ -84,18 +88,18 @@ const EventCalendar = ({ happenings }: Props) => {
             <HStack alignItems="center" gap={5}>
                 <Flex alignItems="inherit">
                     <CircleIcon color={bedpresColor} />
-                    Bedpres
+                    {isNorwegian ? 'Bedpres' : 'Compres'}
                 </Flex>
                 <Flex alignItems="inherit">
                     <CircleIcon color={otherColor} />
-                    Annet
+                    {isNorwegian ? 'Annet' : 'Other'}
                 </Flex>
             </HStack>
 
             <SimpleGrid as={Section} padding="1rem" columns={daysAtaTime} gridGap="1rem">
                 {calendarDays.map((today) => {
                     const formatDate = (date: Date): string => {
-                        return date.toLocaleDateString('nb-NO', {
+                        return date.toLocaleDateString(isNorwegian ? 'nb-NO' : 'en-US', {
                             weekday: 'long',
                             month: 'short',
                             day: 'numeric',
@@ -108,12 +112,14 @@ const EventCalendar = ({ happenings }: Props) => {
                                 fontWeight="light"
                                 fontSize="lg"
                                 borderRadius="0.25rem"
-                                bg={datesAreOnSameDay(today.date, new Date()) ? 'gray.700' : 'transparent'}
+                                bg={datesAreOnSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
                                 px="3"
                                 py="1"
                             >
                                 {datesAreOnSameDay(today.date, new Date())
-                                    ? 'Idag'
+                                    ? isNorwegian
+                                        ? 'Idag'
+                                        : 'Today'
                                     : capitalize(formatDate(today.date))}
                             </Text>
                             <Divider />
@@ -127,7 +133,7 @@ const EventCalendar = ({ happenings }: Props) => {
                     <GridItem colSpan={daysAtaTime}>
                         <Center>
                             <Text fontSize="4xl" fontWeight="extrabold" py="5">
-                                Ingen arrangementer denne uken
+                                {isNorwegian ? 'Ingen arrangementer denne uken' : 'No events this week'}
                             </Text>
                         </Center>
                     </GridItem>
