@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
-import type { HappeningType } from '@api/happening';
+import type { Happening } from '@api/happening';
 
 const authorColors: { [group: string]: string } = {
     strikkeklubben: '#e67e22',
@@ -37,23 +37,18 @@ const getAuthorColor = (author: string) => {
 };
 
 interface Props {
-    type: HappeningType;
-    slug: string;
-    location: string;
-    title: string;
-    author: string;
-    body: string;
+    happening: Happening;
 }
 
-const HappeningCalendarBox = ({ type, title, slug, location, body, author }: Props) => {
+const HappeningCalendarBox = ({ happening }: Props) => {
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
     return (
-        <NextLink href={`/event/${slug}`} passHref>
+        <NextLink href={`/event/${happening.slug}`} passHref>
             <a>
                 <LinkBox
-                    bg={type === 'BEDPRES' ? bedpresColor : otherColor}
+                    bg={happening.happeningType === 'BEDPRES' ? bedpresColor : otherColor}
                     p="2"
                     borderRadius="0.25rem"
                     _hover={{ cursor: 'pointer' }}
@@ -66,31 +61,31 @@ const HappeningCalendarBox = ({ type, title, slug, location, body, author }: Pro
                                 px="1"
                                 color="black"
                                 borderLeft="3px solid"
-                                borderColor={getAuthorColor(author)}
+                                borderColor={getAuthorColor(happening.author)}
                             >
-                                {title}
+                                {happening.title}
                             </Text>
                         </PopoverTrigger>
                         <PopoverContent>
                             <PopoverArrow />
                             <PopoverHeader>
-                                {type === 'BEDPRES' ? (
+                                {happening.happeningType === 'BEDPRES' ? (
                                     <Text as="em" fontWeight="bold" fontSize="sm">
                                         Bedpres
                                     </Text>
                                 ) : (
                                     ''
                                 )}
-                                <Text fontWeight="extrabold">{title}</Text>
+                                <Text fontWeight="extrabold">{happening.title}</Text>
                             </PopoverHeader>
                             <PopoverBody fontSize="lg">
-                                <Text>@ {location}</Text>
+                                <Text>@ {happening.location}</Text>
                                 <Divider />
                                 <Text noOfLines={5}>
-                                    <Markdown>{body}</Markdown>
+                                    <Markdown>{happening.body.no}</Markdown>
                                 </Text>
                                 <Text as="em" fontSize="sm">
-                                    {author}
+                                    {happening.author}
                                 </Text>
                             </PopoverBody>
                         </PopoverContent>
