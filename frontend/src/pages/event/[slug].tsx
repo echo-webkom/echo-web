@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { UserWithName } from '@api/user';
@@ -110,7 +110,10 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             (differenceInHours(regDate, date) > 23 ? (
                                                 <Center>
                                                     <Text fontSize="2xl">
-                                                        Åpner {format(regDate, 'dd. MMM, HH:mm', { locale: nb })}
+                                                        Åpner{' '}
+                                                        {format(regDate, 'dd. MMM, HH:mm', {
+                                                            locale: isNorwegian ? nb : enUS,
+                                                        })}
                                                     </Text>
                                                 </Center>
                                             ) : (
@@ -128,12 +131,17 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                         user={user}
                                                     />
                                                     {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
-                                                        locale: nb,
-                                                    }) !== format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
+                                                        locale: isNorwegian ? nb : enUS,
+                                                    }) !==
+                                                        format(regDeadline, 'dd. MMM, HH:mm', {
+                                                            locale: isNorwegian ? nb : enUS,
+                                                        }) && (
                                                         <Center>
                                                             <Text fontSize="md">
-                                                                Stenger{' '}
-                                                                {format(regDeadline, 'dd. MMM, HH:mm', { locale: nb })}
+                                                                {isNorwegian ? 'Stenger' : 'Closes'}{' '}
+                                                                {format(regDeadline, 'dd. MMM, HH:mm', {
+                                                                    locale: isNorwegian ? nb : enUS,
+                                                                })}
                                                             </Text>
                                                         </Center>
                                                     )}
@@ -141,7 +149,9 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             )}
                                         {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
                                             <Center my="3" data-testid="bedpres-has-been">
-                                                <Text>Påmeldingen er stengt.</Text>
+                                                <Text>
+                                                    {isNorwegian ? 'Påmeldingen er stengt' : 'Registration is closed'}
+                                                </Text>
                                             </Center>
                                         )}
                                     </>

@@ -1,7 +1,8 @@
 import type { ParsedUrlQuery } from 'querystring';
+import { useContext } from 'react';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Spinner, VStack } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
 import type { GetStaticPaths, GetStaticProps } from 'next';
@@ -20,6 +21,7 @@ import MapMarkdownChakra from '@utils/markdown';
 import IconText from '@components/icon-text';
 import { translateJobType } from '@components/job-advert-preview';
 import ButtonLink from '@components/button-link';
+import LanguageContext from 'language-context';
 
 interface Props {
     jobAdvert: JobAdvert | null;
@@ -27,6 +29,7 @@ interface Props {
 
 const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
     const router = useRouter();
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <>
@@ -58,7 +61,7 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                                 <IconText
                                     icon={RiGalleryUploadLine}
                                     text={`Publisert: ${format(new Date(jobAdvert._createdAt), 'dd. MMM yyyy', {
-                                        locale: nb,
+                                        locale: isNorwegian ? nb : enUS,
                                     })}`}
                                 />
                                 <IconText icon={BiCategory} text={translateJobType(jobAdvert.jobType)} />
@@ -76,7 +79,7 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                                 <IconText
                                     icon={RiTimeLine}
                                     text={`Søknadsfrist: ${format(new Date(jobAdvert.deadline), 'dd. MMM yyyy', {
-                                        locale: nb,
+                                        locale: isNorwegian ? nb : enUS,
                                     })}`}
                                 />
                                 <Divider />

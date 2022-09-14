@@ -1,10 +1,12 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isPast } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
+import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
+import LanguageContext from 'language-context';
 
 interface Props {
     event: Happening;
@@ -13,6 +15,7 @@ interface Props {
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
     const router = useRouter();
+    const isNorwegian = useContext(LanguageContext);
     const isMainPage = router.pathname === '/';
 
     const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
@@ -26,7 +29,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 <Text ml="1" fontWeight="bold">
-                    {format(new Date(event.date), 'dd. MMM', { locale: nb })}
+                    {format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })}
                 </Text>
             </Flex>
 
@@ -35,14 +38,20 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
                             {totalRegWithoutWaitList >= totalSpots
-                                ? `Fullt`
-                                : `${totalRegWithoutWaitList} av ${totalSpots === 0 ? '∞' : totalSpots}`}
+                                ? isNorwegian
+                                    ? `Fullt`
+                                    : `Full`
+                                : `${totalRegWithoutWaitList} ${isNorwegian ? 'av' : 'of'} ${
+                                      totalSpots === 0 ? '∞' : totalSpots
+                                  }`}
                         </Text>
                     ) : (
                         <Text ml="1" fontSize="1rem">
-                            Påmelding{' '}
+                            {isNorwegian ? 'Påmelding' : 'Registration'}{' '}
                             <span style={{ whiteSpace: 'nowrap' }}>
-                                {format(new Date(event.registrationDate), 'dd. MMM yyyy', { locale: nb })}
+                                {format(new Date(event.registrationDate), 'dd. MMM yyyy', {
+                                    locale: isNorwegian ? nb : enUS,
+                                })}
                             </span>
                         </Text>
                     )}
