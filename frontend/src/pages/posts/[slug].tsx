@@ -2,7 +2,7 @@ import type { ParsedUrlQuery } from 'querystring';
 import { useContext } from 'react';
 import { Box, Center, Divider, Flex, Heading, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -57,7 +57,9 @@ const PostPage = ({ post }: Props): JSX.Element => {
                                 <Heading size="m">@{post.author}</Heading>
                                 <IconText
                                     icon={BiCalendar}
-                                    text={format(new Date(post._createdAt), 'dd. MMM yyyy', { locale: nb })}
+                                    text={format(new Date(post._createdAt), 'dd. MMM yyyy', {
+                                        locale: isNorwegian ? nb : enUS,
+                                    })}
                                 />
                             </HStack>
 
