@@ -132,7 +132,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                     }) !== format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
                                                         <Center>
                                                             <Text fontSize="md">
-                                                                Stenger{' '}
+                                                                {isNorwegian ? 'Stenger' : 'Closes'}{' '}
                                                                 {format(regDeadline, 'dd. MMM, HH:mm', { locale: nb })}
                                                             </Text>
                                                         </Center>
@@ -141,7 +141,9 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             )}
                                         {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
                                             <Center my="3" data-testid="bedpres-has-been">
-                                                <Text>Påmeldingen er stengt.</Text>
+                                                <Text>
+                                                    ${isNorwegian ? 'Påmeldingen er stengt.' : 'Registration is closed'}
+                                                </Text>
                                             </Center>
                                         )}
                                     </>
