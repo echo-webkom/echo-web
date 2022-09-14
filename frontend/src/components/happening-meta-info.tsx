@@ -1,5 +1,6 @@
 import { VStack, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useContext } from 'react';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
@@ -8,6 +9,7 @@ import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
 import CalendarPopup from '@components/calendar-popup';
+import LanguageContext from 'language-context';
 
 interface Props {
     date: Date;
@@ -36,6 +38,7 @@ const HappeningMetaInfo = ({
     spotRangeCounts,
     spotRangesFromCms,
 }: Props): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
     // This means spots from CMS will be displayed if backend does not respond.
@@ -80,13 +83,15 @@ const HappeningMetaInfo = ({
                             <IconText
                                 key={`mdeventseat1-${sr.spots}`}
                                 icon={MdEventSeat}
-                                text={`${spotsText(sr.spots)} plasser`.concat(
+                                text={`${spotsText(sr.spots)} ${isNorwegian ? 'plasser' : 'spots'}`.concat(
                                     dontShowDegreeYear
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
-                                                  ? `${sr.minDegreeYear}. trinn`
-                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                                  ? `${sr.minDegreeYear}. ${isNorwegian ? 'trinn' : 'year'}`
+                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. ${
+                                                        isNorwegian ? 'trinn' : 'year'
+                                                    }`,
                                           ),
                                 )}
                             />
@@ -97,15 +102,19 @@ const HappeningMetaInfo = ({
                                 key={`mdeventseat2-${sr.spots}`}
                                 icon={MdEventSeat}
                                 text={(sr.waitListCount > 0 || sr.regCount === sr.spots
-                                    ? 'Fullt'
-                                    : `${sr.regCount}/${spotsText(sr.spots)} påmeldt`
+                                    ? isNorwegian
+                                        ? 'Fullt'
+                                        : 'Full'
+                                    : `${sr.regCount}/${spotsText(sr.spots)} ${isNorwegian ? 'påmeldt' : 'registered'}`
                                 ).concat(
                                     dontShowDegreeYear
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
-                                                  ? `${sr.minDegreeYear}. trinn`
-                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. trinn`,
+                                                  ? `${sr.minDegreeYear}. ${isNorwegian ? 'trinn' : 'year'}`
+                                                  : `${sr.minDegreeYear}. - ${sr.maxDegreeYear}. ${
+                                                        isNorwegian ? 'trinn' : 'year'
+                                                    }`,
                                           ),
                                 )}
                             />
@@ -114,7 +123,12 @@ const HappeningMetaInfo = ({
                     </Flex>
                 );
             })}
-            {combinedWaitList > 0 && <IconText icon={IoMdListBox} text={`${combinedWaitList} på venteliste`} />}
+            {combinedWaitList > 0 && (
+                <IconText
+                    icon={IoMdListBox}
+                    text={`${combinedWaitList} ${isNorwegian ? 'på venteliste' : 'in waiting list'}`}
+                />
+            )}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
@@ -125,16 +139,16 @@ const HappeningMetaInfo = ({
             {contactEmail && (
                 <IconText
                     icon={MdLogout}
-                    text="Avmelding"
+                    text={isNorwegian ? 'Avmelding' : 'Unregister'}
                     link={`mailto:${contactEmail}?subject=Avmelding '${title}'`}
                 />
             )}
             {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
                 <IconText
                     icon={MdLockOutline}
-                    text={`Bare for ${
+                    text={`${isNorwegian ? 'Bare for' : 'Only for'}: ${
                         minDegreeYear === maxDegreeYear ? `${minDegreeYear}` : `${minDegreeYear}. - ${maxDegreeYear}`
-                    }. trinn`}
+                    }. ${isNorwegian ? 'trinn' : 'year'}`}
                 />
             )}
         </VStack>
