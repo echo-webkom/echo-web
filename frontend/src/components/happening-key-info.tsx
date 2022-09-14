@@ -1,6 +1,6 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isPast } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enGB } from 'date-fns/locale';
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { BiCalendar } from 'react-icons/bi';
@@ -29,7 +29,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 <Text ml="1" fontWeight="bold">
-                    {format(new Date(event.date), 'dd. MMM', { locale: nb })}
+                    {format(new Date(event.date), 'dd. MMM', isNorwegian ? { locale: nb } : { locale: enGB })}
                 </Text>
             </Flex>
 
@@ -49,7 +49,11 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                         <Text ml="1" fontSize="1rem">
                             {isNorwegian ? 'Påmelding' : 'Registration'}{' '}
                             <span style={{ whiteSpace: 'nowrap' }}>
-                                {format(new Date(event.registrationDate), 'dd. MMM yyyy', { locale: nb })}
+                                {format(
+                                    new Date(event.registrationDate),
+                                    'dd. MMM yyyy',
+                                    isNorwegian ? { locale: nb } : { locale: enGB },
+                                )}
                             </span>
                         </Text>
                     )}

@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
-import { nb } from 'date-fns/locale';
+import { nb, enGB } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { UserWithName } from '@api/user';
@@ -110,7 +110,12 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             (differenceInHours(regDate, date) > 23 ? (
                                                 <Center>
                                                     <Text fontSize="2xl">
-                                                        Åpner {format(regDate, 'dd. MMM, HH:mm', { locale: nb })}
+                                                        Åpner{' '}
+                                                        {format(
+                                                            regDate,
+                                                            'dd. MMM, HH:mm',
+                                                            isNorwegian ? { locale: nb } : { locale: enGB },
+                                                        )}
                                                     </Text>
                                                 </Center>
                                             ) : (
@@ -127,13 +132,24 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                         regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                                         user={user}
                                                     />
-                                                    {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
-                                                        locale: nb,
-                                                    }) !== format(regDeadline, 'dd. MMM, HH:mm', { locale: nb }) && (
+                                                    {format(
+                                                        parseISO(happening.date),
+                                                        'dd. MMM, HH:mm',
+                                                        isNorwegian ? { locale: nb } : { locale: enGB },
+                                                    ) !==
+                                                        format(
+                                                            regDeadline,
+                                                            'dd. MMM, HH:mm',
+                                                            isNorwegian ? { locale: nb } : { locale: enGB },
+                                                        ) && (
                                                         <Center>
                                                             <Text fontSize="md">
                                                                 {isNorwegian ? 'Stenger' : 'Closes'}{' '}
-                                                                {format(regDeadline, 'dd. MMM, HH:mm', { locale: nb })}
+                                                                {format(
+                                                                    regDeadline,
+                                                                    'dd. MMM, HH:mm',
+                                                                    isNorwegian ? { locale: nb } : { locale: enGB },
+                                                                )}
                                                             </Text>
                                                         </Center>
                                                     )}
