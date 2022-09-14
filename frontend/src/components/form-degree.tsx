@@ -8,7 +8,6 @@ interface Props extends SelectProps {
     isHeading?: boolean;
     defaultValue?: number | string | ReadonlyArray<string>;
 }
-
 const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studieretning', ...props }: Props) => {
     const { register } = useFormContext();
     const isNorwegian = useContext(LanguageContext);

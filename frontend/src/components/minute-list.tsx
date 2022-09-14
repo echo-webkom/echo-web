@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import { Flex, Heading, Icon, Link, List, ListItem, Text, useColorModeValue } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
 import NextLink from 'next/link';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import type { Minute } from '@api/minute';
+import LanguageContext from 'language-context';
 
 interface Props {
     minutes: Array<Minute>;
@@ -11,6 +13,7 @@ interface Props {
 
 const MinuteList = ({ minutes }: Props): JSX.Element => {
     const color = useColorModeValue('blue', 'blue.400');
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <>
@@ -22,7 +25,7 @@ const MinuteList = ({ minutes }: Props): JSX.Element => {
                         <Flex align="center">
                             <NextLink href={minute.document} passHref>
                                 <Link href={minute.document} color={color} isExternal mr=".5em">
-                                    {format(new Date(minute.date), 'dd. MMM yyyy', { locale: nb })}
+                                    {format(new Date(minute.date), 'dd. MMM yyyy', { locale: isNorwegian ? nb : enUS })}
                                 </Link>
                             </NextLink>
                             <Icon as={FaExternalLinkAlt} />
