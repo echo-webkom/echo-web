@@ -86,7 +86,7 @@ const FeedbackButton = () => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="5">
-                    <ModalHeader>Send inn tilbakemelding</ModalHeader>
+                    <ModalHeader>{isNorwegian ? 'Send inn tilbakemelding' : 'Submit feedback'}</ModalHeader>
                     <ModalCloseButton />
                     {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                     <form onSubmit={handleSubmit(submitForm)}>
