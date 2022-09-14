@@ -1,16 +1,21 @@
+import { useContext } from 'react';
 import type { SelectProps } from '@chakra-ui/react';
 import { Heading, FormControl, FormLabel, Select } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
+import LanguageContext from 'language-context';
 
 interface Props extends SelectProps {
     isHeading?: boolean;
     defaultValue?: number | string | ReadonlyArray<string>;
 }
-
 const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studieretning', ...props }: Props) => {
     const { register } = useFormContext();
-    const headingText = 'Studieretning';
+    const isNorwegian = useContext(LanguageContext);
+    const headingText = isNorwegian ? 'Studieretning' : 'Field of study';
 
+    if (placeholder === 'Velg studieretning') {
+        placeholder = isNorwegian ? 'Velg studieretning' : 'Choose your field of study';
+    }
     return (
         <FormControl isRequired>
             <FormLabel>

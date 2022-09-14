@@ -1,12 +1,15 @@
+import { useContext } from 'react';
 import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import LogoAccesory from '@components/logo-accesory';
+import LanguageContext from 'language-context';
 
 const randomHeaderMessage = () => {
     const now = new Date();
+    const isNorwegian = useContext(LanguageContext);
 
     const stdMessages = () => {
         const baseMessages = [
@@ -29,7 +32,7 @@ const randomHeaderMessage = () => {
         if (getMonth(now) === 11) return [...baseMessages, 'Ho, ho, ho!'];
 
         // Week-based messages
-        const currentWeek = getWeek(now, { locale: nb });
+        const currentWeek = getWeek(now, { locale: isNorwegian ? nb : enUS });
         if (currentWeek === 34 || currentWeek === 35)
             return [...baseMessages, 'Velkommen (tilbake)!', 'New semester, new me?'];
 

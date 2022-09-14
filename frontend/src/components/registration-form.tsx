@@ -19,7 +19,7 @@ import {
     VStack,
     Wrap,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import NextLink from 'next/link';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -32,6 +32,7 @@ import FormQuestion from '@components/form-question';
 import FormDegree from '@components/form-degree';
 import FormDegreeYear from '@components/form-degree-year';
 import fullNameToSplitName from '@utils/full-name-to-split-name';
+import LanguageContext from 'language-context';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -83,6 +84,7 @@ interface Props {
 
 const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const isNorwegian = useContext(LanguageContext);
     const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
@@ -129,7 +131,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     return (
         <Box data-testid="bedpres-form">
             <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
-                Påmelding
+                {isNorwegian ? 'Påmelding' : 'Register'}
             </Button>
 
             <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
@@ -138,12 +140,12 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                     <FormProvider {...methods}>
                         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                         <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
-                            <ModalHeader>Påmelding</ModalHeader>
+                            <ModalHeader>{isNorwegian ? 'Påmelding' : 'Registration'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody pb="8px">
                                 <VStack spacing={4}>
                                     <FormControl id="email" isRequired>
-                                        <FormLabel>E-post</FormLabel>
+                                        <FormLabel>{isNorwegian ? 'E-post' : 'Email'}</FormLabel>
                                         <Input
                                             type="email"
                                             defaultValue={user?.alternateEmail ?? user?.email}
@@ -156,11 +158,11 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                         />
                                     </FormControl>
                                     <FormControl id="firstName" isRequired>
-                                        <FormLabel>Fornavn</FormLabel>
+                                        <FormLabel>{isNorwegian ? 'Fornavn' : 'First name'}</FormLabel>
                                         <Input defaultValue={firstName} {...register('firstName')} />
                                     </FormControl>
                                     <FormControl id="lastName" isRequired>
-                                        <FormLabel>Etternavn</FormLabel>
+                                        <FormLabel>{isNorwegian ? 'Etternavn' : 'Last name'}</FormLabel>
                                         <Input defaultValue={lastName} {...register('lastName')} />
                                     </FormControl>
                                     <FormDegree defaultValue={user?.degree?.toString()} />
@@ -172,14 +174,20 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                     })}
                                     <FormTerm id="terms1">
                                         <Text ml="0.5rem" fontWeight="bold">
-                                            Jeg bekrefter at jeg har fylt inn riktig informasjon.
+                                            {isNorwegian
+                                                ? 'Jeg bekrefter at jeg har fylt inn riktig informasjon.'
+                                                : 'I confirm that I have filled in the correct information.'}
                                         </Text>
                                     </FormTerm>
                                     <FormTerm id="terms2">
                                         <Text ml="0.5rem" fontWeight="bold">
-                                            {`Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
+                                            {isNorwegian
+                                                ? `Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
                                                 utestengt fra fremtidige 
-                                                ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`}
+                                                ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`
+                                                : `I am aware that if I do not show up I risk being 
+                                                banned from future  
+                                                ${type === 'BEDPRES' ? 'company presentasjoner' : 'events'}.`}
                                         </Text>
                                     </FormTerm>
                                     <FormTerm id="terms3">
@@ -187,12 +195,16 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                             {type === 'BEDPRES' ? (
                                                 <Wrap spacing={0}>
                                                     <Text ml="0.5rem" fontWeight="bold">
-                                                        Jeg har lest gjennom og forstått
+                                                        {isNorwegian
+                                                            ? 'Jeg har lest gjennom og forstått'
+                                                            : 'I have read through and understood'}
                                                     </Text>
                                                     <NextLink href="https://bit.ly/bedkom-faq2" passHref>
                                                         <Link href="https://bit.ly/bedkom-faq2" isExternal>
                                                             <Text color={linkColor} ml="0.5rem" fontWeight="bold">
-                                                                Bedkom sine retningslinjer
+                                                                {isNorwegian
+                                                                    ? 'Bedkom sine retningslinjer'
+                                                                    : "Bedkom's guidelines"}
                                                             </Text>
                                                         </Link>
                                                     </NextLink>
@@ -202,8 +214,10 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                                 </Wrap>
                                             ) : (
                                                 <Text ml="0.5rem" fontWeight="bold">
-                                                    Jeg er klar over at jeg må melde meg av innen 24 timer før
-                                                    arrangementet, dersom jeg ikke kan møte opp.
+                                                    {isNorwegian
+                                                        ? `Jeg er klar over at jeg må melde meg av innen 24 timer før
+                                                        arrangementet, dersom jeg ikke kan møte opp.`
+                                                        : `I am aware that I must cancel within 24 hours before the event, if I cannot attend`}
                                                 </Text>
                                             )}
                                         </Text>
@@ -212,9 +226,9 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                             </ModalBody>
                             <ModalFooter>
                                 <Button type="submit" mr={3} colorScheme="teal">
-                                    Send inn
+                                    {isNorwegian ? 'Send inn' : 'Send in'}
                                 </Button>
-                                <Button onClick={onClose}>Lukk</Button>
+                                <Button onClick={onClose}>{isNorwegian ? 'Lukk' : 'Close'}</Button>
                             </ModalFooter>
                         </form>
                     </FormProvider>
