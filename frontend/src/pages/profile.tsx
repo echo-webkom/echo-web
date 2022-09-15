@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { Spinner, Center, Text, Button, useColorModeValue, Link, Flex, Spacer, Heading } from '@chakra-ui/react';
 import { IoMdHome } from 'react-icons/io';
@@ -8,6 +8,7 @@ import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import Section from '@components/section';
 import ProfileInfo from '@components/profile-info';
 import SEO from '@components/seo';
+import LanguageContext from 'language-context';
 
 const ProfilePage = (): JSX.Element => {
     const [user, setUser] = useState<UserWithName | null>();
@@ -18,6 +19,8 @@ const ProfilePage = (): JSX.Element => {
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
+
+    const isNorwegian = useContext(LanguageContext);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -47,10 +50,12 @@ const ProfilePage = (): JSX.Element => {
                             {error && (
                                 <Flex flexDirection="column" maxW="400px" my="20" gap="5">
                                     <Heading fontWeight="bold" mx="auto">
-                                        Det har skjedd en feil
+                                        {isNorwegian ? 'Det har skjedd en feil' : 'An error has occurred'}
                                     </Heading>
                                     <Text textAlign="center">
-                                        Prøv å logg ut og så inn igjen, eller ta kontakt med Webkom.
+                                        {isNorwegian
+                                            ? 'Prøv å logg ut og så inn igjen, eller ta kontakt med Webkom.'
+                                            : 'Try logging out and then logging in again, or contact Webkom.'}
                                     </Text>
                                     <Button onClick={() => void signOut()}>Logg ut</Button>
                                 </Flex>
@@ -58,10 +63,12 @@ const ProfilePage = (): JSX.Element => {
                             {loading && (
                                 <Flex flexDirection="column" maxW="400px" my="20" gap="5">
                                     <Heading fontWeight="bold" mx="auto">
-                                        Laster inn brukeren din...
+                                        {isNorwegian ? 'Laster inn brukeren din...' : 'Loading your account...'}
                                     </Heading>
                                     <Spinner size="xl" mx="auto" />
-                                    <Button onClick={() => void signOut()}>Logg ut</Button>
+                                    <Button onClick={() => void signOut()}>
+                                        {isNorwegian ? 'Logg ut' : 'Log out'}
+                                    </Button>
                                 </Flex>
                             )}
                             {user && <ProfileInfo user={user} />}
@@ -79,7 +86,7 @@ const ProfilePage = (): JSX.Element => {
                     <Section position="relative" height="300px" width="500px" alignContent="center">
                         <Flex direction="column" height="100%" justifyContent="center">
                             <Text align="center" fontSize="2xl" fontWeight="extrabold">
-                                Du er ikke logget inn
+                                {isNorwegian ? 'Du er ikke logget inn' : 'You are not logged in'}
                             </Text>
                             <Spacer />
                             <Button
@@ -93,11 +100,11 @@ const ProfilePage = (): JSX.Element => {
                                 borderRadius="0.5rem"
                                 onClick={() => void signIn('feide')}
                             >
-                                Logg inn med feide
+                                {isNorwegian ? 'Logg inn med feide' : 'Log in with feide'}
                             </Button>
                             <Spacer />
                             <Link href="/" alignItems="center" justifyContent="center" display="flex">
-                                <IoMdHome /> Hovedside
+                                <IoMdHome /> {isNorwegian ? 'Hovedside' : 'Homepage'}
                             </Link>
                         </Flex>
                     </Section>
