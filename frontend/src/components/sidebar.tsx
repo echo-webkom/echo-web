@@ -123,6 +123,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                         { name: 'squash 🎾', href: '/om-echo/studentgrupper/echo-squash' },
                         { name: 'kaffeslabberas ☕', href: '/om-echo/studentgrupper/echo-kaffeslabberas' },
                         { name: 'bryggelaget 🍺', href: '/om-echo/studentgrupper/bryggelaget' },
+                        { name: 'echo Mages 🪷', href: '/om-echo/studentgrupper/echo-mages' },
                     ],
                 },
                 { name: 'Masterinfo', href: '/om-echo/masterinfo' },

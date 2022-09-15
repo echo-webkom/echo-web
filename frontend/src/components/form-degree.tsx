@@ -12,10 +12,8 @@ const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studi
     const { register } = useFormContext();
     const isNorwegian = useContext(LanguageContext);
     const headingText = isNorwegian ? 'Studieretning' : 'Field of study';
-
-    if (placeholder === 'Velg studieretning') {
-        placeholder = isNorwegian ? 'Velg studieretning' : 'Choose your field of study';
-    }
+    placeholder = isNorwegian ? 'Velg studieretning' : 'Choose your field of study';
+    
     return (
         <FormControl isRequired>
             <FormLabel>

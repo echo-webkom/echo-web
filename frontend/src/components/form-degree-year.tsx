@@ -31,7 +31,6 @@ const FormDegreeYear = ({ isHeading = false, defaultValue, ...props }: Props) =>
                 {...register('degreeYear')}
                 {...props}
             >
-                {isNorwegian ? '. trinn' : '. year'}
                 <option value={1}>{isNorwegian ? '1. trinn' : '1. year'}</option>
                 <option value={2}>{isNorwegian ? '2. trinn' : '2. year'}</option>
                 <option value={3}>{isNorwegian ? '3. trinn' : '3. year'}</option>
