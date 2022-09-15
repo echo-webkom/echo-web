@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
 import FormDegree from '@components/form-degree';
 import FormDegreeYear from '@components/form-degree-year';
+import LanguageContext from 'language-context';
 
 interface ProfileState {
     infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error';
@@ -15,6 +16,7 @@ interface ProfileState {
 }
 
 const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     const methods = useForm<ProfileFormValues>();
     const { handleSubmit, register } = methods;
     const [profileState, setProfileState] = useState<ProfileState>({ infoState: 'idle', errorMessage: null });
@@ -43,11 +45,11 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
     return (
         <Box maxW="xl">
             <Heading size="md" my="0.5rem">
-                Navn
+                {isNorwegian ? 'Navn' : 'Name'}
             </Heading>
             <Text data-cy="profile-name">{user.name}</Text>
             <Heading size="md" my="0.5rem">
-                E-post
+                {isNorwegian ? 'E-post' : 'Email'}
             </Heading>
             <Text data-cy="profile-email" my="0.5rem">
                 {user.email}
@@ -58,9 +60,13 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                     <FormControl>
                         <FormLabel>
                             <Heading size="md" display="inline">
-                                Alternativ e-post
+                                {isNorwegian ? 'Alternativ e-post' : 'Alternative email'}
                             </Heading>
-                            <Text>Denne vil bli brukt i stedet for studentmailen din.</Text>
+                            <Text>
+                                {isNorwegian
+                                    ? 'Denne vil bli brukt i stedet for studentmailen din.'
+                                    : 'This will be used instead of your student email.'}
+                            </Text>
                         </FormLabel>
                         <Input
                             data-cy="profile-alt-email"
@@ -94,10 +100,16 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                         mr={3}
                         colorScheme="teal"
                     >
-                        {profileState.infoState === 'saved' ? 'Endringer lagret!' : 'Lagre endringer'}
+                        {profileState.infoState === 'saved'
+                            ? isNorwegian
+                                ? 'Endringer lagret!'
+                                : 'Changes saved!'
+                            : isNorwegian
+                            ? 'Lagre endringer'
+                            : 'Save changes'}
                     </Button>
                     <Button onClick={() => void signOut()} colorScheme="red">
-                        Logg ut
+                        {isNorwegian ? 'Logg ut' : 'Log out'}
                     </Button>
                     {profileState.errorMessage && (
                         <Text fontWeight="bold" color="red" pt="3">
