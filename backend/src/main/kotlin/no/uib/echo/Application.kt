@@ -52,9 +52,10 @@ fun Application.module() {
     DatabaseHandler(dev, testMigration, databaseUrl, mbMaxPoolSize).init()
 
     configureRouting(
-        adminKey,
-        sendGridApiKey,
-        dev,
-        FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs)
+        adminKey = adminKey,
+        featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs),
+        dev = dev,
+        disableJwtAuth = false,
+        sendGridApiKey = sendGridApiKey,
     )
 }

@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import no.uib.echo.plugins.Routing
 import no.uib.echo.plugins.configureRouting
 import no.uib.echo.schema.Answer
+import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningJson
@@ -21,6 +22,9 @@ import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
+import no.uib.echo.schema.StudentGroup
+import no.uib.echo.schema.StudentGroupMembership
+import no.uib.echo.schema.User
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -37,7 +41,8 @@ class HappeningTest : StringSpec({
                 "2030-04-29T20:43:29Z",
                 everyoneSpotRange,
                 type,
-                "test@test.com"
+                "test@test.com",
+                if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "webkom"
             )
         }
     val exampleHappeningSlug: (type: HAPPENING_TYPE) -> HappeningSlugJson =
@@ -46,29 +51,26 @@ class HappeningTest : StringSpec({
     val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)
     val adminKey = "admin-passord"
     val auth = "admin:$adminKey"
-    val featureToggles = FeatureToggles(sendEmailReg = false, sendEmailHap = false, rateLimit = false, verifyRegs = false)
+    val featureToggles = FeatureToggles(sendEmailReg = false, rateLimit = false, verifyRegs = false)
 
-    beforeSpec { DatabaseHandler(dev = true, testMigration = false, URI(System.getenv("DATABASE_URL")), null).init() }
+    val databaseHandler = DatabaseHandler(dev = true, testMigration = false, URI(System.getenv("DATABASE_URL")), null)
+
+    beforeSpec { databaseHandler.init() }
     beforeTest {
         transaction {
             SchemaUtils.drop(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange
+                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
             )
             SchemaUtils.create(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange
+                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
             )
+            databaseHandler.insertTestData()
         }
     }
 
     "When trying to submit a happening, server should respond with OK." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             for (t in be) {
                 val testCall: TestApplicationCall =
@@ -88,7 +90,7 @@ class HappeningTest : StringSpec({
 
     "Whe trying to update happening spots, server should respond with OK." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             for (t in be) {
                 val submitHappeningCall: TestApplicationCall =
@@ -120,7 +122,7 @@ class HappeningTest : StringSpec({
 
     "When trying to update a happening with the exact same values, server should respond with ACCEPTED." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             for (t in be) {
                 val submitBedpresCall: TestApplicationCall =
@@ -152,7 +154,7 @@ class HappeningTest : StringSpec({
 
     "When trying to submit a happening with bad data, server should respond with INTERNAL_SERVER_ERROR." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             val testCall: TestApplicationCall =
                 handleRequest(method = HttpMethod.Put, uri = "/${Routing.happeningRoute}") {
@@ -170,7 +172,7 @@ class HappeningTest : StringSpec({
 
     "When trying to submit or update a happening with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             val wrongAuth = "admin:damn-feil-passord-100"
 
@@ -192,7 +194,7 @@ class HappeningTest : StringSpec({
 
     "When trying to delete a happening with wrong Authorization header, server should respond with UNAUTHORIZED." {
         withTestApplication({
-            configureRouting(adminKey, null, true, featureToggles)
+            configureRouting(adminKey, featureToggles, dev = true, disableJwtAuth = true)
         }) {
             val wrongAuth = "admin:damn-feil-passord-100"
 
