@@ -94,9 +94,10 @@ import java.util.concurrent.TimeUnit
 
 fun Application.configureRouting(
     adminKey: String,
-    sendGridApiKey: String?,
-    dev: Boolean,
-    featureToggles: FeatureToggles
+    featureToggles: FeatureToggles,
+    dev: Boolean = false,
+    disableJwtAuth: Boolean = false,
+    sendGridApiKey: String? = null
 ) {
     val admin = "admin"
 
@@ -129,7 +130,6 @@ fun Application.configureRouting(
                 withIssuer("https://auth.dataporten.no")
             }
             validate { jwtCredential ->
-                println(jwtCredential.payload)
                 JWTPrincipal(jwtCredential.payload)
             }
         }
@@ -148,8 +148,15 @@ fun Application.configureRouting(
             getUser()
             putUser()
             feedback()
-            getRegistrations()
-            deleteRegistration()
+            if (!disableJwtAuth) {
+                getRegistrations()
+                deleteRegistration()
+            }
+        }
+
+        if (disableJwtAuth) {
+            getRegistrations(true)
+            deleteRegistration(true)
         }
 
         postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
@@ -348,13 +355,16 @@ object Routing {
         }
     }
 
-    fun Route.getRegistrations() {
+    fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
         get("/$registrationRoute/{slug}") {
-            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+            var email: String? = null
+            if (!disableJwtAuth) {
+                email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-            if (email == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@get
+                if (email == null) {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    return@get
+                }
             }
 
             val slug = call.parameters["slug"]
@@ -379,9 +389,11 @@ object Routing {
                 return@get
             }
 
-            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
-                call.respond(HttpStatusCode.Forbidden)
-                return@get
+            if (!disableJwtAuth) {
+                if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@get
+                }
             }
 
             val regs = transaction {
@@ -642,13 +654,16 @@ object Routing {
         }
     }
 
-    fun Route.deleteRegistration() {
+    fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
         delete("/$registrationRoute/{slug}/{email}") {
-            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+            var email: String? = null
+            if (!disableJwtAuth) {
+                email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-            if (email == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@delete
+                if (email == null) {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    return@delete
+                }
             }
 
             val slug = call.parameters["slug"]
@@ -680,9 +695,11 @@ object Routing {
                 return@delete
             }
 
-            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
-                call.respond(HttpStatusCode.Forbidden)
-                return@delete
+            if (!disableJwtAuth) {
+                if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
             }
 
             try {
