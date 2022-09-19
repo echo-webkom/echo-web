@@ -3,7 +3,7 @@ import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import { Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
-import firstUpper from '@utils/first-upper';
+import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, UserWithName } from '@api/user';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
@@ -98,7 +98,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                         Studentgrupper
                     </Heading>
                     <Text data-cy="profile-email" my="0.5rem">
-                        {user.memberships.map((m: string) => firstUpper(m)).join(', ')}
+                        {user.memberships.map((m: string) => capitalize(m)).join(', ')}
                     </Text>
                     <HStack mt={4}>
                         <Button
