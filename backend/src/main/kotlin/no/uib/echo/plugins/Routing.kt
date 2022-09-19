@@ -959,13 +959,20 @@ object Routing {
 
         put("/feedback") {
             try {
+                val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+                if (email !in getGroupMembers("webkom")) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
+                }
+
                 val feedback = call.receive<FeedbackResponseJson>()
 
                 transaction {
                     addLogger(StdOutSqlLogger)
 
                     Feedback.update({ Feedback.id eq feedback.id }) {
-                        it[email] = feedback.email
+                        it[Feedback.email] = feedback.email
                         it[name] = feedback.name
                         it[message] = feedback.message
                         it[isRead] = feedback.isRead
