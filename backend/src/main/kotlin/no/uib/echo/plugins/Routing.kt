@@ -91,6 +91,7 @@ import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.TimeUnit
+import kotlinx.serialization.json.Json
 
 fun Application.configureRouting(
     adminKey: String,
@@ -102,7 +103,9 @@ fun Application.configureRouting(
     val admin = "admin"
 
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            ignoreUnknownKeys = true
+        })
     }
 
     install(Authentication) {
