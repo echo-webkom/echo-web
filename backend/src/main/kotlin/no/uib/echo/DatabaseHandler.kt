@@ -76,6 +76,8 @@ class DatabaseHandler(
                         Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
                     )
                 }
+
+                insertTestData()
             } catch (e: Exception) {
                 System.err.println("Error creating tables.")
             }
