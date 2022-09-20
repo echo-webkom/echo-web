@@ -30,6 +30,7 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import no.uib.echo.FeatureToggles
 import no.uib.echo.Response
 import no.uib.echo.isEmailValid
@@ -91,7 +92,6 @@ import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.TimeUnit
-import kotlinx.serialization.json.Json
 
 fun Application.configureRouting(
     adminKey: String,
@@ -103,9 +103,11 @@ fun Application.configureRouting(
     val admin = "admin"
 
     install(ContentNegotiation) {
-        json(Json {
-            ignoreUnknownKeys = true
-        })
+        json(
+            Json {
+                ignoreUnknownKeys = true
+            }
+        )
     }
 
     install(Authentication) {
