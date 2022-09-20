@@ -137,8 +137,7 @@ export default {
         },
         {
             name: 'contactEmail',
-            title: 'Hvilken email skal liste over påmeldte sendes til, og hvem kan man kontakte ved f.eks. avmelding?',
-            description: '⚠️ Liste over påmeldte vil bli sendt til denne mailen! ⚠️',
+            title: 'Hvem kan man kontakte ved f.eks. avmelding?',
             validation: (Rule) =>
                 Rule.custom((contactEmail, context) =>
                     (typeof context.document.registrationDate !== 'undefined' ||
@@ -187,6 +186,22 @@ export default {
                     ],
                 },
             ],
+        },
+        {
+            name: 'studentGroupName',
+            title: 'Navn på studentgruppe',
+            type: 'string',
+            validation: (Rule) => Rule.required(),
+            options: {
+                list: [
+                    { title: 'Hovedstyret', value: 'hovedstyret' },
+                    { title: 'Bedkom', value: 'bedkom' },
+                    { title: 'Webkom', value: 'webkom' },
+                    { title: 'Gnist', value: 'gnist' },
+                    { title: 'Tilde', value: 'tilde' },
+                ],
+                layout: 'dropdown',
+            },
         },
     ],
 };
