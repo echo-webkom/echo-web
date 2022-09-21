@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
-import { isBefore, isFuture } from 'date-fns';
+import { isBefore } from 'date-fns';
 import type { GetStaticProps } from 'next';
 import { useContext } from 'react';
 import NextLink from 'next/link';

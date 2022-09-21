@@ -62,7 +62,7 @@ const HappeningMetaInfo = ({
 
     const dontShowDegreeYear = trueSpotRanges.length === 0;
 
-    const spotsForAll = minDegreeYear == 1 && maxDegreeYear == 5 && trueSpotRanges.length === 1;
+    const spotsForAll = minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1;
 
     const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
 
@@ -85,7 +85,7 @@ const HappeningMetaInfo = ({
                                 key={`mdeventseat1-${sr.spots}`}
                                 icon={MdEventSeat}
                                 text={`${spotsText(sr.spots)} ${isNorwegian ? 'plasser' : 'spots'}`.concat(
-                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length == 1
+                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length === 1
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
@@ -108,7 +108,7 @@ const HappeningMetaInfo = ({
                                         : 'Full'
                                     : `${sr.regCount}/${spotsText(sr.spots)} ${isNorwegian ? 'påmeldt' : 'registered'}`
                                 ).concat(
-                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length == 1
+                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length === 1
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
@@ -130,15 +130,16 @@ const HappeningMetaInfo = ({
                     text={`${combinedWaitList} ${isNorwegian ? 'på venteliste' : 'in waiting list'}`}
                 />
             )}
-            {(minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
+            {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) ? (
                 <IconText
                     icon={MdLockOutline}
                     text={`${isNorwegian ? 'Bare for' : 'Only for'}: ${
                         minDegreeYear === maxDegreeYear ? `${minDegreeYear}` : `${minDegreeYear}. - ${maxDegreeYear}`
                     }. ${isNorwegian ? 'trinn' : 'year'}`}
                 />
-            )) ||
-                (spotsForAll && <IconText icon={MdLockOpen} text={'Åpent for alle!'} />)}
+            ) : (
+                spotsForAll && <IconText icon={MdLockOpen} text={'Åpent for alle!'} />
+            )}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
