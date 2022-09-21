@@ -1,5 +1,5 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
-import { format, isPast } from 'date-fns';
+import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
@@ -29,7 +29,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 <Text ml="1" fontWeight="bold">
-                    {format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })}
+                    {isToday(new Date(event.date)) ? `I dag` : format(new Date(event.date), 'dd. MMM', { locale: nb })}
                 </Text>
             </Flex>
 
@@ -47,12 +47,19 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                         </Text>
                     ) : (
                         <Text ml="1" fontSize="1rem">
-                            {isNorwegian ? 'Påmelding' : 'Registration'}{' '}
-                            <span style={{ whiteSpace: 'nowrap' }}>
-                                {format(new Date(event.registrationDate), 'dd. MMM yyyy', {
-                                    locale: isNorwegian ? nb : enUS,
-                                })}
-                            </span>
+                            {isToday(new Date(event.registrationDate)) ? (
+                                isNorwegian ? (
+                                    `Påmelding i dag`
+                                ) : (
+                                    `Registration today`
+                                )
+                            ) : (
+                                <span style={{ whiteSpace: 'nowrap' }}>
+                                    {format(new Date(event.registrationDate), 'dd. MMM yyyy', {
+                                        locale: isNorwegian ? nb : enUS,
+                                    })}
+                                </span>
+                            )}
                         </Text>
                     )}
                 </Flex>

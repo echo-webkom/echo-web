@@ -162,7 +162,11 @@ export const getStaticProps: GetStaticProps = async () => {
         fs.writeFileSync('./public/rss.xml', rss);
     }
 
-    const events = eventsResponse.filter((event: Happening) => isFuture(new Date(event.date))).slice(0, 8);
+    const events = eventsResponse
+        .filter((event: Happening) => {
+            return isBefore(new Date().setHours(0, 0, 0, 0), new Date(event.date));
+        })
+        .slice(0, 8);
     const [bedpresLimit, eventLimit] = events.length > 3 ? [4, 8] : [2, 4];
 
     const bedpreses = bedpresesResponse
