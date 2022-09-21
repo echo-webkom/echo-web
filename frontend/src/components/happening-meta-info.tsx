@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
-import { MdEventSeat, MdLockOutline, MdLogout } from 'react-icons/md';
+import { MdEventSeat, MdLockOutline, MdLogout, MdLockOpen } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
@@ -60,8 +60,9 @@ const HappeningMetaInfo = ({
     const maxDegreeYear =
         trueSpotRanges.length === 0 ? 5 : Math.max(...trueSpotRanges.map((sr: SpotRange) => sr.maxDegreeYear));
 
-    const dontShowDegreeYear =
-        (minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1) || trueSpotRanges.length === 1;
+    const dontShowDegreeYear = trueSpotRanges.length === 0;
+
+    const spotsForAll = minDegreeYear == 1 && maxDegreeYear == 5 && trueSpotRanges.length === 1;
 
     const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
 
@@ -84,7 +85,7 @@ const HappeningMetaInfo = ({
                                 key={`mdeventseat1-${sr.spots}`}
                                 icon={MdEventSeat}
                                 text={`${spotsText(sr.spots)} ${isNorwegian ? 'plasser' : 'spots'}`.concat(
-                                    dontShowDegreeYear
+                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length == 1
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
@@ -107,7 +108,7 @@ const HappeningMetaInfo = ({
                                         : 'Full'
                                     : `${sr.regCount}/${spotsText(sr.spots)} ${isNorwegian ? 'påmeldt' : 'registered'}`
                                 ).concat(
-                                    dontShowDegreeYear
+                                    dontShowDegreeYear || spotsForAll || trueSpotRanges.length == 1
                                         ? ''
                                         : ' for '.concat(
                                               sameDegreeYear
@@ -129,6 +130,15 @@ const HappeningMetaInfo = ({
                     text={`${combinedWaitList} ${isNorwegian ? 'på venteliste' : 'in waiting list'}`}
                 />
             )}
+            {(minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
+                <IconText
+                    icon={MdLockOutline}
+                    text={`${isNorwegian ? 'Bare for' : 'Only for'}: ${
+                        minDegreeYear === maxDegreeYear ? `${minDegreeYear}` : `${minDegreeYear}. - ${maxDegreeYear}`
+                    }. ${isNorwegian ? 'trinn' : 'year'}`}
+                />
+            )) ||
+                (spotsForAll && <IconText icon={MdLockOpen} text={'Åpent for alle!'} />)}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
             {locationLink ? (
@@ -141,14 +151,6 @@ const HappeningMetaInfo = ({
                     icon={MdLogout}
                     text={isNorwegian ? 'Avmelding' : 'Unregister'}
                     link={`mailto:${contactEmail}?subject=Avmelding '${title}'`}
-                />
-            )}
-            {minDegreeYear && maxDegreeYear && (minDegreeYear > 1 || maxDegreeYear < 5) && (
-                <IconText
-                    icon={MdLockOutline}
-                    text={`${isNorwegian ? 'Bare for' : 'Only for'}: ${
-                        minDegreeYear === maxDegreeYear ? `${minDegreeYear}` : `${minDegreeYear}. - ${maxDegreeYear}`
-                    }. ${isNorwegian ? 'trinn' : 'year'}`}
                 />
             )}
         </VStack>
