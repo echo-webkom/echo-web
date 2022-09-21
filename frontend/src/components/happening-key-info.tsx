@@ -29,7 +29,11 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 <Text ml="1" fontWeight="bold">
-                    {isToday(new Date(event.date)) ? `I dag` : format(new Date(event.date), 'dd. MMM', { locale: nb })}
+                    {isToday(new Date(event.date))
+                        ? isNorwegian
+                            ? `I dag`
+                            : 'Today'
+                        : format(new Date(event.date), 'dd. MMM', { locale: nb })}
                 </Text>
             </Flex>
 
