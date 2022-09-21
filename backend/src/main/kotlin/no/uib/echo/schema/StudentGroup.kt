@@ -24,7 +24,10 @@ object StudentGroupMembership : Table("student_group_membership") {
     override val primaryKey: PrimaryKey = PrimaryKey(studentGroupName, userEmail)
 }
 
-fun getGroupMembers(group: String): List<String> {
+fun getGroupMembers(group: String?): List<String> {
+    if (group == null)
+        return emptyList()
+
     return transaction {
         addLogger(StdOutSqlLogger)
 
