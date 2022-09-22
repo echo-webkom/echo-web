@@ -54,13 +54,16 @@ const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
                             colSpan={[1, null, 2]}
                         >{`Påmeldinger for '${registrations[0].slug}'`}</Heading>
                         <GridItem>
-                            <ButtonLink
-                                linkTo={`/api/registration?slug=${registrations[0].slug}&type=download`}
-                                fontSize="sm"
-                                mt="1.5rem"
+                            <a
+                                href={`/api/registration?slug=${registrations[0].slug}&type=download`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
                             >
-                                Last ned som CSV
-                            </ButtonLink>
+                                <Button mt="1.5rem" fontSize="sm">
+                                    Last ned som CSV
+                                </Button>
+                            </a>
                         </GridItem>
                         <GridItem>
                             <Button

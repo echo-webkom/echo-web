@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
                     );
 
-                    res.send(data);
+                    res.status(200).send(data);
                     return;
                 }
 
