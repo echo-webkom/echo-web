@@ -16,6 +16,19 @@ export default {
             type: 'string',
         },
         {
+            name: 'section',
+            title: 'Seksjon',
+            validation: (Rule) => Rule.required(),
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'For Studenter', value: 'for-students' },
+                    { title: 'For Bedrifter', value: 'for-companies' },
+                    { title: 'Om Oss', value: 'about-us' },
+                ],
+            },
+        },
+        {
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
