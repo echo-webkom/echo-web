@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 const type = req.query.type as string;
 
                 if (type === 'download') {
-                    const { data, status } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
+                    const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
                         headers: {
                             Authorization: `Bearer ${JWT_TOKEN}`,
                         },
