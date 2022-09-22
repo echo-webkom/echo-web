@@ -132,7 +132,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             (differenceInHours(regDate, date) > 23 ? (
                                                 <Center>
                                                     <Text fontSize="2xl">
-                                                        Åpner{' '}
+                                                        {isNorwegian ? `Åpner ` : `Opens `}
                                                         {format(regDate, 'dd. MMM, HH:mm', {
                                                             locale: isNorwegian ? nb : enUS,
                                                         })}

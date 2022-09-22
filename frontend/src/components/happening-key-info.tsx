@@ -33,7 +33,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                         ? isNorwegian
                             ? `I dag`
                             : 'Today'
-                        : format(new Date(event.date), 'dd. MMM', { locale: nb })}
+                        : format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })}
                 </Text>
             </Flex>
 
@@ -59,6 +59,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                                 )
                             ) : (
                                 <span style={{ whiteSpace: 'nowrap' }}>
+                                    {isNorwegian ? `Påmelding ` : ` Registration `}
                                     {format(new Date(event.registrationDate), 'dd. MMM yyyy', {
                                         locale: isNorwegian ? nb : enUS,
                                     })}
