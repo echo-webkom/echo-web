@@ -3,18 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
-import {
-    useTimeout,
-    Center,
-    Divider,
-    Grid,
-    GridItem,
-    VStack,
-    Heading,
-    LinkBox,
-    LinkOverlay,
-    Text,
-} from '@chakra-ui/react';
+import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
@@ -202,30 +191,25 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                             rowSpan={2}
                             minW="0"
                         >
-                            <VStack>
-                                <Section minW="100%">
-                                    <Article
-                                        heading={happening.title}
-                                        /* eslint-disable */
-                                        body={
-                                            isNorwegian
-                                                ? happening.body.no
-                                                : happening.body.en
-                                                ? happening.body.en
-                                                : '(No english version avalible) \n\n' + happening.body.no
-                                        }
-                                        /* eslint-enable */
-                                    />
-                                </Section>
-                                {regsList.length > 0 && (
-                                    <RegistrationsList
-                                        registrations={regsList}
-                                        error={regsListError?.message ?? null}
-                                    />
-                                )}
-                            </VStack>
+                            <Section minW="100%">
+                                <Article
+                                    heading={happening.title}
+                                    /* eslint-disable */
+                                    body={
+                                        isNorwegian
+                                            ? happening.body.no
+                                            : happening.body.en
+                                            ? happening.body.en
+                                            : '(No english version avalible) \n\n' + happening.body.no
+                                    }
+                                    /* eslint-enable */
+                                />
+                            </Section>
                         </GridItem>
                     </Grid>
+                    {regsList.length > 0 && (
+                        <RegistrationsList registrations={regsList} error={regsListError?.message ?? null} />
+                    )}
                 </>
             )}
         </>
