@@ -14,10 +14,10 @@ import {
     Th,
 } from '@chakra-ui/react';
 import ErrorBox from '@components/error-box';
-import ButtonLink from '@components/button-link';
 import type { Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
+import notEmptyOrNull from '@utils/not-empty-or-null';
 
 interface Props {
     registrations: Array<Registration> | null;
@@ -38,7 +38,7 @@ const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
     const justifyHeading = useBreakpointValue({ base: 'center', lg: 'left' });
 
     return (
-        <Section minW="100%" overflowX="scroll">
+        <Section mt="1rem" minW="100%" overflowX="scroll">
             {error && !registrations && <ErrorBox error={error} />}
             {registrations && registrations.length === 0 && !error && (
                 <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>
@@ -53,10 +53,16 @@ const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
                             colSpan={[1, null, 2]}
                         >{`Påmeldinger for '${registrations[0].slug}'`}</Heading>
                         <GridItem>
-                            {/* TODO: Fix correct linkTo here */}
-                            <ButtonLink linkTo="/" mt="1.5rem" fontSize="sm">
-                                Last ned som CSV
-                            </ButtonLink>
+                            <a
+                                href={`/api/registration?slug=${registrations[0].slug}&type=download`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                            >
+                                <Button mt="1.5rem" fontSize="sm">
+                                    Last ned som CSV
+                                </Button>
+                            </a>
                         </GridItem>
                         <GridItem>
                             <Button
@@ -114,6 +120,7 @@ const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
                                 <Th>Fornavn</Th>
                                 <Th>Etternavn</Th>
                                 <Th>Årstrinn</Th>
+                                {notEmptyOrNull(questions) && questions.map((q, index) => <Th key={index}>{q}</Th>)}
                                 <Th>På venteliste?</Th>
                                 <Th>Slett påmelding</Th>
                             </Tr>

@@ -51,7 +51,7 @@ object Happening : Table() {
     val happeningDate: Column<DateTime> = datetime("happening_date")
     val organizerEmail: Column<String> = text("organizer_email")
     val regVerifyToken: Column<String?> = text("reg_verify_token").nullable()
-    val studentGroupName: Column<String> = text("student_group_name") references StudentGroup.name
+    val studentGroupName: Column<String?> = text("student_group_name").references(StudentGroup.name).nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
 }
@@ -117,7 +117,7 @@ fun insertOrUpdateHappening(
         DateTime(happening[Happening.happeningDate]) == DateTime(newHappening.happeningDate) &&
         spotRanges == newHappening.spotRanges &&
         happening[Happening.organizerEmail].lowercase() == newHappening.organizerEmail.lowercase() &&
-        happening[Happening.studentGroupName].lowercase() == newHappening.studentGroupName.lowercase()
+        happening[Happening.studentGroupName]?.lowercase() == newHappening.studentGroupName.lowercase()
     ) {
         return Pair(
             HttpStatusCode.Accepted,

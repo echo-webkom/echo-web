@@ -19,6 +19,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (req.method === 'GET') {
             try {
+                const type = req.query.type as string;
+
+                if (type === 'download') {
+                    const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
+                        headers: {
+                            Authorization: `Bearer ${JWT_TOKEN}`,
+                        },
+                        validateStatus: (statusCode: number) => statusCode < 500,
+                    });
+
+                    res.setHeader('Content-Type', 'text/csv');
+                    res.setHeader(
+                        'Content-Disposition',
+                        `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
+                    );
+
+                    res.status(200).send(data);
+                    return;
+                }
+
                 const { data, status } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
