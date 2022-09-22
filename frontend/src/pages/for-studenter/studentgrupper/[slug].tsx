@@ -10,6 +10,7 @@ import { isErrorMessage } from '@utils/error';
 import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import MemberProfile from '@components/member-profile';
+import Section from '@components/section';
 
 interface Props {
     studentGroup: StudentGroup;
@@ -28,7 +29,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
             {!router.isFallback && (
                 <>
                     <SEO title={studentGroup.name} />
-                    <SidebarWrapper>
+                    <Section>
                         <Heading textAlign="center" size="2xl" pb="2rem">
                             {studentGroup.name}
                         </Heading>
@@ -60,7 +61,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                                 </WrapItem>
                             ))}
                         </Wrap>
-                    </SidebarWrapper>
+                    </Section>
                 </>
             )}
         </>

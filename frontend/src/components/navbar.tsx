@@ -1,6 +1,7 @@
 import {
     Box,
     Center,
+    Text,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -11,6 +12,12 @@ import {
     Heading,
     Icon,
     IconButton,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    PopoverHeader,
+    PopoverBody,
+    GridItem,
 } from '@chakra-ui/react';
 import type { RefObject } from 'react';
 import { useContext } from 'react';
@@ -18,8 +25,9 @@ import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import ColorModeButton from '@components/color-mode-button';
-import NavLink, { NavLinkButton } from '@components/nav-link';
+import { DesktopNavLink } from '@components/nav-link';
 import LanguageContext from 'language-context';
+import { routes } from 'routes';
 
 const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
     const isNorwegian = useContext(LanguageContext);
@@ -40,27 +48,18 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             fontSize={['3xl', null, null, 'lg', '2xl']}
             justify="flex-end"
             alignItems="center"
+            gap="5"
         >
-            <NavLink text={isNorwegian ? 'Hjem' : 'Home'} href="/" data-cy="hjem" />
-            {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
-            <NavLink text={isNorwegian ? 'Om echo' : 'About echo'} href="/om-echo/om-oss" data-cy="om-oss" />
-            {isMobile && (
-                <Flex data-cy="min-profil">
-                    {status === 'authenticated' && (
-                        <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />
-                    )}
-                    {status === 'unauthenticated' && (
-                        <NavLinkButton onClick={() => void onProfileClick()}>
-                            {isNorwegian ? 'Logg inn' : 'Log in'}
-                        </NavLinkButton>
-                    )}
-                </Flex>
-            )}
+            <Flex gap="5">
+                {routes.map((route) => {
+                    return <DesktopNavLink {...route} />;
+                })}
+            </Flex>
+
             <ColorModeButton />
             {!isMobile && (
                 <IconButton
                     data-cy="min-profil"
-                    ml={['.6rem', null, null, null, '2rem']}
                     aria-label={status === 'authenticated' ? 'Gå til profil' : 'Logg inn'}
                     onClick={() => void onProfileClick()}
                     variant="ghost"

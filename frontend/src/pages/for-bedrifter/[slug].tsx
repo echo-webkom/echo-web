@@ -7,7 +7,6 @@ import SEO from '@components/seo';
 import type { StaticInfo } from '@api/static-info';
 import { StaticInfoAPI } from '@api/static-info';
 import { isErrorMessage } from '@utils/error';
-import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import Section from '@components/section';
 
@@ -38,7 +37,7 @@ const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
 };
 
 const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await StaticInfoAPI.getPaths();
+    const paths = await StaticInfoAPI.getPathsBySection('for-companies');
 
     return {
         paths: paths.map((slug: string) => ({

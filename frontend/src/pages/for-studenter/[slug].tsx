@@ -10,6 +10,7 @@ import { isErrorMessage } from '@utils/error';
 import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import Section from '@components/section';
+import { Routes } from 'routes';
 
 interface Props {
     staticInfo: StaticInfo;
@@ -38,7 +39,7 @@ const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
 };
 
 const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await StaticInfoAPI.getPaths();
+    const paths = await StaticInfoAPI.getPathsBySection('for-students');
 
     return {
         paths: paths.map((slug: string) => ({
