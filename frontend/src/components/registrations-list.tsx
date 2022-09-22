@@ -14,7 +14,6 @@ import {
     Th,
 } from '@chakra-ui/react';
 import ErrorBox from '@components/error-box';
-import ButtonLink from '@components/button-link';
 import type { Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
