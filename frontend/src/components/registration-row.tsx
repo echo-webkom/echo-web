@@ -73,7 +73,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 )}
                 <Td>
                     <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} bg="red.400">
-                        Slett påmelding
+                        Slett
                     </Button>
                 </Td>
             </MotionTr>
