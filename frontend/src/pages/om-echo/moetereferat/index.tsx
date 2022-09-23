@@ -1,12 +1,12 @@
 import { Center, Spinner } from '@chakra-ui/react';
 import type { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import SidebarWrapper from '@components/sidebar-wrapper';
 import SEO from '@components/seo';
 import MinuteList from '@components/minute-list';
 import type { Minute } from '@api/minute';
 import { MinuteAPI } from '@api/minute';
 import { isErrorMessage } from '@utils/error';
+import Section from '@components/section';
 
 interface Props {
     minutes: Array<Minute>;
@@ -25,9 +25,9 @@ const MinutesPage = ({ minutes }: Props): JSX.Element => {
             {!router.isFallback && (
                 <>
                     <SEO title="minutes" />
-                    <SidebarWrapper>
+                    <Section>
                         <MinuteList key="minutes" minutes={minutes} />
-                    </SidebarWrapper>
+                    </Section>
                 </>
             )}
         </>

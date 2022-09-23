@@ -1,10 +1,9 @@
-import { Center, Flex, Icon, IconButton, Spacer, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { memo, useRef } from 'react';
-import { IoIosMenu } from 'react-icons/io';
+import { Center, Flex, Spacer, useColorModeValue } from '@chakra-ui/react';
+import { memo } from 'react';
 import { DesktopNavBar, MobileNavBar } from '@components/navbar';
 import HeaderLogo from '@components/header-logo';
 
-const Header = (): JSX.Element => {
+const Header = () => {
     const borderBg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
     return (

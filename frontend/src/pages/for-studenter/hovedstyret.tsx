@@ -27,7 +27,9 @@ const BoardPage = ({ studentGroups }: Props) => {
                 </Text>
 
                 <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
-                    <StudentGroupPreview studentGroups={studentGroups.reverse()} />
+                    {studentGroups.reverse().map((group) => (
+                        <StudentGroupPreview key={group.slug} {...{ group }} />
+                    ))}
                 </SimpleGrid>
             </Section>
         </>

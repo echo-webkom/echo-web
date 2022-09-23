@@ -4,12 +4,10 @@ import {
     Text,
     Drawer,
     DrawerBody,
-    DrawerCloseButton,
     DrawerContent,
     DrawerHeader,
     DrawerOverlay,
     Flex,
-    Heading,
     Icon,
     IconButton,
     Accordion,
@@ -21,7 +19,7 @@ import {
     Spacer,
     LinkBox,
 } from '@chakra-ui/react';
-import { RefObject, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useContext } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
@@ -32,7 +30,6 @@ import LanguageContext from 'language-context';
 import { routes } from 'routes';
 import { IoIosMenu, IoMdClose } from 'react-icons/io';
 import NextLink from 'next/link';
-import LanguageMenu from './language-menu';
 
 export const DesktopNavBar = () => {
     return (

@@ -7,7 +7,6 @@ import SEO from '@components/seo';
 import type { StaticInfo } from '@api/static-info';
 import { StaticInfoAPI } from '@api/static-info';
 import { isErrorMessage } from '@utils/error';
-import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import Section from '@components/section';
 

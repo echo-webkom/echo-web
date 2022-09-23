@@ -4,54 +4,48 @@ import NextLink from 'next/link';
 import { useState } from 'react';
 
 interface Props {
-    studentGroups: Array<StudentGroup>;
+    group: StudentGroup;
 }
 
-const StudentGroupPreview = ({ studentGroups }: Props): JSX.Element => {
+const StudentGroupPreview = ({ group }: Props): JSX.Element => {
+    const [hover, setHover] = useState(false);
+
+    const bg = useColorModeValue('gray.200', 'gray.800');
+
     return (
-        <>
-            {studentGroups.map((group) => {
-                const [hover, setHover] = useState(false);
-
-                const bg = useColorModeValue('gray.200', 'gray.800');
-
-                return (
-                    <NextLink href={'/for-studenter/studentgrupper/' + group.slug}>
-                        <Box
-                            {...{ bg }}
-                            borderRadius="md"
-                            overflow="hidden"
-                            cursor="pointer"
-                            onMouseOver={() => setHover(true)}
-                            onMouseLeave={() => setHover(false)}
-                            bgImage={group.imageUrl ?? ''}
-                            bgPosition="center"
-                            bgSize="cover"
-                            bgRepeat="no-repeat"
-                            h="225px"
-                        >
-                            <Flex
-                                boxSize="full"
-                                backdropFilter="auto"
-                                backdropBlur={hover ? '0' : '5px'}
-                                transition="0.2s ease-in-out"
-                                justify="center"
-                                alignItems="center"
-                            >
-                                <Text
-                                    fontWeight="bold"
-                                    textColor="white"
-                                    transition="0.2s ease-in-out"
-                                    fontSize={hover ? '3xl' : '2xl'}
-                                >
-                                    {group.name}
-                                </Text>
-                            </Flex>
-                        </Box>
-                    </NextLink>
-                );
-            })}
-        </>
+        <NextLink href={'/for-studenter/studentgrupper/' + group.slug}>
+            <Box
+                {...{ bg }}
+                borderRadius="md"
+                overflow="hidden"
+                cursor="pointer"
+                onMouseOver={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                bgImage={group.imageUrl ?? ''}
+                bgPosition="center"
+                bgSize="cover"
+                bgRepeat="no-repeat"
+                h="225px"
+            >
+                <Flex
+                    boxSize="full"
+                    backdropFilter="auto"
+                    backdropBlur={hover ? '0' : '5px'}
+                    transition="0.2s ease-in-out"
+                    justify="center"
+                    alignItems="center"
+                >
+                    <Text
+                        fontWeight="bold"
+                        textColor="white"
+                        transition="0.2s ease-in-out"
+                        fontSize={hover ? '1.65rem' : '1.5rem'}
+                    >
+                        {group.name}
+                    </Text>
+                </Flex>
+            </Box>
+        </NextLink>
     );
 };
 

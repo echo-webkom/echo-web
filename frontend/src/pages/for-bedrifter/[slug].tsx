@@ -63,15 +63,14 @@ const getStaticProps: GetStaticProps = async (context) => {
                 notFound: true,
             };
         }
+
         throw new Error(staticInfo.message);
     }
 
-    const props: Props = {
-        staticInfo,
-    };
-
     return {
-        props,
+        props: {
+            staticInfo,
+        },
     };
 };
 

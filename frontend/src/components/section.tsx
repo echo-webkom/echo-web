@@ -4,7 +4,15 @@ import { Box, useColorModeValue } from '@chakra-ui/react';
 const Section = (props: BoxProps): JSX.Element => {
     const bg = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');
     return (
-        <Box bg={bg} p="6" shadow="lg" borderRadius="0.5rem" boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)" {...props} />
+        <Box
+            bg={bg}
+            p="6"
+            shadow="lg"
+            borderRadius="0.5rem"
+            mb="5"
+            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
+            {...props}
+        />
     );
 };
 
