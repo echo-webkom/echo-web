@@ -19,24 +19,23 @@ import {
     Spacer,
     LinkBox,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
-import { useContext } from 'react';
+import { useRef, useContext } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import ColorModeButton from '@components/color-mode-button';
-import { DesktopNavLink } from '@components/nav-link';
-import LanguageContext from 'language-context';
-import { routes } from 'routes';
 import { IoIosMenu, IoMdClose } from 'react-icons/io';
 import NextLink from 'next/link';
+import ColorModeButton from '@components/color-mode-button';
+import DesktopNavLink from '@components/nav-link';
+import LanguageContext from 'language-context';
+import routes from 'routes';
 
-export const DesktopNavBar = () => {
+const DesktopNavBar = () => {
     return (
         <Box display={['none', null, null, null, 'block']}>
             <Flex direction="row" gap="5" alignItems="center">
                 {routes.map((route) => {
-                    return <DesktopNavLink {...route} />;
+                    return <DesktopNavLink key={route.title.no} {...route} />;
                 })}
                 <ColorModeButton />
                 <ProfileButton />
@@ -45,7 +44,7 @@ export const DesktopNavBar = () => {
     );
 };
 
-export const MobileNavBar = () => {
+const MobileNavBar = () => {
     const { status } = useSession();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -100,7 +99,7 @@ export const MobileNavBar = () => {
                                 <Accordion w="100%" allowMultiple allowToggle>
                                     {routes.map((route) => {
                                         return (
-                                            <AccordionItem>
+                                            <AccordionItem key={route.title.no}>
                                                 <AccordionButton>
                                                     <AccordionIcon mr="1" />
                                                     <Text fontSize="2xl">{route.title[lang]}</Text>
@@ -109,7 +108,11 @@ export const MobileNavBar = () => {
                                                     <Flex direction="column">
                                                         {route.children.map((child) => {
                                                             return (
-                                                                <NextLink href={child.path} passHref>
+                                                                <NextLink
+                                                                    key={child.title.no}
+                                                                    href={child.path}
+                                                                    passHref
+                                                                >
                                                                     <LinkBox cursor="pointer" onClick={onClose} py="1">
                                                                         <Text fontSize="xl">{child.title[lang]}</Text>
                                                                     </LinkBox>
@@ -125,9 +128,9 @@ export const MobileNavBar = () => {
                                         <AccordionButton
                                             onClick={() => {
                                                 if (status === 'authenticated') {
-                                                    router.push('/profile');
+                                                    void router.push('/profile');
                                                 } else {
-                                                    signIn('feide');
+                                                    void signIn('feide');
                                                 }
                                             }}
                                         >
@@ -177,3 +180,14 @@ const ProfileButton = () => {
         />
     );
 };
+
+const NavBar = () => {
+    return (
+        <>
+            <DesktopNavBar />
+            <MobileNavBar />
+        </>
+    );
+};
+
+export default NavBar;

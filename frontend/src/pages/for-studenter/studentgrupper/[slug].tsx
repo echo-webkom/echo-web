@@ -1,6 +1,7 @@
 import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
+import type { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import SEO from '@components/seo';
 import type { StudentGroup, Member } from '@api/student-group';
 import { StudentGroupAPI } from '@api/student-group';
@@ -8,7 +9,6 @@ import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
 import MemberProfile from '@components/member-profile';
 import Section from '@components/section';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 interface Props {
     studentGroup: StudentGroup;
@@ -66,7 +66,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
     );
 };
 
-export const getStaticPaths = async () => {
+const getStaticPaths = async () => {
     const paths = await StudentGroupAPI.getPaths();
 
     if (isErrorMessage(paths)) {
@@ -83,7 +83,7 @@ export const getStaticPaths = async () => {
     };
 };
 
-export const getStaticProps = async ({ params }: { params: Params }) => {
+const getStaticProps = async ({ params }: { params: Params }) => {
     const studentGroup = await StudentGroupAPI.getStudentGroupBySlug(params.slug);
 
     if (isErrorMessage(studentGroup)) {
@@ -105,3 +105,4 @@ export const getStaticProps = async ({ params }: { params: Params }) => {
 };
 
 export default StudentGroupPage;
+export { getStaticPaths, getStaticProps };

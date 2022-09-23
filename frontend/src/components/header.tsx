@@ -1,6 +1,6 @@
 import { Center, Flex, Spacer, useColorModeValue } from '@chakra-ui/react';
 import { memo } from 'react';
-import { DesktopNavBar, MobileNavBar } from '@components/navbar';
+import NavBar from '@components/navbar';
 import HeaderLogo from '@components/header-logo';
 
 const Header = () => {
@@ -11,8 +11,7 @@ const Header = () => {
             <Flex w="90%" h="120px" alignItems="flex-end" maxW="1300" px={['0', '5%', '50']}>
                 <HeaderLogo />
                 <Spacer />
-                <DesktopNavBar />
-                <MobileNavBar />
+                <NavBar />
             </Flex>
         </Center>
     );

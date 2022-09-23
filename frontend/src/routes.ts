@@ -1,27 +1,27 @@
-export interface Title {
+interface Title {
     no: string;
     en: string | null;
 }
 
-export enum Routes {
+enum Routes {
     Home = '/',
     ForStudents = '/for-studenter',
     ForCompanies = '/for-bedrifter',
     AboutEcho = '/om-echo',
 }
 
-export interface Route {
+interface Route {
     title: Title;
     children: Array<ChildRoute>;
 }
 
-export interface ChildRoute {
+interface ChildRoute {
     title: Title;
     path: string;
     children?: Array<ChildRoute>;
 }
 
-export const routes = [
+const routes = [
     {
         title: {
             no: 'For Studenter',
@@ -296,3 +296,6 @@ export const routes = [
         ],
     },
 ];
+
+export default routes;
+export type { Title, Route, ChildRoute, Routes };

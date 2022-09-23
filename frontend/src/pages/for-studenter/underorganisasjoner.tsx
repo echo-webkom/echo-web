@@ -1,5 +1,6 @@
-import { StudentGroup, StudentGroupAPI } from '@api/student-group';
 import { Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+import type { StudentGroup } from '@api/student-group';
+import { StudentGroupAPI } from '@api/student-group';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';

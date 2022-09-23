@@ -1,7 +1,7 @@
-import { StudentGroup } from '@api/student-group';
 import { Box, Text, Flex, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useState } from 'react';
+import type { StudentGroup } from '@api/student-group';
 
 interface Props {
     group: StudentGroup;

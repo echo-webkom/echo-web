@@ -1,9 +1,9 @@
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import LanguageContext from 'language-context';
 import Image from 'next/image';
 import { useContext } from 'react';
 import Section from './section';
+import LanguageContext from 'language-context';
 
 const ECHO_LOGO = '/echo-logo-only.png';
 
@@ -17,9 +17,9 @@ const LoadingScreen = () => {
                     <motion.div
                         initial={{ rotate: '0deg' }}
                         animate={{ rotate: '360deg' }}
-                        transition={{ duration: 3, repeat: Infinity, type: 'spring' }}
+                        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, type: 'spring' }}
                     >
-                        <Image src={ECHO_LOGO} width="250px" height="250px" />
+                        <Image src={ECHO_LOGO} alt="echo logo" width="250px" height="250px" />
                     </motion.div>
                 </Box>
                 <Heading textAlign="center" fontSize="3xl" my="10">

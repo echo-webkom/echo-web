@@ -4,7 +4,7 @@ import { array, record, string } from 'typescript-json-decoder';
 import { slugDecoder } from '@utils/decoders';
 import type { ErrorMessage } from '@utils/error';
 import SanityAPI from '@api/sanity';
-import { Routes } from 'routes';
+import type { Routes } from 'routes';
 
 const staticInfoDecoder = record({
     name: string,
@@ -81,16 +81,16 @@ const StaticInfoAPI = {
             const result = await SanityAPI.fetch(query);
 
             return array(staticInfoDecoder)(result);
-        } catch (e) {
-            console.log(e); // eslint-disable-line
-            if (axios.isAxiosError(e) && !e.response) {
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            if (axios.isAxiosError(error) && !error.response) {
                 return {
                     message: '404',
                 };
             }
 
             return {
-                message: axios.isAxiosError(e) ? e.message : 'Fail @ getStaticInfoBySection',
+                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStaticInfoBySection',
             };
         }
     },
