@@ -38,6 +38,7 @@ const StudentGroupPreview = ({ group }: Props): JSX.Element => {
                     <Text
                         fontWeight="bold"
                         textColor="white"
+                        textShadow="0 0 40px #000"
                         transition="0.2s ease-in-out"
                         fontSize={hover ? '1.65rem' : '1.5rem'}
                     >
