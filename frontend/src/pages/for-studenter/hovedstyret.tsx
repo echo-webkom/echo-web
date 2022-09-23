@@ -1,14 +1,15 @@
 import { StudentGroup, StudentGroupAPI } from '@api/student-group';
-import { Box, Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+import { Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';
+import StudentGroupPreview from '@components/student-group-preview';
 
 interface Props {
-    boards: Array<StudentGroup>;
+    studentGroups: Array<StudentGroup>;
 }
 
-const BoardPage = ({ boards }: Props) => {
+const BoardPage = ({ studentGroups }: Props) => {
     return (
         <>
             <SEO title="Hovedstyret" />
@@ -25,16 +26,8 @@ const BoardPage = ({ boards }: Props) => {
                     delectus officia dignissimos tempore?
                 </Text>
 
-                <Divider mb="1rem" />
-
-                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                    {boards.map((board) => {
-                        return (
-                            <Text textAlign="center" py="10" bg="gray.300" borderRadius="xl">
-                                {board.name}
-                            </Text>
-                        );
-                    })}
+                <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
+                    <StudentGroupPreview studentGroups={studentGroups.reverse()} />
                 </SimpleGrid>
             </Section>
         </>
@@ -42,20 +35,20 @@ const BoardPage = ({ boards }: Props) => {
 };
 
 export const getStaticProps = async () => {
-    const boards = await StudentGroupAPI.getStudentGroupsByType('board');
+    const studentGroups = await StudentGroupAPI.getStudentGroupsByType('board');
 
-    if (isErrorMessage(boards)) {
-        if (boards.message === '404') {
+    if (isErrorMessage(studentGroups)) {
+        if (studentGroups.message === '404') {
             return {
                 notFound: true,
             };
         }
-        throw new Error(boards.message);
+        throw new Error(studentGroups.message);
     }
 
     return {
         props: {
-            boards,
+            studentGroups,
         },
     };
 };

@@ -1,21 +1,21 @@
 import { StudentGroup, StudentGroupAPI } from '@api/student-group';
-import { Box, Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';
+import StudentGroupPreview from '@components/student-group-preview';
 
 interface Props {
-    subOrgs: Array<StudentGroup>;
+    studentGroups: Array<StudentGroup>;
 }
 
-const BoardPage = ({ subOrgs }: Props) => {
+const SubOrgPage = ({ studentGroups }: Props) => {
     return (
         <>
-            <SEO title="Interessegrupper" />
+            <SEO title="Underorganisasjoner" />
             <Section>
                 <Heading textAlign="center" size="2xl" pb="2rem">
-                    Underorgranisasjoner
+                    Underorganisasjoner
                 </Heading>
 
                 <Divider mb="1rem" />
@@ -26,18 +26,8 @@ const BoardPage = ({ subOrgs }: Props) => {
                     delectus officia dignissimos tempore?
                 </Text>
 
-                <Divider mb="1rem" />
-
-                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                    {subOrgs.map((group) => {
-                        return (
-                            <NextLink href={'/for-studenter/studentgrupper/' + group.slug}>
-                                <Text textAlign="center" py="10" bg="gray.300" borderRadius="xl">
-                                    {group.name}
-                                </Text>
-                            </NextLink>
-                        );
-                    })}
+                <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
+                    <StudentGroupPreview {...{ studentGroups }} />
                 </SimpleGrid>
             </Section>
         </>
@@ -45,22 +35,22 @@ const BoardPage = ({ subOrgs }: Props) => {
 };
 
 export const getStaticProps = async () => {
-    const subOrgs = await StudentGroupAPI.getStudentGroupsByType('suborg');
+    const studentGroups = await StudentGroupAPI.getStudentGroupsByType('suborg');
 
-    if (isErrorMessage(subOrgs)) {
-        if (subOrgs.message === '404') {
+    if (isErrorMessage(studentGroups)) {
+        if (studentGroups.message === '404') {
             return {
                 notFound: true,
             };
         }
-        throw new Error(subOrgs.message);
+        throw new Error(studentGroups.message);
     }
 
     return {
         props: {
-            subOrgs,
+            studentGroups,
         },
     };
 };
 
-export default BoardPage;
+export default SubOrgPage;

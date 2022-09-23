@@ -1,16 +1,14 @@
-import type { ParsedUrlQuery } from 'querystring';
 import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
-import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
 import SEO from '@components/seo';
 import type { StudentGroup, Member } from '@api/student-group';
 import { StudentGroupAPI } from '@api/student-group';
 import { isErrorMessage } from '@utils/error';
-import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import MemberProfile from '@components/member-profile';
 import Section from '@components/section';
+import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 interface Props {
     studentGroup: StudentGroup;
@@ -68,7 +66,7 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
     );
 };
 
-const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths = async () => {
     const paths = await StudentGroupAPI.getPaths();
 
     if (isErrorMessage(paths)) {
@@ -85,13 +83,8 @@ const getStaticPaths: GetStaticPaths = async () => {
     };
 };
 
-interface Params extends ParsedUrlQuery {
-    slug: string;
-}
-
-const getStaticProps: GetStaticProps = async (context) => {
-    const { slug } = context.params as Params;
-    const studentGroup = await StudentGroupAPI.getStudentGroupBySlug(slug);
+export const getStaticProps = async ({ params }: { params: Params }) => {
+    const studentGroup = await StudentGroupAPI.getStudentGroupBySlug(params.slug);
 
     if (isErrorMessage(studentGroup)) {
         if (studentGroup.message === '404') {
@@ -112,4 +105,3 @@ const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export default StudentGroupPage;
-export { getStaticPaths, getStaticProps };

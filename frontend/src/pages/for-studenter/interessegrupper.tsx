@@ -1,20 +1,21 @@
 import { StudentGroup, StudentGroupAPI } from '@api/student-group';
-import { Box, Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+import { Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';
+import StudentGroupPreview from '@components/student-group-preview';
 
 interface Props {
-    interestGroups: Array<StudentGroup>;
+    studentGroups: Array<StudentGroup>;
 }
 
-const BoardPage = ({ interestGroups }: Props) => {
+const IntGroupPage = ({ studentGroups }: Props) => {
     return (
         <>
             <SEO title="Interessegrupper" />
             <Section>
                 <Heading textAlign="center" size="2xl" pb="2rem">
-                    Interessegrupepr
+                    Interessegrupper
                 </Heading>
 
                 <Divider mb="1rem" />
@@ -25,16 +26,8 @@ const BoardPage = ({ interestGroups }: Props) => {
                     delectus officia dignissimos tempore?
                 </Text>
 
-                <Divider mb="1rem" />
-
-                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                    {interestGroups.map((group) => {
-                        return (
-                            <Text textAlign="center" py="10" bg="gray.300" borderRadius="xl">
-                                {group.name}
-                            </Text>
-                        );
-                    })}
+                <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
+                    <StudentGroupPreview {...{ studentGroups }} />
                 </SimpleGrid>
             </Section>
         </>
@@ -42,22 +35,22 @@ const BoardPage = ({ interestGroups }: Props) => {
 };
 
 export const getStaticProps = async () => {
-    const interestGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
+    const studentGroups = await StudentGroupAPI.getStudentGroupsByType('intgroup');
 
-    if (isErrorMessage(interestGroups)) {
-        if (interestGroups.message === '404') {
+    if (isErrorMessage(studentGroups)) {
+        if (studentGroups.message === '404') {
             return {
                 notFound: true,
             };
         }
-        throw new Error(interestGroups.message);
+        throw new Error(studentGroups.message);
     }
 
     return {
         props: {
-            interestGroups,
+            studentGroups,
         },
     };
 };
 
-export default BoardPage;
+export default IntGroupPage;

@@ -1,17 +1,18 @@
 import { StudentGroup, StudentGroupAPI } from '@api/student-group';
-import { Box, Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+import { Divider, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import { isErrorMessage } from '@utils/error';
+import StudentGroupPreview from '@components/student-group-preview';
 
 interface Props {
-    subGroup: Array<StudentGroup>;
+    studentGroups: Array<StudentGroup>;
 }
 
-const BoardPage = ({ subGroup }: Props) => {
+const SubGroupPage = ({ studentGroups }: Props) => {
     return (
         <>
-            <SEO title="Interessegrupper" />
+            <SEO title="Undergrupper" />
             <Section>
                 <Heading textAlign="center" size="2xl" pb="2rem">
                     Undergrupper
@@ -25,16 +26,8 @@ const BoardPage = ({ subGroup }: Props) => {
                     delectus officia dignissimos tempore?
                 </Text>
 
-                <Divider mb="1rem" />
-
-                <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                    {subGroup.map((group) => {
-                        return (
-                            <Text textAlign="center" py="10" bg="gray.300" borderRadius="xl">
-                                {group.name}
-                            </Text>
-                        );
-                    })}
+                <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
+                    <StudentGroupPreview {...{ studentGroups }} />
                 </SimpleGrid>
             </Section>
         </>
@@ -42,22 +35,22 @@ const BoardPage = ({ subGroup }: Props) => {
 };
 
 export const getStaticProps = async () => {
-    const subGroup = await StudentGroupAPI.getStudentGroupsByType('subgroup');
+    const studentGroups = await StudentGroupAPI.getStudentGroupsByType('subgroup');
 
-    if (isErrorMessage(subGroup)) {
-        if (subGroup.message === '404') {
+    if (isErrorMessage(studentGroups)) {
+        if (studentGroups.message === '404') {
             return {
                 notFound: true,
             };
         }
-        throw new Error(subGroup.message);
+        throw new Error(studentGroups.message);
     }
 
     return {
         props: {
-            subGroup,
+            studentGroups,
         },
     };
 };
 
-export default BoardPage;
+export default SubGroupPage;
