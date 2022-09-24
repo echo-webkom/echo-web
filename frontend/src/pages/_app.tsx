@@ -1,5 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, type SessionProviderProps } from 'next-auth/react';
 import { getMonth } from 'date-fns';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ import theme from '@styles/theme';
 import Layout from '@components/layout';
 import LanguageContext from 'language-context';
 
-const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element => {
+const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps<SessionProviderProps>): JSX.Element => {
     const router = useRouter();
     const SSR = typeof window === 'undefined'; //Used to disable rendering of animated component SS
     const [isNorwegian, setIsNorwegian] = useState(true);
