@@ -22,6 +22,7 @@ import IconText from '@components/icon-text';
 import { translateJobType } from '@components/job-advert-preview';
 import ButtonLink from '@components/button-link';
 import LanguageContext from 'language-context';
+import { imgUrlFor } from '@api/sanity';
 
 interface Props {
     jobAdvert: JobAdvert | null;
@@ -48,7 +49,12 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                                     <LinkOverlay isExternal>
                                         <Center>
                                             <Image
-                                                src={jobAdvert.logoUrl}
+                                                src={imgUrlFor(jobAdvert.logoUrl)
+                                                    .width(300)
+                                                    .height(300)
+                                                    .fit('crop')
+                                                    .auto('format')
+                                                    .url()}
                                                 alt="Bedriftslogo"
                                                 width={300}
                                                 height={300}
