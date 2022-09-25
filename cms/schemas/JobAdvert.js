@@ -1,3 +1,5 @@
+import slugify from 'slugify';
+
 export default {
     name: 'jobAdvert',
     title: 'Stillingsannonse',
@@ -26,10 +28,11 @@ export default {
         {
             name: 'slug',
             title: 'Slug (link)',
-            validation: (Rule) => Rule.required(),
+            description: 'Unik identifikator for innlegget. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
             type: 'slug',
             options: {
-                source: 'companyName',
+                source: 'title',
+                slugify: (input) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
             },
         },
         {
@@ -81,7 +84,13 @@ export default {
         {
             name: 'degreeYears',
             title: 'Aktuelle årstrinn',
-            validation: (Rule) => Rule.required().unique(),
+            validation: (Rule) => [
+                Rule.custom((degreeYears) =>
+                    degreeYears.every((year) => year >= 1 && year <= 5) ? true : 'Alle årstrinn må være mellom 1 og 5',
+                )
+                    .required()
+                    .unique(),
+            ],
             type: 'array',
             of: [{ type: 'number' }],
         },
@@ -89,10 +98,7 @@ export default {
             name: 'weight',
             title: 'Vekting',
             description: 'Høyere vetkting gir høyere plassering av annonsen.',
-            validation: (Rule) =>
-                Rule.custom((weight) =>
-                    typeof weight === 'undefined' || weight < 0 ? 'Må være et positivt heltall.' : true,
-                ),
+            validation: (Rule) => Rule.required().integer().positive(),
             type: 'number',
         },
     ],
