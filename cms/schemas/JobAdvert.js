@@ -28,7 +28,7 @@ export default {
         {
             name: 'slug',
             title: 'Slug (link)',
-            description: 'Unik identifikator for innlegget. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
+            description: 'Unik identifikator for annonsen. Bruk "Generate"-knappen! Ikke skriv inn på egenhånd!',
             type: 'slug',
             options: {
                 source: 'title',
