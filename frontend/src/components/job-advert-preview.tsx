@@ -10,26 +10,19 @@ import {
     useColorModeValue,
     Wrap,
 } from '@chakra-ui/react';
+import { useContext } from 'react';
 import { format } from 'date-fns';
 import NextLink from 'next/link';
 import type { JobAdvert } from '@api/job-advert';
-
-const translateJobType = (jobType: 'fulltime' | 'parttime' | 'internship' | 'summerjob'): string => {
-    switch (jobType) {
-        case 'fulltime':
-            return 'Fulltid';
-        case 'parttime':
-            return 'Deltid';
-        case 'internship':
-            return 'Internship';
-        case 'summerjob':
-            return 'Sommerjobb';
-    }
-};
+import degreeYearText from '@utils/degree-year-text';
+import translateJobType from '@utils/translate-job-type';
+import LanguageContext from 'language-context';
 
 const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
+
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <LinkBox
@@ -53,7 +46,7 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
                             </Text>
                             <Wrap>
                                 <Tag colorScheme="teal" variant="subtle">
-                                    {translateJobType(jobAdvert.jobType)}
+                                    {translateJobType(jobAdvert.jobType, isNorwegian)}
                                 </Tag>
                                 {jobAdvert.locations.map((location: string, index: number) => (
                                     <Tag colorScheme="teal" variant="solid" key={`${location}-${index}`}>
@@ -61,11 +54,7 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
                                     </Tag>
                                 ))}
                                 <Tag colorScheme="teal" variant="outline">
-                                    {jobAdvert.degreeYears.length === 1
-                                        ? `${String(jobAdvert.degreeYears[0])}. trinn`
-                                        : `${String(jobAdvert.degreeYears.sort().slice(0, -1).join(', '))} og ${String(
-                                              jobAdvert.degreeYears.slice(-1),
-                                          )} . trinn`}
+                                    {degreeYearText(jobAdvert.degreeYears, isNorwegian)}
                                 </Tag>
                                 <Spacer />
                             </Wrap>
@@ -94,5 +83,4 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
     );
 };
 
-export { translateJobType };
 export default JobAdvertPreview;

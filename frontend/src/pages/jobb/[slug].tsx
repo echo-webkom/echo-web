@@ -19,10 +19,11 @@ import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
 import IconText from '@components/icon-text';
-import { translateJobType } from '@components/job-advert-preview';
+import translateJobType from '@utils/translate-job-type';
 import ButtonLink from '@components/button-link';
 import LanguageContext from 'language-context';
 import { imgUrlFor } from '@api/sanity';
+import degreeYearText from '@utils/degree-year-text';
 
 interface Props {
     jobAdvert: JobAdvert | null;
@@ -66,31 +67,33 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                             <VStack alignItems="left" spacing={3}>
                                 <IconText
                                     icon={RiGalleryUploadLine}
-                                    text={`Publisert: ${format(new Date(jobAdvert._createdAt), 'dd. MMM yyyy', {
-                                        locale: isNorwegian ? nb : enUS,
-                                    })}`}
+                                    text={`${isNorwegian ? 'Publisert' : 'Published'}: ${format(
+                                        new Date(jobAdvert._createdAt),
+                                        'dd. MMM yyyy',
+                                        {
+                                            locale: isNorwegian ? nb : enUS,
+                                        },
+                                    )}`}
                                 />
-                                <IconText icon={BiCategory} text={translateJobType(jobAdvert.jobType)} />
+                                <IconText icon={BiCategory} text={translateJobType(jobAdvert.jobType, isNorwegian)} />
                                 <IconText icon={ImLocation} text={jobAdvert.locations.join(' - ')} />
                                 <IconText
                                     icon={FaUniversity}
-                                    text={
-                                        jobAdvert.degreeYears.length === 1
-                                            ? `${String(jobAdvert.degreeYears[0])}. trinn`
-                                            : `${String(
-                                                  jobAdvert.degreeYears.sort().slice(0, -1).join(', '),
-                                              )} og ${String(jobAdvert.degreeYears.slice(-1))} . trinn`
-                                    }
+                                    text={degreeYearText(jobAdvert.degreeYears, isNorwegian)}
                                 />
                                 <IconText
                                     icon={RiTimeLine}
-                                    text={`Søknadsfrist: ${format(new Date(jobAdvert.deadline), 'dd. MMM yyyy', {
-                                        locale: isNorwegian ? nb : enUS,
-                                    })}`}
+                                    text={`${isNorwegian ? 'Søknadsfrist' : 'Deadline'} : ${format(
+                                        new Date(jobAdvert.deadline),
+                                        'dd. MMM yyyy',
+                                        {
+                                            locale: isNorwegian ? nb : enUS,
+                                        },
+                                    )}`}
                                 />
                                 <Divider />
                                 <ButtonLink w="100%" linkTo={jobAdvert.advertLink} isExternal>
-                                    Søk her!
+                                    {isNorwegian ? 'Søk her!' : 'Apply here!'}
                                 </ButtonLink>
                             </VStack>
                         </GridItem>
