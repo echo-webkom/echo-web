@@ -1,4 +1,5 @@
 import sanityClient from '@sanity/client';
+import imageUrlBuilder from '@sanity/image-url';
 
 const SanityAPI = sanityClient({
     projectId: 'pgq2pd26',
@@ -7,4 +8,11 @@ const SanityAPI = sanityClient({
     useCdn: true,
 });
 
+const builder = imageUrlBuilder(SanityAPI);
+
+const imgUrlFor = (source: any) => {
+    return builder.image(source);
+};
+
 export default SanityAPI;
+export { imgUrlFor };

@@ -46,6 +46,9 @@ export default {
             title: 'Logo til bedrift',
             validation: (Rule) => Rule.required(),
             type: 'image',
+            options: {
+                hotspot: true,
+            },
         },
         {
             name: 'deadline',
