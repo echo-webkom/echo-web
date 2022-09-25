@@ -125,7 +125,7 @@ const IndexPage = ({
                                 }
                                 entries={jobs}
                                 altText={isNorwegian ? 'Ingen stillingsannonser :(' : 'No job advertisements :('}
-                                linkTo="/job"
+                                linkTo="/jobb"
                                 type="job-advert"
                             />
                         </GridItem>
@@ -184,7 +184,7 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
         props: {
             bedpreses,
-            posts: postsResponse.slice(0, process.env.ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' ? 2 : 3),
+            posts: postsResponse.slice(0, process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' ? 2 : 3),
             events: events.slice(0, eventLimit),
             jobs: jobsResponse,
             banner: bannerResponse ?? null,

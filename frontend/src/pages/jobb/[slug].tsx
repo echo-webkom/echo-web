@@ -128,7 +128,7 @@ interface Params extends ParsedUrlQuery {
 }
 
 const getStaticProps: GetStaticProps = async (context) => {
-    if (process.env.ENABLE_JOB_ADVERTS?.toLowerCase() !== 'true') {
+    if (process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() !== 'true') {
         return {
             notFound: true,
         };

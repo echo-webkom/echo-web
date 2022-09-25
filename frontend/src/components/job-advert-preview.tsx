@@ -44,7 +44,7 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element 
             _hover={{ borderColor: borderColor }}
             data-testid={jobAdvert.slug}
         >
-            <NextLink href={`/job/${jobAdvert.slug}`} passHref>
+            <NextLink href={`/jobb/${jobAdvert.slug}`} passHref>
                 <LinkOverlay>
                     <SimpleGrid columns={2} alignItems="start">
                         <GridItem>

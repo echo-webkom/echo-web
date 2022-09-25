@@ -18,7 +18,7 @@ const JobPage = ({ jobAdverts }: Props) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-    if (process.env.ENABLE_JOB_ADVERTS?.toLowerCase() !== 'true') {
+    if (process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() !== 'true') {
         return {
             notFound: true,
         };
