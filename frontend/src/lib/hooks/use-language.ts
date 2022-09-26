@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const useLanguage = () => {
     const [language, setLanguage] = useState('no');
+    const isNorwegian = language === 'no';
 
     useEffect(() => {
         const lang = localStorage.getItem('language');
@@ -24,7 +25,7 @@ const useLanguage = () => {
         setLanguage('no');
     };
 
-    return { language, toggleLanguage };
+    return { isNorwegian, toggleLanguage };
 };
 
 export default useLanguage;

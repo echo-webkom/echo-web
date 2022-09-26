@@ -12,21 +12,25 @@ enum Routes {
 
 interface Route {
     title: Title;
-    children: Array<ChildRoute>;
+    path: string | null;
+    children: Array<Route> | null;
 }
 
-interface ChildRoute {
-    title: Title;
-    path: string;
-    children?: Array<ChildRoute>;
-}
-
-const routes = [
+const routes: Array<Route> = [
+    {
+        title: {
+            no: 'Hjem',
+            en: 'Home',
+        },
+        path: '/',
+        children: null,
+    },
     {
         title: {
             no: 'For Studenter',
             en: 'For Students',
         },
+        path: null,
         children: [
             {
                 title: {
@@ -41,6 +45,7 @@ const routes = [
                             en: null,
                         },
                         path: '/for-studenter/studentgrupper/2022-2023',
+                        children: null,
                     },
                     {
                         title: {
@@ -48,6 +53,7 @@ const routes = [
                             en: null,
                         },
                         path: '/for-studenter/studentgrupper/2021-2022',
+                        children: null,
                     },
                     {
                         title: {
@@ -55,6 +61,7 @@ const routes = [
                             en: null,
                         },
                         path: '/for-studenter/studentgrupper/2020-2021',
+                        children: null,
                     },
                     {
                         title: {
@@ -62,6 +69,7 @@ const routes = [
                             en: null,
                         },
                         path: '/for-studenter/studentgrupper/2019-2020',
+                        children: null,
                     },
                     {
                         title: {
@@ -69,6 +77,7 @@ const routes = [
                             en: null,
                         },
                         path: '/for-studenter/studentgrupper/2018-2019',
+                        children: null,
                     },
                 ],
             },
@@ -84,40 +93,40 @@ const routes = [
                             no: 'Bedkom 👔',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/bedkom',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'Gnist ✨',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/gnist',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'Makerspace 🛠️',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/makerspace',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'Tilde 🥳',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/tilde',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'Webkom 💻',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/webkom',
+                        children: null,
                     },
                 ],
             },
@@ -133,16 +142,16 @@ const routes = [
                             no: 'programmerbar 🍸',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/programmerbar',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'echo karriere 🤝',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/echo-karriere',
+                        children: null,
                     },
                 ],
             },
@@ -158,24 +167,24 @@ const routes = [
                             no: 'filmklubb 🎬',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/echo-filmklubb',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'buldring 🧗',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/echo-klatring-buldring',
+                        children: null,
                     },
                     {
                         title: {
                             no: 'squash 🎾',
                             en: null,
                         },
-
                         path: '/om-echo/studentgrupper/echo-squash',
+                        children: null,
                     },
                     {
                         title: {
@@ -183,6 +192,7 @@ const routes = [
                             en: null,
                         },
                         path: '/om-echo/studentgrupper/echo-kaffeslabberas',
+                        children: null,
                     },
                     {
                         title: {
@@ -190,6 +200,7 @@ const routes = [
                             en: null,
                         },
                         path: '/om-echo/studentgrupper/bryggelaget',
+                        children: null,
                     },
                     {
                         title: {
@@ -197,6 +208,7 @@ const routes = [
                             en: null,
                         },
                         path: '/om-echo/studentgrupper/echo-mages',
+                        children: null,
                     },
                 ],
             },
@@ -206,6 +218,7 @@ const routes = [
                     en: "Master's Info",
                 },
                 path: '/for-studenter/masterinfo',
+                children: null,
             },
             {
                 title: {
@@ -213,6 +226,7 @@ const routes = [
                     en: 'Financial Support',
                 },
                 path: '/for-studenter/oekonomisk-stoette',
+                children: null,
             },
             {
                 title: {
@@ -220,6 +234,7 @@ const routes = [
                     en: 'Feedback',
                 },
                 path: '/for-studenter/anonyme-tilbakemeldinger',
+                children: null,
             },
             {
                 title: {
@@ -227,6 +242,7 @@ const routes = [
                     en: 'Expenses',
                 },
                 path: '/for-studenter/utlegg',
+                children: null,
             },
         ],
     },
@@ -235,6 +251,7 @@ const routes = [
             no: 'For Bedrifter',
             en: 'For Companies',
         },
+        path: null,
         children: [
             {
                 title: {
@@ -242,6 +259,7 @@ const routes = [
                     en: 'Company Presentation',
                 },
                 path: '/for-bedrifter/bedriftspresentasjon',
+                children: null,
             },
             {
                 title: {
@@ -249,6 +267,7 @@ const routes = [
                     en: 'Job Postings',
                 },
                 path: '/for-bedrifter/stillingsutlysninger',
+                children: null,
             },
         ],
     },
@@ -257,6 +276,7 @@ const routes = [
             no: 'Om echo',
             en: 'About echo',
         },
+        path: null,
         children: [
             {
                 title: {
@@ -264,6 +284,7 @@ const routes = [
                     en: 'Who are we?',
                 },
                 path: '/om-echo/om-oss',
+                children: null,
             },
             {
                 title: {
@@ -271,6 +292,7 @@ const routes = [
                     en: 'The institute council',
                 },
                 path: '/om-echo/instituttraadet',
+                children: null,
             },
             {
                 title: {
@@ -278,6 +300,7 @@ const routes = [
                     en: 'Bylaws',
                 },
                 path: '/om-echo/vedtekter',
+                children: null,
             },
             {
                 title: {
@@ -285,6 +308,7 @@ const routes = [
                     en: 'Minutes',
                 },
                 path: '/om-echo/moetereferat',
+                children: null,
             },
             {
                 title: {
@@ -292,10 +316,11 @@ const routes = [
                     en: 'Bekk',
                 },
                 path: '/om-echo/bekk',
+                children: null,
             },
         ],
     },
 ];
 
 export default routes;
-export type { Title, Route, ChildRoute, Routes };
+export type { Title, Route, Routes };

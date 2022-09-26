@@ -13,10 +13,20 @@ import { useContext } from 'react';
 import LanguageContext from 'language-context';
 import type { Route } from 'routes';
 
-const DesktopNavLink = ({ title, children }: Route) => {
+const DesktopNavLink = ({ title, path, children }: Route) => {
     const isNorwegian = useContext(LanguageContext);
 
     const bg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
+
+    if (!children) {
+        return (
+            <NextLink href={path ?? ''} passHref>
+                <LinkBox cursor="pointer">
+                    <LinkOverlay _hover={{ textDecor: 'underline' }}>{title[isNorwegian ? 'no' : 'en']}</LinkOverlay>
+                </LinkBox>
+            </NextLink>
+        );
+    }
 
     return (
         <Popover trigger="hover">

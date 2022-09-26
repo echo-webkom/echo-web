@@ -21,7 +21,7 @@ import {
     DrawerFooter,
     Button,
 } from '@chakra-ui/react';
-import { useRef, useContext } from 'react';
+import { useRef } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -29,13 +29,12 @@ import { IoIosMenu, IoMdClose } from 'react-icons/io';
 import NextLink from 'next/link';
 import ColorModeButton from '@components/color-mode-button';
 import DesktopNavLink from '@components/nav-link';
-import LanguageContext from 'language-context';
 import routes from 'routes';
 import useLanguage from '@hooks/use-language';
 
 const DesktopNavBar = () => {
     return (
-        <Box display={['none', null, null, null, 'block']}>
+        <Box data-cy="navbar-standard" display={['none', null, null, null, 'block']}>
             <Flex direction="row" gap="5" alignItems="center">
                 {routes.map((route) => {
                     return <DesktopNavLink key={route.title.no} {...route} />;
@@ -50,14 +49,12 @@ const DesktopNavBar = () => {
 const MobileNavBar = () => {
     const { status } = useSession();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { language, toggleLanguage } = useLanguage();
+    const { isNorwegian, toggleLanguage } = useLanguage();
 
     const router = useRouter();
-
-    const isNorwegian = useContext(LanguageContext);
-    const lang = isNorwegian ? 'no' : 'en';
-
     const btnRef = useRef<HTMLButtonElement>(null);
+
+    const lang = isNorwegian ? 'no' : 'en';
 
     return (
         <>
@@ -105,27 +102,46 @@ const MobileNavBar = () => {
                                     {routes.map((route) => {
                                         return (
                                             <AccordionItem key={route.title.no}>
-                                                <AccordionButton>
-                                                    <AccordionIcon mr="1" />
-                                                    <Text fontSize="2xl">{route.title[lang]}</Text>
-                                                </AccordionButton>
-                                                <AccordionPanel>
-                                                    <Flex direction="column">
-                                                        {route.children.map((child) => {
-                                                            return (
-                                                                <NextLink
-                                                                    key={child.title.no}
-                                                                    href={child.path}
-                                                                    passHref
-                                                                >
-                                                                    <LinkBox cursor="pointer" onClick={onClose} py="1">
-                                                                        <Text fontSize="xl">{child.title[lang]}</Text>
-                                                                    </LinkBox>
-                                                                </NextLink>
-                                                            );
-                                                        })}
-                                                    </Flex>
-                                                </AccordionPanel>
+                                                {!route.children ? (
+                                                    <NextLink
+                                                        href={route.path ?? ''}
+                                                        data-cy={route.path === '/' ? 'hjem' : ''}
+                                                    >
+                                                        <AccordionButton onClick={onClose}>
+                                                            <Text fontSize="2xl">{route.title[lang]}</Text>
+                                                        </AccordionButton>
+                                                    </NextLink>
+                                                ) : (
+                                                    <>
+                                                        <AccordionButton>
+                                                            <AccordionIcon mr="1" />
+                                                            <Text fontSize="2xl">{route.title[lang]}</Text>
+                                                        </AccordionButton>
+                                                        <AccordionPanel>
+                                                            <Flex direction="column">
+                                                                {route.children.map((child) => {
+                                                                    return (
+                                                                        <NextLink
+                                                                            key={child.title.no}
+                                                                            href={child.path ?? ''}
+                                                                            passHref
+                                                                        >
+                                                                            <LinkBox
+                                                                                cursor="pointer"
+                                                                                onClick={onClose}
+                                                                                py="1"
+                                                                            >
+                                                                                <Text fontSize="xl">
+                                                                                    {child.title[lang]}
+                                                                                </Text>
+                                                                            </LinkBox>
+                                                                        </NextLink>
+                                                                    );
+                                                                })}
+                                                            </Flex>
+                                                        </AccordionPanel>
+                                                    </>
+                                                )}
                                             </AccordionItem>
                                         );
                                     })}
@@ -155,7 +171,7 @@ const MobileNavBar = () => {
                         </DrawerBody>
                         <DrawerFooter>
                             <Button variant="ghost" fontWeight="medium" fontSize="lg" w="100%" onClick={toggleLanguage}>
-                                {language === 'no' ? 'In English' : 'På norsk'}
+                                {isNorwegian ? 'In English' : 'På norsk'}
                             </Button>
                         </DrawerFooter>
                     </DrawerContent>
