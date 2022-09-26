@@ -26,7 +26,7 @@ describe('MobileNavbar', () => {
         cy.mount(<MobileNavBar />);
 
         cy.get('[data-cy=drawer-button]').should('exist');
-        cy.get('[data-cy=drawer-button]').click();
+        cy.get('[data-cy=drawer-button]').click({ force: true });
 
         routes.map((route) => {
             cy.get(`[data-cy=${route.dataCy}]`).should('exist');
