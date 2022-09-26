@@ -18,6 +18,8 @@ import {
     useDisclosure,
     Spacer,
     LinkBox,
+    DrawerFooter,
+    Button,
 } from '@chakra-ui/react';
 import { useRef, useContext } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
@@ -29,6 +31,7 @@ import ColorModeButton from '@components/color-mode-button';
 import DesktopNavLink from '@components/nav-link';
 import LanguageContext from 'language-context';
 import routes from 'routes';
+import useLanguage from '@hooks/use-language';
 
 const DesktopNavBar = () => {
     return (
@@ -47,6 +50,7 @@ const DesktopNavBar = () => {
 const MobileNavBar = () => {
     const { status } = useSession();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { language, toggleLanguage } = useLanguage();
 
     const router = useRouter();
 
@@ -83,6 +87,7 @@ const MobileNavBar = () => {
                         <DrawerHeader>
                             <Flex direction="row" alignItems="center">
                                 <ColorModeButton />
+                                <Spacer />
                                 <Spacer />
                                 <IconButton
                                     as={IoMdClose}
@@ -148,6 +153,11 @@ const MobileNavBar = () => {
                                 </Accordion>
                             </Box>
                         </DrawerBody>
+                        <DrawerFooter>
+                            <Button variant="ghost" fontWeight="medium" fontSize="lg" w="100%" onClick={toggleLanguage}>
+                                {language === 'no' ? 'In English' : 'På norsk'}
+                            </Button>
+                        </DrawerFooter>
                     </DrawerContent>
                 </DrawerOverlay>
             </Drawer>
