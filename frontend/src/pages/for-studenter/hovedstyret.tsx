@@ -21,11 +21,7 @@ const BoardPage = ({ studentGroups }: Props) => {
 
                 <Divider mb="1rem" />
 
-                <Text my="5">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus nihil, maiores iusto modi eos
-                    magni itaque, harum deserunt sapiente error velit natus accusantium voluptate maxime similique
-                    delectus officia dignissimos tempore?
-                </Text>
+                <Text my="5">Hovedstyret er det øverste organet i echo. Styret består av 12 medlemmer.</Text>
 
                 <SimpleGrid columns={[1, null, 2, null, 3]} spacing={4}>
                     {studentGroups.reverse().map((group) => (
