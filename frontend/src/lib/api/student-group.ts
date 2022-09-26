@@ -1,15 +1,10 @@
 import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, union, nil } from 'typescript-json-decoder';
+import { profileDecoder } from './profile';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 import { slugDecoder, emptyArrayOnNilDecoder } from '@utils/decoders';
-
-const profileDecoder = record({
-    name: string,
-    imageUrl: union(string, nil),
-});
-type Profile = decodeType<typeof profileDecoder>;
 
 const memberDecoder = record({
     role: string,
@@ -125,4 +120,4 @@ const StudentGroupAPI = {
     },
 };
 
-export { StudentGroupAPI, type Profile, type Member, type StudentGroup };
+export { StudentGroupAPI, type Member, type StudentGroup };
