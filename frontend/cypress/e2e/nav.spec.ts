@@ -14,15 +14,12 @@ describe('Nav Menus', () => {
         });
 
         describe('When visiting the home page, navbar should navigate to', () => {
-            it('om-echo page', () => {
-                cy.get('[data-cy=om-oss]').click();
-                cy.url().should('include', '/om-echo/om-oss');
-            });
-
             it('home page', () => {
-                cy.get('[data-cy=hjem]').click();
+                cy.get('[data-cy=home]').click();
                 cy.url().should('eq', 'http://localhost:3000/');
             });
+
+            // TODO: Add more tests for other nav links
         });
     });
 });
