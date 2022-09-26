@@ -24,5 +24,6 @@ describe('Header', () => {
         drawerButton.should('exist');
         drawerButton.click({ force: true });
         cy.get('[data-cy=nav-links]').should('exist');
+        cy.get('[data-cy=colormode-button]').should('exist');
     });
 });

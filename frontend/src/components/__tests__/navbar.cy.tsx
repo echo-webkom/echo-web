@@ -1,35 +1,35 @@
-import { createRef } from 'react';
-import NavBar from '@components/navbar';
+import { DesktopNavBar, MobileNavBar } from '@components/navbar';
+import routes from 'routes';
 
-describe('NavBar', () => {
+describe('DesktopNavbar', () => {
     it('renders without crashing', () => {
-        const btnRef = createRef<HTMLButtonElement>();
-        cy.mount(
-            <NavBar
-                isOpen={false}
-                onClose={() => {
-                    return;
-                }}
-                btnRef={btnRef}
-            />,
-        );
+        cy.mount(<DesktopNavBar />);
         cy.get('[data-cy=navbar-standard]').should('exist');
     });
 
     it('renders correctly', () => {
-        const btnRef = createRef<HTMLButtonElement>();
-        cy.mount(
-            <NavBar
-                isOpen={false}
-                onClose={() => {
-                    return;
-                }}
-                btnRef={btnRef}
-            />,
-        );
+        cy.mount(<DesktopNavBar />);
 
-        cy.get('[data-cy=hjem]').should('exist');
-        cy.get('[data-cy=om-oss]').should('exist');
-        cy.get('[data-cy=colormode-button]').should('exist');
+        routes.map((route) => {
+            cy.get(`[data-cy=${route.dataCy}]`).should('exist');
+        });
+    });
+});
+
+describe('MobileNavbar', () => {
+    it('renders without crashing', () => {
+        cy.mount(<MobileNavBar />);
+        cy.get('[data-cy=drawer-button]').should('exist');
+    });
+
+    it('renders correctly', () => {
+        cy.mount(<MobileNavBar />);
+
+        cy.get('[data-cy=drawer-button]').should('exist');
+        cy.get('[data-cy=drawer-button]').click();
+
+        routes.map((route) => {
+            cy.get(`[data-cy=${route.dataCy}]`).should('exist');
+        });
     });
 });

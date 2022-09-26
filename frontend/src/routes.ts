@@ -13,7 +13,14 @@ enum Routes {
 interface Route {
     title: Title;
     path: string | null;
-    children: Array<Route> | null;
+    dataCy: string;
+    children: Array<ChildRoute> | null;
+}
+
+interface ChildRoute {
+    title: Title;
+    path: string | null;
+    children: Array<ChildRoute> | null;
 }
 
 const routes: Array<Route> = [
@@ -23,6 +30,7 @@ const routes: Array<Route> = [
             en: 'Home',
         },
         path: '/',
+        dataCy: 'home',
         children: null,
     },
     {
@@ -30,6 +38,7 @@ const routes: Array<Route> = [
             no: 'For Studenter',
             en: 'For Students',
         },
+        dataCy: 'for-students',
         path: null,
         children: [
             {
@@ -251,6 +260,7 @@ const routes: Array<Route> = [
             no: 'For Bedrifter',
             en: 'For Companies',
         },
+        dataCy: 'for-companies',
         path: null,
         children: [
             {
@@ -276,6 +286,7 @@ const routes: Array<Route> = [
             no: 'Om echo',
             en: 'About echo',
         },
+        dataCy: 'about-echo',
         path: null,
         children: [
             {
