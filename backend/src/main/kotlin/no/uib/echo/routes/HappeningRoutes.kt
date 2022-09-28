@@ -131,8 +131,7 @@ fun Route.getHappeningInfo() {
         call.respond(
             HttpStatusCode.OK,
             HappeningInfoJson(
-                registrationCount,
-                happening[Happening.regVerifyToken]
+                registrationCount
             )
         )
     }

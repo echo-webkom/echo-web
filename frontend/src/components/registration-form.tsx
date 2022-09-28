@@ -1,10 +1,7 @@
 import {
     Box,
     Button,
-    FormControl,
-    FormLabel,
-    Input,
-    Link,
+    Text,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -12,26 +9,20 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Text,
-    useColorModeValue,
+    Input,
     useDisclosure,
     useToast,
     VStack,
-    Wrap,
 } from '@chakra-ui/react';
-import { useContext, useRef } from 'react';
-import NextLink from 'next/link';
+import { useContext } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
+import { userIsComplete } from '@api/user';
 import type { User } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
-import FormTerm from '@components/form-term';
 import FormQuestion from '@components/form-question';
-import FormDegree from '@components/form-degree';
-import FormDegreeYear from '@components/form-degree-year';
-import fullNameToSplitName from '@utils/full-name-to-split-name';
 import LanguageContext from 'language-context';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
@@ -83,39 +74,26 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
 
 interface Props {
     happening: Happening;
-    regVerifyToken: string | null;
     type: HappeningType;
     user: User | null;
 }
 
-const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
-    const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 
     const toast = useToast();
 
-    const initialRef = useRef<HTMLInputElement | null>(null);
-    const { ref, ...rest } = register('email'); // needed for inital focus ref
-
-    const [firstName, lastName] = user && user.name !== '' ? fullNameToSplitName(user.name) : [undefined, undefined];
-
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         await RegistrationAPI.submitRegistration({
             email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            degree: data.degree,
-            degreeYear: data.degreeYear,
             slug: happening.slug,
-            terms: data.terms1 && data.terms2 && data.terms3,
             answers: happening.additionalQuestions.map((q: Question, index: number) => {
                 return { question: q.questionText, answer: data.answers[index] };
             }),
             type: type,
-            regVerifyToken,
         }).then(({ response, statusCode }) => {
             if (statusCode === 200 || statusCode === 202) {
                 onClose();
@@ -132,12 +110,30 @@ const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX
     };
 
     return (
-        <Box data-testid="bedpres-form">
-            <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
-                {isNorwegian ? 'Påmelding' : 'Register'}
-            </Button>
+        <Box data-testid="registration-form">
+            {userIsComplete(user) && (
+                <Button
+                    data-cy="reg-btn"
+                    w="100%"
+                    colorScheme="teal"
+                    onClick={() =>
+                        happening.additionalQuestions.length === 0
+                            ? void submitForm({ email: user.email, answers: [] })
+                            : onOpen()
+                    }
+                >
+                    {isNorwegian ? 'Påmelding' : 'Register'}
+                </Button>
+            )}
+            {!userIsComplete(user) && (
+                <>
+                    <Text fontWeight="bold" textAlign="center" color="red">
+                        Du være innlogget og ha fyllt inn info på profilsiden for å kunne melde deg på
+                    </Text>
+                </>
+            )}
 
-            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
@@ -146,85 +142,13 @@ const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX
                             <ModalHeader>{isNorwegian ? 'Påmelding' : 'Registration'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody pb="8px">
+                                <Input type="email" defaultValue={user?.email} {...register('email')} hidden />
                                 <VStack spacing={4}>
-                                    <FormControl id="email" isRequired>
-                                        <FormLabel>{isNorwegian ? 'E-post' : 'Email'}</FormLabel>
-                                        <Input
-                                            type="email"
-                                            defaultValue={user?.alternateEmail ?? user?.email}
-                                            {...rest}
-                                            // using multiple refs
-                                            ref={(e) => {
-                                                ref(e);
-                                                initialRef.current = e;
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormControl id="firstName" isRequired>
-                                        <FormLabel>{isNorwegian ? 'Fornavn' : 'First name'}</FormLabel>
-                                        <Input defaultValue={firstName} {...register('firstName')} />
-                                    </FormControl>
-                                    <FormControl id="lastName" isRequired>
-                                        <FormLabel>{isNorwegian ? 'Etternavn' : 'Last name'}</FormLabel>
-                                        <Input defaultValue={lastName} {...register('lastName')} />
-                                    </FormControl>
-                                    <FormDegree defaultValue={user?.degree?.toString()} />
-                                    <FormDegreeYear defaultValue={user?.degreeYear ?? undefined} />
                                     {happening.additionalQuestions.map((q: Question, index: number) => {
                                         return (
                                             <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
                                         );
                                     })}
-                                    <FormTerm id="terms1">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {isNorwegian
-                                                ? 'Jeg bekrefter at jeg har fylt inn riktig informasjon.'
-                                                : 'I confirm that I have filled in the correct information.'}
-                                        </Text>
-                                    </FormTerm>
-                                    <FormTerm id="terms2">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {isNorwegian
-                                                ? `Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige 
-                                                ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`
-                                                : `I am aware that if I do not show up I risk being 
-                                                banned from future  
-                                                ${type === 'BEDPRES' ? 'company presentasjoner' : 'events'}.`}
-                                        </Text>
-                                    </FormTerm>
-                                    <FormTerm id="terms3">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {type === 'BEDPRES' ? (
-                                                <Wrap spacing={0}>
-                                                    <Text ml="0.5rem" fontWeight="bold">
-                                                        {isNorwegian
-                                                            ? 'Jeg har lest gjennom og forstått'
-                                                            : 'I have read through and understood'}
-                                                    </Text>
-                                                    <NextLink href="https://bit.ly/bedkom-faq2" passHref>
-                                                        <Link href="https://bit.ly/bedkom-faq2" isExternal>
-                                                            <Text color={linkColor} ml="0.5rem" fontWeight="bold">
-                                                                {isNorwegian
-                                                                    ? 'Bedkom sine retningslinjer'
-                                                                    : "Bedkom's guidelines"}
-                                                            </Text>
-                                                        </Link>
-                                                    </NextLink>
-                                                    <Text ml="0.5rem" fontWeight="bold">
-                                                        .
-                                                    </Text>
-                                                </Wrap>
-                                            ) : (
-                                                <Text ml="0.5rem" fontWeight="bold">
-                                                    {isNorwegian
-                                                        ? `Jeg er klar over at jeg må melde meg av innen 24 timer før
-                                                        arrangementet, dersom jeg ikke kan møte opp.`
-                                                        : `I am aware that I must cancel within 24 hours before the event, if I cannot attend`}
-                                                </Text>
-                                            )}
-                                        </Text>
-                                    </FormTerm>
                                 </VStack>
                             </ModalBody>
                             <ModalFooter>

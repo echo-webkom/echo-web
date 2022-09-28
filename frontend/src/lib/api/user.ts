@@ -7,9 +7,9 @@ import { degreeDecoder } from '@utils/decoders';
 
 // Values directly from the form (aka form fields)
 interface FormValues {
-    alternateEmail: string;
-    degree: Degree;
-    degreeYear: number;
+    alternateEmail: string | null;
+    degree: Degree | null;
+    degreeYear: number | null;
 }
 
 const userDecoder = record({
@@ -136,4 +136,10 @@ const UserAPI = {
     },
 };
 
-export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User };
+const userIsComplete = (user: User | null): user is User =>
+    typeof user?.email === 'string' &&
+    typeof user.name === 'string' &&
+    typeof user.degree === 'string' &&
+    typeof user.degreeYear === 'number';
+
+export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User, userIsComplete };

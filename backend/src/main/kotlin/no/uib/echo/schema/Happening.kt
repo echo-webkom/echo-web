@@ -16,8 +16,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
-private const val REG_VERIFY_TOKEN_LENGTH = 16
-
 enum class HAPPENING_TYPE {
     BEDPRES,
     EVENT
@@ -37,7 +35,6 @@ data class HappeningJson(
 @Serializable
 data class HappeningInfoJson(
     val spotRanges: List<SpotRangeWithCountJson>,
-    val regVerifyToken: String?
 )
 
 object Happening : Table() {
@@ -46,7 +43,6 @@ object Happening : Table() {
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
     val happeningDate: Column<DateTime> = datetime("happening_date")
-    val regVerifyToken: Column<String?> = text("reg_verify_token").nullable()
     val studentGroupName: Column<String?> = text("student_group_name").references(StudentGroup.name).nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(slug)
@@ -54,7 +50,6 @@ object Happening : Table() {
 
 fun insertOrUpdateHappening(
     newHappening: HappeningJson,
-    dev: Boolean
 ): Pair<HttpStatusCode, String> {
     if (newHappening.spotRanges.isEmpty()) {
         return Pair(
@@ -73,12 +68,6 @@ fun insertOrUpdateHappening(
 
     val spotRanges = selectSpotRanges(newHappening.slug)
 
-    val regVerifyToken =
-        if (dev)
-            newHappening.slug
-        else
-            randomString(REG_VERIFY_TOKEN_LENGTH)
-
     if (happening == null) {
         transaction {
             addLogger(StdOutSqlLogger)
@@ -89,7 +78,6 @@ fun insertOrUpdateHappening(
                 it[happeningType] = newHappening.type.toString()
                 it[registrationDate] = DateTime(newHappening.registrationDate)
                 it[happeningDate] = DateTime(newHappening.happeningDate)
-                it[Happening.regVerifyToken] = regVerifyToken
                 it[studentGroupName] = newHappening.studentGroupName.lowercase()
             }
             SpotRange.batchInsert(newHappening.spotRanges) { sr ->
@@ -166,11 +154,4 @@ fun spotRangeToString(spotRanges: List<SpotRangeJson>): String {
         "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
     }
     } ]"
-}
-
-fun randomString(length: Int): String {
-    return (1..length).map {
-        (('A'..'Z') + ('a'..'z') + ('0'..'9'))
-            .random()
-    }.joinToString("")
 }

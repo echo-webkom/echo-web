@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
 import type { HappeningType } from '@api/happening';
-import { type Degree, degreeDecoder } from '@utils/decoders';
+import { degreeDecoder } from '@utils/decoders';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
@@ -22,12 +22,10 @@ type Answer = decodeType<typeof answerDecoder>;
 
 const registrationDecoder = record({
     email: string,
-    firstName: string,
-    lastName: string,
+    name: string,
     degree: degreeDecoder,
     degreeYear: number,
     slug: string,
-    terms: boolean,
     submitDate: string,
     waitList: boolean,
     answers: array(answerDecoder),
@@ -50,28 +48,15 @@ const genericError = {
 // Values directly from the form (aka form fields)
 interface FormValues {
     email: string;
-    firstName: string;
-    lastName: string;
-    degree: Degree;
-    degreeYear: number;
-    terms1: boolean;
-    terms2: boolean;
-    terms3: boolean;
     answers: Array<string>;
 }
 
 // The data from the form + slug and type
 interface FormRegistration {
     email: string;
-    firstName: string;
-    lastName: string;
-    degree: Degree;
-    degreeYear: number;
     slug: string;
     type: HappeningType;
-    terms: boolean;
     answers: Array<Answer>;
-    regVerifyToken: string | null;
 }
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
@@ -114,9 +99,11 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrations: async (slug: string): Promise<Array<Registration> | ErrorMessage> => {
+    getRegistrations: async (slug: string, idToken: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`/api/registration?slug=${slug}`);
+            const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
 
             if (isErrorMessage(data)) {
                 return data;
@@ -133,9 +120,12 @@ const RegistrationAPI = {
     deleteRegistration: async (
         slug: string,
         email: string,
+        idToken: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const { data } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`);
+            const { data } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
 
             return { response: data, error: null };
         } catch (error) {

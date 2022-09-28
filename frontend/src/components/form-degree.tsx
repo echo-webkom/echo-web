@@ -6,26 +6,28 @@ import LanguageContext from 'language-context';
 
 interface Props extends SelectProps {
     isHeading?: boolean;
-    defaultValue?: number | string | ReadonlyArray<string>;
+    hideLabel?: boolean;
+    isRequired?: boolean;
 }
-const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studieretning', ...props }: Props) => {
+const FormDegree = ({ isHeading = false, hideLabel = false, isRequired = false, ...props }: Props) => {
     const { register } = useFormContext();
     const isNorwegian = useContext(LanguageContext);
     const headingText = isNorwegian ? 'Studieretning' : 'Field of study';
-    placeholder = isNorwegian ? 'Velg studieretning' : 'Choose your field of study';
 
     return (
-        <FormControl isRequired>
-            <FormLabel>
-                {isHeading ? (
-                    <Heading size="md" display="inline">
-                        {headingText}
-                    </Heading>
-                ) : (
-                    headingText
-                )}
-            </FormLabel>
-            <Select defaultValue={defaultValue} placeholder={placeholder} {...register('degree')} {...props}>
+        <FormControl isRequired={isRequired}>
+            {!hideLabel && (
+                <FormLabel>
+                    {isHeading ? (
+                        <Heading size="md" display="inline">
+                            {headingText}
+                        </Heading>
+                    ) : (
+                        headingText
+                    )}
+                </FormLabel>
+            )}
+            <Select {...register('degree')} {...props}>
                 <option value="DTEK">Datateknologi</option>
                 <option value="DSIK">Datasikkerhet</option>
                 <option value="DVIT">Data Science/Datavitenskap</option>

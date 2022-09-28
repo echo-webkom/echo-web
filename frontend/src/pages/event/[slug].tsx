@@ -69,8 +69,8 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening) return;
-            const result = await RegistrationAPI.getRegistrations(happening.slug);
+            if (!happening || !data?.idToken) return;
+            const result = await RegistrationAPI.getRegistrations(happening.slug, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setRegsListError(null);
@@ -154,7 +154,6 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                                     <RegistrationForm
                                                         happening={happening}
                                                         type={happening.happeningType}
-                                                        regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                                         user={user}
                                                     />
                                                     {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
@@ -232,32 +231,17 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
-    const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
+    const happeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug);
 
     const date = Date.now();
 
-    if (isErrorMessage(happening)) {
-        if (happening.message === '404') {
-            return {
-                notFound: true,
-            };
-        }
-    } else if (happening.registrationDate && isAfter(date, parseISO(happening.registrationDate))) {
-        const props: Props = {
-            happening: isErrorMessage(happening) ? null : happening,
-            happeningInfo: isErrorMessage(hiddenHappeningInfo) ? null : hiddenHappeningInfo,
-            date,
-            error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
-        };
-
+    if (isErrorMessage(happening) && happening.message === '404') {
         return {
-            props,
+            notFound: true,
         };
     }
 

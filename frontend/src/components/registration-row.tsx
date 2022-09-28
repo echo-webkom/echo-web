@@ -19,6 +19,7 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
@@ -39,6 +40,40 @@ const RegistrationRow = ({ registration, questions }: Props) => {
 
     const router = useRouter();
 
+    const { data } = useSession();
+
+    const handleDelete = async () => {
+        if (!data?.idToken) {
+            toast({
+                title: 'Du er ikke logget inn',
+                status: 'error',
+                isClosable: true,
+            });
+            return;
+        }
+
+        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, data.idToken);
+
+        onClose();
+
+        if (error === null) {
+            setDeleted(true);
+            void router.replace(router.asPath, undefined, { scroll: false });
+            toast({
+                title: 'Påmelding slettet!',
+                description: `Slettet påmeding med email '${registration.email}'.`,
+                isClosable: true,
+            });
+        } else {
+            toast({
+                title: 'Det har skjedd en feil!',
+                description: error,
+                status: 'error',
+                isClosable: true,
+            });
+        }
+    };
+
     return (
         <>
             <MotionTr
@@ -48,8 +83,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 key={JSON.stringify(registration)}
             >
                 <Td fontSize="md">{registration.email}</Td>
-                <Td fontSize="md">{registration.firstName}</Td>
-                <Td fontSize="md">{registration.lastName}</Td>
+                <Td fontSize="md">{registration.name}</Td>
                 <Td fontSize="md">{registration.degree}</Td>
                 <Td fontSize="md">{registration.degreeYear}</Td>
                 {notEmptyOrNull(registration.answers) &&
@@ -103,39 +137,10 @@ const RegistrationRow = ({ registration, questions }: Props) => {
 
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
-                            {/* eslint-disable @typescript-eslint/no-misused-promises */}
-                            <Button
-                                data-cy="confirm-delete-button"
-                                bg="green.400"
-                                onClick={async () => {
-                                    const { error } = await RegistrationAPI.deleteRegistration(
-                                        registration.slug,
-                                        registration.email,
-                                    );
-
-                                    onClose();
-
-                                    if (error === null) {
-                                        setDeleted(true);
-                                        void router.replace(router.asPath, undefined, { scroll: false });
-                                        toast({
-                                            title: 'Påmelding slettet!',
-                                            description: `Slettet påmeding med email '${registration.email}'.`,
-                                            isClosable: true,
-                                        });
-                                    } else {
-                                        toast({
-                                            title: 'Det har skjedd en feil!',
-                                            description: error,
-                                            status: 'error',
-                                            isClosable: true,
-                                        });
-                                    }
-                                }}
-                            >
+                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                            <Button data-cy="confirm-delete-button" bg="green.400" onClick={handleDelete}>
                                 Ja, slett
                             </Button>
-                            {/* eslint-enable @typescript-eslint/no-misused-promises */}
                             <Button onClick={onClose}>Nei</Button>
                         </SimpleGrid>
                     </ModalFooter>

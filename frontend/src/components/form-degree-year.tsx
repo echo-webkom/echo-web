@@ -6,31 +6,29 @@ import LanguageContext from 'language-context';
 
 interface Props extends SelectProps {
     isHeading?: boolean;
-    defaultValue?: number | string | ReadonlyArray<string>;
+    hideLabel?: boolean;
+    isRequired?: boolean;
 }
 
-const FormDegreeYear = ({ isHeading = false, defaultValue, ...props }: Props) => {
+const FormDegreeYear = ({ isHeading = false, hideLabel = false, isRequired = false, ...props }: Props) => {
     const { register } = useFormContext();
     const isNorwegian = useContext(LanguageContext);
     const headingText = isNorwegian ? 'Årstrinn' : 'Year';
 
     return (
-        <FormControl isRequired>
-            <FormLabel>
-                {isHeading ? (
-                    <Heading size="md" display="inline">
-                        {headingText}
-                    </Heading>
-                ) : (
-                    headingText
-                )}
-            </FormLabel>
-            <Select
-                defaultValue={defaultValue}
-                placeholder={isNorwegian ? 'Velg årstrinn' : 'Choose year'}
-                {...register('degreeYear')}
-                {...props}
-            >
+        <FormControl isRequired={isRequired}>
+            {!hideLabel && (
+                <FormLabel>
+                    {isHeading ? (
+                        <Heading size="md" display="inline">
+                            {headingText}
+                        </Heading>
+                    ) : (
+                        headingText
+                    )}
+                </FormLabel>
+            )}
+            <Select {...register('degreeYear')} {...props}>
                 <option value={1}>{isNorwegian ? '1. trinn' : '1. year'}</option>
                 <option value={2}>{isNorwegian ? '2. trinn' : '2. year'}</option>
                 <option value={3}>{isNorwegian ? '3. trinn' : '3. year'}</option>

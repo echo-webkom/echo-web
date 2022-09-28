@@ -28,7 +28,6 @@ fun Application.configureRouting(
         disableJwtAuth = disableJwtAuth,
         sendEmail = featureToggles.sendEmailReg,
         sendGridApiKey = sendGridApiKey,
-        verifyRegs = featureToggles.sendEmailReg
     )
     happeningRoutes()
     feedbackRoutes()

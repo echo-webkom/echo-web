@@ -46,12 +46,12 @@ const ProfilePage = (): JSX.Element => {
 
     return (
         <>
-            <SEO title={user?.name ?? status === 'unauthenticated' ? 'Profilside' : 'Logg inn'} />
+            <SEO title={user?.name ?? status === 'unauthenticated' ? 'Min profil' : 'Logg inn'} />
             {status === 'authenticated' && (
                 <>
-                    <Section>
-                        <Center>
-                            {error && (
+                    {error && (
+                        <Section>
+                            <Center>
                                 <Flex flexDirection="column" maxW="400px" my="20" gap="5">
                                     <Heading fontWeight="bold" mx="auto">
                                         {isNorwegian ? 'Det har skjedd en feil' : 'An error has occurred'}
@@ -65,8 +65,12 @@ const ProfilePage = (): JSX.Element => {
                                         {isNorwegian ? 'Logg ut' : 'Sign out'}
                                     </Button>
                                 </Flex>
-                            )}
-                            {loading && (
+                            </Center>
+                        </Section>
+                    )}
+                    {loading && (
+                        <Section>
+                            <Center>
                                 <Flex flexDirection="column" maxW="400px" my="20" gap="5">
                                     <Heading fontWeight="bold" mx="auto">
                                         {isNorwegian ? 'Laster inn brukeren din...' : 'Loading your account...'}
@@ -76,10 +80,10 @@ const ProfilePage = (): JSX.Element => {
                                         {isNorwegian ? 'Logg ut' : 'Sign out'}
                                     </Button>
                                 </Flex>
-                            )}
-                            {user && <ProfileInfo user={user} />}
-                        </Center>
-                    </Section>
+                            </Center>
+                        </Section>
+                    )}
+                    {user && <ProfileInfo user={user} />}
                 </>
             )}
             {status === 'loading' && (

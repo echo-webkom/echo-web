@@ -32,6 +32,7 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.schema.validStudentGroups
 
 class DeleteHappeningTest {
     companion object {
@@ -127,9 +128,9 @@ private fun insertTestData(t: HAPPENING_TYPE) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
             this[StudentGroup.name] = it
         }
     }
-    insertOrUpdateHappening(hap1(t), true)
+    insertOrUpdateHappening(hap1(t))
 }

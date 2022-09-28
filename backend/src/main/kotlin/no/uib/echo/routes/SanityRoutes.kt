@@ -23,12 +23,12 @@ data class SanityResponse(
 fun Application.sanityRoutes(dev: Boolean) {
     routing {
         authenticate("auth-admin", optional = dev) {
-            sanitySync(dev)
+            sanitySync()
         }
     }
 }
 
-fun Route.sanitySync(dev: Boolean) {
+fun Route.sanitySync() {
     get("/sanity") {
         val client = SanityClient(
             projectId = "pgq2pd26",
@@ -54,7 +54,7 @@ fun Route.sanitySync(dev: Boolean) {
         val response = client.fetch(query).body<SanityResponse>()
 
         val result = response.result.map {
-            val (code, string) = insertOrUpdateHappening(it, dev)
+            val (code, string) = insertOrUpdateHappening(it)
 
             if (code != HttpStatusCode.OK && code != HttpStatusCode.Accepted) {
                 call.respond(code, string)

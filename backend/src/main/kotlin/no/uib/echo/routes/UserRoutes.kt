@@ -22,6 +22,7 @@ import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.masters
+import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
@@ -74,7 +75,7 @@ fun Route.getUser() {
                 user[User.name],
                 user[User.alternateEmail],
                 user[User.degreeYear],
-                user[User.degree]?.let { Degree.valueOf(it) },
+                nullableStringToDegree(user[User.degree]),
                 memberships
             )
         )
@@ -249,7 +250,7 @@ fun Route.getAllUsers() {
                     it[User.name],
                     it[User.alternateEmail],
                     it[User.degreeYear],
-                    it[User.degree]?.let { Degree.valueOf(it) },
+                    nullableStringToDegree(it[User.degree]),
                     StudentGroupMembership.select {
                         StudentGroupMembership.userEmail eq it[User.email]
                     }.toList().map {

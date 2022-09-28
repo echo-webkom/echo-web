@@ -151,7 +151,6 @@ class DatabaseHandler(
                     this[Happening.happeningType] = it.type.toString()
                     this[Happening.registrationDate] = DateTime(it.registrationDate)
                     this[Happening.happeningDate] = DateTime(it.happeningDate)
-                    this[Happening.regVerifyToken] = it.slug
                     this[Happening.studentGroupName] = it.studentGroupName.lowercase()
                 }
 
