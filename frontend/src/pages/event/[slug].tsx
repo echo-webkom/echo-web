@@ -197,15 +197,12 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                             <Section minW="100%">
                                 <Article
                                     heading={happening.title}
-                                    /* eslint-disable */
                                     body={
                                         isNorwegian
                                             ? happening.body.no
-                                            : happening.body.en
-                                            ? happening.body.en
-                                            : '(No english version avalible) \n\n' + happening.body.no
+                                            : happening.body.en ??
+                                              '(No english version avalible) \n\n' + happening.body.no
                                     }
-                                    /* eslint-enable */
                                 />
                             </Section>
                         </GridItem>

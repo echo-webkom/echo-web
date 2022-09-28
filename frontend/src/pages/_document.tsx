@@ -10,7 +10,7 @@ const getInitialProps = async (ctx: DocumentContext): Promise<DocumentInitialPro
 
 const CustomDocument = (): JSX.Element => {
     return (
-        <Html lang="nb-NO">
+        <Html lang="nb">
             <Head>
                 <meta name="robots" content="follow, index" />
                 <meta name="msapplication-TileColor" content="#603cba" />

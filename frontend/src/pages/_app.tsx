@@ -16,14 +16,14 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps<Sessi
     const SSR = typeof window === 'undefined'; //Used to disable rendering of animated component SS
     const [isNorwegian, setIsNorwegian] = useState(true);
     useEffect(() => {
-        function checkLanguageData() {
+        const checkLanguageData = () => {
             const lang = localStorage.getItem('language');
             if (lang === 'en') {
                 setIsNorwegian(false);
             } else {
                 setIsNorwegian(true);
             }
-        }
+        };
         checkLanguageData();
         window.addEventListener('storage', checkLanguageData);
         return () => {
