@@ -66,7 +66,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                     .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
                     .filter(
                         (reg) =>
-                            [reg.firstName, reg.lastName].join(' ').toLowerCase().includes(search.toLowerCase()) ||
+                            reg.name.toLowerCase().includes(search.toLowerCase()) ||
                             reg.email.toLowerCase().includes(search.toLowerCase()),
                     ),
             );
@@ -261,8 +261,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                     <Thead>
                                         <Tr>
                                             <Th>Email</Th>
-                                            <Th>Fornavn</Th>
-                                            <Th>Etternavn</Th>
+                                            <Th>Navn</Th>
                                             <Th>Studieretning</Th>
                                             <Th>Årstrinn</Th>
                                             {notEmptyOrNull(questions) &&

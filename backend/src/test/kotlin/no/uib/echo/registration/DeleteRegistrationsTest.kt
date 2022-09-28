@@ -1,6 +1,7 @@
 package no.uib.echo.registration
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
@@ -16,8 +17,8 @@ import io.ktor.server.testing.testApplication
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
-import no.uib.echo.Response
-import no.uib.echo.ResponseJson
+import no.uib.echo.RegistrationResponse
+import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
@@ -41,6 +42,17 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.user1
+import no.uib.echo.user2
+import no.uib.echo.user3
+import no.uib.echo.user4
+import no.uib.echo.user5
+import no.uib.echo.user6
+import no.uib.echo.user7
+import no.uib.echo.user8
+import no.uib.echo.user9
+import no.uib.echo.users
 
 class DeleteRegistrationsTest {
     companion object {
@@ -105,61 +117,58 @@ class DeleteRegistrationsTest {
                     json()
                 }
             }
-            val waitListAmount = 3
+
+            val users = listOf(user1, user2, user3, user4, user5)
+            val waitListUsers = listOf(user6, user7, user8, user9)
 
             for (t in be) {
-                for (i in 1..hap9(t).spotRanges[0].spots) {
+                for (u in users) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
                         setBody(
                             Json.encodeToString(
-                                exReg(t, hap9(t).slug).copy(
-                                    email = "${t}$i@test.com"
-                                )
+                                exReg(hap9(t).slug, u)
                             )
                         )
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.OK
+                    res.code shouldBe RegistrationResponse.OK
                 }
 
-                for (i in 1..waitListAmount) {
+                for (u in waitListUsers) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
                         setBody(
                             Json.encodeToString(
-                                exReg(t, hap9(t).slug).copy(
-                                    email = "waitlist${t}$i@test.com"
-                                )
+                                exReg(hap9(t).slug, u)
                             )
                         )
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.Accepted
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.WaitList
+                    res.code shouldBe RegistrationResponse.WaitList
                 }
 
                 // Delete $waitListAmount registrations, such that all the registrations
                 // previously on the wait list are now moved off the wait list.
-                for (i in 1..waitListAmount) {
-                    val regEmail = "${t}$i@test.com"
-                    val nextRegOnWaitListEmail = "waitlist${t}$i@test.com"
+                for (u in waitListUsers) {
+                    val regEmail = u.email
                     val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail")
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
-                    deleteRegCall.bodyAsText() shouldBe "Registration with email = ${regEmail.lowercase()} and slug = ${
+                    deleteRegCall.bodyAsText() shouldContain "Registration with email = ${regEmail.lowercase()} and slug = ${
                     hap9(t).slug
-                    } deleted, " + "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list."
+                    } deleted, " + "and registration with email ="
                 }
 
                 // Delete the registrations that were moved off the wait list in the previous for-loop.
-                for (i in 1..waitListAmount) {
-                    val waitListRegEmail = "waitlist${t}$i@test.com"
+                for (u in waitListUsers) {
+                    val waitListRegEmail = u.email
                     val deleteWaitListRegCall =
                         client.delete("/registration/${hap9(t).slug}/$waitListRegEmail")
 
@@ -178,9 +187,24 @@ private fun insertTestData(t: HAPPENING_TYPE) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
             this[StudentGroup.name] = it
         }
+
+        User.batchInsert(users, ignore = true) {
+            this[User.email] = it.email
+            this[User.name] = it.name
+            this[User.alternateEmail] = it.alternateEmail
+            this[User.degree] = it.degree.toString()
+            this[User.degreeYear] = it.degreeYear
+        }
+
+        for (user in users) {
+            StudentGroupMembership.batchInsert(user.memberships, ignore = true) {
+                this[StudentGroupMembership.userEmail] = user.email
+                this[StudentGroupMembership.studentGroupName] = it
+            }
+        }
     }
-    insertOrUpdateHappening(hap9(t), dev = true)
+    insertOrUpdateHappening(hap9(t))
 }

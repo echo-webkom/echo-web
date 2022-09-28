@@ -23,7 +23,7 @@ object Answer : Table() {
     init {
         foreignKey(
             happeningSlug to Registration.happeningSlug,
-            registrationEmail to Registration.email,
+            registrationEmail to Registration.userEmail,
             onUpdate = ReferenceOption.RESTRICT,
             onDelete = ReferenceOption.RESTRICT
         )

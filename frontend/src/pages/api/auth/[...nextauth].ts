@@ -4,6 +4,7 @@ import { FeideGroupAPI } from '@api/feide-group';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
 import { FeedbackAPI } from '@api/feedback';
+import { allValidFeideGroups } from '@utils/degree';
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -21,13 +22,12 @@ export const authOptions: NextAuthOptions = {
             const signInOnlyCollectData = process.env.SIGN_IN_ONLY_COLLECT_DATA === 'true';
 
             if (account?.access_token && account.id_token && profile?.email && profile.name) {
-                const isMember = await FeideGroupAPI.isMemberOfGroup(account.access_token, 'fc:org:uib.no:unit:121200');
+                const groups = await FeideGroupAPI.getGroups(account.access_token);
 
-                if (!isMember) {
+                if (isErrorMessage(groups)) {
                     if (signInOnlyCollectData) {
-                        const groups = await FeideGroupAPI.getGroups(account.access_token);
                         // eslint-disable-next-line no-console
-                        console.log('User is not a member of the group, but only collecting data');
+                        console.log('Could not get group, but only collecting data');
                         void FeedbackAPI.sendFeedback({
                             email: profile.email,
                             name: profile.name,
@@ -35,7 +35,25 @@ export const authOptions: NextAuthOptions = {
                         });
                         return true;
                     }
-                    return '/nei';
+                    // eslint-disable-next-line no-console
+                    console.log('Failed to fetch groups:', groups);
+                    return '/500';
+                }
+
+                const isMember = groups.map((group) => group.id).some((id) => allValidFeideGroups.includes(id));
+
+                if (!isMember) {
+                    if (signInOnlyCollectData) {
+                        // eslint-disable-next-line no-console
+                        console.log('User is not a member of any valid group, but only collecting data');
+                        void FeedbackAPI.sendFeedback({
+                            email: profile.email,
+                            name: profile.name,
+                            message: JSON.stringify(groups),
+                        });
+                    } else {
+                        return '/nei';
+                    }
                 }
 
                 const { email, name } = profile;

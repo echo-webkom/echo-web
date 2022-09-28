@@ -11,7 +11,6 @@ import java.net.URI
 data class FeatureToggles(
     val sendEmailReg: Boolean,
     val rateLimit: Boolean,
-    val verifyRegs: Boolean
 )
 
 fun main(args: Array<String>) {
@@ -27,7 +26,6 @@ fun Application.module() {
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
     val sendEmailReg = environment.config.property("ktor.sendEmailRegistration").getString().toBooleanStrict()
-    val verifyRegs = environment.config.property("ktor.verifyRegs").getString().toBooleanStrict()
     val maybeSendGridApiKey = environment.config.propertyOrNull("ktor.sendGridApiKey")?.getString()
     val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
         true -> null
@@ -51,7 +49,7 @@ fun Application.module() {
     configureAuthentication(adminKey)
     configureContentNegotiation()
     configureRouting(
-        featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs),
+        featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true),
         dev = dev,
         disableJwtAuth = disableJwtAuth,
         sendGridApiKey = sendGridApiKey

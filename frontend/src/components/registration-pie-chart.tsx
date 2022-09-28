@@ -1,7 +1,7 @@
 import { type PieLabelRenderProps, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import randomColor from 'randomcolor';
 import { Center, useColorModeValue } from '@chakra-ui/react';
-import allDegrees from '@utils/degree';
+import { allDegrees } from '@utils/degree';
 import type { Registration } from '@api/registration';
 
 interface Props {

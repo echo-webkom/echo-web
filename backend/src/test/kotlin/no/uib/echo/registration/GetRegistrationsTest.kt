@@ -17,8 +17,8 @@ import io.ktor.server.testing.testApplication
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
-import no.uib.echo.Response
-import no.uib.echo.ResponseJson
+import no.uib.echo.RegistrationResponse
+import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap6
@@ -46,6 +46,8 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.user1
 
 class GetRegistrationsTest {
     companion object {
@@ -107,13 +109,13 @@ class GetRegistrationsTest {
             for (t in be) {
                 val newSlug = "auto-link-test-100-$t"
 
-                insertOrUpdateHappening(hap6(t).copy(slug = newSlug), dev = true)
+                insertOrUpdateHappening(hap6(t).copy(slug = newSlug))
 
                 val regsList = mutableListOf<RegistrationJson>()
 
                 for (sr in hap6(t).spotRanges) {
                     for (i in 1..(sr.spots + waitListCount)) {
-                        val newReg = exReg(t, newSlug).copy(
+                        val newReg = exReg(newSlug, user1).copy(
                             email = "$t${sr.minDegreeYear}${sr.maxDegreeYear}mIxEdcAsE$i@test.com",
                             degree = if (sr.maxDegreeYear > 3) Degree.PROG else Degree.DTEK,
                             degreeYear = if (sr.maxDegreeYear > 3) 4 else 2,
@@ -128,14 +130,14 @@ class GetRegistrationsTest {
 
                         if (i > sr.spots) {
                             submitRegCall.status shouldBe HttpStatusCode.Accepted
-                            val res: ResponseJson = submitRegCall.body()
+                            val res: RegistrationResponseJson = submitRegCall.body()
 
-                            res.code shouldBe Response.WaitList
+                            res.code shouldBe RegistrationResponse.WaitList
                         } else {
                             submitRegCall.status shouldBe HttpStatusCode.OK
-                            val res: ResponseJson = submitRegCall.body()
+                            val res: RegistrationResponseJson = submitRegCall.body()
 
-                            res.code shouldBe Response.OK
+                            res.code shouldBe RegistrationResponse.OK
                         }
                     }
                 }
@@ -192,9 +194,9 @@ private fun insertTestData(t: HAPPENING_TYPE) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
             this[StudentGroup.name] = it
         }
     }
-    insertOrUpdateHappening(hap6(t), dev = true)
+    insertOrUpdateHappening(hap6(t))
 }

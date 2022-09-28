@@ -15,9 +15,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
-import no.uib.echo.schema.RegistrationJson
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
@@ -42,9 +41,8 @@ data class SendGridPersonalization(
 data class SendGridTemplate(
     val title: String,
     val link: String,
-    val hapTypeLiteral: String,
     val waitListSpot: Int? = null,
-    val registration: RegistrationJson? = null
+    val registration: FormRegistrationJson? = null
 )
 
 @Serializable
@@ -70,16 +68,9 @@ fun fromEmail(email: String): String? {
 
 suspend fun sendConfirmationEmail(
     sendGridApiKey: String,
-    registration: RegistrationJson,
+    registration: FormRegistrationJson,
     waitListSpot: Long?
 ) {
-    val hapTypeLiteral = when (registration.type) {
-        HAPPENING_TYPE.EVENT ->
-            "arrangementet"
-        HAPPENING_TYPE.BEDPRES ->
-            "bedriftspresentasjonen"
-    }
-
     val hap = transaction {
         addLogger(StdOutSqlLogger)
 
@@ -97,7 +88,6 @@ suspend fun sendConfirmationEmail(
                 SendGridTemplate(
                     hap[Happening.title],
                     "https://echo.uib.no/event/${registration.slug}",
-                    hapTypeLiteral,
                     waitListSpot = waitListSpot?.toInt(),
                     registration = registration
                 ),

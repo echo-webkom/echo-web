@@ -14,8 +14,8 @@ import io.ktor.server.testing.testApplication
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
-import no.uib.echo.Response
-import no.uib.echo.ResponseJson
+import no.uib.echo.RegistrationResponse
+import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap1
@@ -29,7 +29,6 @@ import no.uib.echo.hap7
 import no.uib.echo.hap8
 import no.uib.echo.hap9
 import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
@@ -39,9 +38,7 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
-import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.schema.masters
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -51,6 +48,14 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.user1
+import no.uib.echo.user2
+import no.uib.echo.user3
+import no.uib.echo.user4
+import no.uib.echo.user5
+import no.uib.echo.user6
+import no.uib.echo.users
 
 class PostRegistrationsTest {
     companion object {
@@ -107,47 +112,21 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
             for (t in be) {
-                for (b in bachelors) {
-                    for (y in 1..3) {
-                        val submitRegCall = client.post("/registration") {
-                            contentType(ContentType.Application.Json)
-                            setBody(
-                                Json.encodeToString(
-                                    exReg(t, hap1(t).slug).copy(
-                                        degree = b,
-                                        degreeYear = y,
-                                        email = "${t}test${b}$y@test.com"
-                                    )
-                                )
+                for (u in users) {
+                    val submitRegCall = client.post("/registration") {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            Json.encodeToString(
+                                exReg(hap1(t).slug, u)
                             )
-                        }
-                        submitRegCall.status shouldBe HttpStatusCode.OK
-                        val res: ResponseJson = submitRegCall.body()
-
-                        res.code shouldBe Response.OK
+                        )
                     }
-                }
+                    submitRegCall.status shouldBe HttpStatusCode.OK
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                for (m in masters) {
-                    for (y in 4..5) {
-                        val submitRegCall = client.post("/registration") {
-                            contentType(ContentType.Application.Json)
-                            setBody(
-                                Json.encodeToString(
-                                    exReg(t, hap1(t).slug).copy(
-                                        degree = m,
-                                        degreeYear = y,
-                                        email = "${t}test${m}$y@test.com"
-                                    )
-                                )
-                            )
-                        }
-                        submitRegCall.status shouldBe HttpStatusCode.OK
-                        val res: ResponseJson = submitRegCall.body()
-
-                        res.code shouldBe Response.OK
-                    }
+                    res.code shouldBe RegistrationResponse.OK
                 }
             }
         }
@@ -165,13 +144,13 @@ class PostRegistrationsTest {
                 for (slug in listOf(hap1(t).slug, hap2(t).slug)) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(t, slug)))
+                        setBody(Json.encodeToString(exReg(slug, user1)))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.OK
+                    res.code shouldBe RegistrationResponse.OK
                 }
             }
         }
@@ -188,13 +167,13 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(answers = emptyList())))
+                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1).copy(answers = emptyList())))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.OK
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.OK
+                res.code shouldBe RegistrationResponse.OK
             }
         }
 
@@ -210,23 +189,23 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug)))
+                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1)))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.OK
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.OK
+                res.code shouldBe RegistrationResponse.OK
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug)))
+                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1)))
                 }
 
                 submitRegAgainCall.status shouldBe HttpStatusCode.UnprocessableEntity
-                val resAgain: ResponseJson = submitRegAgainCall.body()
+                val resAgain: RegistrationResponseJson = submitRegAgainCall.body()
 
-                resAgain.code shouldBe Response.AlreadySubmitted
+                resAgain.code shouldBe RegistrationResponse.AlreadySubmitted
             }
         }
 
@@ -242,46 +221,41 @@ class PostRegistrationsTest {
             for (t in be) {
                 val fillUpRegsCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap8(t).slug)))
+                    setBody(Json.encodeToString(exReg(hap8(t).slug, user1)))
                 }
 
                 fillUpRegsCall.status shouldBe HttpStatusCode.OK
-                val fillUpRes: ResponseJson = fillUpRegsCall.body()
+                val fillUpRes: RegistrationResponseJson = fillUpRegsCall.body()
 
-                fillUpRes.code shouldBe Response.OK
+                fillUpRes.code shouldBe RegistrationResponse.OK
 
-                val newEmail = "bruh@moment.com"
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
                     setBody(
                         Json.encodeToString(
-                            exReg(t, hap8(t).slug).copy(
-                                email = newEmail
-                            )
+                            exReg(hap8(t).slug, user2)
                         )
                     )
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Accepted
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.WaitList
+                res.code shouldBe RegistrationResponse.WaitList
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
                     setBody(
                         Json.encodeToString(
-                            exReg(t, hap8(t).slug).copy(
-                                email = newEmail
-                            )
+                            exReg(hap8(t).slug, user2)
                         )
                     )
                 }
 
                 submitRegAgainCall.status shouldBe HttpStatusCode.UnprocessableEntity
-                val resAgain: ResponseJson = submitRegAgainCall.body()
+                val resAgain: RegistrationResponseJson = submitRegAgainCall.body()
 
-                resAgain.code shouldBe Response.AlreadySubmittedWaitList
+                resAgain.code shouldBe RegistrationResponse.AlreadySubmittedWaitList
             }
         }
 
@@ -297,13 +271,13 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap3(t).slug)))
+                    setBody(Json.encodeToString(exReg(hap3(t).slug, user1)))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Forbidden
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.TooEarly
+                res.code shouldBe RegistrationResponse.TooEarly
             }
         }
 
@@ -319,13 +293,13 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap10(t).slug)))
+                    setBody(Json.encodeToString(exReg(hap10(t).slug, user1)))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Forbidden
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.TooLate
+                res.code shouldBe RegistrationResponse.TooLate
             }
         }
 
@@ -342,206 +316,13 @@ class PostRegistrationsTest {
                 val submitRegCall =
                     client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(t, "ikke-eksisterence-happening-som-ikke-finnes-engang")))
+                        setBody(Json.encodeToString(exReg("ikke-eksisterende-happening-som-ikke-finnes-engang", user1)))
                     }
 
                 submitRegCall.status shouldBe HttpStatusCode.Conflict
-                val res: ResponseJson = submitRegCall.body()
+                val res: RegistrationResponseJson = submitRegCall.body()
 
-                res.code shouldBe Response.HappeningDoesntExist
-            }
-        }
-
-    @Test
-    fun `Email should be valid`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            val emails = listOf(
-                Pair("test@test", false),
-                Pair("test@test.", false),
-                Pair("test_test.com", false),
-                Pair("@test.com", false),
-                Pair("test@uib.no", true),
-                Pair("test@student.uib.no", true),
-                Pair("test_person@hotmail.com", true),
-                Pair("ola.nordmann@echo.uib.no", true)
-            )
-
-            for (t in be) {
-                for ((email, isValid) in emails) {
-                    val testCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(email = email)))
-                    }
-
-                    if (isValid) testCall.status shouldBe HttpStatusCode.OK
-                    else testCall.status shouldBe HttpStatusCode.BadRequest
-
-                    val res: ResponseJson = testCall.body()
-
-                    if (isValid) res.code shouldBe Response.OK
-                    else res.code shouldBe Response.InvalidEmail
-                }
-            }
-        }
-
-    @Test
-    fun `Degree year should not be smaller than one`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                val testCall = client.post("/registration") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(degreeYear = 0)))
-                }
-
-                testCall.status shouldBe HttpStatusCode.BadRequest
-                val res: ResponseJson = testCall.body()
-
-                res.code shouldBe Response.InvalidDegreeYear
-            }
-        }
-
-    @Test
-    fun `Degree year should not be bigger than five`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                val testCall = client.post("/registration") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(degreeYear = 6)))
-                }
-
-                testCall.status shouldBe HttpStatusCode.BadRequest
-                val res: ResponseJson = testCall.body()
-
-                res.code shouldBe Response.InvalidDegreeYear
-            }
-        }
-
-    @Test
-    fun `If the degree year is either four or five, the degree should not correspond to a bachelors degree`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                listOf(
-                    Degree.DTEK,
-                    Degree.DSIK,
-                    Degree.DVIT,
-                    Degree.BINF,
-                    Degree.IMO
-                ).map { deg ->
-                    for (year in 4..5) {
-                        val testCall = client.post("/registration") {
-                            contentType(ContentType.Application.Json)
-                            setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(degreeYear = year, degree = deg)))
-                        }
-
-                        testCall.status shouldBe HttpStatusCode.BadRequest
-                        val res: ResponseJson = testCall.body()
-
-                        res.code shouldBe Response.DegreeMismatchBachelor
-                    }
-                }
-            }
-        }
-
-    @Test
-    fun `If the degree year is between one and three, the degree should not correspond to a masters degree`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                listOf(Degree.INF, Degree.PROG).map { deg ->
-                    for (i in 1..3) {
-                        val testCall = client.post("/registration") {
-                            contentType(ContentType.Application.Json)
-                            setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(degreeYear = i, degree = deg)))
-                        }
-
-                        testCall.status shouldBe HttpStatusCode.BadRequest
-                        val res: ResponseJson = testCall.body()
-
-                        res.code shouldBe Response.DegreeMismatchMaster
-                    }
-                }
-            }
-        }
-
-    @Test
-    fun `If degree is ARMNINF, degree year should be equal to one`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                for (i in 2..5) {
-                    val testCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(t, hap1(t).slug).copy(
-                                    degree = Degree.ARMNINF,
-                                    degreeYear = i
-                                )
-                            )
-                        )
-                    }
-
-                    testCall.status shouldBe HttpStatusCode.BadRequest
-                    val res: ResponseJson = testCall.body()
-
-                    res.code shouldBe Response.DegreeMismatchArmninf
-                }
-            }
-        }
-
-    @Test
-    fun `Terms should be accepted`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                val testCall = client.post("/registration") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(terms = false)))
-                }
-
-                testCall.status shouldBe HttpStatusCode.BadRequest
-                val res: ResponseJson = testCall.body()
-
-                res.code shouldBe Response.InvalidTerms
+                res.code shouldBe RegistrationResponse.HappeningDoesntExist
             }
         }
 
@@ -555,28 +336,26 @@ class PostRegistrationsTest {
                 }
             }
             for (t in be) {
-                for (i in 1..(hap1(t).spotRanges[0].spots)) {
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(email = "tesadasdt$i@test.com")))
-                    }
-
-                    submitRegCall.status shouldBe HttpStatusCode.OK
-                    val res: ResponseJson = submitRegCall.body()
-
-                    res.code shouldBe Response.OK
+                val submitRegCall = client.post("/registration") {
+                    contentType(ContentType.Application.Json)
+                    setBody(Json.encodeToString(exReg(hap8(t).slug, user1)))
                 }
 
-                for (i in 1..3) {
+                submitRegCall.status shouldBe HttpStatusCode.OK
+                val res: RegistrationResponseJson = submitRegCall.body()
+
+                res.code shouldBe RegistrationResponse.OK
+
+                for (u in listOf(user2, user3, user4, user5)) {
                     val submitRegWaitListCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(email = "takadhasdh$i@test.com")))
+                        setBody(Json.encodeToString(exReg(hap1(t).slug, u)))
                     }
 
                     submitRegWaitListCall.status shouldBe HttpStatusCode.Accepted
-                    val res: ResponseJson = submitRegWaitListCall.body()
+                    val resAgain: RegistrationResponseJson = submitRegWaitListCall.body()
 
-                    res.code shouldBe Response.WaitList
+                    resAgain.code shouldBe RegistrationResponse.WaitList
                 }
             }
         }
@@ -591,44 +370,33 @@ class PostRegistrationsTest {
                 }
             }
             for (t in be) {
-                for (i in 1..2) {
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(t, hap5(t).slug).copy(
-                                    email = "teasds${i}t3t@test.com",
-                                    degreeYear = i
-                                )
-                            )
+                val submitRegCall = client.post("/registration") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        Json.encodeToString(
+                            exReg(hap5(t).slug, user1)
                         )
-                    }
-
-                    submitRegCall.status shouldBe HttpStatusCode.Forbidden
-                    val res: ResponseJson = submitRegCall.body()
-
-                    res.code shouldBe Response.NotInRange
+                    )
                 }
 
-                for (i in 3..5) {
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(t, hap4(t).slug).copy(
-                                    email = "tlsbreh100aasdlo0${i}t3t@test.com",
-                                    degreeYear = i,
-                                    degree = if (i > 3) Degree.INF else Degree.DTEK
-                                )
-                            )
+                submitRegCall.status shouldBe HttpStatusCode.Forbidden
+                val res: RegistrationResponseJson = submitRegCall.body()
+
+                res.code shouldBe RegistrationResponse.NotInRange
+
+                val submitRegCall2 = client.post("/registration") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        Json.encodeToString(
+                            exReg(hap4(t).slug, user6)
                         )
-                    }
-
-                    submitRegCall.status shouldBe HttpStatusCode.Forbidden
-                    val res: ResponseJson = submitRegCall.body()
-
-                    res.code shouldBe Response.NotInRange
+                    )
                 }
+
+                submitRegCall2.status shouldBe HttpStatusCode.Forbidden
+                val res2: RegistrationResponseJson = submitRegCall.body()
+
+                res2.code shouldBe RegistrationResponse.NotInRange
             }
         }
 
@@ -642,55 +410,21 @@ class PostRegistrationsTest {
                 }
             }
             for (t in be) {
-                for (i in 1..1000) {
+                for (u in users) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
                         setBody(
                             Json.encodeToString(
-                                exReg(t, hap7(t).slug).copy(
-                                    email = "${t}test$i@test.com"
-                                )
+                                exReg(hap7(t).slug, u)
                             )
                         )
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.OK
+                    res.code shouldBe RegistrationResponse.OK
                 }
-            }
-        }
-
-    @Test
-    fun `Should only be able to sign in via form`() =
-        testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-            for (t in be) {
-                val submitRegFailCall = client.post("/registration?verify=true") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug)))
-                }
-
-                submitRegFailCall.status shouldBe HttpStatusCode.Unauthorized
-                val resFail: ResponseJson = submitRegFailCall.body()
-
-                resFail.code shouldBe Response.NotViaForm
-
-                val submitRegOkCall = client.post("/registration?verify=true") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(t, hap1(t).slug).copy(regVerifyToken = hap1(t).slug)))
-                }
-
-                submitRegOkCall.status shouldBe HttpStatusCode.OK
-                val resOk: ResponseJson = submitRegOkCall.body()
-
-                resOk.code shouldBe Response.OK
             }
         }
 }
@@ -699,18 +433,33 @@ private fun insertTestData(t: HAPPENING_TYPE) {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
             this[StudentGroup.name] = it
         }
+
+        User.batchInsert(users, ignore = true) {
+            this[User.email] = it.email
+            this[User.name] = it.name
+            this[User.alternateEmail] = it.alternateEmail
+            this[User.degree] = it.degree.toString()
+            this[User.degreeYear] = it.degreeYear
+        }
+
+        for (user in users) {
+            StudentGroupMembership.batchInsert(user.memberships, ignore = true) {
+                this[StudentGroupMembership.userEmail] = user.email
+                this[StudentGroupMembership.studentGroupName] = it
+            }
+        }
     }
-    insertOrUpdateHappening(hap1(t), dev = true)
-    insertOrUpdateHappening(hap2(t), dev = true)
-    insertOrUpdateHappening(hap3(t), dev = true)
-    insertOrUpdateHappening(hap4(t), dev = true)
-    insertOrUpdateHappening(hap5(t), dev = true)
-    insertOrUpdateHappening(hap6(t), dev = true)
-    insertOrUpdateHappening(hap7(t), dev = true)
-    insertOrUpdateHappening(hap8(t), dev = true)
-    insertOrUpdateHappening(hap9(t), dev = true)
-    insertOrUpdateHappening(hap10(t), dev = true)
+    insertOrUpdateHappening(hap1(t))
+    insertOrUpdateHappening(hap2(t))
+    insertOrUpdateHappening(hap3(t))
+    insertOrUpdateHappening(hap4(t))
+    insertOrUpdateHappening(hap5(t))
+    insertOrUpdateHappening(hap6(t))
+    insertOrUpdateHappening(hap7(t))
+    insertOrUpdateHappening(hap8(t))
+    insertOrUpdateHappening(hap9(t))
+    insertOrUpdateHappening(hap10(t))
 }
