@@ -42,7 +42,11 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
             )}
             {jobAdvert && !router.isFallback && (
                 <>
-                    <SEO title={jobAdvert.companyName} />
+                    <SEO
+                        title={jobAdvert.companyName}
+                        description={`${jobAdvert.jobType} – ${jobAdvert.companyName}`}
+                        image={jobAdvert.logoUrl}
+                    />
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
                             <LinkBox mb="1em">

@@ -40,7 +40,7 @@ const PostPage = ({ post }: Props): JSX.Element => {
             )}
             {!router.isFallback && (
                 <>
-                    <SEO title={post.title.no} />
+                    <SEO title={post.title.no} description={`${post.body.no.slice(0, 60)} ...`} />
                     <Box>
                         <Section>
                             <Flex direction="row" alignItems="center">
