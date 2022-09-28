@@ -66,6 +66,7 @@ export const getStaticProps: GetStaticProps = async () => {
         'Jonas Hammerseth',
         'Nikolaus Engh',
         'Thea Jenny Kolnes',
+        'Malin Torset Sivertstøl',
     ];
 
     const profiles = await ProfileAPI.getProfilesByName(creditedUsers);
