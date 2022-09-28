@@ -24,12 +24,8 @@ interface Props {
 const PostPage = ({ post }: Props): JSX.Element => {
     const router = useRouter();
     const isNorwegian = useContext(LanguageContext);
-    const localeTitle = (): string => {
-        /* eslint-disable */
-        const output = isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;
-        return output;
-        /* eslint-enable */
-    };
+    // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
+    const localeTitle = () => (isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no);
 
     return (
         <>
@@ -66,16 +62,12 @@ const PostPage = ({ post }: Props): JSX.Element => {
                             <Divider my="0.5em" />
 
                             <Markdown options={{ overrides: MapMarkdownChakra }}>
-                                {
-                                    /* eslint-disable */
-                                    isNorwegian
-                                        ? post.body.no
-                                        : post.body.en
-                                        ? post.body.en
-                                        : '(No english version avalible) \n\n' + post.body.no
-
-                                    /* eslint-enable */
-                                }
+                                {isNorwegian
+                                    ? post.body.no
+                                    : // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
+                                    post.body.en
+                                    ? post.body.en
+                                    : '(No english version avalible) \n\n' + post.body.no}
                             </Markdown>
                         </Section>
                     </Box>
