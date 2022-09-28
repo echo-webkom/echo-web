@@ -30,7 +30,7 @@ const CreditsPage = ({ profiles }: { profiles: Array<Profile> }): JSX.Element =>
             <Section>
                 <Center>
                     <Heading as="h1" size="xl" mb={4}>
-                        Disse folka har bidratt til denne flotte nettsiden
+                        Disse folka har bidratt til denne flotte nettsiden😁
                     </Heading>
                 </Center>
                 <Center pb={16}>
@@ -60,7 +60,8 @@ export const getStaticProps: GetStaticProps = async () => {
         'Alvar Hønsi',
         'Sander Sigmundstad',
         'Kristian Rosland',
-        'Christian Hein',
+        'Torger Bocianowski',
+        'Felix Kaasa',
         'Ole Magnus Fon Johnsen',
         'Jonas Hammerseth',
     ];
