@@ -115,7 +115,7 @@
         "@sanity/image-url": "1.0.1",
         "axios": "0.27.2",
         "calendar-link": "2.2.0",
-        "canvas-confetti": "^1.5.1",
+        "canvas-confetti": "1.5.1",
         "date-fns": "2.29.3",
         "framer-motion": "7.3.6",
         "markdown-to-jsx": "7.1.7",
@@ -132,7 +132,7 @@
         "typescript-json-decoder": "1.0.10"
     },
     "devDependencies": {
-        "@types/canvas-confetti": "^1.4.3",
+        "@types/canvas-confetti": "1.4.3",
         "@types/node": "16.11.59",
         "@types/react": "18.0.21",
         "@types/react-dom": "18.0.6",
