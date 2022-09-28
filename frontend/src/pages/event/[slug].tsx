@@ -84,8 +84,11 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
             {error && !happening && <ErrorBox error={error} />}
             {happening && !error && (
                 <>
-                    <SEO title={happening.title} />
-
+                    <SEO
+                        title={happening.title}
+                        description={`${happening.body.no.slice(0, 60)} ...`}
+                        image={happening.logoUrl ?? undefined}
+                    />
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} as={Section}>
                             <>
