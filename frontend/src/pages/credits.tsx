@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { GetStaticProps } from 'next';
 import confetti from 'canvas-confetti';
-import { Center, Text, Heading, Grid, GridItem, SimpleGrid } from '@chakra-ui/react';
+import { Center, Text, Heading, GridItem, SimpleGrid } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Profile } from '@api/profile';
