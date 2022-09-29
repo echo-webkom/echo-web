@@ -18,10 +18,8 @@ import {
     useDisclosure,
     Spacer,
     LinkBox,
-    DrawerFooter,
-    Button,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -30,7 +28,7 @@ import NextLink from 'next/link';
 import ColorModeButton from '@components/color-mode-button';
 import DesktopNavLink from '@components/nav-link';
 import routes from 'routes';
-import useLanguage from '@hooks/use-language';
+import LanguageContext from 'language-context';
 
 const DesktopNavBar = () => {
     return (
@@ -79,8 +77,9 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer = ({ isOpen, onClose, btnRef }: MobileDrawerProps) => {
+    const isNorwegian = useContext(LanguageContext);
+
     const { status } = useSession();
-    const { isNorwegian, toggleLanguage } = useLanguage();
 
     const router = useRouter();
 
@@ -173,11 +172,6 @@ const MobileDrawer = ({ isOpen, onClose, btnRef }: MobileDrawerProps) => {
                             </Accordion>
                         </Box>
                     </DrawerBody>
-                    <DrawerFooter>
-                        <Button variant="ghost" fontWeight="medium" fontSize="lg" w="100%" onClick={toggleLanguage}>
-                            {isNorwegian ? 'In English' : 'På norsk'}
-                        </Button>
-                    </DrawerFooter>
                 </DrawerContent>
             </DrawerOverlay>
         </Drawer>

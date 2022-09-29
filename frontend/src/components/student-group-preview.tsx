@@ -26,6 +26,7 @@ const StudentGroupPreview = ({ group }: Props): JSX.Element => {
                 bgSize="cover"
                 bgRepeat="no-repeat"
                 h="225px"
+                appearance="auto"
             >
                 <Flex
                     boxSize="full"
