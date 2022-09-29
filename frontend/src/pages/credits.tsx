@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { GetStaticProps } from 'next';
 import confetti from 'canvas-confetti';
-import { Center, Text, Heading, Grid, GridItem } from '@chakra-ui/react';
+import { Center, Text, Heading, Grid, GridItem, SimpleGrid } from '@chakra-ui/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Profile } from '@api/profile';
@@ -29,14 +29,14 @@ const CreditsPage = ({ profiles }: { profiles: Array<Profile> }): JSX.Element =>
             <SEO title="Credits" />
             <Section>
                 <Center>
-                    <Heading as="h1" size="xl" mb={4}>
+                    <Heading as="h1" size="xl" mb={4} paddingTop={10}>
                         Disse folka har bidratt til denne flotte nettsiden😁
                     </Heading>
                 </Center>
                 <Center pb={16}>
                     <Text>Se så flinke de er!</Text>
                 </Center>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4} zIndex={1}>
+                <SimpleGrid columns={3} spacing={4} paddingBottom={10}>
                     {profiles.map((profile) => {
                         return (
                             <GridItem key={profile.name}>
@@ -46,7 +46,7 @@ const CreditsPage = ({ profiles }: { profiles: Array<Profile> }): JSX.Element =>
                             </GridItem>
                         );
                     })}
-                </Grid>
+                </SimpleGrid>
             </Section>
         </>
     );
