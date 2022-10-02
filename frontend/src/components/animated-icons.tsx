@@ -11,7 +11,7 @@ interface Props {
 const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
     const month = getMonth(new Date());
     // Only for Halloween, no animated icons for Christmas
-    if (month !== 10) return <>{children}</>;
+    if (month !== 9) return <>{children}</>;
 
     const keys = [...new Array(n).keys()];
     const folder = '/halloween-icons/';

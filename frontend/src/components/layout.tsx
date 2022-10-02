@@ -10,8 +10,8 @@ interface Props {
 
 const Layout = ({ children }: Props): JSX.Element => {
     return (
-        <Box overflow="hidden" pos="relative" minHeight="100vh" data-testid="layout">
-            <AnimatedIcons n={50}>
+        <AnimatedIcons n={50}>
+            <Box overflow="hidden" pos="relative" minHeight="100vh" data-testid="layout">
                 <Header />
                 <Box
                     maxW="1500"
@@ -25,8 +25,8 @@ const Layout = ({ children }: Props): JSX.Element => {
                 </Box>
                 <FeedbackButton />
                 <Footer />
-            </AnimatedIcons>
-        </Box>
+            </Box>
+        </AnimatedIcons>
     );
 };
 
