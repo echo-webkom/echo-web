@@ -47,7 +47,7 @@
         "sanity-plugin-markdown": "2.1.1",
         "sanity-plugin-media": "1.4.11",
         "slugify": "1.6.5",
-        "styled-components": "5.3.5"
+        "styled-components": "5.3.6"
     },
     "devDependencies": {
         "@sanity/cli": "2.34.0"
