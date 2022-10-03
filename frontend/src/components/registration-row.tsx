@@ -50,6 +50,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 <Td fontSize="md">{registration.email}</Td>
                 <Td fontSize="md">{registration.firstName}</Td>
                 <Td fontSize="md">{registration.lastName}</Td>
+                <Td fontSize="md">{registration.degree}</Td>
                 <Td fontSize="md">{registration.degreeYear}</Td>
                 {notEmptyOrNull(registration.answers) &&
                     registration.answers.map((ans, index) => (

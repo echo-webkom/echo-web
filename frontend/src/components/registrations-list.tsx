@@ -119,6 +119,7 @@ const RegistrationsList = ({ registrations, error }: Props): JSX.Element => {
                                 <Th>Email</Th>
                                 <Th>Fornavn</Th>
                                 <Th>Etternavn</Th>
+                                <Th>Studieretning</Th>
                                 <Th>Årstrinn</Th>
                                 {notEmptyOrNull(questions) && questions.map((q, index) => <Th key={index}>{q}</Th>)}
                                 <Th>På venteliste?</Th>
