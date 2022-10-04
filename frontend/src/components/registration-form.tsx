@@ -38,39 +38,46 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'in
     switch (statusCode) {
         // OK
         // The registration is submitted.
-        case 200:
+        case 200: {
             return 'success';
+        }
 
         // ACCEPTED
         // The bedpres spots are filled up,
         // and the user is placed on the waitlist.
-        case 202:
+        case 202: {
             return 'warning';
+        }
 
         // BAD_REQUEST
         // The form has bad or invalid data.
-        case 400:
+        case 400: {
             return 'warning';
+        }
 
         // FORBIDDEN
         // User submits registration before bedpres is open (shouldn't be possible).
-        case 403:
+        case 403: {
             return 'warning';
+        }
 
         // CONFLICT
         // The bedpres the user is trying to sign up for does not exist.
-        case 409:
+        case 409: {
             return 'error';
+        }
 
         // UNPROCESSABLE_ENTITY
         // The registration already exists.
-        case 422:
+        case 422: {
             return 'warning';
+        }
 
         // INTERNAL_SERVER_ERROR
         // Something has gone horribly wrong.
-        default:
+        default: {
             return 'error';
+        }
     }
 };
 
