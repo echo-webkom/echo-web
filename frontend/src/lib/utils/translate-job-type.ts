@@ -3,14 +3,18 @@ const translateJobType = (
     isNorwegian: boolean = true,
 ): string => {
     switch (jobType) {
-        case 'fulltime':
+        case 'fulltime': {
             return isNorwegian ? 'Fulltid' : 'Full time';
-        case 'parttime':
+        }
+        case 'parttime': {
             return isNorwegian ? 'Deltid' : 'Part time';
-        case 'internship':
+        }
+        case 'internship': {
             return 'Internship';
-        case 'summerjob':
+        }
+        case 'summerjob': {
             return isNorwegian ? 'Sommerjobb' : 'Summer internship';
+        }
     }
 };
 
