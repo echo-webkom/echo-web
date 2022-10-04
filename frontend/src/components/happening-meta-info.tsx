@@ -141,7 +141,7 @@ const HappeningMetaInfo = ({
                 spotsForAll && <IconText icon={MdLockOpen} text={isNorwegian ? 'Åpent for alle!' : 'Open for all!'} />
             )}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
-            <IconText icon={RiTimeLine} text={format(date, 'HH:mm')} />
+            <IconText icon={RiTimeLine} text={format(date, isNorwegian ? 'HH:mm' : 'h:aaa')} />
             {locationLink ? (
                 <IconText icon={ImLocation} text={location} link={locationLink} />
             ) : (
