@@ -38,7 +38,7 @@ const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JS
         >
             {entries.map((entry: Happening | Post | JobAdvert) => {
                 switch (type) {
-                    case 'bedpres':
+                    case 'bedpres': {
                         return (
                             <BedpresPreview
                                 key={entry.slug}
@@ -47,7 +47,8 @@ const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JS
                                 registrationCounts={registrationCounts}
                             />
                         );
-                    case 'event':
+                    }
+                    case 'event': {
                         return (
                             <EventPreview
                                 key={entry.slug}
@@ -55,7 +56,8 @@ const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JS
                                 registrationCounts={registrationCounts}
                             />
                         );
-                    case 'post':
+                    }
+                    case 'post': {
                         return (
                             <PostPreview
                                 key={entry.slug}
@@ -63,8 +65,10 @@ const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JS
                                 w={enableJobAdverts ? '100%' : undefined}
                             />
                         );
-                    case 'job-advert':
+                    }
+                    case 'job-advert': {
                         return <JobAdvertPreview key={entry.slug} jobAdvert={entry as JobAdvert} />;
+                    }
                 }
             })}
         </Stack>
