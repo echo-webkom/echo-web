@@ -1,0 +1,994 @@
+package no.uib.echo.plugins
+
+import com.auth0.jwk.JwkProviderBuilder
+import io.ktor.http.ContentDisposition
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.basic
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.auth.principal
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.receive
+import io.ktor.server.response.header
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondBytes
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import no.uib.echo.FeatureToggles
+import no.uib.echo.Response
+import no.uib.echo.isEmailValid
+import no.uib.echo.plugins.Routing.deleteHappening
+import no.uib.echo.plugins.Routing.deleteRegistration
+import no.uib.echo.plugins.Routing.feedback
+import no.uib.echo.plugins.Routing.getHappeningInfo
+import no.uib.echo.plugins.Routing.getRegistrations
+import no.uib.echo.plugins.Routing.getStatus
+import no.uib.echo.plugins.Routing.getUser
+import no.uib.echo.plugins.Routing.postFeedback
+import no.uib.echo.plugins.Routing.postRegistration
+import no.uib.echo.plugins.Routing.postRegistrationCount
+import no.uib.echo.plugins.Routing.putHappening
+import no.uib.echo.plugins.Routing.putUser
+import no.uib.echo.resToJson
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Feedback
+import no.uib.echo.schema.FeedbackJson
+import no.uib.echo.schema.FeedbackResponse
+import no.uib.echo.schema.FeedbackResponseJson
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningInfoJson
+import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.HappeningSlugJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.StudentGroupMembership
+import no.uib.echo.schema.User
+import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.masters
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
+import no.uib.echo.sendConfirmationEmail
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import org.joda.time.DateTime
+import java.net.URL
+import java.net.URLDecoder
+import java.util.concurrent.TimeUnit
+
+fun Application.configureRouting(
+    adminKey: String,
+    featureToggles: FeatureToggles,
+    dev: Boolean = false,
+    disableJwtAuth: Boolean = false,
+    sendGridApiKey: String? = null
+) {
+    val admin = "admin"
+
+    install(ContentNegotiation) {
+        json(
+            Json {
+                ignoreUnknownKeys = true
+            }
+        )
+    }
+
+    install(Authentication) {
+        basic("auth-$admin") {
+            realm = "Access to registrations and happenings."
+            validate { credentials ->
+                if (credentials.name == admin && credentials.password == adminKey) {
+                    UserIdPrincipal(credentials.name)
+                } else {
+                    null
+                }
+            }
+        }
+
+        val issuer = "https://auth.dataporten.no/openid/jwks"
+        val jwkProvider = JwkProviderBuilder(URL(issuer))
+            .cached(10, 24 * 7, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES)
+            .build()
+
+        jwt("auth-jwt") {
+            realm = "Verify jwt"
+            verifier(jwkProvider, issuer) {
+                acceptLeeway(3)
+                withIssuer("https://auth.dataporten.no")
+            }
+            validate { jwtCredential ->
+                JWTPrincipal(jwtCredential.payload)
+            }
+        }
+    }
+
+    routing {
+        getStatus()
+
+        authenticate("auth-$admin") {
+            putHappening(dev)
+            deleteHappening()
+            getHappeningInfo()
+        }
+
+        authenticate("auth-jwt") {
+            getUser()
+            putUser()
+            feedback()
+            if (!disableJwtAuth) {
+                getRegistrations()
+                deleteRegistration()
+            }
+        }
+
+        if (disableJwtAuth) {
+            getRegistrations(true)
+            deleteRegistration(true)
+        }
+
+        postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
+        postRegistrationCount()
+        postFeedback()
+    }
+}
+
+object Routing {
+    const val registrationRoute: String = "registration"
+    const val happeningRoute: String = "happening"
+
+    fun Route.getStatus() {
+        get("/status") {
+            call.respond(HttpStatusCode.OK)
+        }
+    }
+
+    fun Route.getUser() {
+        get("/user") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
+
+            val user = transaction {
+                addLogger(StdOutSqlLogger)
+                User.select {
+                    User.email eq email
+                }.firstOrNull()
+            }
+
+            if (user == null) {
+                call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
+                return@get
+            }
+
+            val memberships = transaction {
+                addLogger(StdOutSqlLogger)
+
+                StudentGroupMembership.select {
+                    StudentGroupMembership.userEmail eq email
+                }.toList().map {
+                    it[StudentGroupMembership.studentGroupName]
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                UserJson(
+                    user[User.email],
+                    user[User.alternateEmail],
+                    user[User.degreeYear],
+                    Degree.valueOf(user[User.degree]),
+                    memberships.ifEmpty { emptyList() }
+                )
+            )
+        }
+    }
+
+    fun Route.putUser() {
+        put("/user") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen."
+                )
+                return@put
+            }
+
+            try {
+                val user = call.receive<UserJson>()
+                val alternateEmail = user.alternateEmail?.lowercase()
+
+                if (alternateEmail != null) {
+                    if (!isEmailValid(alternateEmail)) {
+                        call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gyldig e-post.")
+                        return@put
+                    }
+                }
+
+                if (user.degreeYear !in 1..5) {
+                    call.respond(HttpStatusCode.BadRequest, "Vennligst velg et gyldig trinn.")
+                    return@put
+                }
+
+                val degreeMismatch = "Studieretning og årstrinn stemmer ikke overens."
+
+                if ((user.degree in bachelors && user.degreeYear !in 1..3) ||
+                    (user.degree in masters && user.degreeYear !in 4..5) ||
+                    (user.degree == Degree.ARMNINF && user.degreeYear != 1)
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, degreeMismatch)
+                    return@put
+                }
+
+                val result = transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.select {
+                        User.email.lowerCase() eq email
+                    }.firstOrNull()
+                }
+
+                if (result == null) {
+                    transaction {
+                        addLogger(StdOutSqlLogger)
+                        User.insert {
+                            it[User.email] = email
+                            it[User.alternateEmail] = alternateEmail
+                            it[degree] = user.degree.toString()
+                            it[degreeYear] = user.degreeYear
+                        }
+                    }
+                    call.respond(HttpStatusCode.OK, "User created with email = $email")
+                    return@put
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+                    User.update({
+                        User.email.lowerCase() eq email
+                    }) {
+                        it[User.alternateEmail] = alternateEmail
+                        it[degree] = user.degree.toString()
+                        it[degreeYear] = user.degreeYear
+                    }
+                }
+                call.respond(
+                    HttpStatusCode.OK,
+                    "User updated with email = $email, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                )
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.getHappeningInfo() {
+        get("/$happeningRoute/{slug}") {
+            val slug = call.parameters["slug"]
+
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest, "No slug specified.")
+                return@get
+            }
+
+            val happening = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select {
+                    Happening.slug eq slug
+                }.firstOrNull()
+            }
+
+            if (happening == null) {
+                call.respond(HttpStatusCode.NotFound, "Happening doesn't exist.")
+                return@get
+            }
+
+            val registrationCount = transaction {
+                addLogger(StdOutSqlLogger)
+
+                SpotRange.select {
+                    SpotRange.happeningSlug eq slug
+                }.toList().map {
+                    SpotRangeWithCountJson(
+                        it[SpotRange.spots],
+                        it[SpotRange.minDegreeYear],
+                        it[SpotRange.maxDegreeYear],
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            false
+                        ),
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            true
+                        )
+                    )
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                HappeningInfoJson(
+                    registrationCount,
+                    happening[Happening.regVerifyToken]
+                )
+            )
+        }
+    }
+
+    fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
+        get("/$registrationRoute/{slug}") {
+            var email: String? = null
+            if (!disableJwtAuth) {
+                email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+                if (email == null) {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    return@get
+                }
+            }
+
+            val slug = call.parameters["slug"]
+
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+
+            val download = call.request.queryParameters["download"] != null
+            val json = call.request.queryParameters["json"] != null
+            val testing = call.request.queryParameters["testing"] != null
+
+            val hap = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select { Happening.slug eq slug }.firstOrNull()
+            }
+
+            if (hap == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
+
+            if (!disableJwtAuth) {
+                if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@get
+                }
+            }
+
+            val regs = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Registration.select {
+                    Registration.happeningSlug eq hap[Happening.slug]
+                }.orderBy(Registration.submitDate to SortOrder.ASC).toList().map { reg ->
+                    RegistrationJson(
+                        reg[Registration.email].lowercase(),
+                        reg[Registration.firstName],
+                        reg[Registration.lastName],
+                        Degree.valueOf(reg[Registration.degree]),
+                        reg[Registration.degreeYear],
+                        reg[Registration.happeningSlug],
+                        reg[Registration.terms],
+                        reg[Registration.submitDate].toString(),
+                        reg[Registration.waitList],
+                        transaction {
+                            addLogger(StdOutSqlLogger)
+
+                            Answer.select {
+                                Answer.registrationEmail.lowerCase() eq reg[Registration.email].lowercase() and
+                                    (Answer.happeningSlug eq hap[Happening.slug])
+                            }.toList()
+                        }.map {
+                            AnswerJson(
+                                it[Answer.question],
+                                it[Answer.answer]
+                            )
+                        },
+                        HAPPENING_TYPE.valueOf(hap[Happening.happeningType]),
+                        null
+                    )
+                }
+            }
+
+            if (download) {
+                val fileName = "pameldte-${hap[Happening.slug]}.csv"
+
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(
+                        ContentDisposition.Parameters.FileName,
+                        fileName
+                    ).toString()
+                )
+                call.respondBytes(
+                    contentType = ContentType.parse("text/csv"),
+                    provider = { toCsv(regs, testing = testing).toByteArray() }
+                )
+            } else if (json) {
+                call.respond(regs)
+            } else {
+                call.response.header(
+                    HttpHeaders.Location,
+                    "https://echo.uib.no/$registrationRoute/$slug"
+                )
+                call.respond(HttpStatusCode.MovedPermanently)
+            }
+        }
+    }
+
+    fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRegs: Boolean) {
+        post("/$registrationRoute") {
+            try {
+                val registration = call.receive<RegistrationJson>()
+
+                if (!isEmailValid(registration.email)) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
+                    return@post
+                }
+
+                if (registration.firstName.isBlank() || registration.lastName.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidName, registration.type))
+                    return@post
+                }
+
+                if (registration.degreeYear !in 1..5) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidDegreeYear, registration.type))
+                    return@post
+                }
+
+                if (registration.degree in bachelors && registration.degreeYear !in 1..3) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchBachelor, registration.type)
+                    )
+                    return@post
+                }
+
+                if (registration.degree in masters && registration.degreeYear !in 4..5) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.DegreeMismatchMaster, registration.type))
+                    return@post
+                }
+
+                if (registration.degree == Degree.ARMNINF && registration.degreeYear != 1) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        resToJson(Response.DegreeMismatchArmninf, registration.type)
+                    )
+                    return@post
+                }
+
+                if (!registration.terms) {
+                    call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidTerms, registration.type))
+                    return@post
+                }
+
+                val happening = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Happening.select {
+                        Happening.slug eq registration.slug
+                    }.firstOrNull()
+                }
+
+                if (happening == null) {
+                    call.respond(
+                        HttpStatusCode.Conflict,
+                        resToJson(Response.HappeningDoesntExist, registration.type)
+                    )
+                    return@post
+                }
+
+                if (happening[Happening.regVerifyToken] != registration.regVerifyToken && verifyRegs) {
+                    call.respond(HttpStatusCode.Unauthorized, resToJson(Response.NotViaForm, registration.type))
+                    return@post
+                }
+
+                if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(
+                            Response.TooEarly,
+                            registration.type,
+                            regDate = happening[Happening.registrationDate].toString()
+                        )
+                    )
+                    return@post
+                }
+
+                if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.TooLate, registration.type)
+                    )
+                    return@post
+                }
+
+                val spotRanges = selectSpotRanges(registration.slug)
+
+                val correctRange = spotRanges.firstOrNull {
+                    registration.degreeYear in it.minDegreeYear..it.maxDegreeYear
+                }
+
+                if (correctRange == null) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(Response.NotInRange, registration.type, spotRanges = spotRanges)
+                    )
+                    return@post
+                }
+
+                val countRegsInSpotRange = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq registration.slug and
+                            (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
+                    }.count()
+                }
+
+                val spotRangeOnWaitList = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq registration.slug and
+                            (
+                                Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
+                                    (Registration.waitList eq true)
+                                )
+                    }.count()
+                }
+
+                val waitList = correctRange.spots in 1..countRegsInSpotRange || spotRangeOnWaitList > 0
+                val waitListSpot = spotRangeOnWaitList + 1
+
+                val oldReg = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.email.lowerCase() eq registration.email.lowercase() and
+                            (Registration.happeningSlug eq registration.slug)
+                    }.firstOrNull()
+                }
+
+                if (oldReg != null) {
+                    val responseCode = when (oldReg[Registration.waitList]) {
+                        true -> Response.AlreadySubmittedWaitList
+                        false -> Response.AlreadySubmitted
+                    }
+                    call.respond(
+                        HttpStatusCode.UnprocessableEntity,
+                        resToJson(responseCode, registration.type)
+                    )
+                    return@post
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.insert {
+                        it[email] = registration.email.lowercase()
+                        it[firstName] = registration.firstName
+                        it[lastName] = registration.lastName
+                        it[degree] = registration.degree.toString()
+                        it[degreeYear] = registration.degreeYear
+                        it[happeningSlug] = registration.slug
+                        it[terms] = true
+                        it[Registration.waitList] = waitList
+                    }
+
+                    if (registration.answers.isNotEmpty()) {
+                        Answer.batchInsert(registration.answers) { a ->
+                            this[Answer.registrationEmail] = registration.email.lowercase()
+                            this[Answer.happeningSlug] = registration.slug
+                            this[Answer.question] = a.question
+                            this[Answer.answer] = a.answer
+                        }
+                    }
+                }
+
+                if (waitList) {
+                    call.respond(
+                        HttpStatusCode.Accepted,
+                        resToJson(Response.WaitList, registration.type, waitListSpot = waitListSpot)
+                    )
+
+                    if (sendGridApiKey == null || !sendEmail) {
+                        return@post
+                    }
+
+                    sendConfirmationEmail(sendGridApiKey, registration, waitListSpot)
+                } else {
+                    call.respond(HttpStatusCode.OK, resToJson(Response.OK, registration.type))
+
+                    if (sendGridApiKey == null || !sendEmail) {
+                        return@post
+                    }
+
+                    sendConfirmationEmail(sendGridApiKey, registration, null)
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
+        delete("/$registrationRoute/{slug}/{email}") {
+            var email: String? = null
+            if (!disableJwtAuth) {
+                email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+                if (email == null) {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    return@delete
+                }
+            }
+
+            val slug = call.parameters["slug"]
+
+            if (slug == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+
+            val paramEmail = call.parameters["email"]
+
+            if (paramEmail == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+
+            val decodedParamEmail = withContext(Dispatchers.IO) {
+                URLDecoder.decode(paramEmail, "utf-8")
+            }.lowercase()
+
+            val hap = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Happening.select { Happening.slug eq slug }.firstOrNull()
+            }
+
+            if (hap == null) {
+                call.respond(HttpStatusCode.NotFound)
+                return@delete
+            }
+
+            if (!disableJwtAuth) {
+                if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
+            }
+
+            try {
+                val reg = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.happeningSlug eq hap[Happening.slug] and
+                            (Registration.email.lowerCase() eq decodedParamEmail)
+                    }.firstOrNull()
+                }
+
+                if (reg == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@delete
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Answer.deleteWhere {
+                        Answer.happeningSlug eq hap[Happening.slug] and
+                            (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
+                    }
+
+                    Registration.deleteWhere {
+                        Registration.happeningSlug eq hap[Happening.slug] and
+                            (Registration.email.lowerCase() eq decodedParamEmail)
+                    }
+                }
+
+                if (reg[Registration.waitList]) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
+                    )
+                    return@delete
+                }
+
+                val highestOnWaitList = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Registration.select {
+                        Registration.waitList eq true
+                    }.orderBy(Registration.submitDate).firstOrNull()
+                }
+
+                if (highestOnWaitList == null) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
+                    )
+                } else {
+                    transaction {
+                        addLogger(StdOutSqlLogger)
+
+                        Registration.update({ Registration.email eq highestOnWaitList[Registration.email].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
+                            it[waitList] = false
+                        }
+                    }
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " +
+                            "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
+                    )
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.putHappening(dev: Boolean) {
+        put("/$happeningRoute") {
+            try {
+                val hap = call.receive<HappeningJson>()
+                val result = insertOrUpdateHappening(hap, dev)
+
+                call.respond(result.first, result.second)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error submitting happening.")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.deleteHappening() {
+        delete("/$happeningRoute") {
+            try {
+                val hap = call.receive<HappeningSlugJson>()
+
+                val hapDeleted = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
+                    if (!happeningExists) {
+                        return@transaction false
+                    }
+
+                    SpotRange.deleteWhere {
+                        SpotRange.happeningSlug eq hap.slug
+                    }
+
+                    Answer.deleteWhere {
+                        Answer.happeningSlug eq hap.slug
+                    }
+
+                    Registration.deleteWhere {
+                        Registration.happeningSlug eq hap.slug
+                    }
+
+                    Happening.deleteWhere {
+                        Happening.slug eq hap.slug
+                    }
+
+                    return@transaction true
+                }
+
+                if (hapDeleted) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
+                    )
+                } else {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
+                    )
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.postRegistrationCount() {
+        post("/$registrationRoute/count") {
+            val slugs = call.receive<SlugJson>().slugs
+            val registrationCounts = transaction {
+                addLogger(StdOutSqlLogger)
+
+                slugs.map {
+                    val count = Registration.select {
+                        Registration.happeningSlug eq it
+                    }.count()
+
+                    val waitListCount = Registration.select {
+                        Registration.happeningSlug eq it and (Registration.waitList eq true)
+                    }.count()
+
+                    RegistrationCountJson(it, count, waitListCount)
+                }
+            }
+
+            call.respond(
+                HttpStatusCode.OK,
+                registrationCounts
+            )
+        }
+    }
+
+    fun Route.postFeedback() {
+        post("/feedback") {
+            try {
+                val feedback = call.receive<FeedbackJson>()
+
+                if (feedback.message.isEmpty()) {
+                    call.respond(HttpStatusCode.BadRequest, FeedbackResponse.EMPTY)
+                    return@post
+                }
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Feedback.insert {
+                        it[email] = feedback.email
+                        it[name] = feedback.name
+                        it[message] = feedback.message
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting feedback.")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun Route.feedback() {
+        get("/feedback") {
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@get
+            }
+
+            if (email !in getGroupMembers("webkom")) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@get
+            }
+
+            val feedback = transaction {
+                addLogger(StdOutSqlLogger)
+
+                Feedback.selectAll().map {
+                    FeedbackResponseJson(
+                        it[Feedback.id],
+                        it[Feedback.email],
+                        it[Feedback.name],
+                        it[Feedback.message],
+                        it[Feedback.sentAt].toString(),
+                        it[Feedback.isRead]
+                    )
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, feedback)
+        }
+
+        delete("/feedback") {
+            @Serializable
+            data class ReqJson(val id: Int)
+
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@delete
+            }
+
+            if (email !in getGroupMembers("webkom")) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@delete
+            }
+
+            try {
+                val req = call.receive<ReqJson>()
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Feedback.deleteWhere {
+                        Feedback.id eq req.id
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error deleting feedback.")
+                e.printStackTrace()
+            }
+        }
+
+        put("/feedback") {
+            try {
+                val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+                if (email !in getGroupMembers("webkom")) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
+                }
+
+                val feedback = call.receive<FeedbackResponseJson>()
+
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Feedback.update({ Feedback.id eq feedback.id }) {
+                        it[Feedback.email] = feedback.email
+                        it[name] = feedback.name
+                        it[message] = feedback.message
+                        it[isRead] = feedback.isRead
+                    }
+                }
+
+                call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error putting feedback.")
+                e.printStackTrace()
+            }
+        }
+    }
+}
