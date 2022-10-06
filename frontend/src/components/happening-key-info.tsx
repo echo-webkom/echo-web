@@ -1,5 +1,5 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
-import { format, isToday, isPast, isFuture } from 'date-fns';
+import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
@@ -29,28 +29,20 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
             <Flex alignItems="center" justifyContent="flex-end">
                 <BiCalendar />
                 {isToday(new Date(event.date)) ? (
-                    <Text ml="1" fontWeight="bold">
-                        {isNorwegian ? `I dag ` : `Today `}
-                    </Text>
+                    <>
+                        <Text ml="1" fontWeight="bold">
+                            {isNorwegian ? `I dag ` : `Today `}
+                        </Text>
+                        <Text ml="1" fontSize="1rem">
+                            {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
+                        </Text>
+                    </>
                 ) : (
                     format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
                 )}
             </Flex>
 
-            {isToday(new Date(event.date)) ? (
-                <Flex alignItems="center" justifyContent="flex-end">
-                    <Text ml="1" fontSize="1rem">
-                        <span style={{ whiteSpace: 'nowrap' }}>
-                            {isNorwegian ? `kl. ` : `at `}
-                            {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
-                        </span>
-                    </Text>
-                </Flex>
-            ) : (
-                ''
-            )}
-
-            {event.registrationDate && isMainPage && isFuture(new Date(event.date)) && (
+            {event.registrationDate && isMainPage && (
                 <Flex alignItems="center" justifyContent="flex-end">
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
