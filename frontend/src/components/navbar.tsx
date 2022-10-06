@@ -1,6 +1,5 @@
 import {
     Box,
-    Center,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -9,19 +8,16 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
-    Icon,
-    IconButton,
 } from '@chakra-ui/react';
-import type { RefObject } from 'react';
-import { useContext } from 'react';
-import { AiOutlineUser } from 'react-icons/ai';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import ColorModeButton from '@components/color-mode-button';
-import NavLink, { NavLinkButton } from '@components/nav-link';
+import type { RefObject } from 'react';
+import { useContext } from 'react';
 import LanguageContext from 'language-context';
+import NavLink, { NavLinkButton } from '@components/nav-link';
+import ColorModeButton from '@components/color-mode-button';
 
-const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
+const NavLinks = (): JSX.Element => {
     const isNorwegian = useContext(LanguageContext);
     const { status } = useSession();
     const router = useRouter();
@@ -44,33 +40,17 @@ const NavLinks = ({ isMobile }: { isMobile: boolean }): JSX.Element => {
             <NavLink text={isNorwegian ? 'Hjem' : 'Home'} href="/" data-cy="hjem" />
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
             <NavLink text={isNorwegian ? 'Om echo' : 'About echo'} href="/om-echo/om-oss" data-cy="om-oss" />
-            {isMobile && (
-                <Flex data-cy="min-profil">
-                    {status === 'authenticated' && (
-                        <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />
-                    )}
-                    {status === 'unauthenticated' && (
-                        <NavLinkButton onClick={() => void onProfileClick()}>
-                            {isNorwegian ? 'Logg inn' : 'Log in'}
-                        </NavLinkButton>
-                    )}
-                </Flex>
-            )}
+            <Flex data-cy="min-profil">
+                {status === 'authenticated' && (
+                    <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />
+                )}
+                {status === 'unauthenticated' && (
+                    <NavLinkButton onClick={() => void onProfileClick()}>
+                        {isNorwegian ? 'Logg inn' : 'Log in'}
+                    </NavLinkButton>
+                )}
+            </Flex>
             <ColorModeButton />
-            {!isMobile && (
-                <IconButton
-                    data-cy="min-profil"
-                    ml={['.6rem', null, null, null, '2rem']}
-                    aria-label={status === 'authenticated' ? 'Gå til profil' : 'Logg inn'}
-                    onClick={() => void onProfileClick()}
-                    variant="ghost"
-                    icon={
-                        <Center>
-                            <Icon as={AiOutlineUser} boxSize={7} />
-                        </Center>
-                    }
-                />
-            )}
         </Flex>
     );
 };
@@ -93,7 +73,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                     w="full"
                     direction="column"
                 >
-                    <NavLinks isMobile={false} />
+                    <NavLinks />
                 </Flex>
             </Box>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
@@ -105,7 +85,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                         </DrawerHeader>
                         <DrawerBody>
                             <Box onClick={onClose} data-cy="nav-links">
-                                <NavLinks isMobile />
+                                <NavLinks />
                             </Box>
                         </DrawerBody>
                     </DrawerContent>
