@@ -22,6 +22,7 @@ const randomHeaderMessage = () => {
             'Mye å gjøre? SUCK IT UP!',
             '@echo_webkom',
             '@echo_uib',
+            'JAJ FOR FAJ'
         ];
 
         // Month-based messages
