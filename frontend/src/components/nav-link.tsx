@@ -33,12 +33,13 @@ interface NavLinkButtonProps {
 
 export const NavLinkButton = ({ children, onClick }: NavLinkButtonProps) => (
     <Button
-        fontSize="3xl"
+        fontSize={['3xl', null, null, 'lg', '2xl']}
         textAlign="left"
         fontWeight="light"
         variant="unstyled"
         _hover={{ textDecoration: 'underline' }}
-        marginBottom="2rem"
+        mb={['1.5rem', null, null, '0']}
+        mr={['.6rem', null, null, null, '1.5rem']}
         onClick={onClick}
     >
         {children}
