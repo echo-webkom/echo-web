@@ -15,7 +15,7 @@ type Member = decodeType<typeof memberDecoder>;
 const studentGroupDecoder = record({
     name: string,
     slug: string,
-    info: union(string, nil),
+    info: (value) => record({ no: string, en: union(string, nil) })(value),
     imageUrl: union(string, nil),
     members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
 });

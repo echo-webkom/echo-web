@@ -8,7 +8,7 @@ export default {
     type: 'document',
     preview: {
         select: {
-            title: 'name',
+            title: 'name.no',
         },
     },
     fields: [
@@ -16,7 +16,7 @@ export default {
             name: 'name',
             title: 'Navn',
             validation: (Rule) => Rule.required(),
-            type: 'string',
+            type: 'localeString',
         },
         {
             name: 'slug',
@@ -24,14 +24,14 @@ export default {
             validation: (Rule) => Rule.required(),
             type: 'slug',
             options: {
-                source: 'name',
+                source: 'name.no',
             },
         },
         {
             name: 'info',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
-            type: 'markdown',
+            type: 'localeMarkdown',
         },
     ],
 };

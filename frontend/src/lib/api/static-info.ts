@@ -1,14 +1,14 @@
 import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
-import { array, record, string } from 'typescript-json-decoder';
+import { array, record, string, nil, union } from 'typescript-json-decoder';
 import { slugDecoder } from '@utils/decoders';
 import type { ErrorMessage } from '@utils/error';
 import SanityAPI from '@api/sanity';
 
 const staticInfoDecoder = record({
-    name: string,
+    name: (value) => record({ no: string, en: union(string, nil) })(value),
     slug: string,
-    info: string,
+    info: (value) => record({ no: string, en: union(string, nil) })(value),
 });
 
 type StaticInfo = decodeType<typeof staticInfoDecoder>;

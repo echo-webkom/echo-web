@@ -1,5 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
 import { Center, Spinner } from '@chakra-ui/react';
+import { useContext } from 'react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
@@ -9,6 +10,7 @@ import { StaticInfoAPI } from '@api/static-info';
 import { isErrorMessage } from '@utils/error';
 import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
+import LanguageContext from 'language-context';
 
 interface Props {
     staticInfo: StaticInfo;
@@ -16,6 +18,7 @@ interface Props {
 
 const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
     const router = useRouter();
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <>
@@ -26,9 +29,11 @@ const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
             )}
             {!router.isFallback && (
                 <>
-                    <SEO title={staticInfo.name} />
+                    <SEO title={isNorwegian ? staticInfo.name.no : staticInfo.name.en ?? staticInfo.name.no} />
                     <SidebarWrapper>
-                        <Markdown options={{ overrides: MapMarkdownChakra }}>{staticInfo.info}</Markdown>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>
+                            {isNorwegian ? staticInfo.info.no : staticInfo.info.en ?? staticInfo.info.no}
+                        </Markdown>
                     </SidebarWrapper>
                 </>
             )}

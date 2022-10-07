@@ -1,4 +1,5 @@
 import type { ParsedUrlQuery } from 'querystring';
+import { useContext } from 'react';
 import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -10,6 +11,7 @@ import { isErrorMessage } from '@utils/error';
 import SidebarWrapper from '@components/sidebar-wrapper';
 import MapMarkdownChakra from '@utils/markdown';
 import MemberProfile from '@components/member-profile';
+import LanguageContext from 'language-context';
 
 interface Props {
     studentGroup: StudentGroup;
@@ -17,6 +19,7 @@ interface Props {
 
 const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
     const router = useRouter();
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <>
@@ -33,9 +36,11 @@ const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
                             {studentGroup.name}
                         </Heading>
                         <Divider mb="1rem" />
-                        {studentGroup.info && (
+                        {studentGroup.info.no !== ' ' && (
                             <>
-                                <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
+                                <Markdown options={{ overrides: MapMarkdownChakra }}>
+                                    {isNorwegian ? studentGroup.info.no : studentGroup.info.en ?? studentGroup.info.no}
+                                </Markdown>
                                 <Divider my="5" />
                             </>
                         )}

@@ -56,7 +56,7 @@ export default {
         {
             name: 'info',
             title: 'Brødtekst',
-            type: 'markdown',
+            type: 'localeMarkdown',
         },
         {
             name: 'grpPicture',
