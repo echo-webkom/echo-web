@@ -15,13 +15,14 @@ import {
     useBreakpointValue,
     type IconProps,
 } from '@chakra-ui/react';
-import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekYear } from 'date-fns';
+import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekYear, isSameDay } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import HappeningCalendarBox from './happening-calendar-box';
 import Section from './section';
 import type { Happening } from '@api/happening';
 import LanguageContext from 'language-context';
+import capitalize from '@utils/capitalize';
 
 interface CalendarDay {
     date: Date;
@@ -58,7 +59,7 @@ const EventCalendar = ({ happenings }: Props) => {
         while (current <= end) {
             dates.push({
                 date: new Date(current),
-                happenings: happenings.filter((happening) => datesAreOnSameDay(new Date(happening.date), current)),
+                happenings: happenings.filter((happening) => isSameDay(new Date(happening.date), current)),
             });
 
             current.setDate(current.getDate() + 1);
@@ -112,11 +113,11 @@ const EventCalendar = ({ happenings }: Props) => {
                                 fontWeight="light"
                                 fontSize="lg"
                                 borderRadius="0.25rem"
-                                bg={datesAreOnSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
+                                bg={isSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
                                 px="3"
                                 py="1"
                             >
-                                {datesAreOnSameDay(today.date, new Date())
+                                {isSameDay(today.date, new Date())
                                     ? isNorwegian
                                         ? 'Idag'
                                         : 'Today'
@@ -141,15 +142,6 @@ const EventCalendar = ({ happenings }: Props) => {
             </SimpleGrid>
         </>
     );
-};
-
-const datesAreOnSameDay = (first: Date, second: Date) =>
-    first.getFullYear() === second.getFullYear() &&
-    first.getMonth() === second.getMonth() &&
-    first.getDate() === second.getDate();
-
-const capitalize = (s: string) => {
-    return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 const CircleIcon = (props: IconProps) => (

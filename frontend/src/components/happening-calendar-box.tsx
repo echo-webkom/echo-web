@@ -45,53 +45,51 @@ const HappeningCalendarBox = ({ happening }: Props) => {
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
     return (
-        <NextLink href={`/event/${happening.slug}`} passHref>
-            <a>
-                <LinkBox
-                    bg={happening.happeningType === 'BEDPRES' ? bedpresColor : otherColor}
-                    p="2"
-                    borderRadius="0.25rem"
-                    _hover={{ cursor: 'pointer' }}
-                >
-                    <Popover trigger="hover">
-                        <PopoverTrigger>
-                            <Text
-                                noOfLines={1}
-                                fontSize="lg"
-                                px="1"
-                                color="black"
-                                borderLeft="3px solid"
-                                borderColor={getAuthorColor(happening.author)}
-                            >
-                                {happening.title}
+        <NextLink href={`/event/${happening.slug}`}>
+            <LinkBox
+                bg={happening.happeningType === 'BEDPRES' ? bedpresColor : otherColor}
+                p="2"
+                borderRadius="0.25rem"
+                _hover={{ cursor: 'pointer' }}
+            >
+                <Popover trigger="hover">
+                    <PopoverTrigger>
+                        <Text
+                            noOfLines={1}
+                            fontSize="lg"
+                            px="1"
+                            color="black"
+                            borderLeft="3px solid"
+                            borderColor={getAuthorColor(happening.author)}
+                        >
+                            {happening.title}
+                        </Text>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverHeader>
+                            {happening.happeningType === 'BEDPRES' ? (
+                                <Text as="em" fontWeight="bold" fontSize="sm">
+                                    Bedpres
+                                </Text>
+                            ) : (
+                                ''
+                            )}
+                            <Text fontWeight="extrabold">{happening.title}</Text>
+                        </PopoverHeader>
+                        <PopoverBody fontSize="lg">
+                            <Text>@ {happening.location}</Text>
+                            <Divider />
+                            <Text noOfLines={5}>
+                                <Markdown>{happening.body.no}</Markdown>
                             </Text>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverHeader>
-                                {happening.happeningType === 'BEDPRES' ? (
-                                    <Text as="em" fontWeight="bold" fontSize="sm">
-                                        Bedpres
-                                    </Text>
-                                ) : (
-                                    ''
-                                )}
-                                <Text fontWeight="extrabold">{happening.title}</Text>
-                            </PopoverHeader>
-                            <PopoverBody fontSize="lg">
-                                <Text>@ {happening.location}</Text>
-                                <Divider />
-                                <Text noOfLines={5}>
-                                    <Markdown>{happening.body.no}</Markdown>
-                                </Text>
-                                <Text as="em" fontSize="sm">
-                                    {happening.author}
-                                </Text>
-                            </PopoverBody>
-                        </PopoverContent>
-                    </Popover>
-                </LinkBox>
-            </a>
+                            <Text as="em" fontSize="sm">
+                                {happening.author}
+                            </Text>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+            </LinkBox>
         </NextLink>
     );
 };
