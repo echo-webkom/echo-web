@@ -1,6 +1,9 @@
+import { AiOutlineFilePdf } from 'react-icons/ai';
+
 export default {
     name: 'meetingMinute',
     title: 'Møtereferat',
+    icon: AiOutlineFilePdf,
     type: 'document',
     preview: {
         select: {

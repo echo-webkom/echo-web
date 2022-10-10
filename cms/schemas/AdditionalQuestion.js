@@ -1,7 +1,10 @@
+import { MdOutlineQuestionAnswer } from 'react-icons/md';
+
 export default {
     name: 'additionalQuestion',
     title: 'Tilleggsspørsmål',
     description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
+    icon: MdOutlineQuestionAnswer,
     type: 'document',
     preview: {
         select: {

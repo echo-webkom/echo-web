@@ -1,10 +1,12 @@
 import sanityClient from 'part:@sanity/base/client';
 import slugify from 'slugify';
+import { MdEvent } from 'react-icons/md';
 
 export default {
     name: 'happening',
     title: 'Arrangement',
     description: 'Et arrangement (fest, workshop, bedpres, osv...).',
+    icon: MdEvent,
     type: 'document',
     preview: {
         select: {

@@ -1,6 +1,9 @@
+import { CgWebsite } from 'react-icons/cg';
+
 export default {
     name: 'staticInfo',
     title: 'Static Info',
+    icon: CgWebsite,
     description: 'Statisk Informasjon',
     type: 'document',
     preview: {
