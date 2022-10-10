@@ -39,7 +39,6 @@ const happeningDecoder = record({
         literal('bedkom'),
         literal('webkom'),
         literal('gnist'),
-        literal('gnist'),
         literal('tilde'),
     ),
     title: string,
