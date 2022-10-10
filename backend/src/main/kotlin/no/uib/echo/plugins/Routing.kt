@@ -124,7 +124,7 @@ fun Application.configureRouting(
 
         val issuer = "https://auth.dataporten.no/openid/jwks"
         val jwkProvider = JwkProviderBuilder(URL(issuer))
-            .cached(10, 24 * 7, TimeUnit.HOURS)
+            .cached(10, 24, TimeUnit.HOURS)
             .rateLimited(10, 1, TimeUnit.MINUTES)
             .build()
 
