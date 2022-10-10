@@ -8,7 +8,7 @@ describe('Entry Box', () => {
 
         describe('Bedpres Entry Box', () => {
             it('Should link to bedpreses page', () => {
-                const bedpresPage = '/bedpres';
+                const bedpresPage = '/arrangementer';
 
                 cy.visit('/');
                 cy.get('[data-cy=entry-box-bedpres]').within(() => {
@@ -20,7 +20,7 @@ describe('Entry Box', () => {
 
         describe('Event Entry Box', () => {
             it('Should link to event page', () => {
-                const eventPage = '/event';
+                const eventPage = '/arrangementer';
 
                 cy.visit('/');
                 cy.get('[data-cy=entry-box-event]').within(() => {
