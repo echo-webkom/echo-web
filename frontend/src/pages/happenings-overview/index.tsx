@@ -41,7 +41,7 @@ interface HappeningBoxProps {
     title: string;
     slug: string;
     location: string;
-    author: string;
+    studentGroupName: string;
     body: string | { no: string; en: string } | { no: string; en: null };
 }
 
@@ -50,7 +50,7 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
 
-const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBoxProps) => {
+const HappeningBox = ({ type, title, slug, location, body, studentGroupName }: HappeningBoxProps) => {
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
@@ -87,7 +87,7 @@ const HappeningBox = ({ type, title, slug, location, body, author }: HappeningBo
                                 <Markdown>{typeof body === 'string' ? body : body.no}</Markdown>
                             </Text>
                             <Text as="em" fontSize="sm">
-                                {author}
+                                {studentGroupName}
                             </Text>
                         </PopoverBody>
                     </PopoverContent>
@@ -115,7 +115,7 @@ const HappeningsColumn = ({ events, date }: EventsStackProps): React.ReactElemen
                     slug={event.slug}
                     location={event.location}
                     body={event.body}
-                    author={event.author}
+                    studentGroupName={event.studentGroupName}
                 />
             ))}
         </Stack>

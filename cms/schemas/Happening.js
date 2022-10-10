@@ -12,7 +12,7 @@ export default {
         select: {
             media: 'logo',
             title: 'title',
-            subtitle: 'author.name',
+            subtitle: 'studentGroupName',
         },
     },
     fields: [
@@ -116,17 +116,6 @@ export default {
             type: 'url',
         },
         {
-            name: 'author',
-            title: 'Forfatter',
-            validation: (Rule) => Rule.required(),
-            type: 'reference',
-            to: [
-                {
-                    type: 'author',
-                },
-            ],
-        },
-        {
             name: 'companyLink',
             title: 'Lenke til bedrift',
             validation: (Rule) =>
@@ -192,6 +181,7 @@ export default {
         {
             name: 'studentGroupName',
             title: 'Navn på studentgruppe',
+            description: 'Denne gruppen får tilgang til påmeldinger.',
             type: 'string',
             validation: (Rule) => Rule.required(),
             options: {
