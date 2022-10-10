@@ -1,9 +1,11 @@
+import { MdOutlineGroup } from 'react-icons/md';
 import slugify from 'slugify';
 
 export default {
     name: 'studentGroup',
     title: 'Studentgruppe',
     description: 'Undergruppe, underorganisasjon eller et echo-styre',
+    icon: MdOutlineGroup,
     type: 'document',
     preview: {
         select: {

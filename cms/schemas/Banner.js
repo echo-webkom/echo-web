@@ -1,7 +1,10 @@
+import { GrCircleInformation } from 'react-icons/gr';
+
 export default {
     name: 'banner',
     title: 'Forsidebanner',
     description: 'Banner som vises øverst på forsiden',
+    icon: GrCircleInformation,
     type: 'document',
     preview: {
         select: {

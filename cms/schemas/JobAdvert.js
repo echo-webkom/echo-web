@@ -1,8 +1,10 @@
+import { MdOutlineLaptop } from 'react-icons/md';
 import slugify from 'slugify';
 
 export default {
     name: 'jobAdvert',
     title: 'Stillingsannonse',
+    icon: MdOutlineLaptop,
     type: 'document',
     preview: {
         select: {

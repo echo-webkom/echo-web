@@ -1,7 +1,10 @@
+import { MdPersonOutline } from 'react-icons/md';
+
 export default {
     name: 'profile',
     title: 'Profil',
     description: 'Et medlem av en studentgruppe.',
+    icon: MdPersonOutline,
     type: 'document',
     preview: {
         select: {

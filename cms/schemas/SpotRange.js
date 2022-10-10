@@ -1,7 +1,10 @@
+import { MdGroups } from 'react-icons/md';
+
 export default {
     name: 'spotRange',
     title: 'Arrangementsplasser',
     description: 'Hvor mange plasser som er tildelt hvert trinn på et arrangement.',
+    icon: MdGroups,
     type: 'document',
     preview: {
         select: {

@@ -1,9 +1,11 @@
 import slugify from 'slugify';
+import { MdOutlineLibraryBooks } from 'react-icons/md';
 
 export default {
     name: 'post',
     title: 'Innlegg',
     type: 'document',
+    icon: MdOutlineLibraryBooks,
     preview: {
         select: {
             title: 'title.no',
