@@ -3,10 +3,10 @@ import type { NextAuthOptions } from 'next-auth';
 
 export const authOptions: NextAuthOptions = {
     session: {
-        maxAge: 3600 * 24 * 7, // 7 days
+        maxAge: 3600,
     },
     jwt: {
-        maxAge: 3600 * 24 * 7, // 7 days
+        maxAge: 3600,
     },
     callbacks: {
         // eslint-disable-next-line @typescript-eslint/require-await
