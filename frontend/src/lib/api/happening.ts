@@ -34,7 +34,14 @@ type SpotRange = decodeType<typeof spotRangeDecoder>;
 
 const happeningDecoder = record({
     _createdAt: string,
-    author: string,
+    studentGroupName: union(
+        literal('hovedstyret'),
+        literal('bedkom'),
+        literal('webkom'),
+        literal('gnist'),
+        literal('gnist'),
+        literal('tilde'),
+    ),
     title: string,
     slug: string,
     date: string,
@@ -92,7 +99,7 @@ const HappeningAPI = {
                         alternatives
                     },
                     "logoUrl": logo.asset -> url,
-                    "author": author -> name,
+                    studentGroupName,
                     _createdAt,
                     spotRanges[] -> {
                         minDegreeYear,
@@ -140,7 +147,7 @@ const HappeningAPI = {
                         alternatives
                     },
                     "logoUrl": logo.asset -> url,
-                    "author": author -> name,
+                    studentGroupName,
                     _createdAt,
                     spotRanges[] -> {
                         minDegreeYear,

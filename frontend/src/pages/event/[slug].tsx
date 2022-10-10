@@ -183,7 +183,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                 )}
                                 <Divider my="1em" />
                                 <Center>
-                                    <Heading size="lg">@{happening.author}</Heading>
+                                    <Heading size="lg">@{happening.studentGroupName}</Heading>
                                 </Center>
                             </>
                         </GridItem>

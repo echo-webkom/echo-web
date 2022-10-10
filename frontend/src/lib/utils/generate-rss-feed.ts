@@ -75,7 +75,7 @@ const getRssXML = (posts: Array<Post> | null, happenings: Array<Happening> | nul
                       publishedAt: formatISO(
                           sub(parseISO(happening.registrationDate ?? new Date().toString()), { hours: 12 }),
                       ),
-                      author: happening.author,
+                      author: happening.studentGroupName,
                       body: happening.body,
                       route: happening.happeningType.toLowerCase(),
                   };
