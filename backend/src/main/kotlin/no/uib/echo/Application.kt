@@ -9,6 +9,7 @@ import io.ktor.server.plugins.cors.routing.CORS
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
 import kotlin.Exception
+import no.uib.echo.plugins.workshopRouting
 
 data class FeatureToggles(
     val sendEmailReg: Boolean,
@@ -58,4 +59,14 @@ fun Application.module() {
         disableJwtAuth = false,
         sendGridApiKey = sendGridApiKey,
     )
+}
+
+fun Application.workshop() {
+    val dev = environment.config.propertyOrNull("ktor.dev") != null
+    val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
+    val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
+
+    DatabaseHandler(dev, testMigration = false, databaseUrl, mbMaxPoolSize).init()
+
+    workshopRouting()
 }

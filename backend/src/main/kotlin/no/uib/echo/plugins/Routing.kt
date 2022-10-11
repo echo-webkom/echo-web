@@ -21,6 +21,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
@@ -92,6 +93,7 @@ import org.joda.time.DateTime
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.TimeUnit
+import no.uib.echo.plugins.Routing.workshopHelloWorld
 
 fun Application.configureRouting(
     adminKey: String,
@@ -167,12 +169,20 @@ fun Application.configureRouting(
         postRegistration(sendGridApiKey, featureToggles.sendEmailReg, featureToggles.verifyRegs)
         postRegistrationCount()
         postFeedback()
+
+        workshopHelloWorld()
     }
 }
 
 object Routing {
     const val registrationRoute: String = "registration"
     const val happeningRoute: String = "happening"
+
+    fun Route.workshopHelloWorld() {
+        get("/") {
+            call.respondText("Hello World!")
+        }
+    }
 
     fun Route.getStatus() {
         get("/status") {
