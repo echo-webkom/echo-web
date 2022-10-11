@@ -174,6 +174,9 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRe
         try {
             val registration = call.receive<RegistrationJson>()
 
+            // Used for testing only to bypass verifyRegs = false.
+            val verifyRegsAnyway = call.request.queryParameters["verify"].toBoolean()
+
             if (!isEmailValid(registration.email)) {
                 call.respond(HttpStatusCode.BadRequest, resToJson(Response.InvalidEmail, registration.type))
                 return@post
@@ -231,7 +234,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRe
                 return@post
             }
 
-            if (happening[Happening.regVerifyToken] != registration.regVerifyToken && verifyRegs) {
+            if (happening[Happening.regVerifyToken] != registration.regVerifyToken && (verifyRegs || verifyRegsAnyway)) {
                 call.respond(HttpStatusCode.Unauthorized, resToJson(Response.NotViaForm, registration.type))
                 return@post
             }

@@ -11,12 +11,10 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
-import no.uib.echo.plugins.Routing
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.HappeningJson
-import no.uib.echo.schema.HappeningSlugJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
@@ -53,51 +51,51 @@ fun Route.putHappening(dev: Boolean) {
 }
 
 fun Route.deleteHappening() {
-    delete("/happening") {
-        try {
-            val hap = call.receive<HappeningSlugJson>()
+    delete("/happening/{slug}") {
+        val slug = call.parameters["slug"]
 
-            val hapDeleted = transaction {
-                addLogger(StdOutSqlLogger)
+        if (slug == null) {
+            call.respond(HttpStatusCode.BadRequest, "No slug specified.")
+            return@delete
+        }
 
-                val happeningExists = Happening.select { Happening.slug eq hap.slug }.firstOrNull() != null
-                if (!happeningExists) {
-                    return@transaction false
-                }
+        val hapDeleted = transaction {
+            addLogger(StdOutSqlLogger)
 
-                SpotRange.deleteWhere {
-                    SpotRange.happeningSlug eq hap.slug
-                }
-
-                Answer.deleteWhere {
-                    Answer.happeningSlug eq hap.slug
-                }
-
-                Registration.deleteWhere {
-                    Registration.happeningSlug eq hap.slug
-                }
-
-                Happening.deleteWhere {
-                    Happening.slug eq hap.slug
-                }
-
-                return@transaction true
+            val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
+            if (!happeningExists) {
+                return@transaction false
             }
 
-            if (hapDeleted) {
-                call.respond(
-                    HttpStatusCode.OK,
-                    "${hap.type.toString().lowercase()} with slug = ${hap.slug} deleted."
-                )
-            } else {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    "${hap.type.toString().lowercase()} with slug = ${hap.slug} does not exist."
-                )
+            SpotRange.deleteWhere {
+                SpotRange.happeningSlug eq slug
             }
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error deleting happening.")
-            e.printStackTrace()
+
+            Answer.deleteWhere {
+                Answer.happeningSlug eq slug
+            }
+
+            Registration.deleteWhere {
+                Registration.happeningSlug eq slug
+            }
+
+            Happening.deleteWhere {
+                Happening.slug eq slug
+            }
+
+            return@transaction true
+        }
+
+        if (hapDeleted) {
+            call.respond(
+                HttpStatusCode.OK,
+                "Happening with slug = $slug deleted."
+            )
+        } else {
+            call.respond(
+                HttpStatusCode.NotFound,
+                "Happening with slug = $slug does not exist."
+            )
         }
     }
 }
