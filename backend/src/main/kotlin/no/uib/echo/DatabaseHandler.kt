@@ -63,28 +63,34 @@ class DatabaseHandler(
         Database.connect(dataSource())
     }
 
-    fun init() {
-        // Don't migrate if running on local machine
+    fun init(shouldInsertTestData: Boolean = true) {
+        // Need to use connection once to open.
+        transaction(conn) {
+            addLogger(StdOutSqlLogger)
+        }
+
+        // Only migrate if not running on local machine
         if (!dev || testMigration) {
             migrate()
-            // Need to use connection once to open.
-            transaction(conn) {}
         } else {
             try {
-                transaction(conn) {
+                transaction {
+                    addLogger(StdOutSqlLogger)
+
                     SchemaUtils.create(
                         Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
                     )
                 }
-
-                insertTestData()
+                if (shouldInsertTestData) {
+                    insertTestData()
+                }
             } catch (e: Exception) {
                 System.err.println("Error creating tables.")
             }
         }
     }
 
-    fun insertTestData() {
+    private fun insertTestData() {
         val studentGroups = listOf("webkom", "bedkom", "tilde")
         val users = listOf(
             UserJson(

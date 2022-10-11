@@ -26,6 +26,8 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val dev = environment.config.propertyOrNull("ktor.dev") != null
     val testMigration = environment.config.property("ktor.testMigration").getString().toBooleanStrict()
+    val disableJwtAuth = environment.config.property("ktor.disableJwtAuth").getString().toBooleanStrict()
+    val shouldInitDb = environment.config.property("ktor.shouldInitDb").getString().toBooleanStrict()
     val adminKey = environment.config.property("ktor.adminKey").getString()
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
@@ -40,7 +42,14 @@ fun Application.module() {
     if (sendGridApiKey == null && !dev && sendEmailReg)
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg.")
 
-    DatabaseHandler(dev, testMigration, databaseUrl, mbMaxPoolSize).init()
+    if (shouldInitDb) {
+        DatabaseHandler(
+            dev,
+            testMigration,
+            databaseUrl,
+            mbMaxPoolSize
+        ).init()
+    }
 
     configureCORS()
     configureAuthentication(adminKey)
@@ -48,7 +57,7 @@ fun Application.module() {
     configureRouting(
         featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs),
         dev = dev,
-        disableJwtAuth = false,
-        sendGridApiKey = sendGridApiKey,
+        disableJwtAuth = disableJwtAuth,
+        sendGridApiKey = sendGridApiKey
     )
 }

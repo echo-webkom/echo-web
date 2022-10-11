@@ -40,9 +40,6 @@ data class HappeningInfoJson(
     val regVerifyToken: String?
 )
 
-@Serializable
-data class HappeningSlugJson(val slug: String, val type: HAPPENING_TYPE)
-
 object Happening : Table() {
     val slug: Column<String> = text("slug").uniqueIndex()
     val title: Column<String> = text("title")
