@@ -9,6 +9,9 @@ import io.ktor.server.plugins.cors.routing.CORS
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
 import kotlin.Exception
+import no.uib.echo.plugins.configureAuthentication
+import no.uib.echo.plugins.configureCORS
+import no.uib.echo.plugins.configureContentNegotiation
 
 data class FeatureToggles(
     val sendEmailReg: Boolean,
@@ -21,18 +24,6 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    install(CORS) {
-        anyHost()
-
-        allowMethod(HttpMethod.Get)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Post)
-        allowMethod(HttpMethod.Delete)
-
-        allowHeader(HttpHeaders.ContentType)
-        allowHeader(HttpHeaders.Authorization)
-    }
-
     val dev = environment.config.propertyOrNull("ktor.dev") != null
     val testMigration = environment.config.property("ktor.testMigration").getString().toBooleanStrict()
     val adminKey = environment.config.property("ktor.adminKey").getString()
@@ -51,8 +42,10 @@ fun Application.module() {
 
     DatabaseHandler(dev, testMigration, databaseUrl, mbMaxPoolSize).init()
 
+    configureCORS()
+    configureAuthentication(adminKey)
+    configureContentNegotiation()
     configureRouting(
-        adminKey = adminKey,
         featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true, verifyRegs = verifyRegs),
         dev = dev,
         disableJwtAuth = false,
