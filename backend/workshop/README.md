@@ -206,6 +206,7 @@ Vi kan også sende med data i form av JSON i forespørslene våre.
 #### Lage en mal for et JSON-objekt
 
 ```kotlin
+@Serializable
 data class TestJson(
     val field1: Int,
     val field2: String,
@@ -264,6 +265,7 @@ Bruk `POST`-metoden.
   <summary>✨ Se fasit</summary>
 
 ```kotlin
+@Serializable
 data class PersonJson(
     val age: Int,
     val occupation: String,
@@ -406,6 +408,7 @@ du tar inn blir satt inn i databasen i tabellen `Person`.
   <summary>✨ Se fasit</summary>
 
 ```kotlin
+@Serializable
 data class PersonJson(
     val age: Int,
     val occupation: String,
@@ -503,6 +506,7 @@ og avslutt funksjonen.
   <summary>✨ Se fasit</summary>
 
 ```kotlin
+@Serializable
 data class PersonJson(
     val age: Int,
     val occupation: String,
@@ -604,6 +608,7 @@ Test.update({ Test.field1 eq test.field1 }) {
   <summary>✨ Se fasit</summary>
 
 ```kotlin
+@Serializable
 data class PersonJson(
     val age: Int,
     val occupation: String,
