@@ -1,0 +1,75 @@
+import { PieChart, ResponsiveContainer, Pie, Cell, Tooltip } from 'recharts';
+import randomColor from 'randomcolor';
+import allDegrees from '@utils/degree';
+import type { Registration } from '@api/registration';
+
+interface Props {
+    registrations: Array<Registration>;
+    field: 'degree' | 'year';
+}
+
+const RegistrationPieChart = ({ registrations, field }: Props) => {
+    const luminosity = 'bright';
+
+    const regsByDegree = allDegrees.map((degree) => {
+        return {
+            name: degree,
+            value: registrations.filter((reg) => reg.degree === degree).length,
+            color: randomColor({ luminosity }),
+        };
+    });
+
+    const regsByYear = [1, 2, 3, 4, 5].map((year) => {
+        return {
+            name: `${year}. trinn`,
+            value: registrations.filter((reg) => reg.degreeYear === year).length,
+            color: randomColor({ luminosity }),
+        };
+    });
+
+    const regs = field === 'degree' ? regsByDegree : regsByYear;
+    const renderCustomizedLabel = ({
+        cx,
+        cy,
+        midAngle,
+        innerRadius,
+        outerRadius,
+        percent,
+        name,
+    }: {
+        cx: number;
+        cy: number;
+        midAngle: number;
+        innerRadius: number;
+        outerRadius: number;
+        percent: number;
+        name: string;
+    }) => {
+        const RADIAN = Math.PI / 180;
+        const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        if (percent === 0) return null;
+        return (
+            <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                {name}
+            </text>
+        );
+    };
+
+    return (
+        <ResponsiveContainer width={600} height={400}>
+            <PieChart width={600} height={400}>
+                <Pie data={regs} dataKey="value" label={renderCustomizedLabel} labelLine={false} outerRadius={140}>
+                    {regs.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} fontWeight="bold" />
+                    ))}
+                </Pie>
+                <Tooltip />
+            </PieChart>
+        </ResponsiveContainer>
+    );
+};
+
+export default RegistrationPieChart;
