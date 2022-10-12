@@ -56,16 +56,15 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
     routing {
         if (disableJwtAuth) {
             getRegistrations(true)
-            postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail, verifyRegs = verifyRegs)
             deleteRegistration(true)
         } else {
             authenticate("auth-jwt") {
                 getRegistrations()
-                postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail, verifyRegs = verifyRegs)
                 deleteRegistration()
             }
         }
 
+        postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail, verifyRegs = verifyRegs)
         postRegistrationCount()
     }
 }
