@@ -18,7 +18,6 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import java.net.URLDecoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.Response
@@ -51,7 +50,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
-
+import java.net.URLDecoder
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, disableJwtAuth: Boolean, verifyRegs: Boolean) {
     routing {
@@ -133,7 +132,7 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
 
                         Answer.select {
                             Answer.registrationEmail.lowerCase() eq reg[Registration.email].lowercase() and
-                                    (Answer.happeningSlug eq hap[Happening.slug])
+                                (Answer.happeningSlug eq hap[Happening.slug])
                         }.toList()
                     }.map {
                         AnswerJson(
@@ -278,7 +277,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRe
 
                 Registration.select {
                     Registration.happeningSlug eq registration.slug and
-                            (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
+                        (Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear)
                 }.count()
             }
 
@@ -287,10 +286,10 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRe
 
                 Registration.select {
                     Registration.happeningSlug eq registration.slug and
-                            (
-                                    Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
-                                            (Registration.waitList eq true)
-                                    )
+                        (
+                            Registration.degreeYear inList correctRange.minDegreeYear..correctRange.maxDegreeYear and
+                                (Registration.waitList eq true)
+                            )
                 }.count()
             }
 
@@ -302,7 +301,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, verifyRe
 
                 Registration.select {
                     Registration.email.lowerCase() eq registration.email.lowercase() and
-                            (Registration.happeningSlug eq registration.slug)
+                        (Registration.happeningSlug eq registration.slug)
                 }.firstOrNull()
             }
 
@@ -423,7 +422,7 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
 
                 Registration.select {
                     Registration.happeningSlug eq hap[Happening.slug] and
-                            (Registration.email.lowerCase() eq decodedParamEmail)
+                        (Registration.email.lowerCase() eq decodedParamEmail)
                 }.firstOrNull()
             }
 
@@ -437,12 +436,12 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
 
                 Answer.deleteWhere {
                     Answer.happeningSlug eq hap[Happening.slug] and
-                            (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
+                        (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
                 }
 
                 Registration.deleteWhere {
                     Registration.happeningSlug eq hap[Happening.slug] and
-                            (Registration.email.lowerCase() eq decodedParamEmail)
+                        (Registration.email.lowerCase() eq decodedParamEmail)
                 }
             }
 
@@ -478,7 +477,7 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
                 call.respond(
                     HttpStatusCode.OK,
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " +
-                            "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
+                        "and registration with email = ${highestOnWaitList[Registration.email].lowercase()} moved off wait list."
                 )
             }
         } catch (e: Exception) {

@@ -8,7 +8,6 @@ import io.ktor.client.request.delete
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import java.net.URI
 import no.uib.echo.DatabaseHandler
 import no.uib.echo.be
 import no.uib.echo.hap1
@@ -28,9 +27,10 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
-import kotlin.test.Test
-import kotlin.test.BeforeTest
+import java.net.URI
 import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class DeleteHappeningTest {
     companion object {
