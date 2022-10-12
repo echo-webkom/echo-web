@@ -11,17 +11,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import java.net.URI
-import kotlin.test.AfterTest
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.uib.echo.DatabaseHandler
+import no.uib.echo.adminKey
 import no.uib.echo.be
 import no.uib.echo.everyoneSpotRange
 import no.uib.echo.hap1
-import kotlin.test.Test
-import kotlin.test.BeforeTest
-import no.uib.echo.DatabaseHandler
-import no.uib.echo.adminKey
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.Happening
@@ -36,6 +32,10 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
+import java.net.URI
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class PutHappeningTest {
     companion object {

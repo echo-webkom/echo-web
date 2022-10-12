@@ -1,17 +1,13 @@
 package no.uib.echo
 
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
-import io.ktor.server.application.install
 import io.ktor.server.netty.EngineMain
-import io.ktor.server.plugins.cors.routing.CORS
-import no.uib.echo.plugins.configureRouting
-import java.net.URI
-import kotlin.Exception
 import no.uib.echo.plugins.configureAuthentication
 import no.uib.echo.plugins.configureCORS
 import no.uib.echo.plugins.configureContentNegotiation
+import no.uib.echo.plugins.configureRouting
+import java.net.URI
+import kotlin.Exception
 
 data class FeatureToggles(
     val sendEmailReg: Boolean,

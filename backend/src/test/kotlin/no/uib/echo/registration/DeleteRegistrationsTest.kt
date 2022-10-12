@@ -13,19 +13,14 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import java.net.URI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import no.uib.echo.DatabaseHandler
+import no.uib.echo.Response
+import no.uib.echo.ResponseJson
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
-import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.Response
-import no.uib.echo.ResponseJson
-import kotlin.test.Test
-import kotlin.test.BeforeTest
-import kotlin.test.AfterTest
-import no.uib.echo.DatabaseHandler
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
@@ -35,11 +30,16 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
+import no.uib.echo.schema.insertOrUpdateHappening
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.URI
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class DeleteRegistrationsTest {
     companion object {
@@ -136,7 +136,7 @@ class DeleteRegistrationsTest {
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
                     deleteRegCall.bodyAsText() shouldBe "Registration with email = ${regEmail.lowercase()} and slug = ${
-                        hap9(t).slug
+                    hap9(t).slug
                     } deleted, " + "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list."
                 }
 
@@ -148,9 +148,9 @@ class DeleteRegistrationsTest {
 
                     deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
                     deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${
-                        hap9(
-                            t
-                        ).slug
+                    hap9(
+                        t
+                    ).slug
                     } deleted."
                 }
             }
