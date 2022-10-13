@@ -19,7 +19,6 @@ import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.masters
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
