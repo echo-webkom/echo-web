@@ -1,4 +1,4 @@
-import { PieChart, ResponsiveContainer, Pie, Cell, Tooltip } from 'recharts';
+import { type PieLabelRenderProps, PieChart, ResponsiveContainer, Pie, Cell, Tooltip } from 'recharts';
 import randomColor from 'randomcolor';
 import allDegrees from '@utils/degree';
 import type { Registration } from '@api/registration';
@@ -28,6 +28,7 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
     });
 
     const regs = field === 'degree' ? regsByDegree : regsByYear;
+
     const renderCustomizedLabel = ({
         cx,
         cy,
@@ -36,21 +37,22 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
         outerRadius,
         percent,
         name,
-    }: {
-        cx: number;
-        cy: number;
-        midAngle: number;
-        innerRadius: number;
-        outerRadius: number;
-        percent: number;
-        name: string;
-    }) => {
+    }: PieLabelRenderProps) => {
+        if (
+            typeof cx !== 'number' ||
+            typeof cy !== 'number' ||
+            typeof midAngle !== 'number' ||
+            typeof innerRadius !== 'number' ||
+            typeof outerRadius !== 'number' ||
+            percent === 0
+        )
+            return null;
+
         const RADIAN = Math.PI / 180;
         const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-        if (percent === 0) return null;
         return (
             <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                 {name}
