@@ -24,6 +24,7 @@ services:
       SEND_EMAIL_REGISTRATION:
       TEST_MIGRATION:
       PORT:
+      DISABLE_JWT_AUTH:
 
   database:
     image: postgres:13.8-alpine
