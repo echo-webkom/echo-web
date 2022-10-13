@@ -457,7 +457,8 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
                 addLogger(StdOutSqlLogger)
 
                 Registration.select {
-                    Registration.waitList eq true
+                    Registration.waitList eq true and
+                        (Registration.happeningSlug eq hap[Happening.slug])
                 }.orderBy(Registration.submitDate).firstOrNull()
             }
 
