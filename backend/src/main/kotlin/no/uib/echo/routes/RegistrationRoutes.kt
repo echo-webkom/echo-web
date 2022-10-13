@@ -51,6 +51,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, disableJwtAuth: Boolean, verifyRegs: Boolean) {
     routing {

@@ -20,6 +20,7 @@ import no.uib.echo.schema.FeedbackJson
 import no.uib.echo.schema.FeedbackResponse
 import no.uib.echo.schema.FeedbackResponseJson
 import no.uib.echo.schema.getGroupMembers
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteWhere

@@ -3,6 +3,7 @@ package no.uib.echo.schema
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
