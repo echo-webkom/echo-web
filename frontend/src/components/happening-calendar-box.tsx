@@ -7,9 +7,7 @@ import {
     Text,
     PopoverContent,
     PopoverBody,
-    Divider,
     useColorModeValue,
-    Box,
 } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
