@@ -27,7 +27,7 @@ services:
       DISABLE_JWT_AUTH:
 
   database:
-    image: postgres:13.8-alpine
+    image: postgres:15.0-alpine
     restart: always
     ports:
       - '5432:5432'
