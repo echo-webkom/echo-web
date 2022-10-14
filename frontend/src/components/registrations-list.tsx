@@ -20,6 +20,7 @@ import {
     Flex,
     Spacer,
     Box,
+    Center,
 } from '@chakra-ui/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { getTime, format, parseISO } from 'date-fns';
@@ -57,7 +58,7 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
         }));
 
     return (
-        <Section mt="1rem" minW="100%" overflowX="scroll">
+        <Section mt="1rem" minW="100%">
             {error && !registrations && <ErrorBox error={error} />}
             {registrations && registrations.length === 0 && !error && (
                 <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>
@@ -71,66 +72,68 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
 
                     <TabPanels>
                         <TabPanel>
-                            <Flex gap="3" alignItems="center">
+                            <Flex gap="3" alignItems="center" direction={['column', null, null, null, 'row']}>
                                 <Heading size={headingSize} justifySelf={justifyHeading}>
                                     Påmeldinger for: {title}
                                 </Heading>
                                 <Spacer />
-                                <a
-                                    href={`/api/registration?slug=${registrations[0].slug}&type=download`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    download
-                                >
-                                    <Button fontSize="sm">Last ned som CSV</Button>
-                                </a>
-                                <Button
-                                    onClick={() => {
-                                        toast({
-                                            position: 'top',
-                                            duration: null,
-                                            render: () => (
-                                                <Section p="2rem" borderRadius="0.5rem">
-                                                    <Heading size="lg" pb="0.5rem">
-                                                        Slette påmeldinger
-                                                    </Heading>
-                                                    <Text py="0.5rem">
-                                                        Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt
-                                                        om å bekrefte at du vil slette påmeldingen. Dersom du godtar
-                                                        dette, vil påmeldingen bli slettet for alltid. Hvis denne
-                                                        påmeldingen ikke var på venteliste, vil neste person på
-                                                        ventelisten automatisk bli rykket opp i listen. Denne personen
-                                                        får ikke automatisk beskjed om at de ikke lenger er på
-                                                        venteliste; arrangør er ansvarlig for å gjøre dette.
-                                                    </Text>
-                                                    <Text fontWeight="bold" py="0.5rem">
-                                                        Det beste er å forhøre seg om neste person på venteliste har
-                                                        mulighet til å delta på arrangementet før du sletter en som har
-                                                        meldt seg av.
-                                                    </Text>
-                                                    <Text py="0.5rem">
-                                                        Påmeldinger som er slettet blir slettet for alltid, og det er
-                                                        ikke mulig å finne denne informasjonen igjen.
-                                                    </Text>
-                                                    <Button
-                                                        onClick={() => {
-                                                            toast.closeAll();
-                                                        }}
-                                                        mt="0.5rem"
-                                                    >
-                                                        Ok, jeg forstår
-                                                    </Button>
-                                                </Section>
-                                            ),
-                                        });
-                                    }}
-                                    fontSize="sm"
-                                >
-                                    Hvordan funker denne listen?
-                                </Button>
+                                <Center alignItems="inherit" gap="3" flexWrap="wrap">
+                                    <a
+                                        href={`/api/registration?slug=${registrations[0].slug}&type=download`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        download
+                                    >
+                                        <Button fontSize="sm">Last ned som CSV</Button>
+                                    </a>
+                                    <Button
+                                        onClick={() => {
+                                            toast({
+                                                position: 'top',
+                                                duration: null,
+                                                render: () => (
+                                                    <Section p="2rem" borderRadius="0.5rem">
+                                                        <Heading size="lg" pb="0.5rem">
+                                                            Slette påmeldinger
+                                                        </Heading>
+                                                        <Text py="0.5rem">
+                                                            Dersom du trykker på &quot;Slett påmelding&quot;, blir du
+                                                            spurt om å bekrefte at du vil slette påmeldingen. Dersom du
+                                                            godtar dette, vil påmeldingen bli slettet for alltid. Hvis
+                                                            denne påmeldingen ikke var på venteliste, vil neste person
+                                                            på ventelisten automatisk bli rykket opp i listen. Denne
+                                                            personen får ikke automatisk beskjed om at de ikke lenger er
+                                                            på venteliste; arrangør er ansvarlig for å gjøre dette.
+                                                        </Text>
+                                                        <Text fontWeight="bold" py="0.5rem">
+                                                            Det beste er å forhøre seg om neste person på venteliste har
+                                                            mulighet til å delta på arrangementet før du sletter en som
+                                                            har meldt seg av.
+                                                        </Text>
+                                                        <Text py="0.5rem">
+                                                            Påmeldinger som er slettet blir slettet for alltid, og det
+                                                            er ikke mulig å finne denne informasjonen igjen.
+                                                        </Text>
+                                                        <Button
+                                                            onClick={() => {
+                                                                toast.closeAll();
+                                                            }}
+                                                            mt="0.5rem"
+                                                        >
+                                                            Ok, jeg forstår
+                                                        </Button>
+                                                    </Section>
+                                                ),
+                                            });
+                                        }}
+                                        fontSize="sm"
+                                    >
+                                        Hvordan funker denne listen?
+                                    </Button>
+                                </Center>
                             </Flex>
                             <Divider my="1rem" />
-                            <Box overflowX="scroll">
+                            <Box overflowX="scroll" mx="-8">
                                 <Table size={tableSize} variant="striped">
                                     <Thead>
                                         <Tr>
