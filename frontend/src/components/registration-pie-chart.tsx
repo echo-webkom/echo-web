@@ -1,5 +1,6 @@
-import { type PieLabelRenderProps, PieChart, ResponsiveContainer, Pie, Cell, Tooltip } from 'recharts';
+import { type PieLabelRenderProps, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import randomColor from 'randomcolor';
+import { Center } from '@chakra-ui/react';
 import allDegrees from '@utils/degree';
 import type { Registration } from '@api/registration';
 
@@ -61,8 +62,8 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
     };
 
     return (
-        <ResponsiveContainer width={600} height={400}>
-            <PieChart width={600} height={400}>
+        <Center>
+            <PieChart width={500} height={500}>
                 <Pie data={regs} dataKey="value" label={renderCustomizedLabel} labelLine={false} outerRadius={140}>
                     {regs.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} fontWeight="bold" />
@@ -70,7 +71,7 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
                 </Pie>
                 <Tooltip />
             </PieChart>
-        </ResponsiveContainer>
+        </Center>
     );
 };
 
