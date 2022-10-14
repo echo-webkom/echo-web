@@ -25,7 +25,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
-import type { UserWithName } from '@api/user';
+import type { User } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormTerm from '@components/form-term';
 import FormQuestion from '@components/form-question';
@@ -86,7 +86,7 @@ interface Props {
     regVerifyToken: string | null;
     type: HappeningType;
     backendUrl: string;
-    user: UserWithName | null;
+    user: User | null;
 }
 
 const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {

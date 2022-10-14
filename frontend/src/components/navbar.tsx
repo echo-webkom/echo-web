@@ -46,7 +46,7 @@ const NavLinks = (): JSX.Element => {
                 )}
                 {status === 'unauthenticated' && (
                     <NavLinkButton onClick={() => void onProfileClick()}>
-                        {isNorwegian ? 'Logg inn' : 'Log in'}
+                        {isNorwegian ? 'Logg inn' : 'Sign in'}
                     </NavLinkButton>
                 )}
             </Flex>
