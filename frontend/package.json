@@ -135,7 +135,7 @@
     },
     "devDependencies": {
         "@types/canvas-confetti": "1.4.3",
-        "@types/node": "16.11.64",
+        "@types/node": "16.11.65",
         "@types/randomcolor": "0.5.6",
         "@types/react": "18.0.21",
         "@types/react-dom": "18.0.6",
