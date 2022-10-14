@@ -60,7 +60,7 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                             px="1"
                             color="black"
                             borderLeft="3px solid"
-                            borderColor={getAuthorColor(happening.author)}
+                            borderColor={getAuthorColor(happening.studentGroupName)}
                         >
                             {happening.title}
                         </Text>
@@ -84,7 +84,7 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                                 <Markdown>{happening.body.no}</Markdown>
                             </Text>
                             <Text as="em" fontSize="sm">
-                                {happening.author}
+                                {happening.studentGroupName}
                             </Text>
                         </PopoverBody>
                     </PopoverContent>
