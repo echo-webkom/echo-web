@@ -208,7 +208,11 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                         </GridItem>
                     </Grid>
                     {regsList.length > 0 && (
-                        <RegistrationsList registrations={regsList} error={regsListError?.message ?? null} />
+                        <RegistrationsList
+                            registrations={regsList}
+                            title={happening.title}
+                            error={regsListError?.message ?? null}
+                        />
                     )}
                 </>
             )}
