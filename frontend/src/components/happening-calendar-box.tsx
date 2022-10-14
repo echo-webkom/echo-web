@@ -36,7 +36,7 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                             {happening.title}
                         </Text>
                     </PopoverTrigger>
-                    <PopoverContent>
+                    <PopoverContent m="2">
                         <PopoverArrow />
                         <PopoverHeader>
                             {happening.happeningType === 'BEDPRES' ? (
