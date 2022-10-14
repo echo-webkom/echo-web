@@ -9,32 +9,12 @@ import {
     PopoverBody,
     Divider,
     useColorModeValue,
+    Box,
 } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
 import type { Happening } from '@api/happening';
-
-const authorColors: { [group: string]: string } = {
-    strikkeklubben: '#e67e22',
-    heltsikker: '#222',
-    'gnist x filmklubb': '#333',
-    jarletheman: '#444',
-    'echo buldring/klatring': '#555',
-    bryggelaget: '#666',
-    programmerbar: '#777',
-    makerspace: '#888',
-    'echo karriere': '#999',
-    webkom: '#aaa',
-    'echo hovedstyret': '#bbb',
-    gnist: 'cyan.500',
-    bedkom: '#811',
-    tilde: '#191',
-};
-
-const getAuthorColor = (author: string) => {
-    author = author.toLowerCase();
-    return authorColors[author];
-};
+import capitalize from '@utils/capitalize';
 
 interface Props {
     happening: Happening;
@@ -54,14 +34,7 @@ const HappeningCalendarBox = ({ happening }: Props) => {
             >
                 <Popover trigger="hover">
                     <PopoverTrigger>
-                        <Text
-                            noOfLines={1}
-                            fontSize="lg"
-                            px="1"
-                            color="black"
-                            borderLeft="3px solid"
-                            borderColor={getAuthorColor(happening.studentGroupName)}
-                        >
+                        <Text noOfLines={1} fontSize="lg" px="1" color="black">
                             {happening.title}
                         </Text>
                     </PopoverTrigger>
@@ -78,13 +51,12 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                             <Text fontWeight="extrabold">{happening.title}</Text>
                         </PopoverHeader>
                         <PopoverBody fontSize="lg">
-                            <Text>@ {happening.location}</Text>
-                            <Divider />
+                            <Text mb="2">@ {happening.location}</Text>
                             <Text noOfLines={5}>
                                 <Markdown>{happening.body.no}</Markdown>
                             </Text>
                             <Text as="em" fontSize="sm">
-                                {happening.studentGroupName}
+                                {capitalize(happening.studentGroupName)}
                             </Text>
                         </PopoverBody>
                     </PopoverContent>
