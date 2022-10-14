@@ -4,12 +4,13 @@ import axios from 'axios';
 import { array } from 'typescript-json-decoder';
 import { type Feedback, feedbackDecoder } from '@api/feedback';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
 
     if (session) {
         const JWT_TOKEN = session.idToken as string;
-        const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
         if (!session.email || !session.name) {
             res.status(401).json({ message: 'Du må være logget inn for å se denne siden.' });

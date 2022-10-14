@@ -85,11 +85,10 @@ interface Props {
     happening: Happening;
     regVerifyToken: string | null;
     type: HappeningType;
-    backendUrl: string;
     user: UserWithName | null;
 }
 
-const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
     const linkColor = useColorModeValue('blue', 'blue.400');
@@ -104,23 +103,20 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     const [firstName, lastName] = user && user.name !== '' ? fullNameToSplitName(user.name) : [undefined, undefined];
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        await RegistrationAPI.submitRegistration(
-            {
-                email: data.email,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                degree: data.degree,
-                degreeYear: data.degreeYear,
-                slug: happening.slug,
-                terms: data.terms1 && data.terms2 && data.terms3,
-                answers: happening.additionalQuestions.map((q: Question, index: number) => {
-                    return { question: q.questionText, answer: data.answers[index] };
-                }),
-                type: type,
-                regVerifyToken,
-            },
-            backendUrl,
-        ).then(({ response, statusCode }) => {
+        await RegistrationAPI.submitRegistration({
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            degree: data.degree,
+            degreeYear: data.degreeYear,
+            slug: happening.slug,
+            terms: data.terms1 && data.terms2 && data.terms3,
+            answers: happening.additionalQuestions.map((q: Question, index: number) => {
+                return { question: q.questionText, answer: data.answers[index] };
+            }),
+            type: type,
+            regVerifyToken,
+        }).then(({ response, statusCode }) => {
             if (statusCode === 200 || statusCode === 202) {
                 onClose();
             }
@@ -190,10 +186,10 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                         <Text ml="0.5rem" fontWeight="bold">
                                             {isNorwegian
                                                 ? `Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige 
+                                                utestengt fra fremtidige
                                                 ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`
-                                                : `I am aware that if I do not show up I risk being 
-                                                banned from future  
+                                                : `I am aware that if I do not show up I risk being
+                                                banned from future
                                                 ${type === 'BEDPRES' ? 'company presentasjoner' : 'events'}.`}
                                         </Text>
                                     </FormTerm>

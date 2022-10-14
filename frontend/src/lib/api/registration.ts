@@ -6,6 +6,8 @@ import { type Degree, degreeDecoder } from '@utils/decoders';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const responseDecoder = record({
     code: string,
     title: string,
@@ -77,12 +79,9 @@ interface FormRegistration {
 const registrationRoute = 'registration';
 
 const RegistrationAPI = {
-    submitRegistration: async (
-        registration: FormRegistration,
-        backendUrl: string,
-    ): Promise<{ response: Response; statusCode: number }> => {
+    submitRegistration: async (registration: FormRegistration): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
+            const { data, status } = await axios.post(`${BACKEND_URL}/${registrationRoute}`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
@@ -147,12 +146,9 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrationCountForSlugs: async (
-        slugs: Array<string>,
-        backendUrl: string,
-    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
+    getRegistrationCountForSlugs: async (slugs: Array<string>): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            const { data } = await axios.post(`${BACKEND_URL}/${registrationRoute}/count`, { slugs });
             return array(registrationCountDecoder)(data);
         } catch (error) {
             if (axios.isAxiosError(error)) {

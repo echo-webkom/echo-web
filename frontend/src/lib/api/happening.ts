@@ -6,6 +6,8 @@ import { handleError } from '@utils/error';
 import { emptyArrayOnNilDecoder } from '@utils/decoders';
 import SanityAPI from '@api/sanity';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const happeningTypeDecoder = union(literal('BEDPRES'), literal('EVENT'));
 type HappeningType = decodeType<typeof happeningTypeDecoder>;
 
@@ -179,9 +181,9 @@ const HappeningAPI = {
         }
     },
 
-    getHappeningInfo: async (auth: string, slug: string, backendUrl: string): Promise<HappeningInfo | ErrorMessage> => {
+    getHappeningInfo: async (auth: string, slug: string): Promise<HappeningInfo | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/happening/${slug}`, {
+            const { data } = await axios.get(`${BACKEND_URL}/happening/${slug}`, {
                 auth: {
                     username: 'admin',
                     password: auth,
