@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { type Happening, HappeningAPI } from '@api/happening';
 import { RegistrationAPI, type RegistrationCount } from '@api/registration';
 import SEO from '@components/seo';
+import Section from '@components/section';
 import { isErrorMessage } from '@utils/error';
 import EventOverview from '@components/event-overview';
 import EventCalendar from '@components/event-calendar';
@@ -16,15 +17,16 @@ interface Props {
 
 const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
     const isNorwegian = useContext(LanguageContext);
+
     const breakpoints = [1, null, null, null, 2];
     const happenings = [...events, ...bedpresses];
 
     return (
         <>
             <SEO title="Arrangementer" />
-            <Heading>Arrangementer</Heading>
             <SimpleGrid columns={breakpoints} gap="6">
-                <GridItem colSpan={breakpoints}>
+                <GridItem as={Section} colSpan={breakpoints}>
+                    <Heading>Arrangementer</Heading>
                     <EventCalendar happenings={happenings} />
                 </GridItem>
                 <GridItem>

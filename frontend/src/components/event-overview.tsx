@@ -1,6 +1,7 @@
 import { Box, Heading, Tab, TabList, TabPanels, Tabs } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
 import { useContext } from 'react';
+import Section from './section';
 import EventOverviewTab from './event-overview-tab';
 import type { RegistrationCount } from '@api/registration';
 import type { Happening } from '@api/happening';
@@ -16,17 +17,16 @@ interface Props {
 const EventOverview = ({ title, events, type, registrationCounts }: Props) => {
     const isNorwegian = useContext(LanguageContext);
 
-    // Amount of previews to be diplayed in each tab
     const n = type === 'bedpres' ? 3 : 5;
 
     const upcomingEvents = events.filter((event) => isFuture(new Date(event.date)));
     const pastEvents = events.filter((event) => isPast(new Date(event.date))).reverse();
 
     return (
-        <Box>
+        <Box as={Section}>
             <Heading>{title}</Heading>
 
-            <Tabs defaultIndex={1} isFitted isLazy>
+            <Tabs defaultIndex={1} isFitted>
                 <TabList>
                     <Tab>{isNorwegian ? 'Tidligere' : 'Past'}</Tab>
                     <Tab>{isNorwegian ? 'Kommende' : 'Upcoming'}</Tab>

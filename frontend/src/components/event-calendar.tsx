@@ -19,7 +19,6 @@ import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekY
 import { useContext, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import HappeningCalendarBox from './happening-calendar-box';
-import Section from './section';
 import type { Happening } from '@api/happening';
 import LanguageContext from 'language-context';
 import capitalize from '@utils/capitalize';
@@ -97,40 +96,41 @@ const EventCalendar = ({ happenings }: Props) => {
                 </Flex>
             </HStack>
 
-            <SimpleGrid as={Section} padding="1rem" columns={daysAtaTime} gridGap="1rem">
-                {calendarDays.map((today) => {
-                    const formatDate = (date: Date): string => {
-                        return date.toLocaleDateString(isNorwegian ? 'nb-NO' : 'en-US', {
-                            weekday: 'long',
-                            month: 'short',
-                            day: 'numeric',
-                        });
-                    };
+            <SimpleGrid padding="1rem" columns={daysAtaTime} gridGap="1rem">
+                {!calendarDays.every((day) => day.happenings.length === 0) ? (
+                    calendarDays.map((today) => {
+                        const formatDate = (date: Date): string => {
+                            return date.toLocaleDateString(isNorwegian ? 'nb-NO' : 'en-US', {
+                                weekday: 'long',
+                                month: 'short',
+                                day: 'numeric',
+                            });
+                        };
 
-                    return (
-                        <Stack key={today.date.toISOString()}>
-                            <Text
-                                fontWeight="light"
-                                fontSize="lg"
-                                borderRadius="0.25rem"
-                                bg={isSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
-                                px="3"
-                                py="1"
-                            >
-                                {isSameDay(today.date, new Date())
-                                    ? isNorwegian
-                                        ? 'Idag'
-                                        : 'Today'
-                                    : capitalize(formatDate(today.date))}
-                            </Text>
-                            <Divider />
-                            {today.happenings.map((happening) => (
-                                <HappeningCalendarBox key={happening.slug} happening={happening} />
-                            ))}
-                        </Stack>
-                    );
-                })}
-                {calendarDays.every((day) => day.happenings.length === 0) && (
+                        return (
+                            <Stack key={today.date.toISOString()}>
+                                <Text
+                                    fontWeight="light"
+                                    fontSize="lg"
+                                    borderRadius="0.25rem"
+                                    bg={isSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
+                                    px="3"
+                                    py="1"
+                                >
+                                    {isSameDay(today.date, new Date())
+                                        ? isNorwegian
+                                            ? 'Idag'
+                                            : 'Today'
+                                        : capitalize(formatDate(today.date))}
+                                </Text>
+                                <Divider />
+                                {today.happenings.map((happening) => (
+                                    <HappeningCalendarBox key={happening.slug} happening={happening} />
+                                ))}
+                            </Stack>
+                        );
+                    })
+                ) : (
                     <GridItem colSpan={daysAtaTime}>
                         <Center>
                             <Text fontSize="4xl" fontWeight="extrabold" py="5">
