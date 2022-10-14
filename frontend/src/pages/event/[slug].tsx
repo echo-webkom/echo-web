@@ -8,7 +8,7 @@ import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
-import type { UserWithName } from '@api/user';
+import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
 import RegistrationsList from '@components/registrations-list';
 import type { Happening, HappeningInfo } from '@api/happening';
@@ -43,7 +43,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
         differenceInMilliseconds(regDate, date) > 172_800_000
             ? null
             : differenceInMilliseconds(regDate, date);
-    const [user, setUser] = useState<UserWithName | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const isNorwegian = useContext(LanguageContext);
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);

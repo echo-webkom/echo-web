@@ -1,10 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
-import { Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
+import { useToast, Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
 import capitalize from '@utils/capitalize';
-import type { ProfileFormValues, UserWithName } from '@api/user';
+import type { ProfileFormValues, User } from '@api/user';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
 import FormDegree from '@components/form-degree';
@@ -16,16 +16,30 @@ interface ProfileState {
     errorMessage: string | null;
 }
 
-const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
+const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const isNorwegian = useContext(LanguageContext);
     const methods = useForm<ProfileFormValues>();
     const { handleSubmit, register } = methods;
     const [profileState, setProfileState] = useState<ProfileState>({ infoState: 'idle', errorMessage: null });
+    const toast = useToast();
+
+    useEffect(() => {
+        if (profileState.infoState === 'error') {
+            toast({
+                title: isNorwegian ? 'Det har skjedd en feil.' : 'An error has occurred.',
+                description: profileState.errorMessage,
+                status: 'error',
+                duration: 8000,
+                isClosable: true,
+            });
+        }
+    }, [profileState, toast, isNorwegian]);
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (data: ProfileFormValues) => {
         setProfileState({ infoState: 'saving', errorMessage: null });
         const res = await UserAPI.putUser({
             email: user.email,
+            name: user.name,
             alternateEmail: data.alternateEmail,
             degree: data.degree,
             degreeYear: +data.degreeYear,
@@ -73,7 +87,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                         <Input
                             data-cy="profile-alt-email"
                             type="email"
-                            placeholder="E-post"
+                            placeholder={isNorwegian ? 'E-post' : 'Email'}
                             onInput={() => setProfileState({ infoState: 'edited', errorMessage: null })}
                             defaultValue={user.alternateEmail ?? undefined}
                             mb="1rem"
@@ -95,7 +109,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                         py="1rem"
                     />
                     <Heading size="md" my="0.5rem">
-                        Studentgrupper
+                        {isNorwegian ? 'Studentgrupper' : 'Student groups'}
                     </Heading>
                     <Text data-cy="profile-email" my="0.5rem">
                         {user.memberships.length > 0 && user.memberships.map((m: string) => capitalize(m)).join(', ')}
@@ -103,7 +117,7 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                     </Text>
                     <HStack mt={4}>
                         <Button
-                            disabled={profileState.infoState !== 'edited'}
+                            disabled={profileState.infoState !== 'edited' && profileState.infoState !== 'error'}
                             isLoading={profileState.infoState === 'saving'}
                             type="submit"
                             form="profile-form"
@@ -119,13 +133,8 @@ const ProfileInfo = ({ user }: { user: UserWithName }): JSX.Element => {
                                 : 'Save changes'}
                         </Button>
                         <Button onClick={() => void signOut()} colorScheme="red">
-                            {isNorwegian ? 'Logg ut' : 'Log out'}
+                            {isNorwegian ? 'Logg ut' : 'Sign out'}
                         </Button>
-                        {profileState.errorMessage && (
-                            <Text fontWeight="bold" color="red" pt="3">
-                                {profileState.errorMessage}
-                            </Text>
-                        )}
                     </HStack>
                 </form>
             </FormProvider>

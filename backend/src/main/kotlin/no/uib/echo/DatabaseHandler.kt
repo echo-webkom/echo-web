@@ -3,7 +3,6 @@ package no.uib.echo
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
@@ -14,7 +13,6 @@ import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
-import no.uib.echo.schema.UserJson
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -92,11 +90,6 @@ class DatabaseHandler(
 
     private fun insertTestData() {
         val studentGroups = listOf("webkom", "bedkom", "tilde")
-        val users = listOf(
-            UserJson(
-                "andreas.bakseter@student.uib.no", "halla@bruh.com", 3, Degree.DTEK, listOf("tilde")
-            )
-        )
         val happenings = listOf(
             HappeningJson(
                 "bedriftspresentasjon-med-bekk",
@@ -137,20 +130,6 @@ class DatabaseHandler(
 
                 StudentGroup.batchInsert(studentGroups) {
                     this[StudentGroup.name] = it
-                }
-
-                User.batchInsert(users) {
-                    this[User.email] = it.email
-                    this[User.alternateEmail] = it.alternateEmail
-                    this[User.degree] = it.degree.toString()
-                    this[User.degreeYear] = it.degreeYear
-                }
-
-                for (user in users) {
-                    StudentGroupMembership.batchInsert(user.memberships) {
-                        this[StudentGroupMembership.studentGroupName] = it
-                        this[StudentGroupMembership.userEmail] = user.email
-                    }
                 }
 
                 Happening.batchInsert(happenings) {

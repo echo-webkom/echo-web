@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { Spinner, Center, Text, Button, useColorModeValue, Link, Flex, Spacer, Heading } from '@chakra-ui/react';
 import { IoMdHome } from 'react-icons/io';
-import type { UserWithName } from '@api/user';
+import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import Section from '@components/section';
@@ -11,7 +11,7 @@ import SEO from '@components/seo';
 import LanguageContext from 'language-context';
 
 const ProfilePage = (): JSX.Element => {
-    const [user, setUser] = useState<UserWithName | null>();
+    const [user, setUser] = useState<User | null>();
     const [error, setError] = useState<ErrorMessage>();
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -55,9 +55,11 @@ const ProfilePage = (): JSX.Element => {
                                     <Text textAlign="center">
                                         {isNorwegian
                                             ? 'Prøv å logg ut og så inn igjen, eller ta kontakt med Webkom.'
-                                            : 'Try logging out and then logging in again, or contact Webkom.'}
+                                            : 'Try signing out and then signing in again, or contact Webkom.'}
                                     </Text>
-                                    <Button onClick={() => void signOut()}>Logg ut</Button>
+                                    <Button onClick={() => void signOut()}>
+                                        {isNorwegian ? 'Logg ut' : 'Sign out'}
+                                    </Button>
                                 </Flex>
                             )}
                             {loading && (
@@ -67,7 +69,7 @@ const ProfilePage = (): JSX.Element => {
                                     </Heading>
                                     <Spinner size="xl" mx="auto" />
                                     <Button onClick={() => void signOut()}>
-                                        {isNorwegian ? 'Logg ut' : 'Log out'}
+                                        {isNorwegian ? 'Logg ut' : 'Sign out'}
                                     </Button>
                                 </Flex>
                             )}
@@ -100,7 +102,7 @@ const ProfilePage = (): JSX.Element => {
                                 borderRadius="0.5rem"
                                 onClick={() => void signIn('feide')}
                             >
-                                {isNorwegian ? 'Logg inn med feide' : 'Log in with feide'}
+                                {isNorwegian ? 'Logg inn med Feide' : 'Sign in with Feide'}
                             </Button>
                             <Spacer />
                             <Link href="/" alignItems="center" justifyContent="center" display="flex">

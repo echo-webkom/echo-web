@@ -10,6 +10,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import no.uib.echo.isEmailValid
@@ -31,6 +32,7 @@ fun Application.userRoutes() {
     routing {
         authenticate("auth-jwt") {
             getUser()
+            postUser()
             putUser()
         }
     }
@@ -71,12 +73,60 @@ fun Route.getUser() {
             HttpStatusCode.OK,
             UserJson(
                 user[User.email],
+                user[User.name],
                 user[User.alternateEmail],
                 user[User.degreeYear],
-                Degree.valueOf(user[User.degree]),
+                user[User.degree]?.let { Degree.valueOf(it) },
                 memberships.ifEmpty { emptyList() }
             )
         )
+    }
+}
+
+fun Route.postUser() {
+    post("/user") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@post
+        }
+
+        try {
+            val user = call.receive<UserJson>()
+
+            if (user.email != email) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
+
+            val existingUser = transaction {
+                addLogger(StdOutSqlLogger)
+
+                User.select {
+                    User.email eq email
+                }.firstOrNull()
+            }
+
+            if (existingUser != null) {
+                call.respond(HttpStatusCode.Conflict, "User already exists.")
+                return@post
+            }
+
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                User.insert {
+                    it[User.email] = user.email.lowercase()
+                    it[name] = user.name
+                }
+            }
+
+            call.respond(HttpStatusCode.OK, "New user created with email = $${user.email.lowercase()} and name = ${user.name}.")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.InternalServerError)
+            e.printStackTrace()
+        }
     }
 }
 
@@ -94,28 +144,36 @@ fun Route.putUser() {
 
         try {
             val user = call.receive<UserJson>()
+
+            if (user.email != email) {
+                call.respond(HttpStatusCode.Forbidden)
+                return@put
+            }
+
             val alternateEmail = user.alternateEmail?.lowercase()
 
-            if (alternateEmail != null) {
+            if (!alternateEmail.isNullOrBlank()) {
                 if (!isEmailValid(alternateEmail)) {
                     call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gyldig e-post.")
                     return@put
                 }
             }
 
-            if (user.degreeYear !in 1..5) {
+            if (user.degreeYear != null && user.degreeYear !in 1..5) {
                 call.respond(HttpStatusCode.BadRequest, "Vennligst velg et gyldig trinn.")
                 return@put
             }
 
             val degreeMismatch = "Studieretning og årstrinn stemmer ikke overens."
 
-            if ((user.degree in bachelors && user.degreeYear !in 1..3) ||
-                (user.degree in masters && user.degreeYear !in 4..5) ||
-                (user.degree == Degree.ARMNINF && user.degreeYear != 1)
-            ) {
-                call.respond(HttpStatusCode.BadRequest, degreeMismatch)
-                return@put
+            if (user.degree != null && user.degreeYear != null) {
+                if ((user.degree in bachelors && user.degreeYear !in 1..3) ||
+                    (user.degree in masters && user.degreeYear !in 4..5) ||
+                    (user.degree == Degree.ARMNINF && user.degreeYear != 1)
+                ) {
+                    call.respond(HttpStatusCode.BadRequest, degreeMismatch)
+                    return@put
+                }
             }
 
             val result = transaction {
@@ -130,6 +188,7 @@ fun Route.putUser() {
                     addLogger(StdOutSqlLogger)
                     User.insert {
                         it[User.email] = email
+                        it[name] = user.name
                         it[User.alternateEmail] = alternateEmail
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
@@ -144,6 +203,7 @@ fun Route.putUser() {
                 User.update({
                     User.email.lowerCase() eq email
                 }) {
+                    it[name] = user.name
                     it[User.alternateEmail] = alternateEmail
                     it[degree] = user.degree.toString()
                     it[degreeYear] = user.degreeYear
@@ -151,7 +211,7 @@ fun Route.putUser() {
             }
             call.respond(
                 HttpStatusCode.OK,
-                "User updated with email = $email, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                "User updated with email = $email, name = ${user.name}, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
