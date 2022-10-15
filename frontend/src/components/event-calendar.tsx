@@ -49,10 +49,10 @@ const EventCalendar = ({ happenings }: Props) => {
         useBreakpointValue({
             base: 0,
             md: 2,
-            xl: 6,
+            '2xl': 6,
         }) ?? 6;
 
-    const [date, setDate] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
+    const [date, setDate] = useState<Date>(new Date());
     const [calendarDates, setCalendarDates] = useState<Array<CalendarDay>>([]);
 
     useEffect(() => {
