@@ -142,7 +142,7 @@
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "5.40.0",
         "@typescript-eslint/parser": "5.40.0",
-        "cypress": "10.9.0",
+        "cypress": "10.10.0",
         "eslint-config-next": "12.3.1",
         "eslint-plugin-unicorn": "44.0.2",
         "typescript": "4.8.4"
