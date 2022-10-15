@@ -1,8 +1,8 @@
 import {
     Button,
-    Center,
     Divider,
     Flex,
+    GridItem,
     Heading,
     HStack,
     Icon,
@@ -120,26 +120,28 @@ const EventCalendar = ({ happenings }: Props) => {
             </HStack>
 
             <SimpleGrid padding="1rem" columns={interval + 1} gridGap="1rem">
-                {calendarDates.map((today) => {
-                    return (
-                        <Stack key={today.date.toISOString()}>
-                            <Text fontWeight="light" fontSize="lg" borderRadius="0.25rem" px="3" py="1">
-                                {isSameDay(today.date, new Date())
-                                    ? isNorwegian
-                                        ? 'Idag'
-                                        : 'Today'
-                                    : capitalize(formatDate(isNorwegian, today.date))}
-                            </Text>
-                            <Divider />
-                            {today.happenings.map((happening) => (
-                                <HappeningCalendarBox key={happening.slug} happening={happening} />
-                            ))}
-                            {today.happenings.length === 0 && interval === 0 && (
-                                <Center>{isNorwegian ? 'Ingen arrangementer' : 'No events'}</Center>
-                            )}
-                        </Stack>
-                    );
-                })}
+                {calendarDates.map((today) => (
+                    <Stack key={today.date.toISOString()}>
+                        <Text fontWeight="light" fontSize="lg" borderRadius="0.25rem" px="3" py="1">
+                            {isSameDay(today.date, new Date())
+                                ? isNorwegian
+                                    ? 'Idag'
+                                    : 'Today'
+                                : capitalize(formatDate(isNorwegian, today.date))}
+                        </Text>
+                        <Divider />
+                        {today.happenings.map((happening) => (
+                            <HappeningCalendarBox key={happening.slug} happening={happening} />
+                        ))}
+                    </Stack>
+                ))}
+                {calendarDates.every((day) => day.happenings.length === 0) && (
+                    <GridItem colSpan={interval + 1}>
+                        <Text textAlign="center" fontSize="2xl">
+                            {isNorwegian ? 'Ingen arrangementer' : 'No events'}
+                        </Text>
+                    </GridItem>
+                )}
             </SimpleGrid>
         </>
     );
