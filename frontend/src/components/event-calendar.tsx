@@ -1,27 +1,34 @@
 import {
     Button,
+    Center,
     Divider,
-    Text,
     Flex,
     Heading,
     HStack,
     Icon,
     SimpleGrid,
-    GridItem,
-    Center,
     Spacer,
     Stack,
-    useColorModeValue,
+    Text,
     useBreakpointValue,
+    useColorModeValue,
     type IconProps,
 } from '@chakra-ui/react';
-import { getISOWeek, subWeeks, addWeeks, startOfWeek, lastDayOfWeek, getISOWeekYear, isSameDay } from 'date-fns';
+import { addDays, eachDayOfInterval, getISOWeek, getISOWeekYear, isSameDay, startOfWeek, subDays } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import HappeningCalendarBox from './happening-calendar-box';
-import type { Happening } from '@api/happening';
 import LanguageContext from 'language-context';
 import capitalize from '@utils/capitalize';
+import type { Happening } from '@api/happening';
+
+const formatDate = (isNorwegian: boolean, date: Date): string => {
+    return date.toLocaleDateString(isNorwegian ? 'nb-NO' : 'en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+    });
+};
 
 interface CalendarDay {
     date: Date;
@@ -35,51 +42,45 @@ interface Props {
 const EventCalendar = ({ happenings }: Props) => {
     const isNorwegian = useContext(LanguageContext);
 
-    const [date, setDate] = useState<Date>(new Date());
-    const [calendarDays, setCalendarDays] = useState<Array<CalendarDay>>([]);
-
-    const daysAtaTime = useBreakpointValue({
-        base: 1,
-        md: 3,
-        '2xl': 7,
-    });
-
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
-    const todayHighlightColor = useColorModeValue('gray.100', 'gray.700');
+
+    const interval =
+        useBreakpointValue({
+            base: 0,
+            lg: 6,
+        }) ?? 6;
+
+    const [date, setDate] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
+    const [calendarDates, setCalendarDates] = useState<Array<CalendarDay>>([]);
 
     useEffect(() => {
-        const start = startOfWeek(date, { weekStartsOn: 1 });
-        const end = lastDayOfWeek(date, { weekStartsOn: 1 });
-
-        const dates = [];
-
-        const current = new Date(start.getTime());
-        while (current <= end) {
-            dates.push({
-                date: new Date(current),
-                happenings: happenings.filter((happening) => isSameDay(new Date(happening.date), current)),
-            });
-
-            current.setDate(current.getDate() + 1);
-        }
-
-        setCalendarDays(dates);
-    }, [date, happenings]);
+        const start = interval === 0 ? date : startOfWeek(date, { weekStartsOn: 1 });
+        const intervalDates = eachDayOfInterval({
+            start: start,
+            end: addDays(start, interval),
+        });
+        setCalendarDates(
+            intervalDates.map((date) => ({
+                date,
+                happenings: happenings.filter((happening) => isSameDay(date, new Date(happening.date))),
+            })),
+        );
+    }, [date, happenings, interval]);
 
     return (
         <>
             <Flex direction={['column', null, 'row']} mb="1rem">
                 <Heading size="lg" marginBottom="1rem">
-                    {isNorwegian ? 'Uke' : 'Week'} {getISOWeek(date)} - {getISOWeekYear(date)}
+                    {interval === 6 && `${isNorwegian ? 'Uke' : 'Week'} ${getISOWeek(date)} - ${getISOWeekYear(date)}`}
                 </Heading>
                 <Spacer />
                 <Flex justifyContent="center" gap="3">
-                    <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subWeeks(date, 1))}>
+                    <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subDays(date, interval + 1))}>
                         {isNorwegian ? 'Forrige uke' : 'Previous week'}
                     </Button>
                     <Button onClick={() => setDate(new Date())}>{isNorwegian ? 'Idag' : 'Today'}</Button>
-                    <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addWeeks(date, 1))}>
+                    <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addDays(date, interval + 1))}>
                         {isNorwegian ? 'Neste uke' : 'Next week'}
                     </Button>
                 </Flex>
@@ -96,49 +97,27 @@ const EventCalendar = ({ happenings }: Props) => {
                 </Flex>
             </HStack>
 
-            <SimpleGrid padding="1rem" columns={daysAtaTime} gridGap="1rem">
-                {!calendarDays.every((day) => day.happenings.length === 0) ? (
-                    calendarDays.map((today) => {
-                        const formatDate = (date: Date): string => {
-                            return date.toLocaleDateString(isNorwegian ? 'nb-NO' : 'en-US', {
-                                weekday: 'long',
-                                month: 'short',
-                                day: 'numeric',
-                            });
-                        };
-
-                        return (
-                            <Stack key={today.date.toISOString()}>
-                                <Text
-                                    fontWeight="light"
-                                    fontSize="lg"
-                                    borderRadius="0.25rem"
-                                    bg={isSameDay(today.date, new Date()) ? todayHighlightColor : 'transparent'}
-                                    px="3"
-                                    py="1"
-                                >
-                                    {isSameDay(today.date, new Date())
-                                        ? isNorwegian
-                                            ? 'Idag'
-                                            : 'Today'
-                                        : capitalize(formatDate(today.date))}
-                                </Text>
-                                <Divider />
-                                {today.happenings.map((happening) => (
-                                    <HappeningCalendarBox key={happening.slug} happening={happening} />
-                                ))}
-                            </Stack>
-                        );
-                    })
-                ) : (
-                    <GridItem colSpan={daysAtaTime}>
-                        <Center>
-                            <Text fontSize="4xl" fontWeight="extrabold" py="5">
-                                {isNorwegian ? 'Ingen arrangementer denne uken' : 'No events this week'}
+            <SimpleGrid padding="1rem" columns={interval + 1} gridGap="1rem">
+                {calendarDates.map((today) => {
+                    return (
+                        <Stack key={today.date.toISOString()}>
+                            <Text fontWeight="light" fontSize="lg" borderRadius="0.25rem" px="3" py="1">
+                                {isSameDay(today.date, new Date())
+                                    ? isNorwegian
+                                        ? 'Idag'
+                                        : 'Today'
+                                    : capitalize(formatDate(isNorwegian, today.date))}
                             </Text>
-                        </Center>
-                    </GridItem>
-                )}
+                            <Divider />
+                            {today.happenings.map((happening) => (
+                                <HappeningCalendarBox key={happening.slug} happening={happening} />
+                            ))}
+                            {today.happenings.length === 0 && interval === 0 && (
+                                <Center>{isNorwegian ? 'Ingen arrangementer' : 'No events'}</Center>
+                            )}
+                        </Stack>
+                    );
+                })}
             </SimpleGrid>
         </>
     );
