@@ -48,14 +48,16 @@ const EventCalendar = ({ happenings }: Props) => {
     const interval =
         useBreakpointValue({
             base: 0,
-            lg: 6,
+            md: 2,
+            xl: 6,
         }) ?? 6;
 
     const [date, setDate] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
     const [calendarDates, setCalendarDates] = useState<Array<CalendarDay>>([]);
 
     useEffect(() => {
-        const start = interval === 0 ? date : startOfWeek(date, { weekStartsOn: 1 });
+        const start =
+            interval === 0 ? date : interval === 2 ? subDays(date, 1) : startOfWeek(date, { weekStartsOn: 1 });
         const intervalDates = eachDayOfInterval({
             start: start,
             end: addDays(start, interval),
@@ -70,18 +72,38 @@ const EventCalendar = ({ happenings }: Props) => {
 
     return (
         <>
-            <Flex direction={['column', null, 'row']} mb="1rem">
+            <Flex direction={['column', null, null, null, 'row']} mb="1rem">
                 <Heading size="lg" marginBottom="1rem">
                     {interval === 6 && `${isNorwegian ? 'Uke' : 'Week'} ${getISOWeek(date)} - ${getISOWeekYear(date)}`}
                 </Heading>
                 <Spacer />
                 <Flex justifyContent="center" gap="3">
                     <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subDays(date, interval + 1))}>
-                        {isNorwegian ? 'Forrige uke' : 'Previous week'}
+                        {interval === 0
+                            ? isNorwegian
+                                ? 'Forrige dag'
+                                : 'Previous day'
+                            : interval === 2
+                            ? isNorwegian
+                                ? 'Forrige tre dager'
+                                : 'Previous three days'
+                            : isNorwegian
+                            ? 'Forrige uke'
+                            : 'Previous week'}
                     </Button>
                     <Button onClick={() => setDate(new Date())}>{isNorwegian ? 'Idag' : 'Today'}</Button>
                     <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addDays(date, interval + 1))}>
-                        {isNorwegian ? 'Neste uke' : 'Next week'}
+                        {interval === 0
+                            ? isNorwegian
+                                ? 'Neste dag'
+                                : 'Next day'
+                            : interval === 2
+                            ? isNorwegian
+                                ? 'Neste tre dager'
+                                : 'Next three days'
+                            : isNorwegian
+                            ? 'Neste uke'
+                            : 'Next week'}
                     </Button>
                 </Flex>
             </Flex>
