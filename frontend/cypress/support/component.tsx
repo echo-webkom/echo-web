@@ -37,6 +37,8 @@ Cypress.Commands.add('mount', (component, options = {}) =>
             session={{
                 expires: new Date(Date.now() + 2 * 86400).toISOString(),
                 user: { name: 'admin' },
+                idToken: 'idToken',
+                accessToken: 'accessToken',
             }}
         >
             {component}
