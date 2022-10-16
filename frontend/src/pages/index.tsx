@@ -90,7 +90,7 @@ const IndexPage = ({
                             title={isNorwegian ? 'Arrangementer' : 'Events'}
                             entries={events}
                             altText={isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}
-                            linkTo="/event"
+                            linkTo="/arrangementer"
                             type="event"
                             registrationCounts={registrationCounts}
                         />
@@ -108,7 +108,7 @@ const IndexPage = ({
                                     ? 'Ingen kommende bedriftspresentasjoner :('
                                     : 'No upcoming company presentations :('
                             }
-                            linkTo="/bedpres"
+                            linkTo="/arrangementer"
                             type="bedpres"
                             registrationCounts={registrationCounts}
                         />

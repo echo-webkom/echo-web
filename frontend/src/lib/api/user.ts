@@ -12,7 +12,7 @@ interface FormValues {
     degreeYear: number;
 }
 
-const userWithNameDecoder = record({
+const userDecoder = record({
     email: string,
     alternateEmail: union(string, nil),
     name: string,
@@ -20,19 +20,12 @@ const userWithNameDecoder = record({
     degreeYear: union(number, nil),
     memberships: array(string),
 });
-type UserWithName = decodeType<typeof userWithNameDecoder>;
-
-const userDecoder = record({
-    email: string,
-    alternateEmail: union(string, nil),
-    degree: union(degreeDecoder, nil),
-    degreeYear: union(number, nil),
-    memberships: array(string),
-});
 type User = decodeType<typeof userDecoder>;
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const UserAPI = {
-    getUser: async (): Promise<UserWithName | null | ErrorMessage> => {
+    getUser: async (): Promise<User | null | ErrorMessage> => {
         try {
             const { data, status } = await axios.get('/api/user', {
                 validateStatus: (statusCode: number) => {
@@ -44,12 +37,42 @@ const UserAPI = {
                 return null;
             }
 
-            return userWithNameDecoder(data);
+            return userDecoder(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
                 message: 'Fail @ getUser',
+            };
+        }
+    },
+
+    postInitialUser: async (
+        idToken: string,
+        email: string,
+        name: string,
+    ): Promise<{ status: number; response: string } | ErrorMessage> => {
+        try {
+            const { status, data } = await axios.post(
+                `${BACKEND_URL}/user`,
+                { email, name },
+                {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                    validateStatus: (status: number) => status < 500,
+                },
+            );
+
+            return {
+                status,
+                response: data,
+            };
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+
+            return {
+                message: JSON.stringify(error),
             };
         }
     },
@@ -73,11 +96,4 @@ const UserAPI = {
     },
 };
 
-export {
-    UserAPI,
-    userDecoder,
-    userWithNameDecoder,
-    type FormValues as ProfileFormValues,
-    type User,
-    type UserWithName,
-};
+export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User };
