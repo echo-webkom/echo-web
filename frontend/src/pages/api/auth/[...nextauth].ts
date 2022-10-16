@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
             const signInOnlyCollectData = process.env.SIGN_IN_ONLY_COLLECT_DATA === 'true';
 
             if (account?.access_token && account.id_token && profile?.email && profile.name) {
-                const isMember = await FeideGroupAPI.isMemberOfGroup(account.access_token, 'fc:org:uib.no:unit:12120');
+                const isMember = await FeideGroupAPI.isMemberOfGroup(account.access_token, 'fc:org:uib.no:unit:121200');
 
                 if (!isMember) {
                     if (signInOnlyCollectData) {

@@ -37,7 +37,7 @@ const FeideGroupPage = () => {
             {!isErrorMessage(group) && (
                 <>
                     <Heading>Feide Groups</Heading>
-                    <pre>{JSON.stringify(group, null, 2)}</pre>)
+                    <pre>{JSON.stringify(group, null, 2)}</pre>
                 </>
             )}
         </Section>
