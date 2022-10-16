@@ -42,7 +42,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
             name: user.name,
             alternateEmail: data.alternateEmail,
             degree: data.degree,
-            degreeYear: +data.degreeYear,
+            degreeYear: data.degreeYear,
             memberships: [],
         });
 

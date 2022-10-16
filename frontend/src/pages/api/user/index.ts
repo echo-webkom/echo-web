@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 const user: User = userDecoder(response.data);
 
-                res.status(200).end(JSON.stringify(user));
+                res.status(200).end(JSON.stringify({ ...user, name, email }));
                 return;
             } catch (error) {
                 res.status(500).end(JSON.stringify(error));
