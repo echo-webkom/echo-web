@@ -79,31 +79,11 @@ const EventCalendar = ({ happenings }: Props) => {
                 <Spacer />
                 <Flex justifyContent="center" gap="3">
                     <Button leftIcon={<BiLeftArrow />} onClick={() => setDate(subDays(date, interval + 1))}>
-                        {interval === 0
-                            ? isNorwegian
-                                ? 'Forrige dag'
-                                : 'Previous day'
-                            : interval === 2
-                            ? isNorwegian
-                                ? 'Forrige tre dager'
-                                : 'Previous three days'
-                            : isNorwegian
-                            ? 'Forrige uke'
-                            : 'Previous week'}
+                        Forrige
                     </Button>
                     <Button onClick={() => setDate(new Date())}>{isNorwegian ? 'Idag' : 'Today'}</Button>
                     <Button rightIcon={<BiRightArrow />} onClick={() => setDate(addDays(date, interval + 1))}>
-                        {interval === 0
-                            ? isNorwegian
-                                ? 'Neste dag'
-                                : 'Next day'
-                            : interval === 2
-                            ? isNorwegian
-                                ? 'Neste tre dager'
-                                : 'Next three days'
-                            : isNorwegian
-                            ? 'Neste uke'
-                            : 'Next week'}
+                        Neste
                     </Button>
                 </Flex>
             </Flex>
