@@ -95,7 +95,7 @@ fun Route.postUser() {
         try {
             val user = call.receive<UserJson>()
 
-            if (user.email != email) {
+            if (user.email.lowercase() != email) {
                 call.respond(HttpStatusCode.Forbidden)
                 return@post
             }
@@ -117,12 +117,12 @@ fun Route.postUser() {
                 addLogger(StdOutSqlLogger)
 
                 User.insert {
-                    it[User.email] = user.email.lowercase()
+                    it[User.email] = email
                     it[name] = user.name
                 }
             }
 
-            call.respond(HttpStatusCode.OK, "New user created with email = $${user.email.lowercase()} and name = ${user.name}.")
+            call.respond(HttpStatusCode.OK, "New user created with email = $email and name = ${user.name}.")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()
@@ -145,7 +145,7 @@ fun Route.putUser() {
         try {
             val user = call.receive<UserJson>()
 
-            if (user.email != email) {
+            if (user.email.lowercase() != email) {
                 call.respond(HttpStatusCode.Forbidden)
                 return@put
             }
@@ -179,7 +179,7 @@ fun Route.putUser() {
             val result = transaction {
                 addLogger(StdOutSqlLogger)
                 User.select {
-                    User.email.lowerCase() eq email
+                    User.email eq email
                 }.firstOrNull()
             }
 
@@ -201,7 +201,7 @@ fun Route.putUser() {
             transaction {
                 addLogger(StdOutSqlLogger)
                 User.update({
-                    User.email.lowerCase() eq email
+                    User.email eq email
                 }) {
                     it[name] = user.name
                     it[User.alternateEmail] = alternateEmail
