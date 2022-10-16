@@ -2,7 +2,6 @@ import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { useContext } from 'react';
-import { useRouter } from 'next/router';
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
@@ -14,9 +13,7 @@ interface Props {
 }
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
-    const router = useRouter();
     const isNorwegian = useContext(LanguageContext);
-    const isMainPage = router.pathname === '/';
 
     const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const waitListCount =
@@ -42,7 +39,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 )}
             </Flex>
 
-            {event.registrationDate && isMainPage && (
+            {event.registrationDate && (
                 <Flex alignItems="center" justifyContent="flex-end">
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
