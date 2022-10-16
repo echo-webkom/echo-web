@@ -4,12 +4,13 @@ import axios from 'axios';
 import { userDecoder } from '@api/user';
 import type { User } from '@api/user';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
 
     if (session) {
         const idToken = session.idToken as string;
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
         if (req.method === 'GET') {
             const { email, name } = session;
@@ -21,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
 
             try {
-                const response = await axios.get(`${backendUrl}/user`, {
+                const response = await axios.get(`${BACKEND_URL}/user`, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
                     },
@@ -63,7 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             try {
                 const response = await axios.post(
-                    `${backendUrl}/user?email=${email.toLowerCase()}&name=${name.toLowerCase()}`,
+                    `${BACKEND_URL}/user?email=${email.toLowerCase()}&name=${name.toLowerCase()}`,
                     {
                         headers: {
                             Authorization: `Bearer ${idToken}`,
@@ -103,7 +104,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             };
 
             try {
-                const response = await axios.put(`${backendUrl}/user`, user, {
+                const response = await axios.put(`${BACKEND_URL}/user`, user, {
                     headers: {
                         Authorization: `Bearer ${idToken}`,
                         'Content-Type': 'application/json',

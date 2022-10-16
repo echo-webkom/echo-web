@@ -85,11 +85,10 @@ interface Props {
     happening: Happening;
     regVerifyToken: string | null;
     type: HappeningType;
-    backendUrl: string;
     user: User | null;
 }
 
-const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
     const linkColor = useColorModeValue('blue', 'blue.400');
@@ -119,7 +118,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                 type: type,
                 regVerifyToken,
             },
-            backendUrl,
+            process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080',
         ).then(({ response, statusCode }) => {
             if (statusCode === 200 || statusCode === 202) {
                 onClose();
@@ -190,10 +189,10 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                         <Text ml="0.5rem" fontWeight="bold">
                                             {isNorwegian
                                                 ? `Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige 
+                                                utestengt fra fremtidige
                                                 ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`
-                                                : `I am aware that if I do not show up I risk being 
-                                                banned from future  
+                                                : `I am aware that if I do not show up I risk being
+                                                banned from future
                                                 ${type === 'BEDPRES' ? 'company presentasjoner' : 'events'}.`}
                                         </Text>
                                     </FormTerm>
