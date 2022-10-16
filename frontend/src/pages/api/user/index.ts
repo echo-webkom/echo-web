@@ -57,7 +57,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const { email, name } = session;
 
             if (!email || !name) {
-                res.status(401).end('faka yu');
+                res.status(401).end();
                 return;
             }
 
