@@ -190,13 +190,21 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
                                         <LineChart width={500} height={300} data={registrationsOverTime}>
                                             <XAxis
                                                 dataKey="key"
-                                                scale="linear"
                                                 tickFormatter={(value) => format(value, 'HH:mm:ss')}
+                                                domain={['dataMin', 'dataMax']}
                                             />
-                                            <YAxis />
+                                            <YAxis
+                                                scale="linear"
+                                                allowDecimals={false}
+                                                domain={['dataMin', 'dataMax + 2']}
+                                            />
                                             <Tooltip
                                                 labelFormatter={(label) => format(label, 'HH:mm:ss')}
                                                 formatter={(value) => [value, 'Antall påmeldinger']}
+                                                contentStyle={{
+                                                    backgroundColor: 'white',
+                                                    color: 'black',
+                                                }}
                                             />
                                             <CartesianGrid strokeDasharray="3 3" scale="linear" />
                                             <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth="1.5" />

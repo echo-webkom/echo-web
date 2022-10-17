@@ -1,6 +1,6 @@
 import { type PieLabelRenderProps, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import randomColor from 'randomcolor';
-import { Center } from '@chakra-ui/react';
+import { Center, useColorModeValue } from '@chakra-ui/react';
 import allDegrees from '@utils/degree';
 import type { Registration } from '@api/registration';
 
@@ -10,6 +10,8 @@ interface Props {
 }
 
 const RegistrationPieChart = ({ registrations, field }: Props) => {
+    const textColor = useColorModeValue('black', 'white');
+
     const luminosity = 'bright';
 
     const regsByDegree = allDegrees.map((degree) => {
@@ -55,7 +57,7 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
         return (
-            <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            <text x={x} y={y} fill={textColor} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                 {name}
             </text>
         );
