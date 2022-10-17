@@ -13,12 +13,16 @@ import {
     Spinner,
     useToast,
     Tag,
+    LinkBox,
+    LinkOverlay,
+    Link,
 } from '@chakra-ui/react';
 import { AiOutlineCheck, AiOutlineClose, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
 import { IoMdPerson } from 'react-icons/io';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { MdOutlineContentCopy } from 'react-icons/md';
+import { parseISO, format } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
@@ -99,9 +103,9 @@ const FeedbackPage = () => {
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error.message}</Text>
                         <Button>
-                            <Link href="/" passHref>
-                                <Text>Tilbake til forsiden</Text>
-                            </Link>
+                            <NextLink href="/" passHref>
+                                <Link>Tilbake til forsiden</Link>
+                            </NextLink>
                         </Button>
                     </Center>
                 )}
@@ -121,16 +125,7 @@ const FeedbackPage = () => {
                         <SimpleGrid columns={gridColumns} gap="3">
                             {feedbacks.length > 0 ? (
                                 feedbacks.map((feedback) => {
-                                    const formattedDate = (date: Date) => {
-                                        const year = date.getFullYear();
-                                        const month = date.getMonth() + 1;
-                                        const day = date.getDate();
-                                        const hour = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-                                        const minute =
-                                            date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-
-                                        return `${year}-${month}-${day} ${hour}:${minute}`;
-                                    };
+                                    const formattedDate = format(parseISO(feedback.sentAt), 'yyyy-MM-dd HH:mm');
 
                                     const name = feedback.name !== '' ? feedback.name : 'Ukjent';
 
@@ -151,25 +146,32 @@ const FeedbackPage = () => {
                                                 </Flex>
                                                 <Spacer />
                                                 <IconButton
-                                                    colorScheme={feedback.isRead ? 'green' : 'gray'}
+                                                    title="Marker tilbakemelding som lest/ulest"
                                                     aria-label="Marker tilbakemelding som lest/ulest"
+                                                    colorScheme={feedback.isRead ? 'green' : 'gray'}
                                                     icon={feedback.isRead ? <AiOutlineClose /> : <AiOutlineCheck />}
                                                     onClick={() =>
                                                         void handleUpdate({ ...feedback, isRead: !feedback.isRead })
                                                     }
                                                 />
                                                 {feedback.email && (
-                                                    <Link href={`mailto:${feedback.email}`}>
-                                                        <IconButton
-                                                            colorScheme="blue"
-                                                            aria-label="Send epost"
-                                                            icon={<AiOutlineMail />}
-                                                        />
-                                                    </Link>
+                                                    <LinkBox>
+                                                        <NextLink href={`mailto:${feedback.email}`} passHref>
+                                                            <LinkOverlay isExternal>
+                                                                <IconButton
+                                                                    title="Send epost"
+                                                                    aria-label="Send epost"
+                                                                    colorScheme="blue"
+                                                                    icon={<AiOutlineMail />}
+                                                                />
+                                                            </LinkOverlay>
+                                                        </NextLink>
+                                                    </LinkBox>
                                                 )}
                                                 <IconButton
-                                                    colorScheme="red"
+                                                    title="Slett tilbakemelding"
                                                     aria-label="Slett tilbakemelding"
+                                                    colorScheme="red"
                                                     icon={<AiOutlineDelete />}
                                                     onClick={() => void handleDelete(feedback.id)}
                                                 />
@@ -193,15 +195,10 @@ const FeedbackPage = () => {
                                                     #{feedback.id}
                                                 </Tag>
                                                 <Tag
-                                                    onClick={() =>
-                                                        void copyToClipboard(
-                                                            'Dato',
-                                                            formattedDate(new Date(feedback.sentAt)),
-                                                        )
-                                                    }
+                                                    onClick={() => void copyToClipboard('Dato', formattedDate)}
                                                     _hover={{ cursor: 'pointer' }}
                                                 >
-                                                    {formattedDate(new Date(feedback.sentAt))}
+                                                    {formattedDate}
                                                 </Tag>
                                             </Flex>
                                         </Flex>
