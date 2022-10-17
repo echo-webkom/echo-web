@@ -73,7 +73,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                     </Td>
                 )}
                 <Td>
-                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} bg="red.400">
+                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} colorScheme="red">
                         Slett
                     </Button>
                 </Td>
