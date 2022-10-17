@@ -190,14 +190,11 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
                                         <LineChart width={500} height={300} data={registrationsOverTime}>
                                             <XAxis
                                                 dataKey="key"
+                                                scale="linear"
                                                 tickFormatter={(value) => format(value, 'HH:mm:ss')}
                                                 domain={['dataMin', 'dataMax']}
                                             />
-                                            <YAxis
-                                                scale="linear"
-                                                allowDecimals={false}
-                                                domain={['dataMin', 'dataMax + 2']}
-                                            />
+                                            <YAxis allowDecimals={false} domain={['dataMin', 'dataMax']} />
                                             <Tooltip
                                                 labelFormatter={(label) => format(label, 'HH:mm:ss')}
                                                 formatter={(value) => [value, 'Antall påmeldinger']}
