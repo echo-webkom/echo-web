@@ -26,7 +26,7 @@ const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
             <SEO title="Arrangementer" />
             <SimpleGrid columns={breakpoints} gap="6">
                 <GridItem as={Section} colSpan={breakpoints}>
-                    <Heading>Arrangementer</Heading>
+                    <Heading>{isNorwegian ? 'Kalender' : 'Calendar'}</Heading>
                     <EventCalendar happenings={happenings} />
                 </GridItem>
                 <GridItem>
