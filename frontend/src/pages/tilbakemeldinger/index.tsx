@@ -16,6 +16,14 @@ import {
     LinkBox,
     LinkOverlay,
     Link,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalCloseButton,
+    ModalFooter,
+    useDisclosure,
+    ModalHeader,
+    ButtonGroup,
 } from '@chakra-ui/react';
 import { AiOutlineCheck, AiOutlineClose, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
 import { IoMdPerson } from 'react-icons/io';
@@ -33,6 +41,8 @@ const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const toast = useToast();
 
@@ -173,8 +183,32 @@ const FeedbackPage = () => {
                                                     aria-label="Slett tilbakemelding"
                                                     colorScheme="red"
                                                     icon={<AiOutlineDelete />}
-                                                    onClick={() => void handleDelete(feedback.id)}
+                                                    onClick={onOpen}
                                                 />
+
+                                                <Modal isOpen={isOpen} onClose={onClose}>
+                                                    <ModalOverlay />
+                                                    <ModalContent>
+                                                        <ModalCloseButton />
+                                                        <ModalHeader>
+                                                            Er du sikker på at du vil slette denne tilbakemeldingen?
+                                                        </ModalHeader>
+
+                                                        <ModalFooter>
+                                                            <ButtonGroup>
+                                                                <Button
+                                                                    colorScheme="red"
+                                                                    onClick={() => void handleDelete(feedback.id)}
+                                                                >
+                                                                    Slett tilbakemelding
+                                                                </Button>
+                                                                <Button variant="ghost" onClick={onClose}>
+                                                                    Lukk
+                                                                </Button>
+                                                            </ButtonGroup>
+                                                        </ModalFooter>
+                                                    </ModalContent>
+                                                </Modal>
                                             </Flex>
                                             <Divider my="2" />
                                             <Text>{feedback.message}</Text>
