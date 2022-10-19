@@ -25,7 +25,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
-import type { User } from '@api/user';
+import { User, UserAPI } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormTerm from '@components/form-term';
 import FormQuestion from '@components/form-question';
@@ -90,6 +90,7 @@ interface Props {
 }
 
 const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
+    const påmeldt: boolean = true;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
     const linkColor = useColorModeValue('blue', 'blue.400');
@@ -137,9 +138,22 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
 
     return (
         <Box data-testid="bedpres-form">
-            <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
-                {isNorwegian ? 'Påmelding' : 'Register'}
-            </Button>
+            {/* {!user && <>Meld deg på med feide!</>} */}
+            {!påmeldt && (
+                <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
+                    {isNorwegian ? 'Påmelding' : 'Register'}
+                </Button>
+            )}
+            {påmeldt && (
+                <Button
+                    data-cy="del-btn"
+                    w="100%"
+                    colorScheme="red"
+                    onClick={() => RegistrationAPI.deleteRegistration(happening.slug, user.email)}
+                >
+                    {isNorwegian ? 'Meld deg av' : 'Unregister'}
+                </Button>
+            )}
 
             <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
