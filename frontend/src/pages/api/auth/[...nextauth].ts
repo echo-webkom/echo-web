@@ -7,10 +7,7 @@ import { FeedbackAPI } from '@api/feedback';
 
 export const authOptions: NextAuthOptions = {
     session: {
-        maxAge: 3600,
-    },
-    jwt: {
-        maxAge: 3600,
+        maxAge: 8 * 60 * 60,
     },
     callbacks: {
         async signIn({ account, profile }) {
