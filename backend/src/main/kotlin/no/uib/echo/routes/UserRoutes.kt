@@ -19,11 +19,13 @@ import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.masters
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
@@ -33,10 +35,14 @@ fun Application.userRoutes() {
             getUser()
             postUser()
             putUser()
+            getAllUsers()
         }
     }
 }
 
+/**
+ * Returns the user with the given email. Email is taken from the JWT token.
+ */
 fun Route.getUser() {
     get("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -82,6 +88,9 @@ fun Route.getUser() {
     }
 }
 
+/**
+ * Creates a new user with the given email. Email is taken from the JWT token.
+ */
 fun Route.postUser() {
     post("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -129,6 +138,9 @@ fun Route.postUser() {
     }
 }
 
+/**
+ * Updates the user with the given email. Email is taken from the JWT token.
+ */
 fun Route.putUser() {
     put("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -216,5 +228,44 @@ fun Route.putUser() {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()
         }
+    }
+}
+
+/**
+ * Gets a list of all users. Only available to admins/webkom.
+ */
+fun Route.getAllUsers() {
+    get("/users") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        if (email !in getGroupMembers("webkom")) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val users = transaction {
+            addLogger(StdOutSqlLogger)
+            User.selectAll().map { it ->
+                UserJson(
+                    it[User.email],
+                    it[User.name],
+                    it[User.alternateEmail],
+                    it[User.degreeYear],
+                    it[User.degree]?.let { Degree.valueOf(it) },
+                    StudentGroupMembership.select {
+                        StudentGroupMembership.userEmail eq it[User.email]
+                    }.toList().map {
+                        it[StudentGroupMembership.studentGroupName]
+                    }.ifEmpty { emptyList() }
+                )
+            }
+        }
+
+        call.respond(HttpStatusCode.OK, users)
     }
 }

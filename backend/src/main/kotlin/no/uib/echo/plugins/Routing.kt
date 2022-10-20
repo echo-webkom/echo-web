@@ -13,6 +13,7 @@ import no.uib.echo.routes.happeningRoutes
 import no.uib.echo.routes.reactionRoutes
 import no.uib.echo.routes.registrationRoutes
 import no.uib.echo.routes.sanityRoutes
+import no.uib.echo.routes.studentGroupRoutes
 import no.uib.echo.routes.userRoutes
 
 fun Application.configureRouting(
@@ -36,6 +37,7 @@ fun Application.configureRouting(
     userRoutes()
     reactionRoutes()
     sanityRoutes(dev)
+    studentGroupRoutes()
 }
 
 fun Route.getStatus() {

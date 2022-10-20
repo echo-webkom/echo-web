@@ -7,7 +7,6 @@ import no.uib.echo.plugins.configureCORS
 import no.uib.echo.plugins.configureContentNegotiation
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
-import kotlin.Exception
 
 data class FeatureToggles(
     val sendEmailReg: Boolean,
@@ -35,8 +34,9 @@ fun Application.module() {
         false -> maybeSendGridApiKey
     }
 
-    if (sendGridApiKey == null && !dev && sendEmailReg)
+    if (sendGridApiKey == null && !dev && sendEmailReg) {
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg.")
+    }
 
     if (shouldInitDb) {
         DatabaseHandler(
