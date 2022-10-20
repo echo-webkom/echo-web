@@ -94,6 +94,29 @@ const UserAPI = {
             };
         }
     },
+
+    getUsers: async (): Promise<Array<User> | ErrorMessage> => {
+        try {
+            const { data, status }: { data: Array<User>; status: number } = await axios.get('/api/users', {
+                headers: { 'Content-Type': 'application/json' },
+                validateStatus: (statusCode: number) => statusCode < 500,
+            });
+
+            if (status === 200) {
+                return data;
+            }
+
+            return {
+                message: 'Du har ikke tilgang til denne siden :(',
+            };
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+
+            return {
+                message: 'Fail @ getUsers',
+            };
+        }
+    },
 };
 
 export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User };

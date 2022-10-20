@@ -8,9 +8,11 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+val validStudentGroups = listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret")
+
 object StudentGroup : Table("student_group") {
     val name: Column<String> = text("group_name").check("valid_student_group") {
-        it inList listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret")
+        it inList validStudentGroups
     }
 
     override val primaryKey: PrimaryKey = PrimaryKey(name)
@@ -24,8 +26,9 @@ object StudentGroupMembership : Table("student_group_membership") {
 }
 
 fun getGroupMembers(group: String?): List<String> {
-    if (group == null)
+    if (group == null) {
         return emptyList()
+    }
 
     return transaction {
         addLogger(StdOutSqlLogger)
