@@ -6,8 +6,15 @@ import {
     Tr,
     Th,
     Tbody,
+<<<<<<< HEAD
     Text,
     Button,
+=======
+    Td,
+    Text,
+    Button,
+    useDisclosure,
+>>>>>>> 03f2cb84 (🚧 Manage user groups)
     Center,
     Link,
     Spinner,
@@ -16,17 +23,30 @@ import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import Section from '@components/section';
 import SEO from '@components/seo';
+<<<<<<< HEAD
 import UserRow from '@components/user-row';
+=======
+>>>>>>> 03f2cb84 (🚧 Manage user groups)
 import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
+<<<<<<< HEAD
+=======
+import capitalize from '@utils/capitalize';
+import AdminModal from '@components/admin-modal';
+>>>>>>> 03f2cb84 (🚧 Manage user groups)
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
+<<<<<<< HEAD
+=======
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+>>>>>>> 03f2cb84 (🚧 Manage user groups)
     useEffect(() => {
         const fetchUsers = async () => {
             const result = await UserAPI.getUsers();

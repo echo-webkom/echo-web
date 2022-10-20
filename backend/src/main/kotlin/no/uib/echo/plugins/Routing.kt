@@ -17,20 +17,18 @@ import no.uib.echo.routes.studentGroupRoutes
 import no.uib.echo.routes.userRoutes
 
 fun Application.configureRouting(
-    featureToggles: FeatureToggles,
-    dev: Boolean = false,
-    disableJwtAuth: Boolean = false,
-    sendGridApiKey: String? = null
+        featureToggles: FeatureToggles,
+        dev: Boolean = false,
+        disableJwtAuth: Boolean = false,
+        sendGridApiKey: String? = null
 ) {
-    routing {
-        getStatus()
-    }
+    routing { getStatus() }
 
     registrationRoutes(
-        disableJwtAuth = disableJwtAuth,
-        sendEmail = featureToggles.sendEmailReg,
-        sendGridApiKey = sendGridApiKey,
-        verifyRegs = featureToggles.sendEmailReg
+            disableJwtAuth = disableJwtAuth,
+            sendEmail = featureToggles.sendEmailReg,
+            sendGridApiKey = sendGridApiKey,
+            verifyRegs = featureToggles.sendEmailReg
     )
     happeningRoutes()
     feedbackRoutes()
@@ -41,7 +39,5 @@ fun Application.configureRouting(
 }
 
 fun Route.getStatus() {
-    get("/status") {
-        call.respond(HttpStatusCode.OK)
-    }
+    get("/status") { call.respond(HttpStatusCode.OK) }
 }
