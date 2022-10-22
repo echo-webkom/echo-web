@@ -4,22 +4,18 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
-import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
-import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.countRegistrationsDegreeYear
-import no.uib.echo.schema.insertOrUpdateHappening
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -27,26 +23,11 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.happeningRoutes(dev: Boolean) {
+fun Application.happeningRoutes() {
     routing {
         authenticate("auth-admin") {
-            putHappening(dev)
             deleteHappening()
             getHappeningInfo()
-        }
-    }
-}
-
-fun Route.putHappening(dev: Boolean) {
-    put("/happening") {
-        try {
-            val hap = call.receive<HappeningJson>()
-            val result = insertOrUpdateHappening(hap, dev)
-
-            call.respond(result.first, result.second)
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error submitting happening.")
-            e.printStackTrace()
         }
     }
 }

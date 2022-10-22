@@ -89,7 +89,7 @@ class DatabaseHandler(
     }
 
     private fun insertTestData() {
-        val studentGroups = listOf("webkom", "bedkom", "tilde")
+        val studentGroups = listOf("webkom", "bedkom", "tilde", "gnist", "hovedstyret")
         val happenings = listOf(
             HappeningJson(
                 "bedriftspresentasjon-med-bekk",
@@ -105,7 +105,6 @@ class DatabaseHandler(
                     )
                 ),
                 HAPPENING_TYPE.BEDPRES,
-                "bedkom@echo.uib.no",
                 studentGroups[1]
             ),
             HappeningJson(
@@ -119,7 +118,6 @@ class DatabaseHandler(
                     )
                 ),
                 HAPPENING_TYPE.EVENT,
-                "tilde@echo.uib.no",
                 studentGroups[2]
             )
         )
@@ -138,7 +136,6 @@ class DatabaseHandler(
                     this[Happening.happeningType] = it.type.toString()
                     this[Happening.registrationDate] = DateTime(it.registrationDate)
                     this[Happening.happeningDate] = DateTime(it.happeningDate)
-                    this[Happening.organizerEmail] = it.organizerEmail.lowercase()
                     this[Happening.regVerifyToken] = it.slug
                     this[Happening.studentGroupName] = it.studentGroupName.lowercase()
                 }
