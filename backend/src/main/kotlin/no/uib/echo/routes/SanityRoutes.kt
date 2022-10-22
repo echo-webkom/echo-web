@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -26,7 +27,9 @@ data class SanityResponse(
 
 fun Application.sanityRoutes(dev: Boolean) {
     routing {
-        sanitySync(dev)
+        authenticate("auth-admin") {
+            sanitySync(dev)
+        }
     }
 }
 
