@@ -17,10 +17,6 @@ val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
 val fewSpotRange = listOf(SpotRangeJson(5, 1, 5))
 
-val adminKey = System.getenv("ADMIN_KEY")
-val featureToggles =
-    FeatureToggles(sendEmailReg = false, rateLimit = false, verifyRegs = false)
-
 val hap1: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
     HappeningJson(
         "$type-med-noen",
@@ -29,7 +25,6 @@ val hap1: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-04-29T20:43:29Z",
         everyoneSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -42,7 +37,6 @@ val hap2: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-07-29T20:10:11Z",
         everyoneSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -55,7 +49,6 @@ val hap3: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2038-01-01T20:10:11Z",
         everyoneSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -68,7 +61,6 @@ val hap4: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-05-29T20:00:11Z",
         oneTwoSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -81,7 +73,6 @@ val hap5: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-06-29T18:07:31Z",
         threeFiveSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -94,7 +85,6 @@ val hap6: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-06-29T18:07:31Z",
         everyoneSplitSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -107,7 +97,6 @@ val hap7: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-06-29T18:07:31Z",
         everyoneInfiniteSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -120,7 +109,6 @@ val hap8: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-06-29T18:07:31Z",
         onlyOneSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -133,7 +121,6 @@ val hap9: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2030-02-18T16:27:05Z",
         fewSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
@@ -146,7 +133,6 @@ val hap10: (type: HAPPENING_TYPE) -> HappeningJson = { type ->
         "2020-02-28T16:15:00Z",
         fewSpotRange,
         type,
-        "test@test.com",
         if (type == HAPPENING_TYPE.BEDPRES) "bedkom" else "tilde"
     )
 }
