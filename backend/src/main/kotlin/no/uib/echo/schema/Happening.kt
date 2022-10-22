@@ -31,7 +31,6 @@ data class HappeningJson(
     val happeningDate: String,
     val spotRanges: List<SpotRangeJson>,
     val type: HAPPENING_TYPE,
-    val organizerEmail: String,
     val studentGroupName: String
 )
 
@@ -47,7 +46,6 @@ object Happening : Table() {
     val happeningType: Column<String> = text("happening_type")
     val registrationDate: Column<DateTime> = datetime("registration_date")
     val happeningDate: Column<DateTime> = datetime("happening_date")
-    val organizerEmail: Column<String> = text("organizer_email")
     val regVerifyToken: Column<String?> = text("reg_verify_token").nullable()
     val studentGroupName: Column<String?> = text("student_group_name").references(StudentGroup.name).nullable()
 
@@ -91,7 +89,6 @@ fun insertOrUpdateHappening(
                 it[happeningType] = newHappening.type.toString()
                 it[registrationDate] = DateTime(newHappening.registrationDate)
                 it[happeningDate] = DateTime(newHappening.happeningDate)
-                it[organizerEmail] = newHappening.organizerEmail.lowercase()
                 it[Happening.regVerifyToken] = regVerifyToken
                 it[studentGroupName] = newHappening.studentGroupName.lowercase()
             }
@@ -114,7 +111,6 @@ fun insertOrUpdateHappening(
         DateTime(happening[Happening.registrationDate]) == DateTime(newHappening.registrationDate) &&
         DateTime(happening[Happening.happeningDate]) == DateTime(newHappening.happeningDate) &&
         spotRanges == newHappening.spotRanges &&
-        happening[Happening.organizerEmail].lowercase() == newHappening.organizerEmail.lowercase() &&
         happening[Happening.studentGroupName]?.lowercase() == newHappening.studentGroupName.lowercase()
     ) {
         return Pair(
@@ -124,7 +120,6 @@ fun insertOrUpdateHappening(
                 "registrationDate = ${newHappening.registrationDate}, " +
                 "happeningDate = ${newHappening.happeningDate}, " +
                 "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-                "organizerEmail = ${newHappening.organizerEmail.lowercase()}, " +
                 "and studentGroupName = ${newHappening.studentGroupName} has already been submitted."
         )
     }
@@ -136,7 +131,6 @@ fun insertOrUpdateHappening(
             it[title] = newHappening.title
             it[registrationDate] = DateTime(newHappening.registrationDate)
             it[happeningDate] = DateTime(newHappening.happeningDate)
-            it[organizerEmail] = newHappening.organizerEmail.lowercase()
             it[studentGroupName] = newHappening.studentGroupName.lowercase()
         }
 
@@ -158,7 +152,6 @@ fun insertOrUpdateHappening(
             "registrationDate = ${newHappening.registrationDate}, " +
             "happeningDate = ${newHappening.happeningDate}, " +
             "spotRanges = ${spotRangeToString(newHappening.spotRanges)}, " +
-            "organizerEmail = ${newHappening.organizerEmail.lowercase()}, " +
             "and studentGroupName = ${newHappening.studentGroupName}"
 
     return Pair(

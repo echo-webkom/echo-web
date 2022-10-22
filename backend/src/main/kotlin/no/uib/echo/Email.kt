@@ -88,11 +88,7 @@ suspend fun sendConfirmationEmail(
         }.firstOrNull()
     } ?: throw Exception("Happening is null.")
 
-    val fromEmail =
-        if (hap[Happening.organizerEmail].contains(Regex("@echo.uib.no$")))
-            hap[Happening.organizerEmail]
-        else
-            "webkom@echo.uib.no"
+    val fromEmail = "webkom@echo.uib.no"
     try {
         withContext(Dispatchers.IO) {
             sendEmail(
