@@ -7,7 +7,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -91,13 +90,7 @@ class GetRegistrationsTest {
             for (t in be) {
                 val newSlug = "auto-link-test-100-$t"
 
-                val submitHappeningCall = client.put("/happening") {
-                    contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(hap6(t).copy(slug = newSlug)))
-                    basicAuth("admin", System.getenv("ADMIN_KEY"))
-                }
-
-                submitHappeningCall.status shouldBe HttpStatusCode.OK
+                insertOrUpdateHappening(hap6(t).copy(slug = newSlug), dev = true)
 
                 val regsList = mutableListOf<RegistrationJson>()
 
