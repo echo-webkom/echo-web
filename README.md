@@ -23,11 +23,11 @@ eller send oss en mail på [webkom-styret@echo.uib.no](mailto:webkom-styret@echo
 
 ## Frontend
 
-**1. Klon Git-repoet.**
+**1. Klon Git-repoet.(Clone Git-Repo)**
 
     git clone git@github.com:echo-webkom/echo-web
 
-**2. Naviger til riktig mappe.**
+**2. Naviger til riktig mappe.(Navigate to the appropriate folder)**
 
     cd echo-web
 
@@ -35,15 +35,16 @@ eller send oss en mail på [webkom-styret@echo.uib.no](mailto:webkom-styret@echo
 
     yarn
 
-**4. Naviger til riktig mappe.**
+**4. Naviger til riktig mappe.(Navigate to the appropriate folder)**
 
     cd frontend
 
-**5. Kopier innholdet i `.env.example` til en fil med navn `.env` (og evt. fyll inn verdier for feltene).**
+**5. Kopier innholdet i `.env.example` til en fil med navn `.env` (og evt. fyll inn verdier for feltene).** <br>
+**(Copy the contents of .env.example to a file named .env (and possibly fill in values for the fields)**
 
     cp .env.example .env
 
-**6. Start en lokal server.**
+**6. Start en lokal server. (Start a local server.)**
 
     yarn dev
 
