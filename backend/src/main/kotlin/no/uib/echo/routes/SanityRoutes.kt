@@ -48,7 +48,7 @@ fun Route.sanitySync(dev: Boolean) {
         }
 
         val response: SanityResponse =
-            client.get("https://pgq2pd26.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%20%3D%3D%20'happening'%20%26%26%20defined(registrationDate)%20%26%26%20defined(spotRanges)%20%26%26%20count(spotRanges)%20%3E%200%20%26%26%20defined(studentGroupName)%20%26%26%20!(_id%20in%20path('drafts.**'))%5D%20%7B%22slug%22%3A%20slug.current%2C%20title%2C%20registrationDate%2C%20%22happeningDate%22%3A%20date%2C%20spotRanges%5B%5D%20-%3E%20%7B%20spots%2C%20minDegreeYear%2C%20maxDegreeYear%20%7D%2C%20%22type%22%3A%20happeningType%2C%20%22organizerEmail%22%3A%20contactEmail%2C%20studentGroupName%7D%0A")
+            client.get("https://pgq2pd26.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%20%3D%3D%20'happening'%20%26%26%20defined(registrationDate)%20%26%26%20defined(spotRanges)%20%26%26%20count(spotRanges)%20%3E%200%20%26%26%20defined(studentGroupName)%20%26%26%20!(_id%20in%20path('drafts.**'))%5D%20%7B%22slug%22%3A%20slug.current%2C%20title%2C%20registrationDate%2C%20%22happeningDate%22%3A%20date%2C%20spotRanges%5B%5D%20-%3E%20%7B%20spots%2C%20minDegreeYear%2C%20maxDegreeYear%20%7D%2C%20%22type%22%3A%20happeningType%2C%20studentGroupName%7D%0A")
                 .body()
 
         client.close()
