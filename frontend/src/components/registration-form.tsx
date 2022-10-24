@@ -91,7 +91,9 @@ interface Props {
 
 const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }: Props): JSX.Element => {
     const påmeldt: boolean = true;
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
+    const { isOpen: isUnRegisterOpen, onOpen: onUnRegisterOpen, onClose: onUnRegisterClose } = useDisclosure();
+
     const isNorwegian = useContext(LanguageContext);
     const linkColor = useColorModeValue('blue', 'blue.400');
     const methods = useForm<RegFormValues>();
@@ -123,7 +125,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
             backendUrl,
         ).then(({ response, statusCode }) => {
             if (statusCode === 200 || statusCode === 202) {
-                onClose();
+                onRegisterClose();
             }
             toast.closeAll();
             toast({
@@ -140,22 +142,17 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
         <Box data-testid="bedpres-form">
             {/* {!user && <>Meld deg på med feide!</>} */}
             {!påmeldt && (
-                <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
+                <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onRegisterOpen}>
                     {isNorwegian ? 'Påmelding' : 'Register'}
                 </Button>
             )}
             {påmeldt && (
-                <Button
-                    data-cy="del-btn"
-                    w="100%"
-                    colorScheme="red"
-                    onClick={() => RegistrationAPI.deleteRegistration(happening.slug, user.email)}
-                >
+                <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onUnRegisterOpen}>
                     {isNorwegian ? 'Meld deg av' : 'Unregister'}
                 </Button>
             )}
 
-            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+            <Modal initialFocusRef={initialRef} isOpen={isRegisterOpen} onClose={onRegisterClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
@@ -249,10 +246,47 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                                 <Button type="submit" mr={3} colorScheme="teal">
                                     {isNorwegian ? 'Send inn' : 'Send in'}
                                 </Button>
-                                <Button onClick={onClose}>{isNorwegian ? 'Lukk' : 'Close'}</Button>
+                                <Button onClick={onRegisterClose}>{isNorwegian ? 'Lukk' : 'Close'}</Button>
                             </ModalFooter>
                         </form>
                     </FormProvider>
+                </ModalContent>
+            </Modal>
+            <Modal initialFocusRef={initialRef} isOpen={isUnRegisterOpen} onClose={onUnRegisterClose}>
+                <ModalOverlay />
+                <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
+                    <ModalHeader>{isNorwegian ? 'Meld deg av' : 'Unregister'}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb="8px">
+                        {/* add input text for reasoning */}
+                        <VStack spacing={4}>
+                            <FormControl id="reason" isRequired>
+                                <FormLabel>
+                                    {isNorwegian ? 'Hvorfor melder du deg av?' : 'Why are you unregistering?'}
+                                </FormLabel>
+                                <Input />
+                            </FormControl>
+
+                            <Text ml="0.5rem" fontWeight="bold">
+                                {isNorwegian
+                                    ? 'Jeg bekrefter at jeg har fylt inn riktig informasjon.'
+                                    : 'I confirm that I have filled in the correct information.'}
+                            </Text>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            type="submit"
+                            mr={3}
+                            colorScheme="teal"
+                            onClick={() => {
+                                onUnRegisterClose();
+                            }}
+                        >
+                            {isNorwegian ? 'Ja' : 'Yes'}
+                        </Button>
+                        <Button onClick={onUnRegisterClose}>{isNorwegian ? 'Nei' : 'No'}</Button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </Box>

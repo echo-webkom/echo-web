@@ -169,6 +169,33 @@ const RegistrationAPI = {
             };
         }
     },
+
+    isUserRegistered: async (slug: string, backendUrl: string, email: string): Promise<boolean | ErrorMessage> => {
+        try {
+            const { data } = await axios.get(
+                `${backendUrl}/${registrationRoute}/isRegistered?slug=${slug}&email=${email}`,
+            );
+
+            if (isErrorMessage(data)) {
+                return data;
+            }
+
+            return data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (!error.response) {
+                    return { message: '404' };
+                }
+                return {
+                    message: error.response.status === 404 ? '404' : 'Fail @ getUserRegistration',
+                };
+            }
+
+            return {
+                message: 'Fail @ getUserRegistration',
+            };
+        }
+    },
 };
 
 export {
