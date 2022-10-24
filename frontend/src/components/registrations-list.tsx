@@ -25,10 +25,14 @@ import {
     Stack,
     Td,
     Input,
+    InputRightElement,
+    InputGroup,
+    IconButton,
 } from '@chakra-ui/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { getTime, format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { MdClose } from 'react-icons/md';
 import ErrorBox from '@components/error-box';
 import type { Registration } from '@api/registration';
 import Section from '@components/section';
@@ -168,12 +172,24 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                 <Center gap="3" flexDirection={['column', null, 'row']} w={['full', null, 'full']}>
                                     <Flex direction="column" w="full">
                                         <Text>Søk:</Text>
-                                        <Input
-                                            title="Søk på navn eller e-post"
-                                            placeholder="Søk på navn eller e-post"
-                                            value={search}
-                                            onChange={(evt) => setSearch(evt.target.value)}
-                                        />
+
+                                        <InputGroup>
+                                            <Input
+                                                title="Søk på navn eller e-post"
+                                                placeholder="Søk på navn eller e-post"
+                                                value={search}
+                                                onChange={(evt) => setSearch(evt.target.value)}
+                                            />
+                                            <InputRightElement>
+                                                <IconButton
+                                                    aria-label="Fjern søk"
+                                                    icon={<MdClose />}
+                                                    onClick={() => setSearch('')}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                />
+                                            </InputRightElement>
+                                        </InputGroup>
                                     </Flex>
                                     <Flex direction="column" w="full">
                                         <Text>Studieretning:</Text>
