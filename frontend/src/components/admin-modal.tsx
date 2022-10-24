@@ -13,10 +13,9 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import DashboardAPI, { StudentGroup, studentGroups } from '@api/dashboard';
+import type { StudentGroup } from '@api/dashboard';
+import { studentGroups } from '@api/dashboard';
 import type { User } from '@api/user';
-import { isErrorMessage } from '@utils/error';
 import capitalize from '@utils/capitalize';
 
 interface Props {
@@ -26,37 +25,19 @@ interface Props {
 }
 
 const AdminModal = ({ user, isOpen, onClose }: Props) => {
-    const [memberships, setMemberships] = useState<Array<StudentGroup>>(user.memberships as Array<StudentGroup>);
-
     const toast = useToast();
 
-    const handleChange = () => {
+    const handleChange = (group: StudentGroup) => {
+        const newGroups = user.memberships.includes(group)
+            ? user.memberships.filter((g) => g !== group)
+            : [...user.memberships, group];
+
         toast({
-            title: 'Oppdaterer medlemsskap',
-            description: `${memberships.toString()}`,
+            title: `Updating ${user.email}`,
+            description: `${newGroups.toString()}`,
             status: 'info',
             isClosable: true,
         });
-
-        // const result = await DashboardAPI.updateMembership(user.email, u);
-
-        // if (!isErrorMessage(result)) {
-        //     toast({
-        //         title: 'Oppdatert medlemskap',
-        //         description: result,
-        //         status: 'success',
-        //         duration: 2000,
-        //         isClosable: true,
-        //     });
-        // } else {
-        //     toast({
-        //         title: 'Noe gikk galt',
-        //         description: result.message,
-        //         status: 'error',
-        //         duration: 2000,
-        //         isClosable: true,
-        //     });
-        // }
     };
 
     return (
@@ -99,17 +80,7 @@ const AdminModal = ({ user, isOpen, onClose }: Props) => {
 
                                 return (
                                     <Flex gap="2" key={group}>
-                                        <Checkbox
-                                            defaultChecked={isMember}
-                                            onChange={(event) => {
-                                                setMemberships((prev) => {
-                                                    return event.target.checked
-                                                        ? [...prev, group]
-                                                        : prev.filter((m) => m !== group);
-                                                });
-                                                void handleChange();
-                                            }}
-                                        >
+                                        <Checkbox defaultChecked={isMember} onChange={() => handleChange(group)}>
                                             <Text>{capitalize(group)}</Text>
                                         </Checkbox>
                                     </Flex>
