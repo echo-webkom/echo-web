@@ -1,4 +1,4 @@
-name: Docker push images
+name: Push images & deploy dev backend
 on:
   push:
     branches: [master]
@@ -9,6 +9,20 @@ permissions:
 
 env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+  TF_VAR_subscription_id: 8afc7368-510a-404a-b4dd-c7351977b037
+  TF_VAR_resource_group_name: echo-web-dev
+  TF_VAR_location: norwayeast
+  TF_VAR_db_user: echoadmindev
+  TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
+  TF_VAR_db_name: echo-web-db-dev
+  TF_VAR_firewall_name: echo-web-db-firewall-dev
+  TF_VAR_container_group_name: echo-web-containers-dev
+  TF_VAR_backend_container_name: echo-web-backend-dev
+  TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
+  ARM_CLIENT_ID: c320aed0-41eb-4089-aedb-8a4ece92c3b5
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: 8afc7368-510a-404a-b4dd-c7351977b037
+  ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
 
 jobs:
   docker_push_frontend:
@@ -58,7 +72,6 @@ jobs:
           docker push "$IMAGE_NAME/frontend" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           SANITY_DATASET: testing
           TAG: latest
 
@@ -99,5 +112,54 @@ jobs:
           docker push "$IMAGE_NAME/backend" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           TAG: latest
+
+  terraform_dev:
+    runs-on: ubuntu-latest
+    needs: [docker_push_backend]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files Terraform
+        id: changed-files-tf
+        uses: tj-actions/changed-files@v33
+        with:
+          files: |
+            terraform
+
+      - name: Get changed files backend
+        id: changed-files-backend
+        uses: tj-actions/changed-files@v33
+        with:
+          files: backend
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Init Terraform
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Apply Terraform changes
+        if: steps.changed-files-tf.outputs.any_changed == 'true'
+        run: |
+          cd terraform
+          terraform apply -auto-approve
+        env:
+          TF_VAR_environment: develop
+
+      - name: Redeploy new container
+        if: steps.changed-files-tf.outputs.any_changed == 'false' && steps.changed-files-backend.any_changed == 'true'
+        run: |
+          cd terraform
+          terraform destroy -auto-approve -target=azurerm_container_group.echo_web_containers
+          terraform apply -auto-approve -target=azurerm_container_group.echo_web_containers
+        env:
+          TF_VAR_environment: develop
