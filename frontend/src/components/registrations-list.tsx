@@ -165,7 +165,10 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                 >
                                     <Flex direction="column" w="full">
                                         <Text>Studieretning:</Text>
-                                        <Select onChange={(evt) => setDegree(evt.target.value as Degree | 'all')}>
+                                        <Select
+                                            value={degree}
+                                            onChange={(evt) => setDegree(evt.target.value as Degree | 'all')}
+                                        >
                                             <option value="all">Alle</option>
                                             {registrations
                                                 .map((reg) => reg.degree)
@@ -180,7 +183,10 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                     <Spacer />
                                     <Flex direction="column" w="full">
                                         <Text>Årstrinn:</Text>
-                                        <Select onChange={(evt) => setYear(Number.parseInt(evt.target.value))}>
+                                        <Select
+                                            value={year}
+                                            onChange={(evt) => setYear(Number.parseInt(evt.target.value))}
+                                        >
                                             <option value={0}>Alle</option>
                                             {registrations
                                                 .map((reg) => reg.degreeYear)
@@ -196,11 +202,25 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                     <Spacer />
                                     <Flex direction="column" w="full">
                                         <Text>Venteliste:</Text>
-                                        <Select onChange={(evt) => setWaitlist(Number.parseInt(evt.target.value))}>
+                                        <Select
+                                            value={waitlist}
+                                            onChange={(evt) => setWaitlist(Number.parseInt(evt.target.value))}
+                                        >
                                             <option value={-1}>Alle</option>
                                             <option value={1}>Bare venteliste</option>
                                             <option value={0}>Uten venteliste</option>
                                         </Select>
+                                    </Flex>
+                                    <Flex mt="auto">
+                                        <Button
+                                            onClick={() => {
+                                                setDegree('all');
+                                                setYear(0);
+                                                setWaitlist(-1);
+                                            }}
+                                        >
+                                            Reset filter
+                                        </Button>
                                     </Flex>
                                 </Center>
                             </Stack>
