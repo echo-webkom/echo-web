@@ -21,15 +21,20 @@ import {
     Spacer,
     Box,
     Center,
+    Select,
+    Stack,
+    Td,
 } from '@chakra-ui/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { getTime, format, parseISO } from 'date-fns';
+import { useEffect, useState } from 'react';
 import ErrorBox from '@components/error-box';
 import type { Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import RegistrationPieChart from '@components/registration-pie-chart';
+import type { Degree } from '@utils/decoders';
 
 interface Props {
     registrations: Array<Registration> | null;
@@ -37,7 +42,26 @@ interface Props {
     title: string;
 }
 
-const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element => {
+const RegistrationsList = ({ registrations, title, error }: Props) => {
+    type DegreeType = 'all' | Degree;
+
+    const [data, setData] = useState<Array<Registration>>([]);
+    const [degree, setDegree] = useState<DegreeType>('all');
+    const [year, setYear] = useState<number>(0);
+    // -1: ALL, 0: Only waitlist, 1: Only accepted
+    const [waitlist, setWaitlist] = useState<number>(-1);
+
+    useEffect(() => {
+        if (registrations) {
+            setData(
+                registrations
+                    .filter((reg) => reg.degree === degree || degree === 'all')
+                    .filter((reg) => reg.degreeYear === year || year === 0)
+                    .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList)),
+            );
+        }
+    }, [degree, registrations, waitlist, year]);
+
     const questions =
         registrations
             ?.flatMap((reg) => reg.answers)
@@ -72,68 +96,116 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
 
                     <TabPanels>
                         <TabPanel>
-                            <Flex gap="3" alignItems="center" direction={['column', null, null, null, 'row']}>
-                                <Heading size={headingSize} justifySelf={justifyHeading}>
-                                    Påmeldinger for: {title}
-                                </Heading>
-                                <Spacer />
-                                <Center alignItems="inherit" gap="3" flexWrap="wrap">
-                                    <a
-                                        href={`/api/registration?slug=${registrations[0].slug}&type=download`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        download
-                                    >
-                                        <Button fontSize="sm">Last ned som CSV</Button>
-                                    </a>
-                                    <Button
-                                        onClick={() => {
-                                            toast({
-                                                position: 'top',
-                                                duration: null,
-                                                render: () => (
-                                                    <Section p="2rem" borderRadius="0.5rem">
-                                                        <Heading size="lg" pb="0.5rem">
-                                                            Slette påmeldinger
-                                                        </Heading>
-                                                        <Text py="0.5rem">
-                                                            Dersom du trykker på &quot;Slett påmelding&quot;, blir du
-                                                            spurt om å bekrefte at du vil slette påmeldingen. Dersom du
-                                                            godtar dette, vil påmeldingen bli slettet for alltid. Hvis
-                                                            denne påmeldingen ikke var på venteliste, vil neste person
-                                                            på ventelisten automatisk bli rykket opp i listen. Denne
-                                                            personen får ikke automatisk beskjed om at de ikke lenger er
-                                                            på venteliste; arrangør er ansvarlig for å gjøre dette.
-                                                        </Text>
-                                                        <Text fontWeight="bold" py="0.5rem">
-                                                            Det beste er å forhøre seg om neste person på venteliste har
-                                                            mulighet til å delta på arrangementet før du sletter en som
-                                                            har meldt seg av.
-                                                        </Text>
-                                                        <Text py="0.5rem">
-                                                            Påmeldinger som er slettet blir slettet for alltid, og det
-                                                            er ikke mulig å finne denne informasjonen igjen.
-                                                        </Text>
-                                                        <Button
-                                                            onClick={() => {
-                                                                toast.closeAll();
-                                                            }}
-                                                            mt="0.5rem"
-                                                        >
-                                                            Ok, jeg forstår
-                                                        </Button>
-                                                    </Section>
-                                                ),
-                                            });
-                                        }}
-                                        fontSize="sm"
-                                    >
-                                        Hvordan funker denne listen?
-                                    </Button>
+                            <Stack gap="3">
+                                <Flex gap="3" alignItems="center" direction={['column', null, null, null, 'row']}>
+                                    <Heading size={headingSize} justifySelf={justifyHeading}>
+                                        Påmeldinger for: {title}
+                                    </Heading>
+                                    <Spacer />
+                                    <Center alignItems="inherit" gap="3" flexWrap="wrap">
+                                        <a
+                                            href={`/api/registration?slug=${registrations[0].slug}&type=download`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download
+                                        >
+                                            <Button fontSize="sm">Last ned som CSV</Button>
+                                        </a>
+                                        <Button
+                                            onClick={() => {
+                                                toast({
+                                                    position: 'top',
+                                                    duration: null,
+                                                    render: () => (
+                                                        <Section p="2rem" borderRadius="0.5rem">
+                                                            <Heading size="lg" pb="0.5rem">
+                                                                Slette påmeldinger
+                                                            </Heading>
+                                                            <Text py="0.5rem">
+                                                                Dersom du trykker på &quot;Slett påmelding&quot;, blir
+                                                                du spurt om å bekrefte at du vil slette påmeldingen.
+                                                                Dersom du godtar dette, vil påmeldingen bli slettet for
+                                                                alltid. Hvis denne påmeldingen ikke var på venteliste,
+                                                                vil neste person på ventelisten automatisk bli rykket
+                                                                opp i listen. Denne personen får ikke automatisk beskjed
+                                                                om at de ikke lenger er på venteliste; arrangør er
+                                                                ansvarlig for å gjøre dette.
+                                                            </Text>
+                                                            <Text fontWeight="bold" py="0.5rem">
+                                                                Det beste er å forhøre seg om neste person på venteliste
+                                                                har mulighet til å delta på arrangementet før du sletter
+                                                                en som har meldt seg av.
+                                                            </Text>
+                                                            <Text py="0.5rem">
+                                                                Påmeldinger som er slettet blir slettet for alltid, og
+                                                                det er ikke mulig å finne denne informasjonen igjen.
+                                                            </Text>
+                                                            <Button
+                                                                onClick={() => {
+                                                                    toast.closeAll();
+                                                                }}
+                                                                mt="0.5rem"
+                                                            >
+                                                                Ok, jeg forstår
+                                                            </Button>
+                                                        </Section>
+                                                    ),
+                                                });
+                                            }}
+                                            fontSize="sm"
+                                        >
+                                            Hvordan funker denne listen?
+                                        </Button>
+                                    </Center>
+                                </Flex>
+                                <Center
+                                    gap={['3', null, '5']}
+                                    flexDirection={['column', null, 'row']}
+                                    w={['full', null, 'full']}
+                                >
+                                    <Flex direction="column" w="full">
+                                        <Text>Studieretning:</Text>
+                                        <Select onChange={(evt) => setDegree(evt.target.value as Degree | 'all')}>
+                                            <option value="all">Alle</option>
+                                            {registrations
+                                                .map((reg) => reg.degree)
+                                                .filter((e, i, arr) => arr.indexOf(e) === i)
+                                                .map((degree) => (
+                                                    <option key={degree} value={degree}>
+                                                        {degree}
+                                                    </option>
+                                                ))}
+                                        </Select>
+                                    </Flex>
+                                    <Spacer />
+                                    <Flex direction="column" w="full">
+                                        <Text>Årstrinn:</Text>
+                                        <Select onChange={(evt) => setYear(Number.parseInt(evt.target.value))}>
+                                            <option value={0}>Alle</option>
+                                            {registrations
+                                                .map((reg) => reg.degreeYear)
+                                                .filter((e, i, arr) => arr.indexOf(e) === i)
+                                                .sort((a, b) => a - b)
+                                                .map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                        </Select>
+                                    </Flex>
+                                    <Spacer />
+                                    <Flex direction="column" w="full">
+                                        <Text>Venteliste:</Text>
+                                        <Select onChange={(evt) => setWaitlist(Number.parseInt(evt.target.value))}>
+                                            <option value={-1}>Alle</option>
+                                            <option value={1}>Bare venteliste</option>
+                                            <option value={0}>Uten venteliste</option>
+                                        </Select>
+                                    </Flex>
                                 </Center>
-                            </Flex>
+                            </Stack>
                             <Divider my="1rem" />
-                            <Box overflowX="scroll" mx="-8">
+                            <Box overflowX="scroll" mx="-10">
                                 <Table size={tableSize} variant="striped">
                                     <Thead>
                                         <Tr>
@@ -149,7 +221,7 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
                                         </Tr>
                                     </Thead>
                                     <Tbody>
-                                        {registrations
+                                        {data
                                             .sort((a, b) => {
                                                 if (a.waitList && !b.waitList) return 1;
                                                 else if (!a.waitList && b.waitList) return -1;
@@ -164,6 +236,13 @@ const RegistrationsList = ({ registrations, title, error }: Props): JSX.Element 
                                                     />
                                                 );
                                             })}
+                                        {data.length === 0 && (
+                                            <Td colSpan={100} fontSize="3xl" py="10">
+                                                <Center>
+                                                    <Text>Ingen påmeldinger som passer dine kriterier</Text>
+                                                </Center>
+                                            </Td>
+                                        )}
                                     </Tbody>
                                 </Table>
                             </Box>
