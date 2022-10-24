@@ -106,7 +106,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                     </TabList>
 
                     <TabPanels>
-                        <TabPanel>
+                        <TabPanel px="0">
                             <Stack gap="3">
                                 <Flex gap="3" alignItems="center" direction={['column', null, null, null, 'row']}>
                                     <Heading size={headingSize} justifySelf={justifyHeading}>
@@ -255,7 +255,8 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                 </Center>
                             </Stack>
                             <Divider my="1rem" />
-                            <Box overflowX="scroll" mx="-10">
+                            {/* mx value is the the negative of Section padding */}
+                            <Box overflowX="scroll" mx="-6">
                                 <Table size={tableSize} variant="striped">
                                     <Thead>
                                         <Tr>
@@ -297,7 +298,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                 </Table>
                             </Box>
                         </TabPanel>
-                        <TabPanel>
+                        <TabPanel px="0">
                             <SimpleGrid columns={[1, 1, null, 2]} spacing="1rem">
                                 <GridItem>
                                     <Heading size="md" my="1rem">
