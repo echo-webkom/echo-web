@@ -4,45 +4,25 @@ import {
     SimpleGrid,
     GridItem,
     Divider,
-    Spacer,
-    Flex,
-    Icon,
     Button,
     Center,
-    IconButton,
     Spinner,
     useToast,
-    Tag,
-    LinkBox,
-    LinkOverlay,
     Link,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalCloseButton,
-    ModalFooter,
-    useDisclosure,
-    ModalHeader,
-    ButtonGroup,
 } from '@chakra-ui/react';
-import { AiOutlineCheck, AiOutlineClose, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
-import { IoMdPerson } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
-import { MdOutlineContentCopy } from 'react-icons/md';
-import { parseISO, format } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
+import FeedbackEntry from '@components/feedback-entry';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const toast = useToast();
 
@@ -93,17 +73,6 @@ const FeedbackPage = () => {
         setFeedbacks(feedbacks?.map((f) => (f.id === feedback.id ? feedback : f)));
     };
 
-    const copyToClipboard = async (title: string, text: string) => {
-        await navigator.clipboard.writeText(text);
-
-        toast({
-            title: `${title} ble kopiert til utklippstavlen!`,
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-        });
-    };
-
     return (
         <>
             <SEO title="Tilbakemeldinger" />
@@ -135,107 +104,13 @@ const FeedbackPage = () => {
                         <SimpleGrid columns={gridColumns} gap="3">
                             {feedbacks.length > 0 ? (
                                 feedbacks.map((feedback) => {
-                                    const formattedDate = format(parseISO(feedback.sentAt), 'yyyy-MM-dd HH:mm');
-
-                                    const name = feedback.name !== '' ? feedback.name : 'Ukjent';
-
                                     return (
-                                        <Flex
+                                        <FeedbackEntry
                                             key={feedback.id}
-                                            p={4}
-                                            shadow="md"
-                                            borderWidth="1px"
-                                            direction="column"
-                                            transition="all 0.3s ease"
-                                            _hover={{ borderColor: 'gray.400' }}
-                                        >
-                                            <Flex gap="2">
-                                                <Flex direction="row" alignItems="center" gap="2">
-                                                    <Icon as={IoMdPerson} />
-                                                    <Text fontWeight="bold">{name}</Text>
-                                                </Flex>
-                                                <Spacer />
-                                                <IconButton
-                                                    title="Marker tilbakemelding som lest/ulest"
-                                                    aria-label="Marker tilbakemelding som lest/ulest"
-                                                    colorScheme={feedback.isRead ? 'green' : 'gray'}
-                                                    icon={feedback.isRead ? <AiOutlineClose /> : <AiOutlineCheck />}
-                                                    onClick={() =>
-                                                        void handleUpdate({ ...feedback, isRead: !feedback.isRead })
-                                                    }
-                                                />
-                                                {feedback.email && (
-                                                    <LinkBox>
-                                                        <NextLink href={`mailto:${feedback.email}`} passHref>
-                                                            <LinkOverlay isExternal>
-                                                                <IconButton
-                                                                    title="Send epost"
-                                                                    aria-label="Send epost"
-                                                                    colorScheme="blue"
-                                                                    icon={<AiOutlineMail />}
-                                                                />
-                                                            </LinkOverlay>
-                                                        </NextLink>
-                                                    </LinkBox>
-                                                )}
-                                                <IconButton
-                                                    title="Slett tilbakemelding"
-                                                    aria-label="Slett tilbakemelding"
-                                                    colorScheme="red"
-                                                    icon={<AiOutlineDelete />}
-                                                    onClick={onOpen}
-                                                />
-
-                                                <Modal isOpen={isOpen} onClose={onClose}>
-                                                    <ModalOverlay />
-                                                    <ModalContent>
-                                                        <ModalCloseButton />
-                                                        <ModalHeader>
-                                                            Er du sikker på at du vil slette denne tilbakemeldingen?
-                                                        </ModalHeader>
-
-                                                        <ModalFooter>
-                                                            <ButtonGroup>
-                                                                <Button
-                                                                    colorScheme="red"
-                                                                    onClick={() => void handleDelete(feedback.id)}
-                                                                >
-                                                                    Slett tilbakemelding
-                                                                </Button>
-                                                                <Button variant="ghost" onClick={onClose}>
-                                                                    Lukk
-                                                                </Button>
-                                                            </ButtonGroup>
-                                                        </ModalFooter>
-                                                    </ModalContent>
-                                                </Modal>
-                                            </Flex>
-                                            <Divider my="2" />
-                                            <Text>{feedback.message}</Text>
-                                            <Spacer my="3" />
-                                            <Flex fontFamily="mono" direction="row" gap="3" fontSize="md">
-                                                <Tag
-                                                    onClick={() =>
-                                                        void copyToClipboard('Tilbakemelding', feedback.message)
-                                                    }
-                                                    _hover={{ cursor: 'pointer' }}
-                                                >
-                                                    <Icon as={MdOutlineContentCopy} />
-                                                </Tag>
-                                                <Tag
-                                                    onClick={() => void copyToClipboard('ID', feedback.id.toString())}
-                                                    _hover={{ cursor: 'pointer' }}
-                                                >
-                                                    #{feedback.id}
-                                                </Tag>
-                                                <Tag
-                                                    onClick={() => void copyToClipboard('Dato', formattedDate)}
-                                                    _hover={{ cursor: 'pointer' }}
-                                                >
-                                                    {formattedDate}
-                                                </Tag>
-                                            </Flex>
-                                        </Flex>
+                                            feedback={feedback}
+                                            handleUpdate={handleUpdate}
+                                            handleDelete={handleDelete}
+                                        />
                                     );
                                 })
                             ) : (
