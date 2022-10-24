@@ -24,6 +24,7 @@ import {
     Select,
     Stack,
     Td,
+    Input,
 } from '@chakra-ui/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { getTime, format, parseISO } from 'date-fns';
@@ -50,6 +51,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
     const [year, setYear] = useState<number>(0);
     // -1: ALL, 0: Only waitlist, 1: Only accepted
     const [waitlist, setWaitlist] = useState<number>(-1);
+    const [search, setSearch] = useState<string>('');
 
     useEffect(() => {
         if (registrations) {
@@ -57,10 +59,15 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                 registrations
                     .filter((reg) => reg.degree === degree || degree === 'all')
                     .filter((reg) => reg.degreeYear === year || year === 0)
-                    .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList)),
+                    .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
+                    .filter(
+                        (reg) =>
+                            [reg.firstName, reg.lastName].join(' ').toLowerCase().includes(search.toLowerCase()) ||
+                            reg.email.toLowerCase().includes(search.toLowerCase()),
+                    ),
             );
         }
-    }, [degree, registrations, waitlist, year]);
+    }, [degree, registrations, waitlist, year, search]);
 
     const questions =
         registrations
@@ -158,14 +165,20 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </Button>
                                     </Center>
                                 </Flex>
-                                <Center
-                                    gap={['3', null, '5']}
-                                    flexDirection={['column', null, 'row']}
-                                    w={['full', null, 'full']}
-                                >
+                                <Center gap="3" flexDirection={['column', null, 'row']} w={['full', null, 'full']}>
+                                    <Flex direction="column" w="full">
+                                        <Text>Søk:</Text>
+                                        <Input
+                                            title="Søk på navn eller e-post"
+                                            placeholder="Søk på navn eller e-post"
+                                            value={search}
+                                            onChange={(evt) => setSearch(evt.target.value)}
+                                        />
+                                    </Flex>
                                     <Flex direction="column" w="full">
                                         <Text>Studieretning:</Text>
                                         <Select
+                                            title="Studieretning"
                                             value={degree}
                                             onChange={(evt) => setDegree(evt.target.value as Degree | 'all')}
                                         >
@@ -180,10 +193,10 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                                 ))}
                                         </Select>
                                     </Flex>
-                                    <Spacer />
                                     <Flex direction="column" w="full">
                                         <Text>Årstrinn:</Text>
                                         <Select
+                                            title="Årstrinn"
                                             value={year}
                                             onChange={(evt) => setYear(Number.parseInt(evt.target.value))}
                                         >
@@ -199,10 +212,10 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                                 ))}
                                         </Select>
                                     </Flex>
-                                    <Spacer />
                                     <Flex direction="column" w="full">
                                         <Text>Venteliste:</Text>
                                         <Select
+                                            title="Venteliste"
                                             value={waitlist}
                                             onChange={(evt) => setWaitlist(Number.parseInt(evt.target.value))}
                                         >
@@ -217,6 +230,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                                 setDegree('all');
                                                 setYear(0);
                                                 setWaitlist(-1);
+                                                setSearch('');
                                             }}
                                         >
                                             Reset filter
