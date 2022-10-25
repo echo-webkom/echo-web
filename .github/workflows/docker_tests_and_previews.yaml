@@ -1,7 +1,8 @@
-name: Docker tests
+name: Docker tests & previews
 on:
   pull_request:
     branches: [master]
+    types: [opened, synchronize, reopened]
 
 permissions:
   packages: write
@@ -9,6 +10,9 @@ permissions:
 
 env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+  TAG: ${{ github.sha }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
 
 jobs:
   build_frontend:
@@ -24,7 +28,7 @@ jobs:
         uses: tj-actions/changed-files@v33
         with:
           files: |
-            frontend
+            frontend/**
             yarn.lock
             package.json
             Dockerfile.frontend
@@ -59,7 +63,6 @@ jobs:
           docker push "$IMAGE_NAME/frontend" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           SANITY_DATASET: testing
 
   build_backend:
@@ -74,7 +77,8 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v33
         with:
-          files: backend
+          files: |
+            backend/**
           files_ignore: |
             backend/.gitignore
             backend/.env.example
@@ -99,7 +103,6 @@ jobs:
           docker push "$IMAGE_NAME/backend" --all-tags
         env:
           DOCKER_BUILDKIT: 1
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
   kotest_tests:
     runs-on: ubuntu-latest
@@ -114,7 +117,8 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v33
         with:
-          files: backend
+          files: |
+            backend/**
           files_ignore: |
             backend/.gitignore
             backend/.env.example
@@ -122,15 +126,11 @@ jobs:
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
       - name: Run Kotest tests with Docker Compose
         if: steps.changed-files.outputs.any_changed == 'true'
         run: docker compose -f backend/docker-compose.kotest.yaml up --exit-code-from=backend
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          TAG: ${{ github.sha }}
           ADMIN_KEY: admin-passord
 
   cypress_e2e_tests:
@@ -147,7 +147,7 @@ jobs:
         uses: tj-actions/changed-files@v33
         with:
           files: |
-            frontend
+            frontend/**
             yarn.lock
             package.json
             Dockerfile.frontend
@@ -165,7 +165,8 @@ jobs:
         id: changed-files-backend
         uses: tj-actions/changed-files@v33
         with:
-          files: backend
+          files: |
+            backend/**
           files_ignore: |
             backend/.gitignore
             backend/.env.example
@@ -188,7 +189,6 @@ jobs:
             fi
           }
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           FRONTEND_CHANGED: ${{ steps.changed-files-frontend.outputs.any_changed }}
           BACKEND_CHANGED: ${{ steps.changed-files-backend.outputs.any_changed }}
 
@@ -196,7 +196,6 @@ jobs:
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: docker compose -f docker-compose.cypress.yaml up --exit-code-from=frontend --attach=frontend
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
           FRONTEND_TAG: ${{ steps.changed-files-frontend.outputs.any_changed == 'true' && github.sha || 'latest' }}
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
           SANITY_DATASET: testing
@@ -229,8 +228,6 @@ jobs:
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
 
       - name: Download database dump
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -249,7 +246,128 @@ jobs:
           docker exec -i backend-database-1 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d postgres latest.dump || true
           docker compose -f backend/docker-compose.yaml up backend & (sleep 15 && docker kill backend-backend-1)
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          TAG: ${{ github.sha }}
           TEST_MIGRATION: true
           ADMIN_KEY: admin-passord
+
+  backend_preview:
+    runs-on: ubuntu-latest
+    needs: [build_backend]
+    outputs:
+      preview_backend_url: ${{ steps.preview_deploy.outputs.BACKEND_URL || steps.default_value.outputs.BACKEND_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set BACKEND_URL default value
+        id: default_value
+        run: echo "BACKEND_URL=https://echo-web-containers-dev.norwayeast.azurecontainer.io" >> $GITHUB_OUTPUT
+
+      - name: Get changed files, backend
+        id: changed-files-backend
+        uses: tj-actions/changed-files@v33
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Get changed files, Terraform
+        id: changed-files-tf
+        uses: tj-actions/changed-files@v33
+        with:
+          files: |
+            terraform/preview/**
+
+      - name: Setup Terraform
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Set environment variables
+        id: env_vars
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        run: |
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')" >> $GITHUB_OUTPUT
+          echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
+        env:
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+
+      - name: Deploy preview container
+        id: preview_deploy
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        run: |
+          cd terraform/preview
+          terraform init
+          terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
+          terraform apply -auto-approve
+          # Get backend url and output it
+          echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHUB_OUTPUT
+        env:
+          TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
+          TF_VAR_location: norwayeast
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
+          TF_VAR_backend_image: '${{ env.IMAGE_NAME}}/backend:${{ steps.env_vars.outputs.BACKEND_TAG }}'
+          ARM_CLIENT_ID: c320aed0-41eb-4089-aedb-8a4ece92c3b5
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: 8afc7368-510a-404a-b4dd-c7351977b037
+          ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+          WORKSPACE_NAME: ${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}
+
+      - name: Find comment
+        id: fc
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: peter-evans/find-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: beep boop!
+
+      - name: Create comment
+        if: steps.fc.outputs.comment-id == '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **beep boop!**
+
+            I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
+
+      - name: Update comment
+        if: steps.fc.outputs.comment-id != '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            **beep boop!**
+
+            I just deployed a *new* backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rewind:
+
+  vercel_preview:
+    runs-on: ubuntu-latest
+    needs: [backend_preview]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+          PR_LABELS: false
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_BalajEhvjfBqbkouJFI9761w
+          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
+          BUILD_ENV: |
+            SANITY_DATASET=production
+            ADMIN_KEY=${{ secrets.ADMIN_KEY_DEV }}
+            NEXT_PUBLIC_BACKEND_URL=${{ needs.backend_preview.outputs.preview_backend_url }}
+            NEXTAUTH_SECRET=secret123AsDef£123
+
+      - name: Seed backend with Sanity data
+        run: curl -v ${{ needs.backend_preview.outputs.preview_backend_url }}/sanity -u admin:$TF_VAR_admin_key --basic || true

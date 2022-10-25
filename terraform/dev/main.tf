@@ -25,6 +25,14 @@ provider "azurerm" {
 resource "azurerm_resource_group" "echo_web" {
   name     = var.resource_group_name
   location = var.location
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = {
+    environment = var.environment
+  }
 }
 
 # Database
@@ -48,6 +56,10 @@ resource "azurerm_postgresql_server" "echo_web_db" {
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     "environment" = var.environment
   }
@@ -61,6 +73,10 @@ resource "azurerm_postgresql_firewall_rule" "echo_web_firewall" {
   server_name         = azurerm_postgresql_server.echo_web_db.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Storage for Caddy
@@ -72,14 +88,25 @@ resource "azurerm_storage_account" "caddy_storage" {
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   enable_https_traffic_only = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = {
+    "environment" = var.environment
+  }
 }
 
 resource "azurerm_storage_share" "caddy_share" {
   name                 = "caddy"
   storage_account_name = azurerm_storage_account.caddy_storage.name
   quota                = 1
-}
 
+  lifecycle {
+    prevent_destroy = true
+  }
+}
 
 # Containers
 
@@ -98,6 +125,10 @@ resource "azurerm_container_group" "echo_web_containers" {
     cpu    = 0.5
     memory = 0.5
 
+    environment_variables = {
+      "MAX_POOL_SIZE" = "5"
+    }
+
     secure_environment_variables = {
       "DATABASE_URL" = "postgres://${var.db_user}%40${var.db_name}:${var.db_password}@${azurerm_postgresql_server.echo_web_db.fqdn}:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
@@ -105,7 +136,7 @@ resource "azurerm_container_group" "echo_web_containers" {
   }
 
   container {
-    name  = "caddy"
+    name  = "echo-web-caddy-dev"
     image = "caddy"
 
     cpu    = 0.5
@@ -129,7 +160,7 @@ resource "azurerm_container_group" "echo_web_containers" {
       share_name           = azurerm_storage_share.caddy_share.name
     }
 
-    commands = ["caddy", "reverse-proxy", "--from", "${var.container_group_name}.norwayeast.azurecontainer.io", "--to", "localhost:8080"]
+    commands = ["caddy", "reverse-proxy", "--from", "${var.container_group_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
   }
 
   exposed_port {
