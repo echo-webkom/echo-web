@@ -1,0 +1,58 @@
+name: Undeploy preview
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+env:
+  IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+
+jobs:
+  backend_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v33
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Set PREVIEW_CONTAINERS environment variable
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          export BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')
+          echo "PREVIEW_CONTAINERS={ echo-web-preview-$BRANCH_NAME_FORMATTED = { image = \"$IMAGE_NAME/backend:$BACKEND_TAG\", admin_key = \"${{ secrets.ADMIN_KEY_DEV }}\", git_sha = \"$GITHUB_SHA\" } }" >> $GITHUB_ENV
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+
+      - name: Undeploy preview container
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          cd terraform
+          terraform init
+          terraform destroy -auto-approve
+        env:
+          TF_VAR_preview_containers: ${{ env.PREVIEW_CONTAINERS }}
+          TF_VAR_subscription_id: 8afc7368-510a-404a-b4dd-c7351977b037
+          TF_VAR_resource_group_name: echo-web-dev
+          TF_VAR_location: norwayeast
+          TF_VAR_db_user: echoadmindev
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
+          TF_VAR_db_name: echo-web-db-dev
+          TF_VAR_firewall_name: echo-web-db-firewall-dev
+          TF_VAR_container_group_name: echo-web-containers-dev
+          TF_VAR_backend_container_name: echo-web-backend-dev
+          TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
