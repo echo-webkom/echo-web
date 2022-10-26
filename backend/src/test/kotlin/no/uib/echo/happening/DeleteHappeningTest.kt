@@ -61,10 +61,24 @@ class DeleteHappeningTest {
     fun afterTest() {
         transaction {
             SchemaUtils.drop(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership
             )
             SchemaUtils.create(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership
             )
         }
     }

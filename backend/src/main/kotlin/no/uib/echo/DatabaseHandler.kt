@@ -7,6 +7,7 @@ import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.Reaction
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
@@ -76,7 +77,15 @@ class DatabaseHandler(
                     addLogger(StdOutSqlLogger)
 
                     SchemaUtils.create(
-                        Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                        Happening,
+                        Registration,
+                        Answer,
+                        SpotRange,
+                        User,
+                        Feedback,
+                        StudentGroup,
+                        StudentGroupMembership,
+                        Reaction
                     )
                 }
                 if (shouldInsertTestData) {
@@ -98,10 +107,14 @@ class DatabaseHandler(
                 "2030-03-09T16:15+01:00",
                 spotRanges = listOf(
                     SpotRangeJson(
-                        11, 1, 2
+                        11,
+                        1,
+                        2
                     ),
                     SpotRangeJson(
-                        9, 3, 5
+                        9,
+                        3,
+                        5
                     )
                 ),
                 HAPPENING_TYPE.BEDPRES,
@@ -114,7 +127,9 @@ class DatabaseHandler(
                 "2030-06-02T14:20+01:00",
                 spotRanges = listOf(
                     SpotRangeJson(
-                        20, 1, 5
+                        20,
+                        1,
+                        5
                     )
                 ),
                 HAPPENING_TYPE.EVENT,

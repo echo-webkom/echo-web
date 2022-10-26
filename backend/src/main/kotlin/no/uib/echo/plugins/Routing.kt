@@ -11,6 +11,7 @@ import io.ktor.server.routing.routing
 import no.uib.echo.FeatureToggles
 import no.uib.echo.routes.feedbackRoutes
 import no.uib.echo.routes.happeningRoutes
+import no.uib.echo.routes.reactionRoutes
 import no.uib.echo.routes.registrationRoutes
 import no.uib.echo.routes.sanityRoutes
 import no.uib.echo.routes.userRoutes
@@ -35,6 +36,7 @@ fun Application.configureRouting(
     feedbackRoutes()
     userRoutes()
     sanityRoutes(dev)
+    reactionRoutes(dev)
 }
 
 fun Route.getStatus() {

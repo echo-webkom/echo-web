@@ -24,6 +24,7 @@ import HappeningMetaInfo from '@components/happening-meta-info';
 import RegistrationForm from '@components/registration-form';
 import Section from '@components/section';
 import LanguageContext from 'language-context';
+import ReactionButtons from '@components/reaction-buttons';
 
 interface Props {
     happening: Happening | null;
@@ -204,6 +205,10 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                               '(No english version avalible) \n\n' + happening.body.no
                                     }
                                 />
+                                <Divider my="1em" />
+                                <Center flexDirection="column" gap="3">
+                                    <ReactionButtons slug={happening.slug} />
+                                </Center>
                             </Section>
                         </GridItem>
                     </Grid>
