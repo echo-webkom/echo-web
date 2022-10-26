@@ -114,7 +114,7 @@
         "@sanity/client": "3.4.1",
         "@sanity/image-url": "1.0.1",
         "axios": "0.27.2",
-        "calendar-link": "2.2.0",
+        "calendar-link": "2.4.0",
         "canvas-confetti": "1.5.1",
         "date-fns": "2.29.3",
         "framer-motion": "7.6.1",

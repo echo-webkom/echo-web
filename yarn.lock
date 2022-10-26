@@ -4581,10 +4581,10 @@ cachedir@^2.3.0:
   resolved "https://registry.yarnpkg.com/cachedir/-/cachedir-2.3.0.tgz#0c75892a052198f0b21c7c1804d8331edfcae0e8"
   integrity sha512-A+Fezp4zxnit6FanDmv9EqXNAi3vt9DWp51/71UEhXukb7QUuvtv9344h91dyAxuTLoSYJFU299qzR3tzwPAhw==
 
-calendar-link@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/calendar-link/-/calendar-link-2.2.0.tgz#fc3dd8d822ff2abeadc8842015fe6d23d65419a7"
-  integrity sha512-Q9HDfz+pMKGGPJ9RJPtt38ucl4cfm0FvrKGi+SrNTjHZgfKAQcbnsk9fVc80kGgKaagIztYacl+hqVoP7zPWvw==
+calendar-link@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/calendar-link/-/calendar-link-2.4.0.tgz#727140bc47f65012edf5bf6ce7cf97247e52df05"
+  integrity sha512-PhsczzAsUQVdTaX8I0QzohK7dpyXpCK79QEsRaaadE63zwDSIZCFDLDykz75DpC4rBpI6d9EenMBRz0rTd4rPQ==
   dependencies:
     dayjs "^1.9.3"
     query-string "^6.13.6"
