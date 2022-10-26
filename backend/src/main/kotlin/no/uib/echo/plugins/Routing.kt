@@ -1,6 +1,5 @@
 package no.uib.echo.plugins
 
-import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -35,8 +34,8 @@ fun Application.configureRouting(
     happeningRoutes()
     feedbackRoutes()
     userRoutes()
+    reactionRoutes()
     sanityRoutes(dev)
-    reactionRoutes(dev)
 }
 
 fun Route.getStatus() {
