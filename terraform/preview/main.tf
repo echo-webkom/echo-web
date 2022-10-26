@@ -35,7 +35,7 @@ resource "azurerm_resource_group" "echo_web" {
 
 resource "azurerm_storage_account" "caddy_preview_storage" {
   name                      = "${substr(replace(var.resource_group_name, "-", ""), 0, 15)}store"
-  resource_group_name       = var.resource_group_name
+  resource_group_name       = azurerm_resource_group.echo_web.name
   location                  = var.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
@@ -57,7 +57,7 @@ resource "azurerm_storage_share" "caddy_preview_share" {
 resource "azurerm_container_group" "echo_web_preview" {
   name                = var.resource_group_name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.echo_web.name
   ip_address_type     = "Public"
   os_type             = "Linux"
   dns_name_label      = var.resource_group_name
@@ -81,15 +81,15 @@ resource "azurerm_container_group" "echo_web_preview" {
   }
 
   container {
-    name = "${var.resource_group_name}-psql"
+    name  = "${var.resource_group_name}-psql"
     image = "postgres:11.6-alpine"
 
     cpu    = 0.5
     memory = 0.5
 
     environment_variables = {
-      "POSTGRES_DB"       = "postgres"
-      "POSTGRES_USER"     = "postgres"
+      "POSTGRES_DB"   = "postgres"
+      "POSTGRES_USER" = "postgres"
     }
 
     secure_environment_variables = {
@@ -97,8 +97,8 @@ resource "azurerm_container_group" "echo_web_preview" {
     }
 
     ports {
-        port     = 5432
-        protocol = "TCP"
+      port     = 5432
+      protocol = "TCP"
     }
   }
 
