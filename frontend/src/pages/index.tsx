@@ -21,6 +21,7 @@ import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import getRssXML from '@utils/generate-rss-feed';
 import LanguageContext from 'language-context';
+import FeedbackPopup from '@components/feedback-popup';
 
 const IndexPage = ({
     bedpreses,
@@ -83,6 +84,7 @@ const IndexPage = ({
                 ) : (
                     <BannerComponent banner={banner} />
                 ))}
+            <FeedbackPopup />
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
