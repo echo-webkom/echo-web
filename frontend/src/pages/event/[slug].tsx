@@ -27,13 +27,12 @@ import LanguageContext from 'language-context';
 
 interface Props {
     happening: Happening | null;
-    backendUrl: string;
     happeningInfo: HappeningInfo | null;
     date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props): JSX.Element => {
+const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
@@ -151,7 +150,6 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                     <RegistrationForm
                                                         happening={happening}
                                                         type={happening.happeningType}
-                                                        backendUrl={backendUrl}
                                                         regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                                         user={user}
                                                     />
@@ -227,12 +225,11 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
+    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug);
     const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
 
     const date = Date.now();
@@ -248,7 +245,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             happening: isErrorMessage(happening) ? null : happening,
             happeningInfo: isErrorMessage(hiddenHappeningInfo) ? null : hiddenHappeningInfo,
             date,
-            backendUrl,
             error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
         };
 
@@ -261,7 +257,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
         date,
-        backendUrl,
         error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
     };
 

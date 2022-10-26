@@ -74,15 +74,12 @@ interface FormRegistration {
     regVerifyToken: string | null;
 }
 
-const registrationRoute = 'registration';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const RegistrationAPI = {
-    submitRegistration: async (
-        registration: FormRegistration,
-        backendUrl: string,
-    ): Promise<{ response: Response; statusCode: number }> => {
+    submitRegistration: async (registration: FormRegistration): Promise<{ resp: Response; status: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
+            const { data, status } = await axios.post(`${BACKEND_URL}/registration`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
@@ -90,29 +87,29 @@ const RegistrationAPI = {
             });
 
             return {
-                response: responseDecoder(data),
-                statusCode: status,
+                resp: responseDecoder(data),
+                status,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
                 if (error.response) {
                     return {
-                        response: { ...genericError, code: 'InternalServerError' },
-                        statusCode: error.response.status,
+                        resp: { ...genericError, code: 'InternalServerError' },
+                        status: error.response.status,
                     };
                 }
                 if (error.request) {
                     return {
-                        response: { ...genericError, code: 'NoResponseError' },
-                        statusCode: 500,
+                        resp: { ...genericError, code: 'NoResponseError' },
+                        status: 500,
                     };
                 }
             }
 
             return {
-                response: { ...genericError, code: 'RequestError' },
-                statusCode: 500,
+                resp: { ...genericError, code: 'RequestError' },
+                status: 500,
             };
         }
     },
@@ -147,12 +144,9 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrationCountForSlugs: async (
-        slugs: Array<string>,
-        backendUrl: string,
-    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
+    getRegistrationCountForSlugs: async (slugs: Array<string>): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            const { data } = await axios.post(`${BACKEND_URL}/registration/count`, { slugs });
             return array(registrationCountDecoder)(data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -174,7 +168,6 @@ const RegistrationAPI = {
 export {
     RegistrationAPI,
     registrationDecoder,
-    registrationRoute,
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,

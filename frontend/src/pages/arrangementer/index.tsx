@@ -58,10 +58,7 @@ export const getStaticProps = async () => {
     if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);
 
     const slugs = [...bedpressesResponse, ...eventsResponse].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
-        slugs,
-        process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080',
-    );
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
 
     return {
         props: {
