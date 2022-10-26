@@ -13,6 +13,7 @@ RUN yarn --frozen-lockfile
 FROM cypress/browsers:node16.14.2-slim-chrome100-ff99-edge AS build
 
 ARG SANITY_DATASET
+ARG NEXT_PUBLIC_BACKEND_URL
 
 WORKDIR /opt/build
 COPY --from=deps /opt/build/node_modules /opt/build/node_modules/
