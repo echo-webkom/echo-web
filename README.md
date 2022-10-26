@@ -76,6 +76,13 @@ du commiter, kan du kjøre denne kommandoen (mens du er i Git-repoet):
 
     ./gradlew addKtlintFormatGitPreCommitHook
 
+#### Sette inn test-data
+
+For å sette inn test-data i databasen, kan du kjøre denne kommandoen,
+mens backend og databasen kjører:
+
+    ./scripts/restore test_data.dump
+
 ## CMS
 
 **1. Klon Git-repoet.**
