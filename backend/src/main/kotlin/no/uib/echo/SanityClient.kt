@@ -19,17 +19,6 @@ class SanityClient(
 ) {
     private val domain = if (useCdn) "apicdn.sanity.io" else "api.sanity.io"
     private val baseUrl = "https://$projectId.$domain/$apiVersion/data/query/$dataset"
-    private val httpClient = HttpClient {
-        install(Logging)
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                    coerceInputValues = true
-                }
-            )
-        }
-    }
 
     suspend fun fetch(query: String): HttpResponse {
         val encodedQuery = withContext(Dispatchers.IO) {
@@ -38,6 +27,18 @@ class SanityClient(
 
         val url = "$baseUrl?query=$encodedQuery"
 
-        return httpClient.get(url)
+        return HttpClient {
+            install(Logging)
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        coerceInputValues = true
+                    }
+                )
+            }
+        }.use {
+            it.get(url)
+        }
     }
 }
