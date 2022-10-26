@@ -124,14 +124,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files Terraform
+      - name: Get changed files, Terraform
         id: changed-files-tf
         uses: tj-actions/changed-files@v33
         with:
           files: |
             terraform/**
 
-      - name: Get changed files backend
+      - name: Get changed files, backend
         id: changed-files-backend
         uses: tj-actions/changed-files@v33
         with:
@@ -142,15 +142,11 @@ jobs:
             backend/.env.example
 
       - name: Setup Terraform
+        if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         uses: hashicorp/setup-terraform@v2
 
-      - name: Init Terraform
-        run: |
-          cd terraform
-          terraform init
-
       - name: Apply Terraform changes
-        if: steps.changed-files-tf.outputs.any_changed == 'true'
+        if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
           cd terraform
           terraform apply -auto-approve
@@ -158,7 +154,7 @@ jobs:
           TF_VAR_environment: develop
 
       - name: Redeploy new container
-        if: steps.changed-files-tf.outputs.any_changed == 'false' && steps.changed-files-backend.any_changed == 'true'
+        if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.any_changed == 'true'
         run: |
           cd terraform
           terraform destroy -auto-approve -target=azurerm_container_group.echo_web_containers
