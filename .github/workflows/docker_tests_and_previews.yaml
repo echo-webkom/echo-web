@@ -293,6 +293,8 @@ jobs:
         run: |
           cd terraform
           terraform init
+          export BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')
+          terraform workspace new $BRANCH_NAME_FORMATTED
           terraform apply -auto-approve
           echo "BACKEND_URL=$(terraform output -json preview_backend_url | sed -e 's/["]//g' -e 's/\[//g' -e 's/\]//g')" >> $GITHUB_OUTPUT
         env:
@@ -312,6 +314,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: 8afc7368-510a-404a-b4dd-c7351977b037
           ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
       - name: Find comment
         if: steps.changed-files.outputs.any_changed == 'true'

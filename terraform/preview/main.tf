@@ -47,10 +47,11 @@ resource "azurerm_container_group" "echo_web_preview_containers" {
     }
 
     secure_environment_variables = {
-      "DATABASE_URL" = "postgres://${var.db_user}%40${var.db_name}:${var.db_password}@${azurerm_postgresql_server.echo_web_db.fqdn}:5432/postgres"
+      "DATABASE_URL" = "postgres://${var.db_user}%40${var.db_name}:${var.db_password}@${var.db_fqdn}:5432/postgres"
       "ADMIN_KEY"    = each.value.admin_key
     }
   }
+
   container {
     name  = "${each.key}-caddy"
     image = "caddy"
@@ -68,7 +69,7 @@ resource "azurerm_container_group" "echo_web_preview_containers" {
       protocol = "TCP"
     }
 
-    commands = ["caddy", "reverse-proxy", "--from", "${each.key}.norwayeast.azurecontainer.io", "--to", "localhost:8080"]
+    commands = ["caddy", "reverse-proxy", "--from", "${each.key}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
   }
 
   exposed_port {

@@ -152,7 +152,7 @@ resource "azurerm_container_group" "echo_web_containers" {
       share_name           = azurerm_storage_share.caddy_share.name
     }
 
-    commands = ["caddy", "reverse-proxy", "--from", "${var.container_group_name}.norwayeast.azurecontainer.io", "--to", "localhost:8080"]
+    commands = ["caddy", "reverse-proxy", "--from", "${var.container_group_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
   }
 
   exposed_port {
