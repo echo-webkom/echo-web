@@ -17,4 +17,4 @@ jobs:
       - name: Check format
         run: |
           cd terraform
-          terraform fmt -diff
+          terraform fmt -check
