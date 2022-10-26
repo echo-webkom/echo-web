@@ -262,8 +262,8 @@ jobs:
         id: default_value
         run: echo "BACKEND_URL=https://echo-web-containers-dev.norwayeast.azurecontainer.io" >> $GITHUB_OUTPUT
 
-      - name: Get changed files
-        id: changed-files
+      - name: Get changed files, backend
+        id: changed-files-backend
         uses: tj-actions/changed-files@v33
         with:
           files: |
@@ -272,25 +272,33 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
+      - name: Get changed files, Terraform
+        id: changed-files-tf
+        uses: tj-actions/changed-files@v33
+        with:
+          files: |
+            terraform/preview/**
+
       - name: Setup Terraform
-        if: steps.changed-files.outputs.any_changed == 'true'
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
 
       - name: Set environment variables
         id: env_vars
-        if: steps.changed-files.outputs.any_changed == 'true'
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: hashicorp/setup-terraform@v2
         run: |
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          BACKEND_TAG: ${{ steps.changed-files.outputs.any_changed == 'true' && github.sha || 'latest' }}
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
 
       - name: Deploy preview container
-        if: steps.changed-files.outputs.any_changed == 'true'
         id: preview_deploy
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         run: |
           cd terraform/preview
           terraform init
@@ -309,15 +317,15 @@ jobs:
           WORKSPACE_NAME: ${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}
 
       - name: Find comment
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: peter-evans/find-comment@v2
         id: fc
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: peter-evans/find-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: beep boop!
 
       - name: Create comment
-        if: steps.fc.outputs.comment-id == '' && steps.changed-files.outputs.any_changed == 'true'
+        if: steps.fc.outputs.comment-id == '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.REPO_PAT }}
@@ -328,7 +336,7 @@ jobs:
             I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
 
       - name: Update comment
-        if: steps.fc.outputs.comment-id != '' && steps.changed-files.outputs.any_changed == 'true'
+        if: steps.fc.outputs.comment-id != '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.REPO_PAT }}
