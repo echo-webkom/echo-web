@@ -13,6 +13,8 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Reaction
+import no.uib.echo.schema.Reaction.happeningSlug
+import no.uib.echo.schema.Reaction.userEmail
 import no.uib.echo.schema.ReactionType
 import no.uib.echo.schema.ReactionsJson
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -24,9 +26,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.reactionRoutes(dev: Boolean) {
+fun Application.reactionRoutes() {
     routing {
-        authenticate("auth-jwt", optional = dev) {
+        authenticate("auth-jwt") {
             postReaction()
         }
         getReactions()
@@ -87,7 +89,7 @@ fun Route.postReaction() {
         val reactionExists = transaction {
             addLogger(StdOutSqlLogger)
             Reaction.select {
-                Reaction.userEmail eq email and (Reaction.happeningSlug eq slug) and (Reaction.reaction eq reaction)
+                userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
             }.count() > 0
         }
 
@@ -130,7 +132,7 @@ fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
         addLogger(StdOutSqlLogger)
 
         Reaction.select {
-            Reaction.happeningSlug eq slug
+            happeningSlug eq slug
         }.groupBy {
             ReactionType.valueOf(it[Reaction.reaction])
         }.mapValues {
