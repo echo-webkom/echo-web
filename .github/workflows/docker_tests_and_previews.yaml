@@ -278,11 +278,12 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Set PREVIEW_CONTAINERS environment variable
+      - name: Set environment variables
+        id: env_vars
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          export BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')
-          echo "PREVIEW_CONTAINERS={ echo-web-preview-$BRANCH_NAME_FORMATTED = { image = \"$IMAGE_NAME/backend:$BACKEND_TAG\", admin_key = \"${{ secrets.ADMIN_KEY_DEV }}\", git_sha = \"$GITHUB_SHA\" } }" >> $GITHUB_ENV
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')" >> $GITHUB_OUTPUT
+          echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
           BACKEND_TAG: ${{ steps.changed-files.outputs.any_changed == 'true' && github.sha || 'latest' }}
@@ -291,30 +292,21 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         id: preview_deploy
         run: |
-          cd terraform
+          cd terraform/preview
           terraform init
-          export BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')
-          terraform workspace new $BRANCH_NAME_FORMATTED
+          terraform workspace new $WORKSPACE_NAME
           terraform apply -auto-approve
-          echo "BACKEND_URL=$(terraform output -json preview_backend_url | sed -e 's/["]//g' -e 's/\[//g' -e 's/\]//g')" >> $GITHUB_OUTPUT
+          echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHUB_OUTPUT
         env:
-          TF_VAR_preview_containers: ${{ env.PREVIEW_CONTAINERS }}
-          TF_VAR_subscription_id: 8afc7368-510a-404a-b4dd-c7351977b037
-          TF_VAR_resource_group_name: echo-web-dev
+          TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_location: norwayeast
-          TF_VAR_db_user: echoadmindev
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
-          TF_VAR_db_name: echo-web-db-dev
-          TF_VAR_firewall_name: echo-web-db-firewall-dev
-          TF_VAR_container_group_name: echo-web-containers-dev
-          TF_VAR_backend_container_name: echo-web-backend-dev
-          TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
-          TF_VAR_environment: preview
+          TF_VAR_backend_image: '$IMAGE_NAME/backend:$BACKEND_TAG'
           ARM_CLIENT_ID: c320aed0-41eb-4089-aedb-8a4ece92c3b5
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: 8afc7368-510a-404a-b4dd-c7351977b037
           ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          WORKSPACE_NAME: ${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}
 
       - name: Find comment
         if: steps.changed-files.outputs.any_changed == 'true'

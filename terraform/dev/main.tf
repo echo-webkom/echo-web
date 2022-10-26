@@ -25,6 +25,14 @@ provider "azurerm" {
 resource "azurerm_resource_group" "echo_web" {
   name     = var.resource_group_name
   location = var.location
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = {
+    environment = var.environment
+  }
 }
 
 # Database

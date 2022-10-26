@@ -52,8 +52,3 @@ variable "admin_key" {
   type        = string
   description = "The ADMIN_KEY for the backend."
 }
-
-variable "preview_containers" {
-  type    = map(map(string))
-  default = {}
-}
