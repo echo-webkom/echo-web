@@ -302,7 +302,7 @@ jobs:
         run: |
           cd terraform/preview
           terraform init
-          terraform workspace new $WORKSPACE_NAME
+          terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
           terraform apply -auto-approve
           # Get backend url and output it
           echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHUB_OUTPUT
