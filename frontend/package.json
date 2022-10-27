@@ -138,7 +138,7 @@
         "@types/node": "16.18.0",
         "@types/randomcolor": "0.5.6",
         "@types/react": "18.0.22",
-        "@types/react-dom": "18.0.6",
+        "@types/react-dom": "18.0.7",
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "5.41.0",
         "@typescript-eslint/parser": "5.41.0",
