@@ -20,6 +20,10 @@ provider "azurerm" {
   subscription_id = "8afc7368-510a-404a-b4dd-c7351977b037"
 }
 
+locals {
+  dns_name_label = substr(var.resource_group_name, 0, 18)
+}
+
 # Resource group
 
 resource "azurerm_resource_group" "echo_web" {
@@ -60,7 +64,7 @@ resource "azurerm_container_group" "echo_web_preview" {
   resource_group_name = azurerm_resource_group.echo_web.name
   ip_address_type     = "Public"
   os_type             = "Linux"
-  dns_name_label      = var.resource_group_name
+  dns_name_label      = local.dns_name_label
 
   container {
     name  = "${var.resource_group_name}-backend"
@@ -75,7 +79,7 @@ resource "azurerm_container_group" "echo_web_preview" {
     }
 
     secure_environment_variables = {
-      "DATABASE_URL" = "postgres://postgres:${var.db_password}@${var.resource_group_name}.${var.location}.azurecontainer.io:5432/postgres"
+      "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.dns_name_label}.${var.location}.azurecontainer.io:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
     }
   }
