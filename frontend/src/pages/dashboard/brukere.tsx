@@ -6,10 +6,8 @@ import {
     Tr,
     Th,
     Tbody,
-    Td,
     Text,
     Button,
-    useDisclosure,
     Center,
     Link,
     Spinner,
@@ -18,19 +16,16 @@ import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import Section from '@components/section';
 import SEO from '@components/seo';
+import UserRow from '@components/user-row';
 import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
-import capitalize from '@utils/capitalize';
-import AdminModal from '@components/admin-modal';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -84,19 +79,7 @@ const AdminUserPage = () => {
                                 </Thead>
                                 <Tbody>
                                     {users.map((user) => (
-                                        <Tr key={user.email}>
-                                            <Td>{user.name}</Td>
-                                            <Td>{user.email}</Td>
-                                            <Td>
-                                                {user.memberships.length > 0 &&
-                                                    user.memberships.map((m: string) => capitalize(m)).join(', ')}
-                                            </Td>
-                                            <Td>
-                                                <Button onClick={onOpen}>Rediger</Button>
-
-                                                <AdminModal isOpen={isOpen} onClose={onClose} user={user} />
-                                            </Td>
-                                        </Tr>
+                                        <UserRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>
                             </Table>

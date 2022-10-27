@@ -20,6 +20,7 @@ import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.masters
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -64,15 +65,7 @@ fun Route.getUser() {
             return@get
         }
 
-        val memberships = transaction {
-            addLogger(StdOutSqlLogger)
-
-            StudentGroupMembership.select {
-                StudentGroupMembership.userEmail eq email
-            }.toList().map {
-                it[StudentGroupMembership.studentGroupName]
-            }
-        }
+        val memberships = getUserStudentGroups(email)
 
         call.respond(
             HttpStatusCode.OK,
@@ -82,7 +75,7 @@ fun Route.getUser() {
                 user[User.alternateEmail],
                 user[User.degreeYear],
                 user[User.degree]?.let { Degree.valueOf(it) },
-                memberships.ifEmpty { emptyList() }
+                memberships
             )
         )
     }

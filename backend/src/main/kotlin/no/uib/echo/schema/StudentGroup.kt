@@ -39,3 +39,29 @@ fun getGroupMembers(group: String?): List<String> {
         }.toList().map { it[StudentGroupMembership.userEmail].lowercase() }
     }
 }
+
+fun _getGroupMembers(group: String?): List<String> {
+    if (group == null) {
+        return emptyList()
+    }
+
+    return transaction {
+        addLogger(StdOutSqlLogger)
+
+        StudentGroupMembership.select {
+            StudentGroupMembership.studentGroupName eq group.lowercase()
+        }.toList().map { it[StudentGroupMembership.userEmail].lowercase() }
+    }
+}
+
+fun getUserStudentGroups(email: String): List<String> = transaction {
+    addLogger(StdOutSqlLogger)
+
+    StudentGroupMembership.select {
+        StudentGroupMembership.userEmail eq email
+    }.toList().map {
+        it[StudentGroupMembership.studentGroupName]
+    }.ifEmpty {
+        emptyList()
+    }
+}

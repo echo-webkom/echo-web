@@ -6,65 +6,81 @@ import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
-import kotlinx.serialization.Serializable
 import no.uib.echo.schema.StudentGroupMembership
+import no.uib.echo.schema._getGroupMembers
+import no.uib.echo.schema.getAllUserEmails
 import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
+import no.uib.echo.schema.validStudentGroups
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.studentGroupRoutes() {
-    routing { authenticate("auth-jwt") { putMembership() } }
+    routing {
+        authenticate("auth-jwt") {
+            studentGroup()
+        }
+    }
 }
 
-fun Route.putMembership() {
-    put("/membership") {
-        @Serializable
-        data class RequestJson(val userEmail: String, val studentGroups: List<String>)
-
-        val req = call.receive<RequestJson>()
-        val email =
-            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
-
-        if (email == null) {
+fun Route.studentGroup() {
+    put("/studentgroup") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        if (email != null && email !in getGroupMembers("webkom")) {
             call.respond(HttpStatusCode.Unauthorized)
             return@put
         }
 
-        if (email !in getGroupMembers("webkom")) {
-            call.respond(HttpStatusCode.Forbidden)
+        val group = call.request.queryParameters["group"]
+        val userEmail = call.request.queryParameters["email"]
+        if (group == null || userEmail == null) {
+            call.respond(
+                HttpStatusCode.BadRequest,
+                "Expected values for query parameters 'group' and 'user'. Got 'group'=$group and 'user'=$userEmail"
+            )
             return@put
         }
 
-        transaction {
-            addLogger(StdOutSqlLogger)
-
-            StudentGroupMembership.deleteWhere { StudentGroupMembership.userEmail eq req.userEmail }
+        if (group !in validStudentGroups) {
+            call.respond(HttpStatusCode.BadRequest, "Invalid student group: $group")
+            return@put
         }
 
-        transaction {
-            addLogger(StdOutSqlLogger)
+        if (userEmail !in getAllUserEmails()) {
+            call.respond(HttpStatusCode.BadRequest, "Invalid user email: $userEmail")
+            return@put
+        }
 
-            req.studentGroups.forEach { group ->
+        if (userEmail in _getGroupMembers(group)) {
+            transaction {
+                addLogger(StdOutSqlLogger)
+
+                StudentGroupMembership.deleteWhere {
+                    studentGroupName eq group and
+                        (StudentGroupMembership.userEmail eq userEmail)
+                }
+            }
+        } else {
+            transaction {
+                addLogger(StdOutSqlLogger)
+
                 StudentGroupMembership.insert {
-                    it[userEmail] = req.userEmail
                     it[studentGroupName] = group
+                    it[StudentGroupMembership.userEmail] = userEmail
                 }
             }
         }
 
-        call.respond(
-            HttpStatusCode.OK,
-            "User ${req.userEmail} is now a member of ${req.studentGroups}"
-        )
+        val memberships = getUserStudentGroups(userEmail)
+        call.respond(HttpStatusCode.OK, memberships)
     }
 }
