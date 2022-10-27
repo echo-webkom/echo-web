@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
 
 jobs:
-  backend_preview:
+  undeploy_backend_preview:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,19 +19,8 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v33
-        with:
-          files: |
-            backend/**
-          files_ignore: |
-            backend/.gitignore
-            backend/.env.example
-
       - name: Set environment variables
         id: env_vars
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
@@ -40,13 +29,12 @@ jobs:
           BACKEND_TAG: ${{ steps.changed-files.outputs.any_changed == 'true' && github.sha || 'latest' }}
 
       - name: Undeploy preview container
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           cd terraform/preview
           terraform init
-          terraform workspace select $WORKSPACE_NAME
-          terraform destroy -auto-approve
-          terraform workspace delete $WORKSPACE_NAME
+          terraform workspace select $WORKSPACE_NAME && \
+            terraform destroy -auto-approve && \
+            terraform workspace delete $WORKSPACE_NAME
         env:
           TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_location: norwayeast
