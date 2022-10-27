@@ -1,4 +1,4 @@
-name: Undeploy preview
+name: Destroy backend preview
 on:
   pull_request:
     branches: [master]
@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
 
 jobs:
-  undeploy_backend_preview:
+  destroy_backend_preview:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,12 +28,13 @@ jobs:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
           BACKEND_TAG: ${{ steps.changed-files.outputs.any_changed == 'true' && github.sha || 'latest' }}
 
-      - name: Undeploy preview container
+      - name: Destroy preview container
         run: |
           cd terraform/preview
           terraform init
           terraform workspace select $WORKSPACE_NAME && \
             terraform destroy -auto-approve && \
+            terraform workspace select default && \
             terraform workspace delete $WORKSPACE_NAME
         env:
           TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
