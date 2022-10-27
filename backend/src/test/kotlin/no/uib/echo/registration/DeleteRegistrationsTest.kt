@@ -5,7 +5,6 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.delete
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -64,10 +63,24 @@ class DeleteRegistrationsTest {
     fun afterTest() {
         transaction {
             SchemaUtils.drop(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership
             )
             SchemaUtils.create(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership
             )
         }
     }
