@@ -11,6 +11,7 @@ permissions:
 env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
   TAG: ${{ github.sha }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   build_frontend:
@@ -292,7 +293,6 @@ jobs:
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/[\/_]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
 
       - name: Deploy preview container
@@ -308,7 +308,7 @@ jobs:
           TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_location: norwayeast
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
-          TF_VAR_backend_image: '$IMAGE_NAME/backend:$BACKEND_TAG'
+          TF_VAR_backend_image: '${{ env.IMAGE_NAME}}/backend:${{ steps.env_vars.outputs.BACKEND_TAG }}'
           TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
           ARM_CLIENT_ID: c320aed0-41eb-4089-aedb-8a4ece92c3b5
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
