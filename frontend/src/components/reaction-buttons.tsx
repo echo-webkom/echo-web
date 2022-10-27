@@ -56,7 +56,7 @@ const ReactionButtons = ({ slug }: Props) => {
         };
 
         void fetchReactions();
-    });
+    }, [slug]);
 
     const sendReaction = async (reaction: ReactionType) => {
         const result = await ReactionAPI.post(slug, reaction);
@@ -70,9 +70,15 @@ const ReactionButtons = ({ slug }: Props) => {
                 isClosable: true,
             });
             return;
+        } else {
+            setData(result);
+            toast({
+                title: 'Reaksjon sendt!',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
         }
-
-        setData(result);
     };
 
     const handleClick = (reaction: ReactionType) => {

@@ -16,42 +16,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        // NOTE: Not in use. Here for later.
-        if (req.method === 'GET') {
-            const slug = req.query.slug as string;
-            if (!slug) {
-                res.status(400).json({ message: 'Mangler slug.' });
-                return;
-            }
-
-            try {
-                const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
-                    headers: {
-                        Authorization: `Bearer ${JWT_TOKEN}`,
-                    },
-                    validateStatus: (statusCode: number) => statusCode < 500,
-                });
-
-                if (status === 200) {
-                    res.status(200).json(reactionDecoder(data));
-                    return;
-                }
-
-                res.status(401).json({ message: 'Du har ikke tilgang til denne siden.' });
-                return;
-            } catch {
-                res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
-                return;
-            }
-        }
-
         if (req.method === 'POST') {
-            const slug = req.query.slug as string;
-            const reaction = req.query.reaction as string;
-            if (!slug || !reaction) {
-                res.status(400).json({ message: 'Mangler slug eller reaksjon.' });
-                return;
-            }
+            const slug = req.body.slug as string;
+            const reaction = req.body.reaction as string;
 
             try {
                 const { data, status } = await axios.post(`${BACKEND_URL}/reaction/${slug}/${reaction}`, {
@@ -62,11 +29,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 });
 
                 if (status === 200) {
-                    res.status(200).json(reactionDecoder(data));
+                    res.status(200).send(reactionDecoder(data));
                     return;
                 }
 
-                res.status(401).json({ message: 'Du har ikke tilgang til å reagere.' });
+                res.status(401).json({ message: 'Du har ikke tilgang til denne siden.' });
+                return;
             } catch {
                 res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
                 return;
