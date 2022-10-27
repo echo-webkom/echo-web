@@ -28,6 +28,7 @@ import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningInfoJson
+import no.uib.echo.schema.Reaction
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.SpotRange
@@ -68,10 +69,26 @@ class GetRegistrationsTest {
     fun afterTest() {
         transaction {
             SchemaUtils.drop(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership,
+                Reaction
             )
             SchemaUtils.create(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership,
+                Reaction
             )
         }
     }

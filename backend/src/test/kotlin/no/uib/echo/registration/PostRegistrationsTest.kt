@@ -33,6 +33,7 @@ import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Reaction
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
@@ -73,10 +74,26 @@ class PostRegistrationsTest {
     fun afterTest() {
         transaction {
             SchemaUtils.drop(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership,
+                Reaction
             )
             SchemaUtils.create(
-                Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
+                Happening,
+                Registration,
+                Answer,
+                SpotRange,
+                User,
+                Feedback,
+                StudentGroup,
+                StudentGroupMembership,
+                Reaction
             )
         }
     }
@@ -98,7 +115,9 @@ class PostRegistrationsTest {
                             setBody(
                                 Json.encodeToString(
                                     exReg(t, hap1(t).slug).copy(
-                                        degree = b, degreeYear = y, email = "${t}test${b}$y@test.com"
+                                        degree = b,
+                                        degreeYear = y,
+                                        email = "${t}test${b}$y@test.com"
                                     )
                                 )
                             )
@@ -117,7 +136,9 @@ class PostRegistrationsTest {
                             setBody(
                                 Json.encodeToString(
                                     exReg(t, hap1(t).slug).copy(
-                                        degree = m, degreeYear = y, email = "${t}test${m}$y@test.com"
+                                        degree = m,
+                                        degreeYear = y,
+                                        email = "${t}test${m}$y@test.com"
                                     )
                                 )
                             )
@@ -428,7 +449,7 @@ class PostRegistrationsTest {
                     Degree.DSIK,
                     Degree.DVIT,
                     Degree.BINF,
-                    Degree.IMO,
+                    Degree.IMO
                 ).map { deg ->
                     for (year in 4..5) {
                         val testCall = client.post("/registration") {
@@ -577,7 +598,7 @@ class PostRegistrationsTest {
                             Json.encodeToString(
                                 exReg(t, hap5(t).slug).copy(
                                     email = "teasds${i}t3t@test.com",
-                                    degreeYear = i,
+                                    degreeYear = i
                                 )
                             )
                         )
