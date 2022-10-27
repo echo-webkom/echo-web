@@ -85,7 +85,7 @@ resource "azurerm_container_group" "echo_web_preview" {
   }
 
   container {
-    name  = "${var.resource_group_name}-psql"
+    name  = "${local.short_rg_name}-psql"
     image = "postgres:11.6-alpine"
 
     cpu    = 0.5
