@@ -35,17 +35,13 @@ const ReactionAPI = {
     },
     post: async (slug: string, reaction: ReactionType): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.post(`/api/reaction?slug=${slug}&reaction=${reaction}`, {
-                validateStatus: (status: number) => status < 500,
-            });
+            const { data, status } = await axios.post(`/api/reaction`, { slug, reaction });
 
             if (status === 200) {
                 return reactionDecoder(data);
             }
 
-            return {
-                message: 'Kunne ikke legge til reaksjonen. Prøv igjen senere.',
-            };
+            return data as ErrorMessage;
         } catch {
             return { message: 'Noe gikk galt. Prøv igjen senere.' };
         }

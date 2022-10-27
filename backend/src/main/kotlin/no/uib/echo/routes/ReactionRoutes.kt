@@ -17,6 +17,7 @@ import no.uib.echo.schema.Reaction.happeningSlug
 import no.uib.echo.schema.Reaction.userEmail
 import no.uib.echo.schema.ReactionType
 import no.uib.echo.schema.ReactionsJson
+import no.uib.echo.schema.User
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -73,7 +74,20 @@ fun Route.postReaction() {
     post("/reaction/{slug}/{reaction}") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
         if (email == null) {
-            call.respond(HttpStatusCode.Unauthorized, "No email specified.")
+            call.respond(HttpStatusCode.Unauthorized)
+            return@post
+        }
+
+        val user = transaction {
+            addLogger(StdOutSqlLogger)
+
+            User.select {
+                User.email eq email
+            }.firstOrNull()
+        }
+
+        if (user == null) {
+            call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
             return@post
         }
 
@@ -88,6 +102,7 @@ fun Route.postReaction() {
 
         val reactionExists = transaction {
             addLogger(StdOutSqlLogger)
+
             Reaction.select {
                 userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
             }.count() > 0
@@ -96,6 +111,7 @@ fun Route.postReaction() {
         if (reactionExists) {
             transaction {
                 addLogger(StdOutSqlLogger)
+
                 Reaction.deleteWhere {
                     userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
                 }
