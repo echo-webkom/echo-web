@@ -35,7 +35,13 @@ const ReactionAPI = {
     },
     post: async (slug: string, reaction: ReactionType): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.post(`/api/reaction`, { slug, reaction });
+            const { data, status } = await axios.put(`/api/reaction`, null, {
+                params: { slug, reaction },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                validateStatus: (status: number) => status < 500,
+            });
 
             if (status === 200) {
                 return reactionDecoder(data);

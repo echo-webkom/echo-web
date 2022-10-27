@@ -9,7 +9,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Reaction
@@ -30,7 +30,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun Application.reactionRoutes() {
     routing {
         authenticate("auth-jwt") {
-            postReaction()
+            putReaction()
         }
         getReactions()
     }
@@ -70,12 +70,13 @@ fun Route.getReactions() {
     }
 }
 
-fun Route.postReaction() {
-    post("/reaction/{slug}/{reaction}") {
+// Add or update reaction
+fun Route.putReaction() {
+    put("/reaction") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
         if (email == null) {
             call.respond(HttpStatusCode.Unauthorized)
-            return@post
+            return@put
         }
 
         val user = transaction {
@@ -88,17 +89,17 @@ fun Route.postReaction() {
 
         if (user == null) {
             call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
-            return@post
+            return@put
         }
 
-        val slug = call.parameters["slug"]
-        val reactionParam = call.parameters["reaction"]
-        if (slug == null || reactionParam == null) {
+        val slug = call.request.queryParameters["slug"]
+        val reactionQuery = call.request.queryParameters["reaction"]
+        if (slug == null || reactionQuery == null) {
             call.respond(HttpStatusCode.BadRequest, "Bad slug or reaction")
-            return@post
+            return@put
         }
 
-        val reaction = ReactionType.valueOf(reactionParam.uppercase()).name
+        val reaction = ReactionType.valueOf(reactionQuery.uppercase()).name
 
         val reactionExists = transaction {
             addLogger(StdOutSqlLogger)

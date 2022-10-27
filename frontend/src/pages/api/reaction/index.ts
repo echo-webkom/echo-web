@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import axios from 'axios';
-import { reactionDecoder } from '@api/reaction';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -16,12 +15,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        if (req.method === 'POST') {
-            const slug = req.body.slug as string;
-            const reaction = req.body.reaction as string;
+        if (req.method === 'PUT') {
+            const slug = req.query.slug as string;
+            const reaction = req.query.reaction as string;
 
             try {
-                const { data, status } = await axios.post(`${BACKEND_URL}/reaction/${slug}/${reaction}`, {
+                const { data, status } = await axios.put(`${BACKEND_URL}/reaction`, null, {
+                    params: { slug, reaction },
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
                     },
@@ -29,11 +29,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 });
 
                 if (status === 200) {
-                    res.status(200).send(reactionDecoder(data));
+                    res.status(200).send(data);
                     return;
                 }
 
-                res.status(401).json({ message: 'Du har ikke tilgang til denne siden.' });
+                res.status(401).json({ message: 'Du har ikke tilgang til denne funksjonen.' });
                 return;
             } catch {
                 res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
