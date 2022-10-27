@@ -305,9 +305,7 @@ jobs:
           terraform workspace new $WORKSPACE_NAME
           terraform apply -auto-approve
           # Get backend url and output it
-          export "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHB_OUTPUT
-          echo $BACKEND_URL >> $GITHUB_OUTPUT
-          # Seed with test data
+          echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHB_OUTPUT
         env:
           TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_location: norwayeast
