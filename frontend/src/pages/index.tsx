@@ -39,6 +39,7 @@ const IndexPage = ({
     jobs: Array<JobAdvert>;
 }): JSX.Element => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
+    const enableFeedbackPopup = process.env.NEXT_PUBLIC_ENABLE_FEEDBACK_POPUP?.toLowerCase() === 'true';
     const isNorwegian = useContext(LanguageContext);
 
     const BannerComponent = ({ banner }: { banner: Banner }) => {
@@ -84,7 +85,7 @@ const IndexPage = ({
                 ) : (
                     <BannerComponent banner={banner} />
                 ))}
-            <FeedbackPopup />
+            {enableFeedbackPopup && <FeedbackPopup />}
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
