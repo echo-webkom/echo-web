@@ -11,6 +11,8 @@ import {
     Center,
     Link,
     Spinner,
+    Flex,
+    Spacer,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
@@ -66,7 +68,16 @@ const AdminUserPage = () => {
                 )}
                 {users && (
                     <>
-                        <Heading>Administrer brukere</Heading>
+                        <Flex>
+                            <Heading>Administrer brukere</Heading>
+                            <Spacer />
+                            <NextLink href="/dashboard" passHref>
+                                <Button as="a" colorScheme="blue" my="1rem">
+                                    Tilbake
+                                </Button>
+                            </NextLink>
+                        </Flex>
+
                         <TableContainer>
                             <Table variant="simple">
                                 <Thead>
