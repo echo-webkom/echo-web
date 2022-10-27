@@ -3,6 +3,7 @@ import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useToast, Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
 import { UserAPI } from '@api/user';
@@ -138,6 +139,13 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                     </HStack>
                 </form>
             </FormProvider>
+            {user.memberships.includes('webkom') && (
+                <NextLink href="/dashboard" passHref>
+                    <Button w="100%" as="a" colorScheme="blue" my="1rem">
+                        Til dashboard
+                    </Button>
+                </NextLink>
+            )}
         </Box>
     );
 };

@@ -2,7 +2,11 @@ package no.uib.echo.schema
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
 data class UserJson(
@@ -22,4 +26,10 @@ object User : Table() {
     val degree: Column<String?> = text("degree").nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(email)
+}
+
+fun getAllUserEmails(): List<String> = transaction {
+    addLogger(StdOutSqlLogger)
+
+    User.selectAll().toList().map { it[User.email].lowercase() }
 }

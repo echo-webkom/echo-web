@@ -1,33 +1,38 @@
 import axios from 'axios';
+import type { decodeType } from 'typescript-json-decoder';
+import { array, literal, union } from 'typescript-json-decoder';
 import type { ErrorMessage } from '@utils/error';
 
-type StudentGroup = 'webkom' | 'bedkom' | 'gnist' | 'tilde' | 'hovedstyret';
 const studentGroups: Array<StudentGroup> = ['webkom', 'bedkom', 'gnist', 'tilde', 'hovedstyret'];
 
+const studentGroupDecoder = union(
+    literal('webkom'),
+    literal('bedkom'),
+    literal('gnist'),
+    literal('tilde'),
+    literal('hovedstyret'),
+);
+type StudentGroup = decodeType<typeof studentGroupDecoder>;
+
 const DashboardAPI = {
-    updateMembership: async (email: string, memberships: Array<String>): Promise<string | ErrorMessage> => {
+    updateMembership: async (email: string, group: StudentGroup): Promise<Array<StudentGroup> | ErrorMessage> => {
         try {
-            const { status } = await axios.put(
-                '/api/membership',
-                {
-                    email,
-                    memberships,
+            const { data, status } = await axios.put(`/api/studentgroup`, null, {
+                params: { group, email },
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                {
-                    validateStatus: (statusCode: number) => statusCode < 500,
-                },
-            );
+                validateStatus: (status: number) => status < 500,
+            });
 
             if (status === 200) {
-                return `Brukeren ${email} er nå med i ${memberships.join(', ')}.`;
+                return array(studentGroupDecoder)(data);
             }
 
-            return {
-                message: 'Kunne ikke oppdatere medlemskap.',
-            };
+            return { message: data };
         } catch {
             return {
-                message: `Failed to update membership of ${email}.`,
+                message: 'Failed @ updateMembership.',
             };
         }
     },
