@@ -33,7 +33,7 @@ fun Route.putMembership() {
 
         val req = call.receive<RequestJson>()
         val email =
-                call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
             call.respond(HttpStatusCode.Unauthorized)
@@ -63,8 +63,8 @@ fun Route.putMembership() {
         }
 
         call.respond(
-                HttpStatusCode.OK,
-                "User ${req.userEmail} is now a member of ${req.studentGroups}"
+            HttpStatusCode.OK,
+            "User ${req.userEmail} is now a member of ${req.studentGroups}"
         )
     }
 }
