@@ -15,6 +15,7 @@ import no.uib.echo.schema.Answer
 import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Reaction
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
@@ -68,7 +69,8 @@ class DeleteHappeningTest {
                 User,
                 Feedback,
                 StudentGroup,
-                StudentGroupMembership
+                StudentGroupMembership,
+                Reaction
             )
             SchemaUtils.create(
                 Happening,
@@ -78,7 +80,8 @@ class DeleteHappeningTest {
                 User,
                 Feedback,
                 StudentGroup,
-                StudentGroupMembership
+                StudentGroupMembership,
+                Reaction
             )
         }
     }
