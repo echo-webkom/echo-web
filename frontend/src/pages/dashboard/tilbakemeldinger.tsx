@@ -9,6 +9,8 @@ import {
     Spinner,
     useToast,
     Link,
+    Flex,
+    Spacer,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
@@ -96,7 +98,16 @@ const FeedbackPage = () => {
                 )}
                 {feedbacks && (
                     <>
-                        <Heading mb="5">Tilbakemeldinger</Heading>
+                        <Flex>
+                            <Heading mb="5">Tilbakemeldinger</Heading>
+                            <Spacer />
+                            <NextLink href="/dashboard" passHref>
+                                <Button as="a" colorScheme="blue" my="1rem">
+                                    Tilbake
+                                </Button>
+                            </NextLink>
+                        </Flex>
+
                         {feedbacks.length > 0 && (
                             <Text fontWeight="bold">Antall tilbakemeldinger: {feedbacks.length}</Text>
                         )}
