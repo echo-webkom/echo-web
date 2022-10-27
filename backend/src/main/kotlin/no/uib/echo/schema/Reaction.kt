@@ -22,9 +22,10 @@ data class ReactionsJson(
 )
 
 object Reaction : Table() {
+    private val id: Column<Int> = integer("id").autoIncrement()
     val userEmail: Column<String> = text("user_email") references User.email
     val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
     val reaction: Column<String> = text("reaction")
 
-    override val primaryKey = PrimaryKey(userEmail, happeningSlug)
+    override val primaryKey = PrimaryKey(id)
 }
