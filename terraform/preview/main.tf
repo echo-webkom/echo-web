@@ -21,13 +21,13 @@ provider "azurerm" {
 }
 
 locals {
-  dns_name_label = substr(var.resource_group_name, 0, 18)
+  short_rg_name = substr(var.resource_group_name, 0, 25)
 }
 
 # Resource group
 
 resource "azurerm_resource_group" "echo_web" {
-  name     = var.resource_group_name
+  name     = local.short_rg_name
   location = var.location
 
   tags = {
@@ -59,15 +59,15 @@ resource "azurerm_storage_share" "caddy_preview_share" {
 # Preview containers
 
 resource "azurerm_container_group" "echo_web_preview" {
-  name                = var.resource_group_name
+  name                = local.short_rg_name
   location            = var.location
   resource_group_name = azurerm_resource_group.echo_web.name
   ip_address_type     = "Public"
   os_type             = "Linux"
-  dns_name_label      = local.dns_name_label
+  dns_name_label      = local.short_rg_name
 
   container {
-    name  = "${var.resource_group_name}-backend"
+    name  = "${local.short_rg_name}-backend"
     image = var.backend_image
 
     cpu    = 0.5
@@ -79,7 +79,7 @@ resource "azurerm_container_group" "echo_web_preview" {
     }
 
     secure_environment_variables = {
-      "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.dns_name_label}.${var.location}.azurecontainer.io:5432/postgres"
+      "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.short_rg_name}.${var.location}.azurecontainer.io:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
     }
   }
@@ -107,7 +107,7 @@ resource "azurerm_container_group" "echo_web_preview" {
   }
 
   container {
-    name  = "${var.resource_group_name}-caddy"
+    name  = "${local.short_rg_name}-caddy"
     image = "caddy"
 
     cpu    = 0.5
@@ -123,7 +123,7 @@ resource "azurerm_container_group" "echo_web_preview" {
       protocol = "TCP"
     }
 
-    commands = ["caddy", "reverse-proxy", "--from", "${var.resource_group_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
+    commands = ["caddy", "reverse-proxy", "--from", "${local.short_rg_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
   }
 
   exposed_port {
