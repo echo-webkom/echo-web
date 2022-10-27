@@ -95,14 +95,19 @@ const FeedbackPopup = () => {
                             {isNorwegian ? (
                                 <Flex direction="column" gap="2" fontSize="md" mb="3">
                                     <Text>
-                                        Vi i Webkom ønsker alltids å forbedere oss, derfor er vi ute etter <b>din </b>
-                                        tilbakemeldig.
+                                        Vi i Webkom ønsker alltid å forbedre på nettsiden, derfor trenger vi din
+                                        tilbakemelding på hva vi kan gjøre bedre eller hva det er du ønsker å se på
+                                        nettsiden.
                                     </Text>
-                                    <Text>Skriv gjerne hva du ønsker på nettsiden vår.</Text>
+                                    <Text>Tusen takk.</Text>
                                 </Flex>
                             ) : (
                                 <Text fontSize="md" mb="3">
-                                    Engelsk hersjkj
+                                    <Text>
+                                        We at Webkom always want to improve the website, so we need your feedback on
+                                        what we can do better or what you would like to see on the website.
+                                    </Text>
+                                    <Text>Thank you.</Text>
                                 </Text>
                             )}
                             <VStack spacing={4}>
