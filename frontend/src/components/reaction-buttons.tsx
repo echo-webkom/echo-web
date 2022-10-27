@@ -139,7 +139,16 @@ interface ReactionButtonProps extends ButtonProps {
 
 const ReactionButton = ({ emoji, isLoading, count, ...props }: ReactionButtonProps) => {
     return (
-        <Button gap="2" w={['full', null, null, 'auto']} isLoading={isLoading} {...props}>
+        <Button
+            rounded="3xl"
+            size="sm"
+            _light={{ bg: 'gray.50', _hover: { bg: 'gray.100' } }}
+            _dark={{ bg: 'gray.800', _hover: { bg: 'gray.700' } }}
+            gap="2"
+            w={['full', null, null, 'auto']}
+            isLoading={isLoading}
+            {...props}
+        >
             <Text>{emoji}</Text>
             <Text>{count}</Text>
         </Button>
