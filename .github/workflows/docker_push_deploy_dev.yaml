@@ -148,7 +148,8 @@ jobs:
       - name: Apply Terraform changes
         if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
-          cd terraform
+          cd terraform/dev
+          terraform init
           terraform apply -auto-approve
         env:
           TF_VAR_environment: develop
@@ -156,7 +157,8 @@ jobs:
       - name: Redeploy new container
         if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.any_changed == 'true'
         run: |
-          cd terraform
+          cd terraform/dev
+          terraform init
           terraform destroy -auto-approve -target=azurerm_container_group.echo_web_containers
           terraform apply -auto-approve -target=azurerm_container_group.echo_web_containers
         env:
