@@ -81,7 +81,7 @@ du commiter, kan du kjøre denne kommandoen (mens du er i Git-repoet):
 For å sette inn test-data i databasen, kan du kjøre denne kommandoen,
 mens backend og databasen kjører:
 
-    ./scripts/restore test_data.dump
+    ./scripts/restore
 
 ## CMS
 
