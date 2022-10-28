@@ -326,7 +326,7 @@ jobs:
           body-includes: beep boop!
 
       - name: Create comment
-        if: steps.fc.outputs.comment-id == '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        if: steps.fc.outputs.comment-id == '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.REPO_PAT }}
@@ -337,7 +337,7 @@ jobs:
             I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
 
       - name: Update comment
-        if: steps.fc.outputs.comment-id != '' && (steps.changed-files.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        if: steps.fc.outputs.comment-id != '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.REPO_PAT }}
