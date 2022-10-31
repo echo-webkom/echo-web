@@ -14,7 +14,6 @@ import type { Post } from '@api/post';
 import { PostAPI } from '@api/post';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
-import LanguageMenu from '@components/language-menu';
 import LanguageContext from 'language-context';
 
 interface Props {
@@ -44,7 +43,6 @@ const PostPage = ({ post }: Props): JSX.Element => {
                                     {localeTitle()}
                                 </Heading>
                                 <Spacer />
-                                <LanguageMenu />
                             </Flex>
 
                             <Divider mb="0.5em" />
