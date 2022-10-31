@@ -24,7 +24,7 @@ const LanguageMenu = (): JSX.Element => {
             <Button bg="none" fontSize="xxl" onClick={() => setLanguage('no')} isDisabled={language === 'no'}>
                 🇳🇴
             </Button>
-            <Divider orientation="vertical" height="80%" />
+            <Divider orientation="vertical" height="80%" mx="0.5rem" />
             <Button bg="none" fontSize="xxl" onClick={() => setLanguage('en')} isDisabled={language === 'en'}>
                 🇬🇧
             </Button>
