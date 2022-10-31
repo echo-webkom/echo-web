@@ -1,5 +1,4 @@
 import {
-    Box,
     Flex,
     Text,
     Heading,
@@ -7,7 +6,8 @@ import {
     useColorModeValue,
     Button,
     Center,
-    Link,
+    LinkBox,
+    LinkOverlay,
     Spinner,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -70,10 +70,8 @@ const DashboardPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>Du har ikke tilgang til denne siden.</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
+                        <Button as={NextLink} href="/">
+                            Tilbake til forsiden
                         </Button>
                     </Center>
                 )}
@@ -88,15 +86,16 @@ const DashboardPage = () => {
                         <Heading>Dashboard</Heading>
                         <SimpleGrid columns={[1, null, null, 2]} gap="5">
                             {adminRoutes.map((route) => (
-                                <NextLink href={route.to} key={route.title}>
-                                    <Box
-                                        bg={bg}
-                                        borderRadius="md"
-                                        overflow="hidden"
-                                        cursor="pointer"
-                                        h="225px"
-                                        appearance="auto"
-                                    >
+                                <LinkBox
+                                    key={route.title}
+                                    bg={bg}
+                                    borderRadius="md"
+                                    overflow="hidden"
+                                    cursor="pointer"
+                                    h="225px"
+                                    appearance="auto"
+                                >
+                                    <LinkOverlay as={NextLink} href={route.to}>
                                         <Flex
                                             direction="column"
                                             borderRadius="md"
@@ -111,8 +110,8 @@ const DashboardPage = () => {
                                             </Text>
                                             <Text>{route.desc}</Text>
                                         </Flex>
-                                    </Box>
-                                </NextLink>
+                                    </LinkOverlay>
+                                </LinkBox>
                             ))}
                         </SimpleGrid>
                     </>

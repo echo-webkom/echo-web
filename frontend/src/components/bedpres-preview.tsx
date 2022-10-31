@@ -27,16 +27,14 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
                 <Box>
                     {/** Parent box is required to prevent child box from scaling inconsistently */}
                     <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
-                        <Image src={logoUrl} alt={bedpres.title} layout="fill" objectFit="fill" />
+                        <Image src={logoUrl} alt={bedpres.title} fill />
                     </Box>
                 </Box>
-                <NextLink href={`/event/${bedpres.slug}`} passHref>
-                    <LinkOverlay>
-                        <Heading ml="2" display={['none', 'block']} fontWeight="regular" fontSize="larger">
-                            {bedpres.title}
-                        </Heading>
-                    </LinkOverlay>
-                </NextLink>
+                <LinkOverlay href={`/event/${bedpres.slug}`} as={NextLink}>
+                    <Heading ml="2" display={['none', 'block']} fontWeight="regular" fontSize="larger">
+                        {bedpres.title}
+                    </Heading>
+                </LinkOverlay>
                 <Spacer />
                 <Box minW="fit-content">
                     <HappeningKeyInfo event={bedpres} registrationCounts={registrationCounts} />

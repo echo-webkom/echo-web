@@ -8,7 +8,6 @@ import {
     Center,
     Spinner,
     useToast,
-    Link,
     Flex,
     Spacer,
 } from '@chakra-ui/react';
@@ -83,10 +82,8 @@ const FeedbackPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
+                        <Button as={NextLink} href="/">
+                            Tilbake til forsiden
                         </Button>
                     </Center>
                 )}
@@ -101,11 +98,9 @@ const FeedbackPage = () => {
                         <Flex>
                             <Heading mb="5">Tilbakemeldinger</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <Button as={NextLink} href="/dashboard" colorScheme="blue" my="1rem">
+                                Tilbake
+                            </Button>
                         </Flex>
 
                         {feedbacks.length > 0 && (

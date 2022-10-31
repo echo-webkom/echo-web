@@ -14,8 +14,8 @@ const LogoAccesory = ({ iconSrc, w, h }: Props): JSX.Element => {
             <motion.div
                 style={{
                     position: 'absolute',
-                    left: 114,
-                    top: 7,
+                    left: 465,
+                    top: 45,
                     transform: 'rotate(-20deg)',
                 }}
             >

@@ -1,4 +1,4 @@
-import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Link, Text, useColorModeValue } from '@chakra-ui/react';
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
@@ -79,7 +79,9 @@ const HeaderLogo = () => {
     const textColor = useColorModeValue('white', 'black');
 
     return (
-        <LinkBox
+        <Link
+            as={NextLink}
+            href="/"
             p="1.05rem"
             bg={bg}
             shadow="lg"
@@ -90,33 +92,29 @@ const HeaderLogo = () => {
         >
             <Flex display={{ base: 'none', md: 'block' }}>
                 <Image src={bigLogo} alt="logo" width={260} height={77} />
+                {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
             </Flex>
             <Flex display={{ base: 'block', md: 'none' }}>
                 <Image src={smallLogo} alt="logo" width={90} height={90} />
             </Flex>
-            {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
-            <NextLink href="/" passHref>
-                <LinkOverlay>
-                    <Flex position="absolute" bottom="-1rem" left="5%" w="20rem">
-                        <Text
-                            bg={textBg}
-                            pb="0.1rem"
-                            pt="0.2rem"
-                            px="1rem"
-                            align="left"
-                            color={textColor}
-                            fontSize="md"
-                            noOfLines={1}
-                            suppressHydrationWarning
-                            borderRadius="0.5rem"
-                            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
-                        >
-                            {randomHeaderMessage()}
-                        </Text>
-                    </Flex>
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
+            <Flex position="absolute">
+                <Text
+                    bg={textBg}
+                    pb="0.1rem"
+                    pt="0.2rem"
+                    px="1rem"
+                    align="left"
+                    color={textColor}
+                    fontSize="md"
+                    noOfLines={1}
+                    suppressHydrationWarning
+                    borderRadius="0.5rem"
+                    boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
+                >
+                    {randomHeaderMessage()}
+                </Text>
+            </Flex>
+        </Link>
     );
 };
 

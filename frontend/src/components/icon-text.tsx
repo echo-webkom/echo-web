@@ -21,11 +21,9 @@ const IconText = ({ icon, iconColor, text, textColor, link, ...props }: Props): 
                 </Text>
             )}
             {link && (
-                <NextLink href={link} passHref>
-                    <Link href={link} color={textColor} isExternal>
-                        {text}
-                    </Link>
-                </NextLink>
+                <Link as={NextLink} href={link} color={textColor} isExternal>
+                    {text}
+                </Link>
             )}
         </Grid>
     );

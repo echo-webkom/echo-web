@@ -8,8 +8,7 @@ import {
     ModalCloseButton,
     useDisclosure,
     SimpleGrid,
-    LinkBox,
-    LinkOverlay,
+    Link,
     Icon,
 } from '@chakra-ui/react';
 import { google, outlook, yahoo, ics } from 'calendar-link';
@@ -65,38 +64,50 @@ const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Elemen
                     <ModalCloseButton />
                     <ModalBody>
                         <SimpleGrid columns={4} spacing="4" textAlign="center">
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                                <NextLink href={google(event)} passHref>
-                                    <LinkOverlay isExternal aria-label="Legg til i Google kalenderen">
-                                        <Icon as={FaGoogle} w={12} h={12} />
-                                        <h2>Google</h2>
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                                <NextLink href={outlook(event)} passHref>
-                                    <LinkOverlay isExternal aria-label="Legg til i Outlook kalenderen">
-                                        <Icon as={SiMicrosoftoutlook} w={12} h={12} />
-                                        <h2>Outlook</h2>
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                                <NextLink href={yahoo(eventPlusOneHour)} passHref>
-                                    <LinkOverlay isExternal aria-label="Legg til i Yahoo kalenderen">
-                                        <Icon as={FaYahoo} w={12} h={12} />
-                                        <h2>Yahoo</h2>
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                                <NextLink href={ics(event)} passHref>
-                                    <LinkOverlay isExternal aria-label="Last ned .ics fil">
-                                        <Icon as={FaFileDownload} w={12} h={12} />
-                                        <h2>.ics fil</h2>
-                                    </LinkOverlay>
-                                </NextLink>
-                            </LinkBox>
+                            <Link
+                                as={NextLink}
+                                href={google(event)}
+                                isExternal
+                                aria-label="Legg til i Google-kalenderen"
+                                transition=".1s ease-out"
+                                _hover={{ transform: 'scale(1.05)' }}
+                            >
+                                <Icon as={FaGoogle} w={12} h={12} />
+                                <h2>Google</h2>
+                            </Link>
+                            <Link
+                                as={NextLink}
+                                href={outlook(event)}
+                                isExternal
+                                aria-label="Legg til i Outlook-kalenderen"
+                                transition=".1s ease-out"
+                                _hover={{ transform: 'scale(1.05)' }}
+                            >
+                                <Icon as={SiMicrosoftoutlook} w={12} h={12} />
+                                <h2>Outlook</h2>
+                            </Link>
+                            <Link
+                                as={NextLink}
+                                href={yahoo(eventPlusOneHour)}
+                                isExternal
+                                aria-label="Legg til i Yahoo-kalendaren"
+                                transition=".1s ease-out"
+                                _hover={{ transform: 'scale(1.05)' }}
+                            >
+                                <Icon as={FaYahoo} w={12} h={12} />
+                                <h2>Yahoo</h2>
+                            </Link>
+                            <Link
+                                as={NextLink}
+                                href={ics(event)}
+                                isExternal
+                                aria-label="Last ned .ics-fil"
+                                transition=".1s ease-out"
+                                _hover={{ transform: 'scale(1.05)' }}
+                            >
+                                <Icon as={FaFileDownload} w={12} h={12} />
+                                <h2>.ics fil</h2>
+                            </Link>
                         </SimpleGrid>
                     </ModalBody>
 

@@ -9,7 +9,6 @@ import {
     Text,
     Button,
     Center,
-    Link,
     Spinner,
     Flex,
     Spacer,
@@ -53,10 +52,8 @@ const AdminUserPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
+                        <Button as={NextLink} href="/">
+                            Tilbake til forsiden
                         </Button>
                     </Center>
                 )}
@@ -71,11 +68,9 @@ const AdminUserPage = () => {
                         <Flex>
                             <Heading>Administrer brukere</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <Button as={NextLink} href="/dashboard" colorScheme="blue" my="1rem">
+                                Tilbake
+                            </Button>
                         </Flex>
 
                         <TableContainer>

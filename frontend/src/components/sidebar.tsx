@@ -9,8 +9,6 @@ import {
     AccordionPanel,
     AccordionIcon,
     Link,
-    LinkBox,
-    LinkOverlay,
     UnorderedList,
     ListItem,
 } from '@chakra-ui/react';
@@ -54,18 +52,19 @@ interface MenuLinkProps {
 
 const MenuLink = ({ href, isFocused, onClick, focusColor, testid, children }: MenuLinkProps) => {
     return (
-        <LinkBox data-testid={testid} onClick={onClick} data-cy="nav-item" py="0.2em">
-            <NextLink href={href} passHref>
-                <LinkOverlay
-                    as={Link}
-                    textUnderlineOffset="0.1em"
-                    fontSize={20}
-                    textColor={isFocused ? focusColor : undefined}
-                >
-                    {children}
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
+        <Link
+            as={NextLink}
+            href={href}
+            data-testid={testid}
+            onClick={onClick}
+            data-cy="nav-item"
+            py="0.2em"
+            textUnderlineOffset="0.1em"
+            fontSize={20}
+            textColor={isFocused ? focusColor : undefined}
+        >
+            {children}
+        </Link>
     );
 };
 

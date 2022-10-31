@@ -1,5 +1,6 @@
 import {
     Icon,
+    Link,
     LinkBox,
     LinkOverlay,
     SimpleGrid,
@@ -47,35 +48,47 @@ const Footer = (): JSX.Element => {
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
                     </Center>
                     <SimpleGrid columns={3} pt="0.5rem" spacing="3rem">
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink href="https://facebook.com/groups/informatikk" passHref>
-                                <LinkOverlay isExternal aria-label="Link til Facebook">
-                                    <Icon as={FaFacebook} w={10} h={10} />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink href="https://github.com/echo-webkom/echo-web" passHref>
-                                <LinkOverlay isExternal aria-label="Link til GitHub">
-                                    <Icon as={FaGithub} w={10} h={10} />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                            <NextLink href="https://instagram.com/echo_uib" passHref>
-                                <LinkOverlay isExternal aria-label="Link til Instagram">
-                                    <Icon as={FaInstagram} w={10} h={10} />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
+                        <Link
+                            as={NextLink}
+                            href="https://facebook.com/groups/informatikk"
+                            isExternal
+                            aria-label="Link til Facebook"
+                            transition=".1s ease-out"
+                            _hover={{ transform: 'scale(1.05)' }}
+                            color={color}
+                        >
+                            <Icon as={FaFacebook} w={10} h={10} />
+                        </Link>
+                        <Link
+                            as={NextLink}
+                            href="https://github.com/echo-webkom/echo-web"
+                            isExternal
+                            aria-label="Link til GitHub"
+                            transition=".1s ease-out"
+                            _hover={{ transform: 'scale(1.05)' }}
+                            color={color}
+                        >
+                            <Icon as={FaGithub} w={10} h={10} />
+                        </Link>
+                        <Link
+                            as={NextLink}
+                            href="https://instagram.com/echo-uib"
+                            isExternal
+                            aria-label="Link til Instagram"
+                            transition=".1s ease-out"
+                            _hover={{ transform: 'scale(1.05)' }}
+                            color={color}
+                        >
+                            <Icon as={FaInstagram} w={10} h={10} />
+                        </Link>
                     </SimpleGrid>
                 </SimpleGrid>
 
                 <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
-                    <Text fontSize="sm" color="white" m={0} textAlign="center" fontWeight="bold">
-                        Hovedsamarbeidspartner
-                    </Text>
                     <LinkBox m={0}>
+                        <Text fontSize="sm" color="white" my="0.5rem" textAlign="center" fontWeight="bold">
+                            Hovedsamarbeidspartner
+                        </Text>
                         <NextLink href="https://bekk.no" passHref>
                             <LinkOverlay isExternal>
                                 <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
@@ -85,56 +98,58 @@ const Footer = (): JSX.Element => {
                 </SimpleGrid>
 
                 <SimpleGrid columns={[1, 1, 1]} alignItems="center">
-                    <Text fontSize="sm" color="white" m={0} textAlign="center">
-                        POWERED BY
-                    </Text>
                     <LinkBox m={0}>
+                        <Text fontSize="sm" color="white" textAlign="center">
+                            POWERED BY
+                        </Text>
                         <NextLink href="https://sanity.io" passHref>
                             <LinkOverlay isExternal>
                                 <Image alt="sanity" width={175} height={52.5} src={sanityLogo} />
                             </LinkOverlay>
                         </NextLink>
                     </LinkBox>
-                    <LinkBox m={0}>
-                        <NextLink href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss" passHref>
-                            <LinkOverlay isExternal>
-                                <Image alt="Powered by Vercel" width={175} height={52.5} src={vercelLogo} />
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
+                    <Link as={NextLink} href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss" isExternal>
+                        <Image alt="Powered by Vercel" width={175} height={52.5} src={vercelLogo} />
+                    </Link>
                 </SimpleGrid>
 
                 <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
-                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                        <NextLink href="mailto:echo@uib.no" passHref>
-                            <LinkOverlay isExternal>
-                                <Text fontSize="md" color={color}>
-                                    echo@uib.no
-                                </Text>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                        <NextLink href="https://goo.gl/maps/adUsBsoZh3QqNvA36" passHref>
-                            <LinkOverlay isExternal>
-                                <Text fontSize="md" color={color}>
-                                    Thormøhlensgate 55
-                                </Text>
-                                <Text fontSize="md" color={color}>
-                                    5006 Bergen
-                                </Text>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
-                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                        <NextLink href="https://w2.brreg.no/enhet/sok/detalj.jsp?orgnr=998995035" passHref>
-                            <LinkOverlay isExternal>
-                                <Text fontSize="md" color={color}>
-                                    Org nr: 998 995 035
-                                </Text>
-                            </LinkOverlay>
-                        </NextLink>
-                    </LinkBox>
+                    <Link
+                        as={NextLink}
+                        href="mailto:echo@uib.no"
+                        isExternal
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)' }}
+                    >
+                        <Text fontSize="md" color={color}>
+                            echo@uib.no
+                        </Text>
+                    </Link>
+                    <Link
+                        as={NextLink}
+                        href="https://goo.gl/maps/adUsBsoZh3QqNvA36"
+                        isExternal
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)' }}
+                    >
+                        <Text fontSize="md" color={color}>
+                            Thormøhlensgate 55
+                        </Text>
+                        <Text fontSize="md" color={color}>
+                            5006 Bergen
+                        </Text>
+                    </Link>
+                    <Link
+                        as={NextLink}
+                        href="https://w2.brreg.no/enhet/sok/detalj.jsp?orgnr=998995035"
+                        isExternal
+                        transition=".1s ease-out"
+                        _hover={{ transform: 'scale(1.05)' }}
+                    >
+                        <Text fontSize="md" color={color}>
+                            Org nr: 998 995 035
+                        </Text>
+                    </Link>
                 </SimpleGrid>
             </SimpleGrid>
         </Wrap>

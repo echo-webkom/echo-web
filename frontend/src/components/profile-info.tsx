@@ -140,11 +140,9 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                 </form>
             </FormProvider>
             {user.memberships.includes('webkom') && (
-                <NextLink href="/dashboard" passHref>
-                    <Button w="100%" as="a" colorScheme="blue" my="1rem">
-                        Til dashboard
-                    </Button>
-                </NextLink>
+                <Button as={NextLink} href="/dashboard" w="100%" colorScheme="blue" my="1rem">
+                    Til dashboard
+                </Button>
             )}
         </Box>
     );

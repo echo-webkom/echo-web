@@ -17,7 +17,7 @@ import {
 import { addDays, eachDayOfInterval, getISOWeek, getISOWeekYear, isSameDay, startOfWeek, subDays } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
-import HappeningCalendarBox from './happening-calendar-box';
+import HappeningCalendarBox from '@components/happening-calendar-box';
 import LanguageContext from 'language-context';
 import capitalize from '@utils/capitalize';
 import type { Happening } from '@api/happening';
