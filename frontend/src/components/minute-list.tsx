@@ -26,9 +26,11 @@ interface Props {
 }
 
 const MinuteList = ({ minutes }: Props): JSX.Element => {
+    const newMinutes = minutes.map((obj) => ({ ...obj, date: new Date(obj.date) }));
+
     const color = useColorModeValue('blue', 'blue.400');
     const isNorwegian = useContext(LanguageContext);
-    const years: Array<number> = new Array(...new Set(minutes.map((e) => new Date(e.date).getFullYear())));
+    const years = [...new Set(newMinutes.map((e) => e.date.getFullYear()))];
 
     return (
         <>
@@ -46,14 +48,14 @@ const MinuteList = ({ minutes }: Props): JSX.Element => {
                         {years.map((year) => (
                             <TabPanel key={`${year}TabPanel`}>
                                 <List>
-                                    {minutes
-                                        .filter((minute) => new Date(minute.date).getFullYear() === year)
+                                    {newMinutes
+                                        .filter((minute) => minute.date.getFullYear() === year)
                                         .map((minute) => (
-                                            <ListItem key={minute.date}>
+                                            <ListItem key={minute.date.toDateString()}>
                                                 <Flex align="center">
                                                     <NextLink href={minute.document} passHref>
                                                         <Link href={minute.document} color={color} isExternal mr=".5em">
-                                                            {format(new Date(minute.date), 'dd. MMM yyyy', {
+                                                            {format(minute.date, 'dd. MMM yyyy', {
                                                                 locale: isNorwegian ? nb : enUS,
                                                             })}
                                                         </Link>
