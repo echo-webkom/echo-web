@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
+import LanguageMenu from './language-menu';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
@@ -105,6 +106,7 @@ const Footer = (): JSX.Element => {
                 </SimpleGrid>
 
                 <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
+                    <LanguageMenu />
                     <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="mailto:echo@uib.no" passHref>
                             <LinkOverlay isExternal>
