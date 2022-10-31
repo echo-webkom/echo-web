@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 
 const LanguageMenu = (): JSX.Element => {
     const [language, setLanguage] = useState('no');
@@ -19,18 +19,20 @@ const LanguageMenu = (): JSX.Element => {
         window.dispatchEvent(new Event('storage'));
     }, [language]);
 
-    const clicked = () => {
-        if (language === 'no') {
-            setLanguage('en');
-            return;
-        }
-        setLanguage('no');
+    const clicked = (language: Flag) => {
+        setLanguage(language);
     };
-
+    type Flag = 'no' | 'en';
     return (
-        <Button bg="none" fontSize="xxl" onClick={clicked} marginRight="1rem">
-            {language === 'en' ? '🇬🇧' : '🇳🇴'}
-        </Button>
+        <Flex justify={'center'}>
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('no')}>
+                🇳🇴
+            </Button>
+            <Text>|</Text>
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('en')}>
+                🇬🇧
+            </Button>
+        </Flex>
     );
 };
 
