@@ -19,17 +19,17 @@ const LanguageMenu = (): JSX.Element => {
         window.dispatchEvent(new Event('storage'));
     }, [language]);
 
-    const clicked = (language: Flag) => {
-        setLanguage(language);
+    const clicked = (lang: Flag) => {
+        setLanguage(lang);
     };
     type Flag = 'no' | 'en';
     return (
         <Flex alignItems="center" justify="center">
-            <Button bg="none" fontSize="xxl" onClick={() => clicked('no')}>
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('no')} isDisabled={language === 'no'}>
                 🇳🇴
             </Button>
             <Divider orientation="vertical" height="80%" />
-            <Button bg="none" fontSize="xxl" onClick={() => clicked('en')}>
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('en')} isDisabled={language === 'en'}>
                 🇬🇧
             </Button>
         </Flex>
