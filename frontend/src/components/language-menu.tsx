@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button, Divider, Flex } from '@chakra-ui/react';
+import { Button, Divider, Flex, useColorModeValue } from '@chakra-ui/react';
 
 const LanguageMenu = (): JSX.Element => {
     const [language, setLanguage] = useState('no');
+    const hoverColor = useColorModeValue('gray.600', 'gray.700');
     useEffect(() => {
         // we can not use localstorage in the language useState decleration, this would cause a react hydration error.
         // so we have to set it via a useEffect.
@@ -19,17 +20,25 @@ const LanguageMenu = (): JSX.Element => {
         window.dispatchEvent(new Event('storage'));
     }, [language]);
 
-    const clicked = (language: Flag) => {
-        setLanguage(language);
-    };
-    type Flag = 'no' | 'en';
     return (
         <Flex alignItems="center" justify="center">
-            <Button bg="none" fontSize="xxl" onClick={() => clicked('no')}>
+            <Button
+                bg="none"
+                fontSize="xxl"
+                onClick={() => setLanguage('no')}
+                isDisabled={language === 'no'}
+                _hover={{ bg: hoverColor }}
+            >
                 🇳🇴
             </Button>
-            <Divider orientation="vertical" height="80%" />
-            <Button bg="none" fontSize="xxl" onClick={() => clicked('en')}>
+            <Divider orientation="vertical" height="80%" mx="0.5rem" />
+            <Button
+                bg="none"
+                fontSize="xxl"
+                onClick={() => setLanguage('en')}
+                isDisabled={language === 'en'}
+                _hover={{ bg: hoverColor }}
+            >
                 🇬🇧
             </Button>
         </Flex>
