@@ -1,6 +1,5 @@
 import { Divider, Flex, Heading, Spacer } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
-import LanguageMenu from '@components/language-menu';
 import MapMarkdownChakra from '@utils/markdown';
 
 interface Props {
@@ -16,7 +15,6 @@ const Article = ({ heading, body }: Props): JSX.Element => {
                     {heading}
                 </Heading>
                 <Spacer />
-                <LanguageMenu />
             </Flex>
             <Divider my=".5em" />
             <Markdown options={{ overrides: MapMarkdownChakra }}>{body}</Markdown>
