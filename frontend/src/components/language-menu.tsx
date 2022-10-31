@@ -19,18 +19,25 @@ const LanguageMenu = (): JSX.Element => {
         window.dispatchEvent(new Event('storage'));
     }, [language]);
 
-    const clicked = () => {
-        if (language === 'no') {
-            setLanguage('en');
-            return;
-        }
-        setLanguage('no');
+    const clicked = (language: Flag) => {
+        setLanguage(language);
     };
 
+    type Flag = 'no' | 'en';
+
     return (
-        <Button bg="none" fontSize="xxl" onClick={clicked} marginRight="1rem">
-            {language === 'en' ? '🇬🇧' : '🇳🇴'}
-        </Button>
+        <>
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('no')} marginRight="1rem">
+                '🇳🇴'
+            </Button>
+            |
+            <Button bg="none" fontSize="xxl" onClick={() => clicked('en')} marginRight="1rem">
+                '🇬🇧'
+            </Button>
+        </>
+
+
+
     );
 };
 
