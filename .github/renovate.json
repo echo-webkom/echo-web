@@ -5,7 +5,7 @@
     "prHourlyLimit": 0,
     "stabilityDays": 3,
     "prCreation": "not-pending",
-    "ignoreDeps": ["openjdk", "node"],
+    "ignoreDeps": ["openjdk", "node", "postgres", "azurerm"],
     "updateInternalDeps": true,
     "additionalBranchPrefix": "{{parentDir}}-",
     "packageRules": [
