@@ -84,7 +84,7 @@ const ReactionButtons = ({ slug }: Props) => {
     const handleClick = (reaction: ReactionType) => {
         if (session.status !== 'authenticated') {
             toast({
-                title: isNorwegian ? 'Du må være logget inn for reagere' : 'You must be logged in to react',
+                title: isNorwegian ? 'Du må være logget inn for å reagere' : 'You must be logged in to react',
                 status: 'info',
                 duration: 5000,
                 isClosable: true,
