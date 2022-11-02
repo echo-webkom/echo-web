@@ -6,6 +6,7 @@ import type { ErrorMessage } from '@utils/error';
 
 const bannerDecoder = record({
     color: string,
+    textColor: string,
     text: string,
     linkTo: union(string, nil),
     isExternal: boolean,
@@ -19,6 +20,7 @@ const BannerAPI = {
             const query = `
                     *[_type == "banner" && !(_id in path('drafts.**'))] {
                         color,
+                        textColor,
                         text,
                         linkTo,
                         isExternal

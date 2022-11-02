@@ -52,7 +52,7 @@ const IndexPage = ({
                 mx={['0rem', null, null, '3rem']}
                 my={['1rem', null, '2rem', '2.5rem']}
             >
-                <Heading textAlign="center" size={headingSize} color="white">
+                <Heading textAlign="center" size={headingSize} color={banner.textColor}>
                     {banner.text}
                 </Heading>
             </Section>
