@@ -25,8 +25,14 @@ export default {
             type: 'colorPicker',
         },
         {
+            name: 'textColor',
+            title: 'Farge på bannertekst',
+            validation: (Rule) => Rule.required(),
+            type: 'colorPicker',
+        },
+        {
             name: 'linkTo',
-            title: 'Lenke til intern side',
+            title: 'Lenke til intern/ekstern side',
             type: 'string',
         },
         {
