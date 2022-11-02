@@ -491,9 +491,15 @@ fun Route.getUserIsRegistered(disableJwtAuth: Boolean = false){
         }
 
         val userRegistered = transaction {
-            Registration.select(Registration.email eq email and(Happening.slug eq slug))
+            Registration.select(Registration.email eq email and(Happening.slug eq slug)).firstOrNull()
         }
-        call.respond(userRegistered)
+        if (userRegistered == null){
+            call.respond(HttpStatusCode.OK, false)
+            return@get
+        } else {
+            call.respond(HttpStatusCode.OK, true)
+            return@get
+        }
     }
 }
 

@@ -104,7 +104,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
 
     useEffect(() => {
         const fetchInfo = async () => {
-            if (!user.email) return;
+            if (user === null || !user.email) return;
             const res = await HappeningAPI.getUserIsRegistered(user.email, happening.slug, 'localhost:8080');
             // fiks til neste gang
             //setRegistered(res);

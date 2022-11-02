@@ -200,7 +200,7 @@ const HappeningAPI = {
             const { data } = await axios.get(`${backendUrl}/user/registrations/${email}/${slug}`);
             return data;
         } catch (error) {
-            return false;
+            return { message: 'Error in getUserIsRegistered' };
         }
     },
 };
