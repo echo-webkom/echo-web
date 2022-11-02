@@ -38,18 +38,9 @@ import no.uib.echo.schema.masters
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.lowerCase
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
 
@@ -58,10 +49,12 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
         if (disableJwtAuth) {
             getRegistrations(true)
             deleteRegistration(true)
+            getUserIsRegistered(true)
         } else {
             authenticate("auth-jwt") {
                 getRegistrations()
                 deleteRegistration()
+                getUserIsRegistered()
             }
         }
 
@@ -487,6 +480,23 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
         }
     }
 }
+
+fun Route.getUserIsRegistered(disableJwtAuth: Boolean = false){
+    get("user/registrations/{email?}/{slug?}") {
+        val email = call.parameters["email"]?.lowercase()
+        val slug = call.parameters["slug"]
+        if (email == null || slug == null){
+            call.respond(HttpStatusCode.BadRequest, "email or slug missing")
+            return@get
+        }
+
+        val userRegistered = transaction {
+            Registration.select(Registration.email eq email and(Happening.slug eq slug))
+        }
+        call.respond(userRegistered)
+    }
+}
+
 
 fun Route.postRegistrationCount() {
     post("/registration/count") {

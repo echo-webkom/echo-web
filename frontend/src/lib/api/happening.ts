@@ -5,6 +5,7 @@ import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import { emptyArrayOnNilDecoder } from '@utils/decoders';
 import SanityAPI from '@api/sanity';
+import { data } from 'cypress/types/jquery';
 
 const happeningTypeDecoder = union(literal('BEDPRES'), literal('EVENT'));
 type HappeningType = decodeType<typeof happeningTypeDecoder>;
@@ -192,6 +193,14 @@ const HappeningAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: JSON.stringify(error) };
+        }
+    },
+    getUserIsRegistered: async (email: string, slug: string, backendUrl: string): Promise<boolean | ErrorMessage> => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/user/registrations/${email}/${slug}`);
+            return data;
+        } catch (error) {
+            return false;
         }
     },
 };

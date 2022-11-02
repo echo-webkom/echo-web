@@ -19,11 +19,11 @@ import {
     VStack,
     Wrap,
 } from '@chakra-ui/react';
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import NextLink from 'next/link';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
-import type { Happening, HappeningType, Question } from '@api/happening';
+import { Happening, HappeningAPI, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
 import { User, UserAPI } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
@@ -100,6 +100,17 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     const { register, handleSubmit } = methods;
 
     const toast = useToast();
+    const [registered, setRegistered] = useState(false);
+
+    useEffect(() => {
+        const fetchInfo = async () => {
+            if (!user.email) return;
+            const res = await HappeningAPI.getUserIsRegistered(user.email, happening.slug, 'localhost:8080');
+            // fiks til neste gang
+            //setRegistered(res);
+        };
+        void fetchInfo();
+    }, []);
 
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
@@ -278,7 +289,7 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                         <Button
                             type="submit"
                             mr={3}
-                            colorScheme="teal"
+                            colorScheme="red"
                             onClick={() => {
                                 onUnRegisterClose();
                             }}
