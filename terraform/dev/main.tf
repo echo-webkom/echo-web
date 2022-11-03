@@ -8,7 +8,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "echo-web-tfstate"
-    storage_account_name = "echowebtfstatestorage"
+    storage_account_name = "echowebtfstatestore"
     container_name       = "tfstate"
     key                  = "azure.terraform.tfstate"
   }
@@ -17,7 +17,7 @@ terraform {
 provider "azurerm" {
   features {}
 
-  subscription_id = "8afc7368-510a-404a-b4dd-c7351977b037"
+  subscription_id = "f16e6916-1e71-42a0-9df3-0246b805f432"
 }
 
 # Resource group
@@ -25,10 +25,6 @@ provider "azurerm" {
 resource "azurerm_resource_group" "echo_web" {
   name     = var.resource_group_name
   location = var.location
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   tags = {
     environment = var.environment
@@ -56,10 +52,6 @@ resource "azurerm_postgresql_server" "echo_web_db" {
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     "environment" = var.environment
   }
@@ -73,25 +65,17 @@ resource "azurerm_postgresql_firewall_rule" "echo_web_firewall" {
   server_name         = azurerm_postgresql_server.echo_web_db.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # Storage for Caddy
 
 resource "azurerm_storage_account" "caddy_storage" {
   name                      = "caddy"
-  resource_group_name       = var.resource_group_name
+  resource_group_name       = azurerm_resource_group.echo_web.name
   location                  = var.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   enable_https_traffic_only = true
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   tags = {
     "environment" = var.environment
@@ -102,10 +86,6 @@ resource "azurerm_storage_share" "caddy_share" {
   name                 = "caddy"
   storage_account_name = azurerm_storage_account.caddy_storage.name
   quota                = 1
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # Containers
@@ -113,7 +93,7 @@ resource "azurerm_storage_share" "caddy_share" {
 resource "azurerm_container_group" "echo_web_containers" {
   name                = var.container_group_name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.echo_web.name
   ip_address_type     = "Public"
   os_type             = "Linux"
   dns_name_label      = var.container_group_name
