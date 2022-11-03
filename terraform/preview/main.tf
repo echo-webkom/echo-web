@@ -8,7 +8,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "echo-web-tfstate"
-    storage_account_name = "echowebtfstatestorage"
+    storage_account_name = "echowebtfstatestore"
     container_name       = "tfstate"
     key                  = "azure.terraform.tfstate"
   }
