@@ -12,17 +12,18 @@ import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.StudentGroup
-import no.uib.echo.schema.StudentGroupMembership
-import no.uib.echo.schema.User
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.net.URI
+import no.uib.echo.schema.StudentGroupMembership
+import no.uib.echo.schema.User
 
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
@@ -143,6 +144,16 @@ class DatabaseHandler(
 
                 StudentGroup.batchInsert(studentGroups) {
                     this[StudentGroup.name] = it
+                }
+
+                User.insert {
+                    it[name] = "Frank Foreleser"
+                    it[email] = "noreply@feide.no"
+                }
+
+                StudentGroupMembership.insert {
+                    it[studentGroupName] = "webkom"
+                    it[userEmail] = "noreply@feide.no"
                 }
 
                 Happening.batchInsert(happenings) {
