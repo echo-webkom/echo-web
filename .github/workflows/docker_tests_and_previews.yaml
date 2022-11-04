@@ -203,10 +203,6 @@ jobs:
           NEXTAUTH_SECRET: very-secret-string-123
           FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
           FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
-          CYPRESS_FEIDE_USERNAME: ${{ secrets.CYPRESS_FEIDE_USERNAME }}
-          CYPRESS_FEIDE_PASSWORD: ${{ secrets.CYPRESS_FEIDE_PASSWORD }}
-          CYPRESS_FEIDE_FULL_NAME: ${{ secrets.CYPRESS_FEIDE_FULL_NAME }}
-          CYPRESS_FEIDE_EMAIL: ${{ secrets.CYPRESS_FEIDE_EMAIL }}
 
   migration_tests:
     runs-on: ubuntu-latest

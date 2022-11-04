@@ -29,7 +29,7 @@ const UserAPI = {
         try {
             const { data, status } = await axios.get('/api/user', {
                 validateStatus: (statusCode: number) => {
-                    return statusCode < 500;
+                    return statusCode < 400 || statusCode === 404;
                 },
             });
 
