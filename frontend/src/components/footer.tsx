@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
-import LanguageMenu from './language-menu';
-
+import LanguageMenu from '@components/language-menu';
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
 const vercelLogo = '/powered-by-vercel.svg';
