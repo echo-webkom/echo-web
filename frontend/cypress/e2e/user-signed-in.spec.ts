@@ -3,6 +3,11 @@ import feide from '../fixtures/feide.json';
 import { happenings } from '../fixtures/happening.json';
 import { waitListEmails } from '../fixtures/users.json';
 
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from failing the test
+    return false;
+});
+
 describe('User tests', () => {
     describe('720p res', () => {
         beforeEach(() => {
