@@ -33,7 +33,7 @@ jobs:
           cd terraform/preview
           terraform init
           terraform workspace select $WORKSPACE_NAME && \
-            terraform destroy -auto-approve && \
+            terraform destroy -auto-approve -lock-timeout=15m && \
             terraform workspace select default && \
             terraform workspace delete $WORKSPACE_NAME
         env:
