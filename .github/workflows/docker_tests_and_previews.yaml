@@ -194,7 +194,9 @@ jobs:
 
       - name: Run Cypress end-to-end tests
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        run: docker compose -f docker-compose.cypress.yaml up --exit-code-from=frontend --attach=frontend
+        run: |
+          docker compose -f docker-compose.cypress.yaml down
+          docker compose -f docker-compose.cypress.yaml up --exit-code-from=frontend --attach=frontend --build
         env:
           FRONTEND_TAG: ${{ steps.changed-files-frontend.outputs.any_changed == 'true' && github.sha || 'latest' }}
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
