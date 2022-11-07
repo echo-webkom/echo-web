@@ -1,8 +1,9 @@
 import { Text, Stack, StackDivider } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import type { JobAdvert } from '@api/job-advert';
 import JobAdvertPreview from '@components/job-advert-preview';
+import LanguageContext from 'language-context';
 
 interface Props {
     jobAdverts: Array<JobAdvert>;
@@ -17,6 +18,7 @@ const sortJobs = (list: Array<JobAdvert>, field: SortType) => {
 };
 
 const JobAdvertOverview = ({ jobAdverts }: Props): JSX.Element => {
+    const isNorwegian = useContext(LanguageContext);
     const [type, setType] = useState<JobType>('all');
     const [location, setLocation] = useState<string>('all');
     const [company, setCompany] = useState<string>('all');
@@ -83,17 +85,22 @@ const JobAdvertOverview = ({ jobAdverts }: Props): JSX.Element => {
                         <option value="jobType">Type</option>
                     </Select>
                 </Stack>
-                <Stack w="100%" gap="5">
-                    {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
-                        (type === job.jobType || type === 'all') &&
-                        (job.locations.some((locations) => locations.toLocaleLowerCase() === location) ||
-                            location === 'all') &&
-                        (job.degreeYears.includes(Number(degreeYear)) || degreeYear === 'all') &&
-                        (company === job.companyName.toLowerCase() || company === 'all') ? (
-                            <JobAdvertPreview key={job.slug} jobAdvert={job} />
-                        ) : null,
-                    )}
-                </Stack>
+                {jobAdverts.length > 0 ? (
+                    <Stack w="100%" gap="5">
+                        <div>{jobAdverts.length}</div>
+                        {sortJobs(jobAdverts, sortBy).map((job: JobAdvert) =>
+                            (type === job.jobType || type === 'all') &&
+                            (job.locations.some((locations) => locations.toLocaleLowerCase() === location) ||
+                                location === 'all') &&
+                            (job.degreeYears.includes(Number(degreeYear)) || degreeYear === 'all') &&
+                            (company === job.companyName.toLowerCase() || company === 'all') ? (
+                                <JobAdvertPreview key={job.slug} jobAdvert={job} />
+                            ) : null,
+                        )}
+                    </Stack>
+                ) : (
+                    <Text>{isNorwegian ? 'Ingen stillingsannonser :(' : 'No job advertisements :('}</Text>
+                )}
             </Stack>
         </>
     );
