@@ -43,11 +43,9 @@ describe('User tests', () => {
             for (const { slug } of happenings) {
                 for (let rows = 5; rows > 0; rows--) {
                     describe('can delete a registration', () => {
-                        beforeEach(() => {
-                            cy.visit(`/event/${slug}`);
-                        });
-
                         it('and make a wait list registration move up.', () => {
+                            cy.visit(`/event/${slug}`);
+
                             const { e } = waitListEmails[5 - rows];
 
                             cy.get(`[data-cy="reg-row-${e.toLowerCase()}"`)
@@ -70,11 +68,9 @@ describe('User tests', () => {
 
                 for (let rows = 20; rows > 0; rows--) {
                     describe('can delete a registration', () => {
-                        beforeEach(() => {
-                            cy.visit(`/event/${slug}`);
-                        });
-
                         it('where the wait list is empty, and the registration is deleted properly.', () => {
+                            cy.visit(`/event/${slug}`);
+
                             const delBtns = cy.get('[data-cy=delete-button]');
 
                             delBtns.should('have.length', rows);
@@ -124,8 +120,8 @@ const signIn = () => {
             validate() {
                 cy.visit('/profile');
 
-                cy.get('[data-cy="profile-name"]').should('contain', feide.name);
-                cy.get('[data-cy="profile-email"]').should('contain', feide.email);
+                cy.get('[data-cy="profile-name"]').should('have.text', feide.name);
+                cy.get('[data-cy="profile-email"]').should('have.text', feide.email);
             },
         },
     );
