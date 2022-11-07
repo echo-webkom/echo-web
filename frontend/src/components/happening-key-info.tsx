@@ -43,7 +43,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 <Flex alignItems="center" justifyContent="flex-end">
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
-                            {totalRegWithoutWaitList >= totalSpots
+                            {totalRegWithoutWaitList >= totalSpots && totalSpots !== 0
                                 ? isNorwegian
                                     ? `Fullt`
                                     : `Full`

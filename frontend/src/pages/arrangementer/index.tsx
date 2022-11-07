@@ -69,6 +69,7 @@ export const getStaticProps = async () => {
             bedpresses: bedpressesResponse,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
         },
+        revalidate: 60,
     };
 };
 
