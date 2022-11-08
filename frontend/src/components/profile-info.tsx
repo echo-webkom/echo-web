@@ -112,7 +112,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                     <Heading size="md" my="0.5rem">
                         {isNorwegian ? 'Studentgrupper' : 'Student groups'}
                     </Heading>
-                    <Text data-cy="profile-email" my="0.5rem">
+                    <Text my="0.5rem">
                         {user.memberships.length > 0 && user.memberships.map((m: string) => capitalize(m)).join(', ')}
                         {user.memberships.length === 0 && 'Ingen'}
                     </Text>

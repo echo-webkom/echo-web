@@ -147,7 +147,7 @@ class DatabaseHandler(
                 }
 
                 User.insert {
-                    it[name] = "Frank Foreleser"
+                    it[name] = "Frank Foreleser Føllesen"
                     it[email] = "noreply@feide.no"
                 }
 

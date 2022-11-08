@@ -16,6 +16,10 @@ export default defineConfig({
         watchForFileChanges: false,
     },
 
+    retries: {
+        runMode: 2,
+    },
+
     component: {
         devServer: {
             framework: 'next',
