@@ -37,6 +37,7 @@ interface Props {
 
 const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props) => {
     const session = useSession();
+    const isLoggedIn = session.data?.idToken !== undefined;
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
@@ -207,7 +208,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                               '(No english version avalible) \n\n' + happening.body.no
                                     }
                                 />
-                                {session.status === 'authenticated' && (
+                                {isLoggedIn && (
                                     <>
                                         <Divider my="1em" />
                                         <Center flexDirection="column" gap="3">
