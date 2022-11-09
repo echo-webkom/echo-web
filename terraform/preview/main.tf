@@ -21,7 +21,7 @@ provider "azurerm" {
 }
 
 locals {
-  short_rg_name = substr(var.resource_group_name, 0, 25)
+  short_rg_name = trim(substr(var.resource_group_name, 0, 25), "_-")
 }
 
 # Resource group
