@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -29,9 +30,17 @@ const AdminUserPage = () => {
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
+    const { data } = useSession();
+
     useEffect(() => {
         const fetchUsers = async () => {
-            const result = await UserAPI.getUsers();
+            if (!data?.idToken) {
+                setError({ message: 'Du er ikke logget inn.' });
+                setLoading(false);
+                return;
+            }
+
+            const result = await UserAPI.getUsers(data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUsers(result);
@@ -43,7 +52,7 @@ const AdminUserPage = () => {
         };
 
         void fetchUsers();
-    }, []);
+    }, [data?.idToken]);
 
     return (
         <>

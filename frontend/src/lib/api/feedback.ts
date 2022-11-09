@@ -52,11 +52,11 @@ const FeedbackAPI = {
             return errorResponse;
         }
     },
-    getFeedback: async (): Promise<Array<Feedback> | ErrorMessage> => {
+    getFeedback: async (idToken: string): Promise<Array<Feedback> | ErrorMessage> => {
         try {
-            const { data } = await axios.get('/api/feedback', {
+            const { data } = await axios.get(`${BACKEND_URL}/feedback`, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}`,
                 },
                 validateStatus: (status: number) => status < 500,
             });
@@ -72,10 +72,11 @@ const FeedbackAPI = {
             };
         }
     },
-    updateFeedback: async (feedback: Feedback): Promise<string | ErrorMessage> => {
+
+    updateFeedback: async (feedback: Feedback, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data } = await axios.put('/api/feedback', feedback, {
-                headers: { 'Content-Type': 'application/json' },
+            const { data } = await axios.put(`${BACKEND_URL}/feedback`, feedback, {
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
                 validateStatus: (status: number) => status < 500,
             });
 
@@ -86,15 +87,17 @@ const FeedbackAPI = {
             };
         }
     },
-    deleteFeedback: async (id: number): Promise<string | ErrorMessage> => {
+
+    deleteFeedback: async (id: number, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data } = await axios.delete('/api/feedback', {
-                headers: { 'Content-Type': 'application/json' },
-                data: id,
-                validateStatus: (status: number) => status < 500,
+            const { data, status } = await axios.delete(`${BACKEND_URL}/feedback`, {
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+                data: { id },
             });
 
-            return string(data);
+            if (status === 200) return string(data);
+
+            return { message: data };
         } catch {
             return {
                 message: 'Kunne ikke slette tilbakemeldingen.',

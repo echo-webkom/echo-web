@@ -25,24 +25,35 @@ type User = decodeType<typeof userDecoder>;
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const UserAPI = {
-    getUser: async (): Promise<User | null | ErrorMessage> => {
+    getUser: async (email: string, name: string, idToken: string): Promise<User | null | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get('/api/user', {
-                validateStatus: (statusCode: number) => {
-                    return statusCode < 500;
+            const { data, status } = await axios.get(`${BACKEND_URL}/user`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
                 },
+                validateStatus: (statusCode: number) => statusCode < 500,
             });
 
+            // no user in database
             if (status === 404) {
-                return null;
+                return {
+                    email: email,
+                    name: name,
+                    alternateEmail: null,
+                    degreeYear: null,
+                    degree: null,
+                    memberships: [],
+                };
             }
 
-            return userDecoder(data);
+            const user = userDecoder(data);
+
+            return { ...user, name, email };
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
-                message: 'Fail @ getUser',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -77,14 +88,20 @@ const UserAPI = {
         }
     },
 
-    putUser: async (user: User): Promise<{ status: number; response: string } | ErrorMessage> => {
+    putUser: async (user: User, idToken: string): Promise<{ status: number; response: string } | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put('/api/user', user, {
-                headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode) => statusCode < 500,
-            });
+            const { data, status } = await axios.put(
+                `${BACKEND_URL}/user`,
+                { ...user, memberships: [] },
+                {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                },
+            );
 
-            return { status: number(status), response: string(data) };
+            return { status, response: JSON.stringify(data) };
         } catch (error) {
             console.log(error); // eslint-disable-line
 
@@ -95,25 +112,25 @@ const UserAPI = {
         }
     },
 
-    getUsers: async (): Promise<Array<User> | ErrorMessage> => {
+    getUsers: async (idToken: string): Promise<Array<User> | ErrorMessage> => {
         try {
-            const { data, status }: { data: Array<User>; status: number } = await axios.get('/api/users', {
-                headers: { 'Content-Type': 'application/json' },
+            const { data, status } = await axios.get(`${BACKEND_URL}/users`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
                 validateStatus: (statusCode: number) => statusCode < 500,
             });
 
             if (status === 200) {
-                return data;
+                return array(userDecoder)(data);
             }
 
             return {
                 message: 'Du har ikke tilgang til denne siden :(',
             };
         } catch (error) {
-            console.log(error); // eslint-disable-line
-
             return {
-                message: 'Fail @ getUsers',
+                message: JSON.stringify(error),
             };
         }
     },

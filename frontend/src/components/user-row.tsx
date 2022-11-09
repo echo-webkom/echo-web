@@ -17,6 +17,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import type { StudentGroup } from '@api/dashboard';
 import DashboardAPI, { studentGroups } from '@api/dashboard';
 import type { User } from '@api/user';
@@ -33,8 +34,12 @@ const UserRow = ({ initialUser }: Props) => {
     const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const { data } = useSession();
+
     const handleChange = async (group: StudentGroup) => {
-        const result = await DashboardAPI.updateMembership(user.email, group);
+        if (!data?.idToken) return;
+
+        const result = await DashboardAPI.updateMembership(user.email, group, data.idToken);
 
         if (isErrorMessage(result)) {
             toast({

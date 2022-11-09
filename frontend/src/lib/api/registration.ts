@@ -74,15 +74,12 @@ interface FormRegistration {
     regVerifyToken: string | null;
 }
 
-const registrationRoute = 'registration';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const RegistrationAPI = {
-    submitRegistration: async (
-        registration: FormRegistration,
-        backendUrl: string,
-    ): Promise<{ response: Response; statusCode: number }> => {
+    submitRegistration: async (registration: FormRegistration): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
+            const { data, status } = await axios.post(`${BACKEND_URL}/registration`, registration, {
                 headers: { 'Content-Type': 'application/json' },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
@@ -138,7 +135,7 @@ const RegistrationAPI = {
         email: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const { data } = await axios.delete(`/api/registration?slug=${slug}&email=${email}`);
+            const { data } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`);
 
             return { response: data, error: null };
         } catch (error) {
@@ -147,12 +144,9 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrationCountForSlugs: async (
-        slugs: Array<string>,
-        backendUrl: string,
-    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
+    getRegistrationCountForSlugs: async (slugs: Array<string>): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            const { data } = await axios.post(`${BACKEND_URL}/registration/count`, { slugs });
             return array(registrationCountDecoder)(data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -174,7 +168,6 @@ const RegistrationAPI = {
 export {
     RegistrationAPI,
     registrationDecoder,
-    registrationRoute,
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,

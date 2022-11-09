@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { ErrorMessage } from '@utils/error';
@@ -38,11 +39,15 @@ const DashboardPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [isWebkom, setIsWebkom] = useState<boolean>(false);
 
+    const { data } = useSession();
+
     const bg = useColorModeValue('gray.200', 'gray.800');
 
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await UserAPI.getUser();
+            if (!data?.user?.email || !data.user.name || !data.idToken) return;
+
+            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUser(result);
@@ -54,7 +59,7 @@ const DashboardPage = () => {
         };
 
         void fetchUser();
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         if (user) {

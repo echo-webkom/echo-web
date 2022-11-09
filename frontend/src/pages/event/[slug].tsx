@@ -6,8 +6,8 @@ import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfte
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
-import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
+import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
@@ -29,13 +29,12 @@ import ReactionButtons from '@components/reaction-buttons';
 
 interface Props {
     happening: Happening | null;
-    backendUrl: string;
     happeningInfo: HappeningInfo | null;
     date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props) => {
+const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
     const session = useSession();
     const isLoggedIn = session.data?.idToken !== undefined;
     const router = useRouter();
@@ -52,26 +51,30 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
 
+    const { data } = useSession();
+
     useTimeout(() => {
         if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
     }, time);
 
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await UserAPI.getUser();
+            if (!data?.user?.email || !data.user.name || !data.idToken) return;
+
+            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUser(result);
             }
         };
         void fetchUser();
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening) return;
+            if (!happening || !data?.idToken) return;
 
-            const result = await RegistrationAPI.getRegistrations(happening.slug);
+            const result = await RegistrationAPI.getRegistrations(happening.slug, 'json', data.idToken);
 
             if (!isErrorMessage(result)) {
                 setRegsListError(null);
@@ -81,7 +84,7 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
             }
         };
         void fetchRegs();
-    }, [happening]);
+    }, [happening, data?.idToken]);
 
     return (
         <>
@@ -155,7 +158,6 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                                     <RegistrationForm
                                                         happening={happening}
                                                         type={happening.happeningType}
-                                                        backendUrl={backendUrl}
                                                         regVerifyToken={happeningInfo?.regVerifyToken ?? null}
                                                         user={user}
                                                     />
@@ -260,7 +262,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             happening: isErrorMessage(happening) ? null : happening,
             happeningInfo: isErrorMessage(hiddenHappeningInfo) ? null : hiddenHappeningInfo,
             date,
-            backendUrl,
             error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
         };
 
@@ -273,7 +274,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
         date,
-        backendUrl,
         error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
     };
 
