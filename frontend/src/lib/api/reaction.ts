@@ -3,6 +3,8 @@ import type { decodeType } from 'typescript-json-decoder';
 import { literal, union, number, record } from 'typescript-json-decoder';
 import { type ErrorMessage } from '@utils/error';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const reactionTypeDecoder = union(literal('LIKE'), literal('ROCKET'), literal('BEER'), literal('EYES'), literal('FIX'));
 type ReactionType = decodeType<typeof reactionTypeDecoder>;
 
@@ -16,10 +18,17 @@ const reactionDecoder = record({
 type Reaction = decodeType<typeof reactionDecoder>;
 
 const ReactionAPI = {
-    get: async (slug: string): Promise<Reaction | ErrorMessage> => {
+    get: async (slug: string, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get(`/api/reaction`, {
+            if (!idToken) {
+                return { message: 'No token.' };
+            }
+
+            const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
                 params: { slug },
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
                 validateStatus: (status: number) => status < 500,
             });
 
@@ -36,11 +45,16 @@ const ReactionAPI = {
             return { message: 'Noe gikk galt. Prøv igjen senere.' };
         }
     },
-    post: async (slug: string, reaction: ReactionType): Promise<Reaction | ErrorMessage> => {
+    post: async (slug: string, reaction: ReactionType, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put(`/api/reaction`, null, {
+            if (!idToken) {
+                return { message: 'No token.' };
+            }
+
+            const { data, status } = await axios.put(`${BACKEND_URL}/reaction`, null, {
                 params: { slug, reaction },
                 headers: {
+                    Authorization: `Bearer ${idToken}`,
                     'Content-Type': 'application/json',
                 },
                 validateStatus: (status: number) => status < 500,
