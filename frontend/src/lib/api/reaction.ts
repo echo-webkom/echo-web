@@ -3,8 +3,6 @@ import type { decodeType } from 'typescript-json-decoder';
 import { literal, union, number, record } from 'typescript-json-decoder';
 import { type ErrorMessage } from '@utils/error';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-
 const reactionTypeDecoder = union(literal('LIKE'), literal('ROCKET'), literal('BEER'), literal('EYES'), literal('FIX'));
 type ReactionType = decodeType<typeof reactionTypeDecoder>;
 
@@ -20,12 +18,17 @@ type Reaction = decodeType<typeof reactionDecoder>;
 const ReactionAPI = {
     get: async (slug: string): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
+            const { data, status } = await axios.get(`/api/reaction`, {
+                params: { slug },
                 validateStatus: (status: number) => status < 500,
             });
 
             if (status === 404) {
                 return { message: 'Kunne ikke finne arrangementet.' };
+            }
+
+            if (status === 401) {
+                return { message: 'Du må være logget inn for å se arrangementet.' };
             }
 
             return reactionDecoder(data);

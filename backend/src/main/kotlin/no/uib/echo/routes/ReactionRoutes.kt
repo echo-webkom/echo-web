@@ -31,13 +31,19 @@ fun Application.reactionRoutes() {
     routing {
         authenticate("auth-jwt") {
             putReaction()
+            getReactions()
         }
-        getReactions()
     }
 }
 
 fun Route.getReactions() {
     get("/reaction/{slug}") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
         val slug = call.parameters["slug"]
         if (slug == null) {
             call.respond(HttpStatusCode.BadRequest, "No slug specified.")
@@ -70,7 +76,6 @@ fun Route.getReactions() {
     }
 }
 
-// Add or update reaction
 fun Route.putReaction() {
     put("/reaction") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()

@@ -1,12 +1,13 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { useSession } from 'next-auth/react';
 import type { ErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
@@ -34,7 +35,8 @@ interface Props {
     error: string | null;
 }
 
-const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props): JSX.Element => {
+const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props) => {
+    const session = useSession();
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
@@ -205,10 +207,14 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                               '(No english version avalible) \n\n' + happening.body.no
                                     }
                                 />
-                                <Divider my="1em" />
-                                <Center flexDirection="column" gap="3">
-                                    <ReactionButtons slug={happening.slug} />
-                                </Center>
+                                {session.status === 'authenticated' && (
+                                    <>
+                                        <Divider my="1em" />
+                                        <Center flexDirection="column" gap="3">
+                                            <ReactionButtons slug={happening.slug} />
+                                        </Center>
+                                    </>
+                                )}
                             </Section>
                         </GridItem>
                     </Grid>
