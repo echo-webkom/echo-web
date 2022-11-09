@@ -35,7 +35,7 @@ fun Application.studentGroupRoutes() {
 fun Route.studentGroup() {
     put("/studentgroup") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
-        if (email != null && email !in getGroupMembers("webkom")) {
+        if (email !in getGroupMembers("webkom")) {
             call.respond(HttpStatusCode.Unauthorized)
             return@put
         }

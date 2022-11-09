@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
+import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
@@ -30,9 +31,13 @@ const FeedbackPage = () => {
 
     const gridColumns = [1, null, null, null, 2];
 
+    const { data } = useSession();
+
     useEffect(() => {
         const getFeedbacks = async () => {
-            const result = await FeedbackAPI.getFeedback();
+            if (!data?.idToken) return;
+
+            const result = await FeedbackAPI.getFeedback(data.idToken);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -44,10 +49,12 @@ const FeedbackPage = () => {
         };
 
         void getFeedbacks();
-    }, []);
+    }, [data?.idToken]);
 
     const handleDelete = async (id: number) => {
-        await FeedbackAPI.deleteFeedback(id);
+        if (!data?.idToken) return;
+
+        await FeedbackAPI.deleteFeedback(id, data.idToken);
 
         toast({
             title: 'Tilbakemeldingen ble slettet!',
@@ -60,7 +67,8 @@ const FeedbackPage = () => {
     };
 
     const handleUpdate = async (feedback: Feedback) => {
-        await FeedbackAPI.updateFeedback(feedback);
+        if (!data?.idToken) return;
+        await FeedbackAPI.updateFeedback(feedback, data.idToken);
 
         toast({
             title: feedback.isRead ? 'Markert som lest' : 'Markert som ulest',

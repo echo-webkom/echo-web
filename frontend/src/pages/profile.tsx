@@ -22,9 +22,13 @@ const ProfilePage = (): JSX.Element => {
 
     const isNorwegian = useContext(LanguageContext);
 
+    const { data } = useSession();
+
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await UserAPI.getUser();
+            if (!data?.idToken || !data.user?.email || !data.user.name) return;
+
+            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUser(result);
@@ -36,7 +40,7 @@ const ProfilePage = (): JSX.Element => {
         };
 
         void fetchUser();
-    }, []);
+    }, [data]);
 
     const { status } = useSession();
 

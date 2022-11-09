@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useToast, Box, Input, HStack, Heading, Text, FormControl, FormLabel, Button } from '@chakra-ui/react';
@@ -24,6 +24,8 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const [profileState, setProfileState] = useState<ProfileState>({ infoState: 'idle', errorMessage: null });
     const toast = useToast();
 
+    const { data } = useSession();
+
     useEffect(() => {
         if (profileState.infoState === 'error') {
             toast({
@@ -36,16 +38,23 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
         }
     }, [profileState, toast, isNorwegian]);
 
-    const submitForm: SubmitHandler<ProfileFormValues> = async (data: ProfileFormValues) => {
+    const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
+        if (!data?.idToken) {
+            setProfileState({ infoState: 'error', errorMessage: 'Du er ikke logget inn. Prøv på nytt.' });
+            return;
+        }
         setProfileState({ infoState: 'saving', errorMessage: null });
-        const res = await UserAPI.putUser({
-            email: user.email,
-            name: user.name,
-            alternateEmail: data.alternateEmail,
-            degree: data.degree,
-            degreeYear: data.degreeYear,
-            memberships: [],
-        });
+        const res = await UserAPI.putUser(
+            {
+                email: user.email,
+                name: user.name,
+                alternateEmail: profileFormVals.alternateEmail,
+                degree: profileFormVals.degree,
+                degreeYear: profileFormVals.degreeYear,
+                memberships: [],
+            },
+            data.idToken,
+        );
 
         if (isErrorMessage(res)) {
             setProfileState({ infoState: 'error', errorMessage: res.message });

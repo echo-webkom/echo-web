@@ -14,26 +14,27 @@ const studentGroupDecoder = union(
 );
 type StudentGroup = decodeType<typeof studentGroupDecoder>;
 
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
+
 const DashboardAPI = {
-    updateMembership: async (email: string, group: StudentGroup): Promise<Array<StudentGroup> | ErrorMessage> => {
+    updateMembership: async (
+        email: string,
+        group: StudentGroup,
+        idToken: string,
+    ): Promise<Array<StudentGroup> | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put(`/api/studentgroup`, null, {
+            const { data, status } = await axios.put(`${BACKEND_URL}/studentgroup`, null, {
                 params: { group, email },
                 headers: {
-                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (status: number) => status < 500,
             });
 
-            if (status === 200) {
-                return array(studentGroupDecoder)(data);
-            }
+            if (status === 200) return array(studentGroupDecoder)(data);
 
             return { message: data };
-        } catch {
-            return {
-                message: 'Failed @ updateMembership.',
-            };
+        } catch (error) {
+            return { message: JSON.stringify(error) };
         }
     },
 };
