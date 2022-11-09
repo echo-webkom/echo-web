@@ -15,6 +15,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
+        if (req.method === 'GET') {
+            const slug = req.query.slug as string;
+
+            try {
+                const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
+                    headers: {
+                        Authorization: `Bearer ${JWT_TOKEN}`,
+                    },
+                    validateStatus: (status: number) => status < 500,
+                });
+
+                if (status === 404) {
+                    res.status(404).json({ message: 'Kunne ikke finne arrangementet.' });
+                    return;
+                }
+
+                if (status === 401) {
+                    res.status(401).json({ message: 'Du må være logget inn for å se reaksjoner for arrangementet.' });
+                    return;
+                }
+
+                res.status(200).json(data);
+                return;
+            } catch {
+                res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
+                return;
+            }
+        }
+
         if (req.method === 'PUT') {
             const slug = req.query.slug as string;
             const reaction = req.query.reaction as string;
