@@ -1,6 +1,7 @@
 import type { ButtonProps } from '@chakra-ui/react';
 import { useToast, ButtonGroup, Button, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import type { Reaction, ReactionType } from '@api/reaction';
 import ReactionAPI from '@api/reaction';
 import { isErrorMessage } from '@utils/error';
@@ -33,13 +34,16 @@ interface Props {
 }
 
 const ReactionButtons = ({ slug }: Props) => {
+    const session = useSession();
     const toast = useToast();
 
     const [data, setData] = useState<Reaction | null>(null);
 
+    const idToken = session.data?.idToken as string;
+
     useEffect(() => {
         const fetchReactions = async () => {
-            const result = await ReactionAPI.get(slug);
+            const result = await ReactionAPI.get(slug, idToken);
 
             if (isErrorMessage(result)) {
                 return;
@@ -49,10 +53,10 @@ const ReactionButtons = ({ slug }: Props) => {
         };
 
         void fetchReactions();
-    }, [slug]);
+    }, [idToken, slug]);
 
     const handleClick = async (reaction: ReactionType) => {
-        const result = await ReactionAPI.post(slug, reaction);
+        const result = await ReactionAPI.post(slug, reaction, idToken);
 
         if (isErrorMessage(result)) {
             toast({
@@ -79,7 +83,7 @@ const ReactionButtons = ({ slug }: Props) => {
     }
 
     return (
-        <ButtonGroup w={['full', null, null, 'auto']} id={slug}>
+        <ButtonGroup w={['full', null, null, 'auto']}>
             <ReactionButton onClick={() => void handleClick('LIKE')} {...reactions.like} count={data.like} />
             <ReactionButton onClick={() => void handleClick('ROCKET')} {...reactions.rocket} count={data.rocket} />
             <ReactionButton onClick={() => void handleClick('BEER')} {...reactions.beer} count={data.beer} />
@@ -99,10 +103,10 @@ const ReactionButton = ({ emoji, count, ...props }: ReactionButtonProps) => {
         <Button
             rounded="3xl"
             size="sm"
-            _light={{ bg: 'gray.50', _hover: { bg: 'gray.100' } }}
-            _dark={{ bg: 'gray.800', _hover: { bg: 'gray.700' } }}
             gap="2"
             w={['full', null, null, 'auto']}
+            _light={{ bg: 'gray.50', _hover: { bg: 'gray.100' } }}
+            _dark={{ bg: 'gray.800', _hover: { bg: 'gray.700' } }}
             {...props}
         >
             <Text>{emoji}</Text>
