@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Spacer } from '@chakra-ui/react';
 import Footer from '@components/footer';
 import Header from '@components/header';
 import AnimatedIcons from '@components/animated-icons';
@@ -11,21 +11,15 @@ interface Props {
 const Layout = ({ children }: Props): JSX.Element => {
     return (
         <AnimatedIcons n={50}>
-            <Box overflow="hidden" pos="relative" minHeight="100vh" data-testid="layout">
+            <Flex direction="column" minH="100vh" data-testid="layout">
                 <Header />
-                <Box
-                    maxW="1500"
-                    w={['97%', null, null, '90%']}
-                    m="auto"
-                    px={['0', '5%', '50']}
-                    pb={['610px', '370px', '250px', '200px', '200px']}
-                    mb={['70', '50']}
-                >
+                <Box maxW="1500" w={['97%', null, null, '90%']} m="auto">
                     {children}
                 </Box>
                 <FeedbackButton />
+                <Spacer py="2" />
                 <Footer />
-            </Box>
+            </Flex>
         </AnimatedIcons>
     );
 };
