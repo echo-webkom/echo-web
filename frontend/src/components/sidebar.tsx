@@ -25,7 +25,7 @@ interface MenuDropdownProps {
 
 const MenuDropdown = (props: MenuDropdownProps) => {
     return (
-        <Accordion allowMultiple allowToggle defaultIndex={props.isOpen ? 0 : undefined}>
+        <Accordion allowToggle defaultIndex={props.isOpen ? 0 : undefined}>
             <AccordionItem border="hidden">
                 <h2>
                     <AccordionButton px={0} _hover={{ textDecoration: 'underline' }}>
