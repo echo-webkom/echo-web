@@ -35,8 +35,8 @@ interface Props {
 }
 
 const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
-    const session = useSession();
-    const isLoggedIn = session.data?.idToken !== undefined;
+    const { data } = useSession();
+    const isLoggedIn = data?.idToken !== undefined;
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
@@ -50,8 +50,6 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
     const isNorwegian = useContext(LanguageContext);
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
-
-    const { data } = useSession();
 
     useTimeout(() => {
         if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
@@ -72,9 +70,8 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening || !data?.idToken) return;
-
-            const result = await RegistrationAPI.getRegistrations(happening.slug, 'json', data.idToken);
+            if (!happening) return;
+            const result = await RegistrationAPI.getRegistrations(happening.slug);
 
             if (!isErrorMessage(result)) {
                 setRegsListError(null);
