@@ -39,7 +39,7 @@ const ReactionButtons = ({ slug }: Props) => {
 
     const [data, setData] = useState<Reaction | null>(null);
 
-    const idToken = session.data?.idToken as string;
+    const idToken = session.data?.idToken;
 
     useEffect(() => {
         const fetchReactions = async () => {
