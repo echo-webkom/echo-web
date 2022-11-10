@@ -59,6 +59,7 @@ jobs:
             -t "$IMAGE_NAME/frontend:$GITHUB_SHA" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --build-arg SANITY_DATASET=$SANITY_DATASET \
+            --build-arg NEXT_PUBLIC_BACKEND_URL=http://backend:8080 \
             .
           docker push "$IMAGE_NAME/frontend" --all-tags
         env:
