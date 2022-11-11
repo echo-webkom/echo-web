@@ -14,7 +14,7 @@ const reactionDecoder = record({
     beer: number,
     eyes: number,
     fix: number,
-    reacted: array(string),
+    reactedTo: array(string),
 });
 type Reaction = decodeType<typeof reactionDecoder>;
 

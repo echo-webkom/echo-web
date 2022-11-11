@@ -169,15 +169,15 @@ fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
     return reactions
 }
 
-fun getReactedTo(slug: String, email: String): Array<ReactionType> {
-    val reactions: Array<ReactionType> = transaction {
+fun getReactedTo(slug: String, email: String): List<ReactionType> {
+    val reactions: List<ReactionType> = transaction {
         addLogger(StdOutSqlLogger)
 
         Reaction.select {
             userEmail eq email and (happeningSlug eq slug)
         }.map {
             ReactionType.valueOf(it[Reaction.reaction])
-        }.toTypedArray()
+        }.toList()
     }
 
     return reactions

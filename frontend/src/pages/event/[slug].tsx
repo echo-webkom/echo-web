@@ -1,6 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
 import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
@@ -36,7 +36,6 @@ interface Props {
 
 const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
     const { data } = useSession();
-    const isLoggedIn = data?.idToken !== undefined;
     const router = useRouter();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
@@ -207,14 +206,9 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                               '(No english version avalible) \n\n' + happening.body.no
                                     }
                                 />
-                                {isLoggedIn && (
-                                    <>
-                                        <Divider my="1em" />
-                                        <Center flexDirection="column" gap="3">
-                                            <ReactionButtons slug={happening.slug} />
-                                        </Center>
-                                    </>
-                                )}
+                                <Center>
+                                    <ReactionButtons slug={happening.slug} />
+                                </Center>
                             </Section>
                         </GridItem>
                     </Grid>

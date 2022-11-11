@@ -34,16 +34,14 @@ interface Props {
 }
 
 const ReactionButtons = ({ slug }: Props) => {
-    const session = useSession();
     const toast = useToast();
+    const session = useSession();
 
     const [data, setData] = useState<Reaction | null>(null);
 
-    const idToken = session.data?.idToken;
-
     useEffect(() => {
         const fetchReactions = async () => {
-            const result = await ReactionAPI.get(slug, idToken);
+            const result = await ReactionAPI.get(slug, session.data?.idToken);
 
             if (isErrorMessage(result)) {
                 return;
@@ -53,10 +51,10 @@ const ReactionButtons = ({ slug }: Props) => {
         };
 
         void fetchReactions();
-    }, [idToken, slug]);
+    }, [session.data?.idToken, slug, toast]);
 
     const handleClick = async (reaction: ReactionType) => {
-        const result = await ReactionAPI.post(slug, reaction, idToken);
+        const result = await ReactionAPI.post(slug, reaction, session.data?.idToken);
 
         if (isErrorMessage(result)) {
             toast({
@@ -67,9 +65,9 @@ const ReactionButtons = ({ slug }: Props) => {
                 isClosable: true,
             });
             return;
-        } else {
-            setData(result);
         }
+
+        setData(result);
     };
 
     if (data === null) {
@@ -82,31 +80,31 @@ const ReactionButtons = ({ slug }: Props) => {
                 onClick={() => void handleClick('LIKE')}
                 {...reactions.like}
                 count={data.like}
-                clicked={data.reacted.includes('LIKE')}
+                clicked={data.reactedTo.includes('LIKE')}
             />
             <ReactionButton
                 onClick={() => void handleClick('ROCKET')}
                 {...reactions.rocket}
                 count={data.rocket}
-                clicked={data.reacted.includes('ROCKET')}
+                clicked={data.reactedTo.includes('ROCKET')}
             />
             <ReactionButton
                 onClick={() => void handleClick('BEER')}
                 {...reactions.beer}
                 count={data.beer}
-                clicked={data.reacted.includes('BEER')}
+                clicked={data.reactedTo.includes('BEER')}
             />
             <ReactionButton
                 onClick={() => void handleClick('EYES')}
                 {...reactions.eyes}
                 count={data.eyes}
-                clicked={data.reacted.includes('EYES')}
+                clicked={data.reactedTo.includes('EYES')}
             />
             <ReactionButton
                 onClick={() => void handleClick('FIX')}
                 {...reactions.fix}
                 count={data.fix}
-                clicked={data.reacted.includes('FIX')}
+                clicked={data.reactedTo.includes('FIX')}
             />
         </ButtonGroup>
     );
