@@ -62,6 +62,7 @@ fun Route.getReactions() {
         }
 
         val reactions = getReactionsBySlug(slug)
+        val reactedTo = getReactedTo(slug, email)
 
         call.respond(
             HttpStatusCode.OK,
@@ -70,7 +71,8 @@ fun Route.getReactions() {
                 reactions[ReactionType.ROCKET] ?: 0,
                 reactions[ReactionType.BEER] ?: 0,
                 reactions[ReactionType.EYES] ?: 0,
-                reactions[ReactionType.FIX] ?: 0
+                reactions[ReactionType.FIX] ?: 0,
+                reactedTo
             )
         )
     }
@@ -135,6 +137,7 @@ fun Route.putReaction() {
         }
 
         val reactions = getReactionsBySlug(slug)
+        val reactedTo = getReactedTo(slug, email)
 
         call.respond(
             HttpStatusCode.OK,
@@ -143,7 +146,8 @@ fun Route.putReaction() {
                 reactions[ReactionType.ROCKET] ?: 0,
                 reactions[ReactionType.BEER] ?: 0,
                 reactions[ReactionType.EYES] ?: 0,
-                reactions[ReactionType.FIX] ?: 0
+                reactions[ReactionType.FIX] ?: 0,
+                reactedTo
             )
         )
     }
@@ -160,6 +164,20 @@ fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
         }.mapValues {
             it.value.count()
         }
+    }
+
+    return reactions
+}
+
+fun getReactedTo(slug: String, email: String): Array<ReactionType> {
+    val reactions: Array<ReactionType> = transaction {
+        addLogger(StdOutSqlLogger)
+
+        Reaction.select {
+            userEmail eq email and (happeningSlug eq slug)
+        }.map {
+            ReactionType.valueOf(it[Reaction.reaction])
+        }.toTypedArray()
     }
 
     return reactions

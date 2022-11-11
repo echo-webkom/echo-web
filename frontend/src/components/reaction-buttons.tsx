@@ -69,12 +69,6 @@ const ReactionButtons = ({ slug }: Props) => {
             return;
         } else {
             setData(result);
-            toast({
-                title: 'Reaksjon sendt!',
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
         }
     };
 
@@ -84,11 +78,36 @@ const ReactionButtons = ({ slug }: Props) => {
 
     return (
         <ButtonGroup w={['full', null, null, 'auto']}>
-            <ReactionButton onClick={() => void handleClick('LIKE')} {...reactions.like} count={data.like} />
-            <ReactionButton onClick={() => void handleClick('ROCKET')} {...reactions.rocket} count={data.rocket} />
-            <ReactionButton onClick={() => void handleClick('BEER')} {...reactions.beer} count={data.beer} />
-            <ReactionButton onClick={() => void handleClick('EYES')} {...reactions.eyes} count={data.eyes} />
-            <ReactionButton onClick={() => void handleClick('FIX')} {...reactions.fix} count={data.fix} />
+            <ReactionButton
+                onClick={() => void handleClick('LIKE')}
+                {...reactions.like}
+                count={data.like}
+                clicked={data.reacted.includes('LIKE')}
+            />
+            <ReactionButton
+                onClick={() => void handleClick('ROCKET')}
+                {...reactions.rocket}
+                count={data.rocket}
+                clicked={data.reacted.includes('ROCKET')}
+            />
+            <ReactionButton
+                onClick={() => void handleClick('BEER')}
+                {...reactions.beer}
+                count={data.beer}
+                clicked={data.reacted.includes('BEER')}
+            />
+            <ReactionButton
+                onClick={() => void handleClick('EYES')}
+                {...reactions.eyes}
+                count={data.eyes}
+                clicked={data.reacted.includes('EYES')}
+            />
+            <ReactionButton
+                onClick={() => void handleClick('FIX')}
+                {...reactions.fix}
+                count={data.fix}
+                clicked={data.reacted.includes('FIX')}
+            />
         </ButtonGroup>
     );
 };
@@ -96,17 +115,21 @@ const ReactionButtons = ({ slug }: Props) => {
 interface ReactionButtonProps extends ButtonProps {
     emoji: string;
     count: number;
+    clicked: boolean;
 }
 
-const ReactionButton = ({ emoji, count, ...props }: ReactionButtonProps) => {
+const ReactionButton = ({ emoji, count, clicked, ...props }: ReactionButtonProps) => {
     return (
         <Button
             rounded="3xl"
             size="sm"
             gap="2"
             w={['full', null, null, 'auto']}
-            _light={{ bg: 'gray.50', _hover: { bg: 'gray.100' } }}
-            _dark={{ bg: 'gray.800', _hover: { bg: 'gray.700' } }}
+            _light={{
+                bg: clicked ? 'cyan.100' : 'gray.50',
+                _hover: { bg: clicked ? 'cyan.200' : 'gray.100' },
+            }}
+            _dark={{ bg: clicked ? 'cyan.600' : 'gray.800', _hover: { bg: clicked ? 'cyan.700' : 'gray.700' } }}
             {...props}
         >
             <Text>{emoji}</Text>

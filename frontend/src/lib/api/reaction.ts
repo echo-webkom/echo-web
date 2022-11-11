@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
-import { literal, union, number, record } from 'typescript-json-decoder';
+import { literal, union, number, record, array, string } from 'typescript-json-decoder';
 import { type ErrorMessage } from '@utils/error';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
@@ -14,6 +14,7 @@ const reactionDecoder = record({
     beer: number,
     eyes: number,
     fix: number,
+    reacted: array(string),
 });
 type Reaction = decodeType<typeof reactionDecoder>;
 

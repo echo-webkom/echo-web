@@ -18,7 +18,8 @@ data class ReactionsJson(
     val rocket: Int,
     val beer: Int,
     val eyes: Int,
-    val fix: Int
+    val fix: Int,
+    val reactedTo: Array<ReactionType>
 )
 
 object Reaction : Table() {
