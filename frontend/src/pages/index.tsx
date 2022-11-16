@@ -1,5 +1,15 @@
 import fs from 'fs';
-import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
+import {
+    Center,
+    Grid,
+    GridItem,
+    Heading,
+    LinkBox,
+    LinkOverlay,
+    useBreakpointValue,
+    VStack,
+    Text,
+} from '@chakra-ui/react';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore } from 'date-fns';
 import type { GetStaticProps } from 'next';
@@ -26,7 +36,6 @@ import FeedbackPopup from '@components/feedback-popup';
 const IndexPage = ({
     bedpreses,
     posts,
-    events,
     banner,
     registrationCounts,
     jobs,
@@ -89,14 +98,20 @@ const IndexPage = ({
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
-                        <EntryBox
-                            title={isNorwegian ? 'Arrangementer' : 'Events'}
-                            entries={events}
-                            altText={isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}
-                            linkTo="/arrangementer"
-                            type="event"
-                            registrationCounts={registrationCounts}
-                        />
+                        <VStack as={Section} spacing={10}>
+                            <Center>
+                                <Heading>Velkommen til echo</Heading>
+                            </Center>
+                            <Text>
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+                                has been the industrys standard dummy text ever since the 1500s, when an unknown printer
+                                took a galley of type and scrambled it to make a type specimen book. It has survived not
+                                only five centuries, but also the leap into electronic typesetting, remaining
+                                essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                                sheets containing Lorem Ipsum passages, and more recently with desktop publishing
+                                software like Aldus PageMaker including versions of Lorem Ipsum.
+                            </Text>
+                        </VStack>
                     </GridItem>
                     <GridItem>
                         <EntryBox
