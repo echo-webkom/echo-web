@@ -24,7 +24,7 @@ import NextLink from 'next/link';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Happening, HappeningAPI, HappeningType, Question } from '@api/happening';
-import type { RegFormValues } from '@api/registration';
+import { RegFormValues, registrationDecoder } from '@api/registration';
 import { User, UserAPI } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormTerm from '@components/form-term';
@@ -33,6 +33,7 @@ import FormDegree from '@components/form-degree';
 import FormDegreeYear from '@components/form-degree-year';
 import fullNameToSplitName from '@utils/full-name-to-split-name';
 import LanguageContext from 'language-context';
+import { isErrorMessage } from '@utils/error';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -103,13 +104,19 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     const [registered, setRegistered] = useState(false);
 
     useEffect(() => {
-        const fetchInfo = async () => {
-            if (user === null || !user.email) return;
-            const res = await HappeningAPI.getUserIsRegistered(user.email, happening.slug, 'localhost:8080');
-            // fiks til neste gang
-            //setRegistered(res);
+        const fetchIsRegistered = async () => {
+            if (user) {
+                const isRegistered = await HappeningAPI.getUserIsRegistered(user.email, happening.slug);
+                if (isErrorMessage(isRegistered)) {
+                    setRegistered(false);
+                    return;
+                }
+                setRegistered(isRegistered);
+                return;
+            }
+            setRegistered(false);
         };
-        void fetchInfo();
+        void fetchIsRegistered();
     }, []);
 
     const initialRef = useRef<HTMLInputElement | null>(null);
@@ -152,12 +159,12 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
     return (
         <Box data-testid="bedpres-form">
             {/* {!user && <>Meld deg på med feide!</>} */}
-            {!påmeldt && (
+            {!registered && (
                 <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onRegisterOpen}>
                     {isNorwegian ? 'Påmelding' : 'Register'}
                 </Button>
             )}
-            {påmeldt && (
+            {registered && (
                 <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onUnRegisterOpen}>
                     {isNorwegian ? 'Meld deg av' : 'Unregister'}
                 </Button>
@@ -292,6 +299,17 @@ const RegistrationForm = ({ happening, regVerifyToken, type, backendUrl, user }:
                             colorScheme="red"
                             onClick={() => {
                                 onUnRegisterClose();
+                                if (user) {
+                                    RegistrationAPI.deleteRegistration(happening.slug, user.email);
+                                } else {
+                                    toast({
+                                        title: 'Error',
+                                        description: 'You are not logged in',
+                                        status: 'error',
+                                        duration: 5000,
+                                        isClosable: true,
+                                    });
+                                }
                             }}
                         >
                             {isNorwegian ? 'Ja' : 'Yes'}

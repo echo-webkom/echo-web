@@ -49,7 +49,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
         if (disableJwtAuth) {
             getRegistrations(true)
             deleteRegistration(true)
-            getUserIsRegistered(true)
+            getUserIsRegistered()
         } else {
             authenticate("auth-jwt") {
                 getRegistrations()
@@ -481,8 +481,8 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
     }
 }
 
-fun Route.getUserIsRegistered(disableJwtAuth: Boolean = false){
-    get("user/registrations/{email?}/{slug?}") {
+fun Route.getUserIsRegistered() {
+    get("/user/registrations/{email}/{slug}") {
         val email = call.parameters["email"]?.lowercase()
         val slug = call.parameters["slug"]
         if (email == null || slug == null){
@@ -494,12 +494,11 @@ fun Route.getUserIsRegistered(disableJwtAuth: Boolean = false){
             Registration.select(Registration.email eq email and(Happening.slug eq slug)).firstOrNull()
         }
         if (userRegistered == null){
-            call.respond(HttpStatusCode.OK, false)
-            return@get
-        } else {
-            call.respond(HttpStatusCode.OK, true)
+            call.respond(HttpStatusCode.NotFound)
             return@get
         }
+
+        call.respond(HttpStatusCode.OK)
     }
 }
 

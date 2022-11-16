@@ -5,7 +5,8 @@ import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import { emptyArrayOnNilDecoder } from '@utils/decoders';
 import SanityAPI from '@api/sanity';
-import { data } from 'cypress/types/jquery';
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const happeningTypeDecoder = union(literal('BEDPRES'), literal('EVENT'));
 type HappeningType = decodeType<typeof happeningTypeDecoder>;
@@ -195,10 +196,10 @@ const HappeningAPI = {
             return { message: JSON.stringify(error) };
         }
     },
-    getUserIsRegistered: async (email: string, slug: string, backendUrl: string): Promise<boolean | ErrorMessage> => {
+    getUserIsRegistered: async (email: string, slug: string): Promise<boolean | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/user/registrations/${email}/${slug}`);
-            return data;
+            const { status } = await axios.get(`${BACKEND_URL}/user/registrations/${email}/${slug}`);
+            return status === 200;
         } catch (error) {
             return { message: 'Error in getUserIsRegistered' };
         }
