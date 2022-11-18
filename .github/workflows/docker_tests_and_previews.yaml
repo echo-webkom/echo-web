@@ -173,6 +173,20 @@ jobs:
           install-command: yarn --frozen-lockfile
           wait-on: 'http://localhost:3000, http://localhost:8080/status'
 
+      - name: Upload Cypress screenshots (only on failure)
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+
+      - name: Upload Cypress video
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: frontend/cypress/videos
+
   migration_tests:
     runs-on: ubuntu-latest
     needs: [build_backend]
