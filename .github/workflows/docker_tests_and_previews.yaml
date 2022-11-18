@@ -15,57 +15,6 @@ env:
   TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
 
 jobs:
-  build_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v34
-        with:
-          files: |
-            frontend/**
-            yarn.lock
-            package.json
-            Dockerfile.frontend
-            docker-compose.cypress.yaml
-          files_ignore: |
-            *.md
-            *.png
-            *.ico
-            *.svg
-            *.test.tsx
-            frontend/.gitignore
-            frontend/.env.example
-
-      - name: Login to GitHub Container Registry
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build frontend with cache and push to registry
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: |
-          docker build \
-            -f Dockerfile.frontend \
-            --cache-from "$IMAGE_NAME/frontend:latest" \
-            -t "$IMAGE_NAME/frontend:$GITHUB_SHA" \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --build-arg SANITY_DATASET=$SANITY_DATASET \
-            --build-arg NEXT_PUBLIC_BACKEND_URL=http://backend:8080 \
-            .
-          docker push "$IMAGE_NAME/frontend" --all-tags
-        env:
-          DOCKER_BUILDKIT: 1
-          SANITY_DATASET: testing
-
   build_backend:
     runs-on: ubuntu-latest
     steps:
@@ -136,7 +85,9 @@ jobs:
 
   cypress_e2e_tests:
     runs-on: ubuntu-latest
-    needs: [build_frontend, build_backend]
+    needs: [build_backend]
+    env:
+      ADMIN_KEY: admin-passord
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -151,8 +102,7 @@ jobs:
             frontend/**
             yarn.lock
             package.json
-            Dockerfile.frontend
-            docker-compose.cypress.yaml
+            .github/workflows/docker_tests_and_previews.yaml
           files_ignore: |
             *.md
             *.png
@@ -172,42 +122,56 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
-      - name: Pull Docker images, depending on what has changed
+      - name: Pull Docker image, depending on what has changed
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
-          { if [[ "$FRONTEND_CHANGED" = "true" ]] && [[ "$BACKEND_CHANGED" = "true" ]]; then
-              echo "Both changed."
-              docker pull "$IMAGE_NAME/frontend:$GITHUB_SHA"
+          { if [[ "$BACKEND_CHANGED" = "true" ]]; then
+              echo "Backend changed."
               docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
-            elif [[ "$FRONTEND_CHANGED" = "true" ]]; then
-              echo "Only frontend changed."
-              docker pull "$IMAGE_NAME/frontend:$GITHUB_SHA"
-              docker pull "$IMAGE_NAME/backend:latest"
             else
-              echo "Only backend changed."
-              docker pull "$IMAGE_NAME/frontend:latest"
-              docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+              echo "Backend didn't change."
+              docker pull "$IMAGE_NAME/backend:latest"
             fi
           }
         env:
-          FRONTEND_CHANGED: ${{ steps.changed-files-frontend.outputs.any_changed }}
           BACKEND_CHANGED: ${{ steps.changed-files-backend.outputs.any_changed }}
 
-      - name: Run Cypress end-to-end tests
+      - name: Start backend
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        run: docker compose -f docker-compose.cypress.yaml up --exit-code-from=frontend --attach=frontend
+        run: |
+          cd backend
+          docker compose up --build &
         env:
-          FRONTEND_TAG: ${{ steps.changed-files-frontend.outputs.any_changed == 'true' && github.sha || 'latest' }}
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install frontend dependencies
+        run: yarn --frozen-lockfile --ignore-scripts
+
+      - name: Start frontend
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
+        run: |
+          cd frontend
+          yarn build
+          yarn start &
+        env:
           SANITY_DATASET: testing
-          ADMIN_KEY: admin-passord
           NEXTAUTH_SECRET: very-secret-string-123
           FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
           FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
-          CYPRESS_FEIDE_USERNAME: ${{ secrets.CYPRESS_FEIDE_USERNAME }}
-          CYPRESS_FEIDE_PASSWORD: ${{ secrets.CYPRESS_FEIDE_PASSWORD }}
-          CYPRESS_FEIDE_FULL_NAME: ${{ secrets.CYPRESS_FEIDE_FULL_NAME }}
-          CYPRESS_FEIDE_EMAIL: ${{ secrets.CYPRESS_FEIDE_EMAIL }}
+
+      - name: Run Cypress end-to-end tests
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
+        uses: cypress-io/github-action@v4.2.0
+        with:
+          working-directory: frontend
+          install-command: yarn --frozen-lockfile
+          wait-on: 'http://localhost:3000, http://localhost:8080/status'
 
   migration_tests:
     runs-on: ubuntu-latest
