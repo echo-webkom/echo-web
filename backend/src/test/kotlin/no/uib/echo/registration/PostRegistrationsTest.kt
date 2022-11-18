@@ -1,6 +1,7 @@
 package no.uib.echo.registration
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
@@ -11,8 +12,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
@@ -24,21 +23,23 @@ import no.uib.echo.hap2
 import no.uib.echo.hap3
 import no.uib.echo.hap4
 import no.uib.echo.hap5
-import no.uib.echo.hap6
 import no.uib.echo.hap7
 import no.uib.echo.hap8
-import no.uib.echo.hap9
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Reaction
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
+import no.uib.echo.haps
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.nullableDegreeToString
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.tables
+import no.uib.echo.user1
+import no.uib.echo.user2
+import no.uib.echo.user3
+import no.uib.echo.user4
+import no.uib.echo.user5
+import no.uib.echo.user6
+import no.uib.echo.users
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -48,14 +49,6 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import no.uib.echo.schema.validStudentGroups
-import no.uib.echo.user1
-import no.uib.echo.user2
-import no.uib.echo.user3
-import no.uib.echo.user4
-import no.uib.echo.user5
-import no.uib.echo.user6
-import no.uib.echo.users
 
 class PostRegistrationsTest {
     companion object {
@@ -70,36 +63,14 @@ class PostRegistrationsTest {
     @BeforeTest
     fun beforeTest() {
         db.init(false)
-        for (t in be) {
-            insertTestData(t)
-        }
+        insertTestData()
     }
 
     @AfterTest
     fun afterTest() {
         transaction {
-            SchemaUtils.drop(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
-            SchemaUtils.create(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
+            SchemaUtils.drop(*tables)
+            SchemaUtils.create(*tables)
         }
     }
 
@@ -117,12 +88,11 @@ class PostRegistrationsTest {
                 for (u in users) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(hap1(t).slug, u)
-                            )
-                        )
+                        setBody(exReg(hap1(t).slug, u))
                     }
+
+                    u.degree shouldNotBe null
+
                     submitRegCall.status shouldBe HttpStatusCode.OK
                     val res: RegistrationResponseJson = submitRegCall.body()
 
@@ -144,7 +114,7 @@ class PostRegistrationsTest {
                 for (slug in listOf(hap1(t).slug, hap2(t).slug)) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(slug, user1)))
+                        setBody(exReg(slug, user1))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
@@ -167,7 +137,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1).copy(answers = emptyList())))
+                    setBody(exReg(hap1(t).slug, user1).copy(answers = emptyList()))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.OK
@@ -189,7 +159,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1)))
+                    setBody(exReg(hap1(t).slug, user1))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.OK
@@ -199,7 +169,7 @@ class PostRegistrationsTest {
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap1(t).slug, user1)))
+                    setBody(exReg(hap1(t).slug, user1))
                 }
 
                 submitRegAgainCall.status shouldBe HttpStatusCode.UnprocessableEntity
@@ -221,7 +191,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val fillUpRegsCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap8(t).slug, user1)))
+                    setBody(exReg(hap8(t).slug, user1))
                 }
 
                 fillUpRegsCall.status shouldBe HttpStatusCode.OK
@@ -231,11 +201,7 @@ class PostRegistrationsTest {
 
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        Json.encodeToString(
-                            exReg(hap8(t).slug, user2)
-                        )
-                    )
+                    setBody(exReg(hap8(t).slug, user2))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Accepted
@@ -245,11 +211,7 @@ class PostRegistrationsTest {
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        Json.encodeToString(
-                            exReg(hap8(t).slug, user2)
-                        )
-                    )
+                    setBody(exReg(hap8(t).slug, user2))
                 }
 
                 submitRegAgainCall.status shouldBe HttpStatusCode.UnprocessableEntity
@@ -271,7 +233,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap3(t).slug, user1)))
+                    setBody(exReg(hap3(t).slug, user1))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Forbidden
@@ -293,7 +255,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap10(t).slug, user1)))
+                    setBody(exReg(hap10(t).slug, user1))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Forbidden
@@ -316,7 +278,7 @@ class PostRegistrationsTest {
                 val submitRegCall =
                     client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg("ikke-eksisterende-happening-som-ikke-finnes-engang", user1)))
+                        setBody(exReg("ikke-eksisterende-happening-som-ikke-finnes-engang", user1))
                     }
 
                 submitRegCall.status shouldBe HttpStatusCode.Conflict
@@ -338,7 +300,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(Json.encodeToString(exReg(hap8(t).slug, user1)))
+                    setBody(exReg(hap8(t).slug, user1))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.OK
@@ -349,7 +311,7 @@ class PostRegistrationsTest {
                 for (u in listOf(user2, user3, user4, user5)) {
                     val submitRegWaitListCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(Json.encodeToString(exReg(hap1(t).slug, u)))
+                        setBody(exReg(hap8(t).slug, u))
                     }
 
                     submitRegWaitListCall.status shouldBe HttpStatusCode.Accepted
@@ -372,11 +334,7 @@ class PostRegistrationsTest {
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        Json.encodeToString(
-                            exReg(hap5(t).slug, user1)
-                        )
-                    )
+                    setBody(exReg(hap5(t).slug, user1))
                 }
 
                 submitRegCall.status shouldBe HttpStatusCode.Forbidden
@@ -386,11 +344,7 @@ class PostRegistrationsTest {
 
                 val submitRegCall2 = client.post("/registration") {
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        Json.encodeToString(
-                            exReg(hap4(t).slug, user6)
-                        )
-                    )
+                    setBody(exReg(hap4(t).slug, user6))
                 }
 
                 submitRegCall2.status shouldBe HttpStatusCode.Forbidden
@@ -413,11 +367,7 @@ class PostRegistrationsTest {
                 for (u in users) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(hap7(t).slug, u)
-                            )
-                        )
+                        setBody(exReg(hap7(t).slug, u))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
@@ -429,37 +379,33 @@ class PostRegistrationsTest {
         }
 }
 
-private fun insertTestData(t: HAPPENING_TYPE) {
+private fun insertTestData() {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }
 
-        User.batchInsert(users, ignore = true) {
+        User.batchInsert(users) {
             this[User.email] = it.email
             this[User.name] = it.name
             this[User.alternateEmail] = it.alternateEmail
-            this[User.degree] = it.degree.toString()
+            this[User.degree] = nullableDegreeToString(it.degree)
             this[User.degreeYear] = it.degreeYear
         }
 
         for (user in users) {
-            StudentGroupMembership.batchInsert(user.memberships, ignore = true) {
+            StudentGroupMembership.batchInsert(user.memberships) {
                 this[StudentGroupMembership.userEmail] = user.email
                 this[StudentGroupMembership.studentGroupName] = it
             }
         }
     }
-    insertOrUpdateHappening(hap1(t))
-    insertOrUpdateHappening(hap2(t))
-    insertOrUpdateHappening(hap3(t))
-    insertOrUpdateHappening(hap4(t))
-    insertOrUpdateHappening(hap5(t))
-    insertOrUpdateHappening(hap6(t))
-    insertOrUpdateHappening(hap7(t))
-    insertOrUpdateHappening(hap8(t))
-    insertOrUpdateHappening(hap9(t))
-    insertOrUpdateHappening(hap10(t))
+
+    for (t in be) {
+        for (hap in haps(t)) {
+            insertOrUpdateHappening(hap)
+        }
+    }
 }

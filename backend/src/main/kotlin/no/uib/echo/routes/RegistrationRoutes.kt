@@ -34,6 +34,7 @@ import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.User
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
@@ -51,7 +52,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
-import no.uib.echo.schema.nullableStringToDegree
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, disableJwtAuth: Boolean) {
     routing {

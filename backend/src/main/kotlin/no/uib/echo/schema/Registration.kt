@@ -16,7 +16,7 @@ import org.joda.time.DateTime
 data class FormRegistrationJson(
     val email: String,
     val slug: String,
-    val answers: List<AnswerJson> = emptyList()
+    val answers: List<AnswerJson>,
 )
 
 @Serializable
