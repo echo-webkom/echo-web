@@ -1,4 +1,4 @@
-name: Push images & deploy dev backend
+name: Push backend image & deploy dev backend
 on:
   push:
     branches: [master]
@@ -99,7 +99,7 @@ jobs:
         run: |
           cd terraform/dev
           terraform init
-          terraform apply -auto-approve
+          terraform apply -auto-approve -lock-timeout=15m
         env:
           TF_VAR_environment: development
 
@@ -108,7 +108,7 @@ jobs:
         run: |
           cd terraform/dev
           terraform init
-          terraform destroy -auto-approve -target=azurerm_container_group.echo_web_containers
-          terraform apply -auto-approve -target=azurerm_container_group.echo_web_containers
+          terraform destroy -auto-approve -target=azurerm_container_group.echo_web_containers -lock-timeout=15m
+          terraform apply -auto-approve -target=azurerm_container_group.echo_web_containers -lock-timeout=15m
         env:
           TF_VAR_environment: development
