@@ -140,30 +140,9 @@ jobs:
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
           cd backend
-          docker compose up --build &
+          docker compose up &
         env:
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
-
-      - name: Cache frontend dependencies
-        uses: actions/cache@v3
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install frontend dependencies
-        run: yarn --frozen-lockfile --ignore-scripts
-
-      - name: Start frontend
-        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        run: |
-          cd frontend
-          yarn build
-          yarn start &
-        env:
-          SANITY_DATASET: testing
-          NEXTAUTH_SECRET: very-secret-string-123
-          FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
-          FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
 
       - name: Run Cypress end-to-end tests
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
@@ -171,7 +150,15 @@ jobs:
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
+          build: yarn build
+          start: yarn start
           wait-on: 'http://localhost:3000, http://localhost:8080/status'
+          config: video=false
+        env:
+          SANITY_DATASET: testing
+          NEXTAUTH_SECRET: very-secret-string-123
+          FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
+          FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
 
       - name: Upload Cypress screenshots (only on failure)
         uses: actions/upload-artifact@v2
@@ -179,13 +166,6 @@ jobs:
         with:
           name: cypress-screenshots
           path: frontend/cypress/screenshots
-
-      - name: Upload Cypress video
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: cypress-videos
-          path: frontend/cypress/videos
 
   migration_tests:
     runs-on: ubuntu-latest
