@@ -14,10 +14,12 @@ import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
+import no.uib.echo.schema.validStudentGroups
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -26,6 +28,18 @@ import java.net.URI
 
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
+
+val tables: Array<Table> = arrayOf(
+    Happening,
+    Registration,
+    Answer,
+    SpotRange,
+    User,
+    Feedback,
+    StudentGroup,
+    StudentGroupMembership,
+    Reaction
+)
 
 class DatabaseHandler(
     private val dev: Boolean,
@@ -76,17 +90,7 @@ class DatabaseHandler(
                 transaction {
                     addLogger(StdOutSqlLogger)
 
-                    SchemaUtils.create(
-                        Happening,
-                        Registration,
-                        Answer,
-                        SpotRange,
-                        User,
-                        Feedback,
-                        StudentGroup,
-                        StudentGroupMembership,
-                        Reaction
-                    )
+                    SchemaUtils.create(*tables)
                 }
                 if (shouldInsertTestData) {
                     insertTestData()
@@ -98,7 +102,6 @@ class DatabaseHandler(
     }
 
     private fun insertTestData() {
-        val studentGroups = listOf("webkom", "bedkom", "tilde", "gnist", "hovedstyret")
         val happenings = listOf(
             HappeningJson(
                 "bedriftspresentasjon-med-bekk",
@@ -118,7 +121,7 @@ class DatabaseHandler(
                     )
                 ),
                 HAPPENING_TYPE.BEDPRES,
-                studentGroups[1]
+                validStudentGroups[1]
             ),
             HappeningJson(
                 "fest-med-tilde",
@@ -133,7 +136,7 @@ class DatabaseHandler(
                     )
                 ),
                 HAPPENING_TYPE.EVENT,
-                studentGroups[2]
+                validStudentGroups[2]
             )
         )
 
@@ -141,7 +144,7 @@ class DatabaseHandler(
             transaction {
                 addLogger(StdOutSqlLogger)
 
-                StudentGroup.batchInsert(studentGroups) {
+                StudentGroup.batchInsert(validStudentGroups) {
                     this[StudentGroup.name] = it
                 }
 

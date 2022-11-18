@@ -14,36 +14,21 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Reaction
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.insertOrUpdateHappening
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.net.URI
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
+import no.uib.echo.schema.nullableDegreeToString
 import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.tables
 import no.uib.echo.user1
+import no.uib.echo.user10
 import no.uib.echo.user2
 import no.uib.echo.user3
 import no.uib.echo.user4
@@ -53,6 +38,15 @@ import no.uib.echo.user7
 import no.uib.echo.user8
 import no.uib.echo.user9
 import no.uib.echo.users
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.net.URI
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class DeleteRegistrationsTest {
     companion object {
@@ -67,50 +61,20 @@ class DeleteRegistrationsTest {
     @BeforeTest
     fun beforeTest() {
         db.init(false)
-        for (t in be) {
-            insertTestData(t)
-        }
+        insertTestData()
     }
 
     @AfterTest
     fun afterTest() {
         transaction {
-            SchemaUtils.drop(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
-            SchemaUtils.create(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
+            SchemaUtils.drop(*tables)
+            SchemaUtils.create(*tables)
         }
     }
 
     @Test
     fun `Should delete registrations properly`() =
         testApplication {
-            DatabaseHandler(
-                dev = true,
-                testMigration = false,
-                dbUrl = URI(System.getenv("DATABASE_URL")),
-                mbMaxPoolSize = null
-            ).init(
-                shouldInsertTestData = false
-            )
             val client = createClient {
                 install(Logging)
                 install(ContentNegotiation) {
@@ -118,18 +82,14 @@ class DeleteRegistrationsTest {
                 }
             }
 
-            val users = listOf(user1, user2, user3, user4, user5)
-            val waitListUsers = listOf(user6, user7, user8, user9)
+            val usersSublist = listOf(user1, user2, user3, user4, user5)
+            val waitListUsers = listOf(user6, user7, user8, user9, user10)
 
             for (t in be) {
-                for (u in users) {
+                for (u in usersSublist) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(hap9(t).slug, u)
-                            )
-                        )
+                        setBody(exReg(hap9(t).slug, u))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
@@ -141,11 +101,7 @@ class DeleteRegistrationsTest {
                 for (u in waitListUsers) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(hap9(t).slug, u)
-                            )
-                        )
+                        setBody(exReg(hap9(t).slug, u))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.Accepted
@@ -154,26 +110,26 @@ class DeleteRegistrationsTest {
                     res.code shouldBe RegistrationResponse.WaitList
                 }
 
-                // Delete $waitListAmount registrations, such that all the registrations
+                // Delete registrations for u in userSublist, such that all the registrations
                 // previously on the wait list are now moved off the wait list.
-                for (u in waitListUsers) {
-                    val regEmail = u.email
+                for (u in usersSublist) {
+                    val regEmail = u.email.lowercase()
                     val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail")
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
-                    deleteRegCall.bodyAsText() shouldContain "Registration with email = ${regEmail.lowercase()} and slug = ${
+                    deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
                     hap9(t).slug
                     } deleted, " + "and registration with email ="
                 }
 
                 // Delete the registrations that were moved off the wait list in the previous for-loop.
                 for (u in waitListUsers) {
-                    val waitListRegEmail = u.email
+                    val waitListRegEmail = u.email.lowercase()
                     val deleteWaitListRegCall =
                         client.delete("/registration/${hap9(t).slug}/$waitListRegEmail")
 
                     deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
-                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${
+                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = $waitListRegEmail and slug = ${
                     hap9(
                         t
                     ).slug
@@ -183,28 +139,31 @@ class DeleteRegistrationsTest {
         }
 }
 
-private fun insertTestData(t: HAPPENING_TYPE) {
+private fun insertTestData() {
     transaction {
         addLogger(StdOutSqlLogger)
 
-        StudentGroup.batchInsert(validStudentGroups, ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }
 
-        User.batchInsert(users, ignore = true) {
+        User.batchInsert(users) {
             this[User.email] = it.email
             this[User.name] = it.name
             this[User.alternateEmail] = it.alternateEmail
-            this[User.degree] = it.degree.toString()
+            this[User.degree] = nullableDegreeToString(it.degree)
             this[User.degreeYear] = it.degreeYear
         }
 
         for (user in users) {
-            StudentGroupMembership.batchInsert(user.memberships, ignore = true) {
+            StudentGroupMembership.batchInsert(user.memberships) {
                 this[StudentGroupMembership.userEmail] = user.email
                 this[StudentGroupMembership.studentGroupName] = it
             }
         }
     }
-    insertOrUpdateHappening(hap9(t))
+
+    for (t in be) {
+        insertOrUpdateHappening(hap9(t))
+    }
 }
