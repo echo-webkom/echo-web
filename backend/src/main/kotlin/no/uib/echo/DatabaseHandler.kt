@@ -25,8 +25,6 @@ import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.net.URI
-import no.uib.echo.schema.UserJson
-import no.uib.echo.schema.nullableDegreeToString
 
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
