@@ -125,7 +125,8 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
                 }.firstOrNull()
 
                 RegistrationJson(
-                    user?.get(User.alternateEmail) ?: reg[Registration.userEmail],
+                    reg[Registration.userEmail],
+                    user?.get(User.alternateEmail),
                     user?.get(User.name) ?: "<ingen navn>",
                     Degree.valueOf(reg[Registration.degree]),
                     reg[Registration.degreeYear],

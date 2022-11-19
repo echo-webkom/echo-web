@@ -67,7 +67,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                     .filter(
                         (reg) =>
                             reg.name.toLowerCase().includes(search.toLowerCase()) ||
-                            reg.email.toLowerCase().includes(search.toLowerCase()),
+                            (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
                     ),
             );
         }

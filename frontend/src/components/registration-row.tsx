@@ -61,7 +61,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
-                description: `Slettet påmeding med email '${registration.email}'.`,
+                description: `Slettet påmeding med email '${registration.alternateEmail ?? registration.email}'.`,
                 isClosable: true,
             });
         } else {
@@ -82,7 +82,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 data-cy={`reg-row-${registration.email}`}
                 key={JSON.stringify(registration)}
             >
-                <Td fontSize="md">{registration.email}</Td>
+                <Td fontSize="md">{registration.alternateEmail ?? registration.email}</Td>
                 <Td fontSize="md">{registration.name}</Td>
                 <Td fontSize="md">{registration.degree}</Td>
                 <Td fontSize="md">{registration.degreeYear}</Td>
@@ -125,7 +125,9 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                             size="md"
                             pb="0.5rem"
                             lineHeight="1.5"
-                        >{`Er du sikker på at du vil slette påmeldingen med email '${registration.email}'?`}</Heading>
+                        >{`Er du sikker på at du vil slette påmeldingen med email '${
+                            registration.alternateEmail ?? registration.email
+                        }'?`}</Heading>
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>

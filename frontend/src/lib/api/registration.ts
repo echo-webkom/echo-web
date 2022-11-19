@@ -22,6 +22,7 @@ type Answer = decodeType<typeof answerDecoder>;
 
 const registrationDecoder = record({
     email: string,
+    alternateEmail: union(string, nil),
     name: string,
     degree: degreeDecoder,
     degreeYear: number,
@@ -130,7 +131,7 @@ const RegistrationAPI = {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
 
-            return { response: data, error: null };
+            return { response: string(data), error: null };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { response: null, error: JSON.stringify(error) };
