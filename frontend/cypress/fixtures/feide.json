@@ -1,5 +1,22 @@
 {
-    "alternateEmail": "halla@bruh.com",
-    "degree": "Datateknologi",
-    "degreeYear": 3
+    "feide": [
+        {
+            "username": "frank_foreleser",
+            "password": "098asd",
+            "name": "Frank Foreleser Føllesen",
+            "email": "noreply@feide.no",
+            "alternateEmail": "frank_alt@feide.no",
+            "degree": "Datateknologi",
+            "degreeYear": "3. trinn"
+        },
+        {
+            "username": "eva_student",
+            "password": "098asd",
+            "name": "Eva Student Åsen",
+            "email": "eva_student@feide.no",
+            "alternateEmail": "eva_alt@feide.com",
+            "degree": "Master i informatikk",
+            "degreeYear": "4. trinn"
+        }
+    ]
 }

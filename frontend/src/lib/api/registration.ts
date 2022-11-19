@@ -62,10 +62,13 @@ interface FormRegistration {
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const RegistrationAPI = {
-    submitRegistration: async (registration: FormRegistration): Promise<{ response: Response; statusCode: number }> => {
+    submitRegistration: async (
+        registration: FormRegistration,
+        idToken: string,
+    ): Promise<{ response: Response; statusCode: number }> => {
         try {
             const { data, status } = await axios.post(`${BACKEND_URL}/registration`, registration, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
                 },

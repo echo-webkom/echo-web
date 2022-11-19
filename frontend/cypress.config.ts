@@ -5,10 +5,19 @@ export default defineConfig({
 
     e2e: {
         baseUrl: 'http://localhost:3000',
-        supportFile: false,
-        specPattern: '**/*.spec.ts',
-        excludeSpecPattern: '**/{feide-signin.spec.ts,registration-deletion.spec.ts}',
+        specPattern: [
+            '**/entry-box.spec.ts',
+            '**/nav.spec.ts',
+            '**/feide-sign-in.spec.ts',
+            '**/happening-registration.spec.ts',
+        ],
         experimentalSessionAndOrigin: true,
+        experimentalModifyObstructiveThirdPartyCode: false,
+        watchForFileChanges: false,
+    },
+
+    retries: {
+        runMode: 2,
     },
 
     component: {
