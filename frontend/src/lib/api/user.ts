@@ -98,16 +98,17 @@ const UserAPI = {
                         Authorization: `Bearer ${idToken}`,
                         'Content-Type': 'application/json',
                     },
+                    validateStatus: (statusCode: number) => statusCode < 500,
                 },
             );
 
-            return { status, response: JSON.stringify(data) };
+            return { status, response: string(data) };
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
                 status: 500,
-                message: 'Det har skjedd en feil. Du kan prøve å logge inn og ut, og sende inn skjemaet på nytt.',
+                message: 'Du kan prøve å logge inn og ut, og sende inn skjemaet på nytt.',
             };
         }
     },
