@@ -22,6 +22,7 @@ data class FormRegistrationJson(
 @Serializable
 data class RegistrationJson(
     val email: String,
+    val alternateEmail: String? = null,
     val name: String,
     val degree: Degree,
     val degreeYear: Int,
@@ -79,7 +80,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
     return "email,name,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading" +
         regs.joinToString("") { reg ->
             "\n" +
-                reg.email.lowercase() + "," +
+                (reg.alternateEmail?.lowercase() ?: reg.email.lowercase()) + "," +
                 reg.name + "," +
                 reg.degree.toString() + "," +
                 reg.degreeYear.toString() + "," +
