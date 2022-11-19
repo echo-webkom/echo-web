@@ -51,7 +51,6 @@ data class SendGridEmail(val email: String, val name: String? = null)
 enum class Template {
     CONFIRM_REG,
     CONFIRM_WAIT,
-    REGS_LINK
 }
 
 private const val SENDGRID_ENDPOINT = "https://api.sendgrid.com/v3/mail/send"
@@ -127,7 +126,6 @@ suspend fun sendEmail(
     val templateId = when (template) {
         Template.CONFIRM_REG -> "d-1fff3960b2184def9cf8bac082aeac21"
         Template.CONFIRM_WAIT -> "d-1965cd803e6940c1a6724e3c53b70275"
-        Template.REGS_LINK -> "d-50e33549c29e46b7a6c871e97324ac5f"
     }
 
     val response: HttpResponse = HttpClient {
