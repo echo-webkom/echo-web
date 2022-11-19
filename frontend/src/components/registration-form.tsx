@@ -15,6 +15,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { useContext } from 'react';
+import { useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { Happening, HappeningType, Question } from '@api/happening';
@@ -86,26 +87,41 @@ const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
 
     const toast = useToast();
 
+    const { data: session } = useSession();
+
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        await RegistrationAPI.submitRegistration({
-            email: data.email,
-            slug: happening.slug,
-            answers: happening.additionalQuestions.map((q: Question, index: number) => {
-                return { question: q.questionText, answer: data.answers[index] };
-            }),
-            type: type,
-        }).then(({ response, statusCode }) => {
-            if (statusCode === 200 || statusCode === 202) {
-                onClose();
-            }
-            toast.closeAll();
+        if (!session?.idToken) {
             toast({
-                title: response.title,
-                description: response.desc,
-                status: codeToStatus(statusCode),
-                duration: 8000,
-                isClosable: true,
+                title: 'Du er ikke logget inn.',
+                description: 'Logg inn for å melde deg på.',
+                status: 'warning',
             });
+            return;
+        }
+
+        const { response, statusCode } = await RegistrationAPI.submitRegistration(
+            {
+                email: data.email,
+                slug: happening.slug,
+                answers: happening.additionalQuestions.map((q: Question, index: number) => {
+                    return { question: q.questionText, answer: data.answers[index] };
+                }),
+                type: type,
+            },
+            session.idToken,
+        );
+
+        if (statusCode === 200 || statusCode === 202) {
+            onClose();
+        }
+
+        toast.closeAll();
+        toast({
+            title: response.title,
+            description: response.desc,
+            status: codeToStatus(statusCode),
+            duration: 8000,
+            isClosable: true,
         });
     };
 

@@ -144,8 +144,8 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                             <Heading size="2xl">Min profil</Heading>
                         </Center>
                         <Divider my="1rem" />
-                        <IconText icon={CgProfile} text={user.name} />
-                        <IconText icon={MdOutlineEmail} text={user.email} />
+                        <IconText data-cy="profile-name" icon={CgProfile} text={user.name} />
+                        <IconText data-cy="profile-email" icon={MdOutlineEmail} text={user.email} />
                         {user.memberships.length > 0 && (
                             <IconText
                                 icon={GrGroup}

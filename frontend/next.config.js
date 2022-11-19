@@ -14,9 +14,6 @@ module.exports = withPWA({
     images: {
         domains: ['cdn.sanity.io'],
     },
-    experimental: {
-        esmExternals: false,
-    },
     async redirects() {
         return [
             { source: '/events', destination: '/event', permanent: true },

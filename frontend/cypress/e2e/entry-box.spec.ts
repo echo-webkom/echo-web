@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 describe('Entry Box', () => {
     describe('720p res', () => {
         beforeEach(() => {

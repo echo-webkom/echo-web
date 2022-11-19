@@ -176,7 +176,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
                 email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
                 if (email == null) {
-                    call.respond(HttpStatusCode.Unauthorized)
+                    call.respond(HttpStatusCode.Unauthorized, resToJson(RegistrationResponse.NotSignedIn))
                     return@post
                 }
             }

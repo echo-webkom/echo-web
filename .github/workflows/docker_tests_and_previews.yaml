@@ -122,19 +122,13 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
-      - name: Pull Docker image, depending on what has changed
-        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        run: |
-          { if [[ "$BACKEND_CHANGED" = "true" ]]; then
-              echo "Backend changed."
-              docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
-            else
-              echo "Backend didn't change."
-              docker pull "$IMAGE_NAME/backend:latest"
-            fi
-          }
-        env:
-          BACKEND_CHANGED: ${{ steps.changed-files-backend.outputs.any_changed }}
+      - name: Backend changed, pull Docker image
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
+        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+
+      - name: Backend didn't change, pull Docker image
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed != 'true'
+        run: docker pull "$IMAGE_NAME/backend:latest"
 
       - name: Start backend
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
@@ -154,6 +148,7 @@ jobs:
           start: yarn start
           wait-on: 'http://localhost:3000, http://localhost:8080/status'
           config: video=false
+          browser: firefox
         env:
           SANITY_DATASET: testing
           NEXTAUTH_SECRET: very-secret-string-123
