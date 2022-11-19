@@ -36,7 +36,7 @@ import Section from '@components/section';
 import LanguageContext from 'language-context';
 
 interface ProfileState {
-    infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error';
+    infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error' | 'warning';
     infoProgress: 'none' | 'degree' | 'degreeYear' | 'all';
     errorMessage: string | null;
 }
@@ -88,11 +88,11 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const { data } = useSession();
 
     useEffect(() => {
-        if (profileState.infoState === 'error') {
+        if (profileState.infoState === 'error' || profileState.infoState === 'warning') {
             toast({
                 title: isNorwegian ? 'Det har skjedd en feil.' : 'An error has occurred.',
                 description: profileState.errorMessage,
-                status: 'error',
+                status: profileState.infoState,
                 duration: 8000,
                 isClosable: true,
             });
@@ -131,7 +131,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
         if (res.status === 200) {
             setProfileState({ infoState: 'saved', infoProgress: userToInfoProgress(newUser), errorMessage: null });
         } else {
-            setProfileState({ ...profileState, infoState: 'error', errorMessage: res.response });
+            setProfileState({ ...profileState, infoState: 'warning', errorMessage: res.response });
         }
     };
 
