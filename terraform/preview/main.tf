@@ -123,6 +123,14 @@ resource "azurerm_container_group" "echo_web_preview" {
       protocol = "TCP"
     }
 
+    volume {
+      name                 = "caddy-data"
+      mount_path           = "/data"
+      storage_account_name = azurerm_storage_account.caddy_preview_storage.name
+      storage_account_key  = azurerm_storage_account.caddy_preview_storage.primary_access_key
+      share_name           = azurerm_storage_share.caddy_preview_share.name
+    }
+
     commands = ["caddy", "reverse-proxy", "--from", "${local.short_rg_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
   }
 
