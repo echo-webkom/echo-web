@@ -4,7 +4,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { BsQuestion } from 'react-icons/bs';
 import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
-import { GrGroup } from 'react-icons/gr';
+import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
 import { AiFillCheckCircle } from 'react-icons/ai';
 import {
@@ -23,6 +23,7 @@ import {
     InputGroup,
     InputRightAddon,
     Button,
+    useColorModeValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import capitalize from '@utils/capitalize';
@@ -87,6 +88,8 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
 
     const { data } = useSession();
 
+    const iconColor = useColorModeValue('black', 'white');
+
     useEffect(() => {
         if (profileState.infoState === 'error' || profileState.infoState === 'warning') {
             toast({
@@ -104,7 +107,9 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
             setProfileState({
                 ...profileState,
                 infoState: 'error',
-                errorMessage: 'Du er ikke logget inn. Prøv på nytt.',
+                errorMessage: isNorwegian
+                    ? 'Du er ikke logget inn. Prøv på nytt.'
+                    : 'You are not logged in. Try again.',
             });
             return;
         }
@@ -137,18 +142,24 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
 
     return (
         <Center>
-            <SimpleGrid columns={2} gap={4} w="60%">
+            <SimpleGrid columns={2} gap={4} w={['95%', '90%', '80%', '60%']}>
                 <GridItem colSpan={2}>
                     <Section>
                         <Center mb="1rem">
-                            <Heading size="2xl">Min profil</Heading>
+                            <Heading size={['xl', null, '2xl']}>{isNorwegian ? 'Min profil' : 'My profile'}</Heading>
                         </Center>
                         <Divider my="1rem" />
-                        <IconText data-cy="profile-name" icon={CgProfile} text={user.name} />
-                        <IconText data-cy="profile-email" icon={MdOutlineEmail} text={user.email} />
+                        <IconText iconColor={iconColor} data-cy="profile-name" icon={CgProfile} text={user.name} />
+                        <IconText
+                            iconColor={iconColor}
+                            data-cy="profile-email"
+                            icon={MdOutlineEmail}
+                            text={user.email}
+                        />
                         {user.memberships.length > 0 && (
                             <IconText
-                                icon={GrGroup}
+                                iconColor={iconColor}
+                                icon={BiGroup}
                                 text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                             />
                         )}
@@ -159,8 +170,12 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                         <Tooltip
                             label={
                                 done
-                                    ? 'Du har fylt ut all informasjonen du trenger for å melde deg på arrangementer!'
-                                    : 'Du må fylle ut all informasjonen under før du kan melde deg på arrangementer'
+                                    ? isNorwegian
+                                        ? 'Du har fylt ut all informasjonen du trenger for å melde deg på arrangementer!'
+                                        : 'You have filled out all the information you need to sign up for events!'
+                                    : isNorwegian
+                                    ? 'Du må fylle ut all informasjonen under før du kan melde deg på arrangementer.'
+                                    : 'You must fill out all the information below before you can sign up for events.'
                             }
                         >
                             <SimpleGrid columns={15} mb="1rem">
@@ -185,7 +200,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                                             transform: done ? 'scale(1.5)' : 'scale(1)',
                                         }}
                                         as={AiFillCheckCircle}
-                                        color="green.500"
+                                        color={useColorModeValue('green.500', 'green.200')}
                                         w={8}
                                         h={8}
                                         visibility={done ? 'visible' : 'hidden'}
@@ -213,7 +228,13 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                                             {...register('alternateEmail')}
                                         />
                                         <InputRightAddon>
-                                            <Tooltip label="Denne vil bli brukt i stedet for studentmailen din når du melder deg på et arrangement">
+                                            <Tooltip
+                                                label={
+                                                    isNorwegian
+                                                        ? 'Denne vil bli brukt i stedet for studentmailen din når du melder deg på et arrangement'
+                                                        : 'Your alternate email will be used instead of your student email when you sign up for an event.'
+                                                }
+                                            >
                                                 <span>
                                                     <Icon as={BsQuestion} p="0.1rem" w={8} h={8} />
                                                 </span>
