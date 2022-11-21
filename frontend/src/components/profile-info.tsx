@@ -24,6 +24,8 @@ import {
     InputRightAddon,
     Button,
     useColorModeValue,
+    Alert,
+    AlertIcon,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import capitalize from '@utils/capitalize';
@@ -167,47 +169,12 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                 </GridItem>
                 <GridItem colSpan={2}>
                     <Section>
-                        <Tooltip
-                            label={
-                                done
-                                    ? isNorwegian
-                                        ? 'Du har fylt ut all informasjonen du trenger for å melde deg på arrangementer!'
-                                        : 'You have filled out all the information you need to sign up for events!'
-                                    : isNorwegian
-                                    ? 'Du må fylle ut all informasjonen under før du kan melde deg på arrangementer.'
-                                    : 'You must fill out all the information below before you can sign up for events.'
-                            }
-                        >
-                            <SimpleGrid columns={15} mb="1rem">
-                                <GridItem colSpan={14} mt="0.6rem">
-                                    <Progress
-                                        value={infoProgressNumber(profileState.infoProgress)}
-                                        transition="0.6s ease"
-                                        sx={{
-                                            '& > div:first-child': {
-                                                transitionProperty: 'width',
-                                            },
-                                        }}
-                                        colorScheme="green"
-                                        hasStripe={!done}
-                                        isAnimated={!done}
-                                    />
-                                </GridItem>
-                                <GridItem mx="-0.2rem" colSpan={1}>
-                                    <Icon
-                                        sx={{
-                                            transition: '0.3s ease-out',
-                                            transform: done ? 'scale(1.5)' : 'scale(1)',
-                                        }}
-                                        as={AiFillCheckCircle}
-                                        color={useColorModeValue('green.500', 'green.200')}
-                                        w={8}
-                                        h={8}
-                                        visibility={done ? 'visible' : 'hidden'}
-                                    />
-                                </GridItem>
-                            </SimpleGrid>
-                        </Tooltip>
+                        {profileState.infoProgress !== 'all' && (
+                            <Alert status="warning" borderRadius="0.5rem" mb="6">
+                                <AlertIcon />
+                                Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
+                            </Alert>
+                        )}
                         <FormProvider {...methods}>
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                             <form data-cy="profile-form" id="profile-form" onSubmit={handleSubmit(submitForm)}>
