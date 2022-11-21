@@ -13,11 +13,17 @@ import {
     useDisclosure,
     useToast,
     VStack,
+    Spinner,
+    Alert,
+    AlertIcon,
+    Center,
 } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
+import { MdOutlineArrowForward } from 'react-icons/md';
+import NextLink from 'next/link';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
 import { userIsComplete } from '@api/user';
@@ -77,9 +83,10 @@ interface Props {
     happening: Happening;
     type: HappeningType;
     user: User | null;
+    loadingUser: boolean;
 }
 
-const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
     const methods = useForm<RegFormValues>();
@@ -87,7 +94,7 @@ const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
 
     const toast = useToast();
 
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!session?.idToken) {
@@ -125,6 +132,22 @@ const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
         });
     };
 
+    if (status === 'loading' || loadingUser)
+        return (
+            <Box data-testid="registration-form">
+                <Center>
+                    <Spinner />
+                </Center>
+            </Box>
+        );
+
+    if (status === 'unauthenticated')
+        return (
+            <Box data-testid="registration-form">
+                <Text textAlign="center">Logg inn for å melde deg på</Text>
+            </Box>
+        );
+
     return (
         <Box data-testid="registration-form">
             {userIsComplete(user) && (
@@ -138,14 +161,20 @@ const RegistrationForm = ({ happening, type, user }: Props): JSX.Element => {
                             : onOpen()
                     }
                 >
-                    {isNorwegian ? 'Påmelding' : 'Register'}
+                    {isNorwegian ? 'Klikk her for å melde deg på' : 'Click here to register'}
                 </Button>
             )}
             {!userIsComplete(user) && (
                 <>
-                    <Text fontWeight="bold" textAlign="center" color="red">
-                        Du være innlogget og ha fyllt inn info på profilsiden for å kunne melde deg på
-                    </Text>
+                    <Alert status="warning" borderRadius="0.5rem" mb="5">
+                        <AlertIcon />
+                        Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
+                    </Alert>
+                    <NextLink href="/profile" passHref>
+                        <Button w="100%" rightIcon={<MdOutlineArrowForward />} colorScheme="teal" variant="outline">
+                            Min profil
+                        </Button>
+                    </NextLink>
                 </>
             )}
 
