@@ -33,7 +33,7 @@ fun Application.configureAuthentication(adminKey: String) {
         jwt("auth-jwt") {
             realm = "Verify jwt"
             verifier(jwkProvider, issuer) {
-                acceptLeeway(3)
+                acceptLeeway(10)
                 withIssuer("https://auth.dataporten.no")
             }
             validate { jwtCredential ->
