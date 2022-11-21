@@ -44,8 +44,8 @@
         "react-dom": "18.2.0",
         "react-icons": "4.6.0",
         "sanity-plugin-color-picker": "1.0.3",
-        "sanity-plugin-markdown": "2.1.1",
-        "sanity-plugin-media": "1.4.13",
+        "sanity-plugin-markdown": "3.0.0",
+        "sanity-plugin-media": "2.0.0",
         "slugify": "1.6.5",
         "styled-components": "5.3.6"
     },
