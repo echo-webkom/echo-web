@@ -1,15 +1,13 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 import { useState, useContext, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
-import { BsQuestion } from 'react-icons/bs';
 import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
 import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
 import {
-    Icon,
-    SimpleGrid,
-    GridItem,
     useToast,
     Center,
     Tooltip,
@@ -24,78 +22,87 @@ import {
     useColorModeValue,
     Alert,
     AlertIcon,
+    SimpleGrid,
+    GridItem,
+    Icon,
+    Spinner,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { BsQuestion } from 'react-icons/bs';
+import ErrorBox from './error-box';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
-import { UserAPI } from '@api/user';
+import { UserAPI, userIsComplete } from '@api/user';
 import { isErrorMessage } from '@utils/error';
+import type { ErrorMessage } from '@utils/error';
 import FormDegree from '@components/form-degree';
 import FormDegreeYear from '@components/form-degree-year';
 import IconText from '@components/icon-text';
 import Section from '@components/section';
 import LanguageContext from 'language-context';
 
-interface ProfileState {
-    infoState: 'idle' | 'edited' | 'saving' | 'saved' | 'error' | 'warning';
-    infoProgress: 'none' | 'degree' | 'degreeYear' | 'all';
-    errorMessage: string | null;
-}
+const ProfileInfo = (): JSX.Element => {
+    const [user, setUser] = useState<User | null>();
+    const [error, setError] = useState<ErrorMessage>();
+    const [loading, setLoading] = useState<boolean>(true);
 
-const userToInfoProgress = (user: User): ProfileState['infoProgress'] => {
-    if (user.degree && user.degreeYear) return 'all';
-    if (user.degree) return 'degree';
-    if (user.degreeYear) return 'degreeYear';
+    const [saved, setSaved] = useState<boolean>(false);
+    const [satisfied, setSatisfied] = useState<boolean>(false);
 
-    return 'none';
-};
-
-const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const isNorwegian = useContext(LanguageContext);
     const methods = useForm<ProfileFormValues>({
         defaultValues: {
-            degree: user.degree ?? null,
-            degreeYear: user.degreeYear ?? null,
-            alternateEmail: user.alternateEmail ?? null,
+            degree: user?.degree ?? null,
+            degreeYear: user?.degreeYear ?? null,
+            alternateEmail: user?.alternateEmail ?? null,
         },
     });
-    const { handleSubmit, register } = methods;
-    const [profileState, setProfileState] = useState<ProfileState>({
-        infoState: 'idle',
-        infoProgress: userToInfoProgress(user),
-        errorMessage: null,
-    });
-
+    const { handleSubmit, register, setValue } = methods;
     const toast = useToast();
-
-    const { data } = useSession();
-
     const iconColor = useColorModeValue('black', 'white');
 
+    const { data, status } = useSession();
+
     useEffect(() => {
-        if (profileState.infoState === 'error' || profileState.infoState === 'warning') {
+        const fetchUser = async () => {
+            if (!data?.idToken || !data.user?.email || !data.user.name) return;
+
+            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
+
+            if (!isErrorMessage(result)) {
+                setUser(result);
+            } else {
+                setError(result);
+            }
+        };
+
+        void fetchUser();
+    }, [data]);
+
+    useEffect(() => {
+        if (user) {
+            setValue('degree', user.degree);
+            setValue('degreeYear', user.degreeYear);
+            setValue('alternateEmail', user.alternateEmail);
+
+            setSatisfied(userIsComplete(user));
+            setLoading(false);
+        }
+    }, [user, setValue]);
+
+    const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
+        if (!user || status !== 'authenticated') {
             toast({
-                title: isNorwegian ? 'Det har skjedd en feil.' : 'An error has occurred.',
-                description: profileState.errorMessage,
-                status: profileState.infoState,
+                title: isNorwegian ? 'Du er ikke logget inn' : 'You are not signed in',
+                description: isNorwegian ? 'Vennligst prøv på nytt' : 'Please try again',
+                status: 'error',
                 duration: 8000,
                 isClosable: true,
             });
-        }
-    }, [profileState, toast, isNorwegian]);
-
-    const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
-        if (!data?.idToken) {
-            setProfileState({
-                ...profileState,
-                infoState: 'error',
-                errorMessage: isNorwegian
-                    ? 'Du er ikke logget inn. Prøv på nytt.'
-                    : 'You are not logged in. Try again.',
-            });
             return;
         }
-        setProfileState({ ...profileState, infoState: 'saving', errorMessage: null });
+
+        setLoading(true);
 
         const newUser: User = {
             email: user.email,
@@ -104,23 +111,39 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
             // @ts-expect-error
             degree: profileFormVals.degree !== '' ? profileFormVals.degree : null,
             // @ts-expect-error
-            degreeYear: profileFormVals.degreeYear !== '' ? profileFormVals.degreeYear : null,
+            degreeYear: profileFormVals.degreeYear !== '' ? Number.parseInt(profileFormVals.degreeYear) : null,
             memberships: [],
         };
 
         const res = await UserAPI.putUser(newUser, data.idToken);
 
         if (isErrorMessage(res)) {
-            setProfileState({ ...profileState, infoState: 'error', errorMessage: res.message });
+            toast({
+                title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
+                description: res.message,
+                status: 'error',
+                duration: 8000,
+                isClosable: true,
+            });
+            setLoading(false);
             return;
         }
 
-        if (res.status === 200) {
-            setProfileState({ infoState: 'saved', infoProgress: userToInfoProgress(newUser), errorMessage: null });
-        } else {
-            setProfileState({ ...profileState, infoState: 'warning', errorMessage: res.response });
-        }
+        setUser(res);
+        setSaved(true);
+        setLoading(false);
     };
+
+    if (loading && !user)
+        return (
+            <Center>
+                <Spinner />
+            </Center>
+        );
+
+    if (error) return <ErrorBox error={`${error.message}`} />;
+
+    if (!user) return <ErrorBox error="Det har skjedd en feil." />;
 
     return (
         <Center>
@@ -149,7 +172,7 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                 </GridItem>
                 <GridItem colSpan={2}>
                     <Section>
-                        {profileState.infoProgress !== 'all' && (
+                        {!satisfied && !loading && (
                             <Alert status="warning" borderRadius="0.5rem" mb="6">
                                 <AlertIcon />
                                 Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
@@ -157,20 +180,18 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                         )}
                         <FormProvider {...methods}>
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                            <form data-cy="profile-form" id="profile-form" onSubmit={handleSubmit(submitForm)}>
+                            <form
+                                data-cy="profile-form"
+                                id="profile-form"
+                                onSubmit={handleSubmit(submitForm)}
+                                onChange={() => setSaved(false)}
+                            >
                                 <FormControl>
                                     <InputGroup>
                                         <Input
                                             data-cy="profile-alt-email"
                                             type="email"
                                             placeholder={isNorwegian ? 'Alternativ e-post' : 'Alternate email'}
-                                            onInput={() =>
-                                                setProfileState({
-                                                    ...profileState,
-                                                    infoState: 'edited',
-                                                    errorMessage: null,
-                                                })
-                                            }
                                             mb="1rem"
                                             {...register('alternateEmail')}
                                         />
@@ -189,34 +210,18 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                                         </InputRightAddon>
                                     </InputGroup>
                                 </FormControl>
-                                <FormDegree
-                                    data-cy="profile-degree"
-                                    hideLabel
-                                    onInput={() =>
-                                        setProfileState({ ...profileState, infoState: 'edited', errorMessage: null })
-                                    }
-                                    py="1rem"
-                                />
-                                <FormDegreeYear
-                                    data-cy="profile-degree-year"
-                                    hideLabel
-                                    onInput={() =>
-                                        setProfileState({ ...profileState, infoState: 'edited', errorMessage: null })
-                                    }
-                                    py="1rem"
-                                />
+                                <FormDegree data-cy="profile-degree" hideLabel py="1rem" />
+                                <FormDegreeYear data-cy="profile-degree-year" hideLabel py="1rem" />
                                 <HStack mt={4} gap={4}>
                                     <Button
-                                        disabled={
-                                            profileState.infoState !== 'edited' && profileState.infoState !== 'error'
-                                        }
-                                        isLoading={profileState.infoState === 'saving'}
+                                        isLoading={loading}
+                                        disabled={saved}
                                         type="submit"
                                         form="profile-form"
                                         colorScheme="teal"
                                         width="50%"
                                     >
-                                        {profileState.infoState === 'saved'
+                                        {saved
                                             ? isNorwegian
                                                 ? 'Endringer lagret!'
                                                 : 'Changes saved!'

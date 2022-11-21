@@ -88,9 +88,9 @@ const UserAPI = {
         }
     },
 
-    putUser: async (user: User, idToken: string): Promise<{ status: number; response: string } | ErrorMessage> => {
+    putUser: async (user: User, idToken: string): Promise<User | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put(
+            const { status, data } = await axios.put(
                 `${BACKEND_URL}/user`,
                 { ...user, memberships: [] },
                 {
@@ -102,13 +102,18 @@ const UserAPI = {
                 },
             );
 
-            return { status, response: string(data) };
+            if (status === 200) {
+                return userDecoder(data);
+            }
+
+            return {
+                message: string(data),
+            };
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
-                status: 500,
-                message: 'Du kan prøve å logge inn og ut, og sende inn skjemaet på nytt.',
+                message: error as string,
             };
         }
     },

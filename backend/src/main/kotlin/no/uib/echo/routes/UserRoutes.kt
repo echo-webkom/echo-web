@@ -189,7 +189,7 @@ fun Route.putUser() {
             }
 
             if (result == null) {
-                transaction {
+                val newUser = transaction {
                     addLogger(StdOutSqlLogger)
                     User.insert {
                         it[User.email] = email
@@ -198,12 +198,25 @@ fun Route.putUser() {
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
                     }
+
+                    User.select {
+                        User.email eq email
+                    }.first()
                 }
-                call.respond(HttpStatusCode.OK, "User created with email = $email")
-                return@put
+                call.respond(
+                    HttpStatusCode.OK,
+                    UserJson(
+                        newUser[User.email],
+                        newUser[User.name],
+                        newUser[User.alternateEmail],
+                        newUser[User.degreeYear],
+                        nullableStringToDegree(newUser[User.degree]),
+                        emptyList()
+                    )
+                )
             }
 
-            transaction {
+            val updatedUser = transaction {
                 addLogger(StdOutSqlLogger)
                 User.update({
                     User.email eq email
@@ -213,10 +226,24 @@ fun Route.putUser() {
                     it[degree] = user.degree.toString()
                     it[degreeYear] = user.degreeYear
                 }
+
+                User.select {
+                    User.email eq email
+                }.first()
             }
+
+            val memberships = getUserStudentGroups(email)
+
             call.respond(
                 HttpStatusCode.OK,
-                "User updated with email = $email, name = ${user.name}, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                UserJson(
+                    updatedUser[User.email],
+                    updatedUser[User.name],
+                    updatedUser[User.alternateEmail],
+                    updatedUser[User.degreeYear],
+                    nullableStringToDegree(updatedUser[User.degree]),
+                    memberships
+                )
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)

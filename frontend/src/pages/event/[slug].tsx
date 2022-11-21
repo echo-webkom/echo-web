@@ -46,6 +46,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
             ? null
             : differenceInMilliseconds(regDate, date);
     const [user, setUser] = useState<User | null>(null);
+    const [loadingUser, setLoadingUser] = useState<boolean>(false);
     const isNorwegian = useContext(LanguageContext);
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
@@ -57,12 +58,14 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
     useEffect(() => {
         const fetchUser = async () => {
             if (!data?.user?.email || !data.user.name || !data.idToken) return;
+            setLoadingUser(true);
 
             const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUser(result);
             }
+            setLoadingUser(false);
         };
         void fetchUser();
     }, [data]);
@@ -155,6 +158,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                                         happening={happening}
                                                         type={happening.happeningType}
                                                         user={user}
+                                                        loadingUser={loadingUser}
                                                     />
                                                     {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
                                                         locale: isNorwegian ? nb : enUS,
@@ -165,7 +169,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                                         <Center>
                                                             <Text fontSize="md">
                                                                 {isNorwegian ? 'Stenger' : 'Closes'}{' '}
-                                                                {format(regDeadline, 'dd. MMM, HH:mm', {
+                                                                {format(regDeadline, 'dd. MMM HH:mm', {
                                                                     locale: isNorwegian ? nb : enUS,
                                                                 })}
                                                             </Text>
