@@ -6,14 +6,12 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
 import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
-import { AiFillCheckCircle } from 'react-icons/ai';
 import {
     Icon,
     SimpleGrid,
     GridItem,
     useToast,
     Center,
-    Progress,
     Tooltip,
     Divider,
     Input,
@@ -52,23 +50,6 @@ const userToInfoProgress = (user: User): ProfileState['infoProgress'] => {
     return 'none';
 };
 
-const infoProgressNumber = (progress: ProfileState['infoProgress']): number => {
-    switch (progress) {
-        case 'none': {
-            return 0;
-        }
-        case 'degree': {
-            return 50;
-        }
-        case 'degreeYear': {
-            return 50;
-        }
-        case 'all': {
-            return 100;
-        }
-    }
-};
-
 const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
     const isNorwegian = useContext(LanguageContext);
     const methods = useForm<ProfileFormValues>({
@@ -84,7 +65,6 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
         infoProgress: userToInfoProgress(user),
         errorMessage: null,
     });
-    const done = profileState.infoProgress === 'all';
 
     const toast = useToast();
 
