@@ -195,7 +195,6 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                                     onInput={() =>
                                         setProfileState({ ...profileState, infoState: 'edited', errorMessage: null })
                                     }
-                                    placeholder={isNorwegian ? 'Studieretning' : 'Field of study'}
                                     py="1rem"
                                 />
                                 <FormDegreeYear
@@ -204,7 +203,6 @@ const ProfileInfo = ({ user }: { user: User }): JSX.Element => {
                                     onInput={() =>
                                         setProfileState({ ...profileState, infoState: 'edited', errorMessage: null })
                                     }
-                                    placeholder={isNorwegian ? 'Årstrinn' : 'Year of study'}
                                     py="1rem"
                                 />
                                 <HStack mt={4} gap={4}>
