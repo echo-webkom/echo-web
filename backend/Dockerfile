@@ -42,7 +42,6 @@ RUN apt update \
 
 COPY --from=build /opt/build/build/libs/*-all.jar /opt/app/build/libs/
 COPY Procfile /opt/app
-COPY scripts scripts
 
 # Use Procfile as single source of truth.
 CMD cat Procfile | sed -e 's/web: //g' | bash
