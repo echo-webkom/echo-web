@@ -1,3 +1,5 @@
 #!/bin/bash
 
 docker exec -it backend-database-1 env PGPASSWORD=password pg_restore -O -c -v --no-acl -h localhost -U postgres -d postgres /test_data.dump
+# Have to do it twice to get all data, for some reason
+docker exec -it backend-database-1 env PGPASSWORD=password pg_restore -O -c -v --no-acl -h localhost -U postgres -d postgres /test_data.dump

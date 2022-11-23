@@ -3,12 +3,13 @@
 .idea/
 .gradle/
 build/
+scripts/
 
 .gitignore
 *.iml
 Dockerfile
 docker-compose*
-test
 LICENSE
 README.md
 renovate.json
+*.dump
