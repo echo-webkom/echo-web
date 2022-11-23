@@ -21,6 +21,7 @@ import {
     Button,
     useColorModeValue,
     Alert,
+    Skeleton,
     AlertIcon,
     SimpleGrid,
     GridItem,
@@ -108,10 +109,8 @@ const ProfileInfo = (): JSX.Element => {
             email: user.email,
             name: user.name,
             alternateEmail: profileFormVals.alternateEmail !== '' ? profileFormVals.alternateEmail : null,
-            // @ts-expect-error
-            degree: profileFormVals.degree !== '' ? profileFormVals.degree : null,
-            // @ts-expect-error
-            degreeYear: profileFormVals.degreeYear !== '' ? Number.parseInt(profileFormVals.degreeYear) : null,
+            degree: profileFormVals.degree,
+            degreeYear: profileFormVals.degreeYear,
             memberships: [],
         };
 
@@ -172,11 +171,13 @@ const ProfileInfo = (): JSX.Element => {
                 </GridItem>
                 <GridItem colSpan={2}>
                     <Section>
-                        {!satisfied && !loading && (
-                            <Alert status="warning" borderRadius="0.5rem" mb="6">
-                                <AlertIcon />
-                                Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
-                            </Alert>
+                        {!satisfied && (
+                            <Skeleton isLoaded={!loading}>
+                                <Alert status="warning" borderRadius="0.5rem" mb="6">
+                                    <AlertIcon />
+                                    Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
+                                </Alert>
+                            </Skeleton>
                         )}
                         <FormProvider {...methods}>
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
