@@ -29,7 +29,7 @@ fun resToJson(
 ): RegistrationResponseJson {
     when (res) {
         RegistrationResponse.NotSignedIn ->
-            return RegistrationResponseJson(res, "Du er ikke logged inn.", "Vennligst logg inn før du fortsetter.")
+            return RegistrationResponseJson(res, "Du er ikke logget inn.", "Vennligst logg inn før du fortsetter.")
         RegistrationResponse.InvalidDegree ->
             return RegistrationResponseJson(res, "Vennligst velg en studieretning.", "")
         RegistrationResponse.InvalidDegreeYear ->
