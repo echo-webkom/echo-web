@@ -1,9 +1,8 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
 import { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
-import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
+import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
+import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -20,7 +19,6 @@ import type { Registration } from '@api/registration';
 import ErrorBox from '@components/error-box';
 import SEO from '@components/seo';
 import Article from '@components/article';
-import Countdown from '@components/countdown';
 import HappeningMetaInfo from '@components/happening-meta-info';
 import RegistrationForm from '@components/registration-form';
 import Section from '@components/section';
@@ -35,25 +33,14 @@ interface Props {
 }
 
 const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
-    const { data } = useSession();
-    const router = useRouter();
+    const { data, status } = useSession();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
-    const time =
-        !happening ||
-        differenceInMilliseconds(regDate, date) < 0 ||
-        differenceInMilliseconds(regDate, date) > 172_800_000
-            ? null
-            : differenceInMilliseconds(regDate, date);
     const [user, setUser] = useState<User | null>(null);
     const [loadingUser, setLoadingUser] = useState<boolean>(false);
     const isNorwegian = useContext(LanguageContext);
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
-
-    useTimeout(() => {
-        if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
-    }, time);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -137,38 +124,24 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                 {happening.registrationDate && (
                                     <>
                                         <Divider my="1em" />
-                                        {isBefore(date, regDate) &&
-                                            (differenceInHours(regDate, date) > 23 ? (
-                                                <Center>
-                                                    <Text fontSize="2xl">
-                                                        {isNorwegian ? `Åpner ` : `Opens `}
-                                                        {format(regDate, 'dd. MMM, HH:mm', {
-                                                            locale: isNorwegian ? nb : enUS,
-                                                        })}
-                                                    </Text>
-                                                </Center>
-                                            ) : (
-                                                <Countdown date={regDate} />
-                                            ))}
+                                        {isFuture(regDeadline) && (
+                                            <RegistrationForm
+                                                happening={happening}
+                                                type={happening.happeningType}
+                                                user={user}
+                                                loadingUser={loadingUser}
+                                            />
+                                        )}
                                         {isBefore(date, parseISO(happening.date)) &&
                                             isAfter(date, regDate) &&
                                             isBefore(date, regDeadline) && (
                                                 <>
-                                                    <RegistrationForm
-                                                        happening={happening}
-                                                        type={happening.happeningType}
-                                                        user={user}
-                                                        loadingUser={loadingUser}
-                                                    />
-                                                    {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
-                                                        locale: isNorwegian ? nb : enUS,
-                                                    }) !==
-                                                        format(regDeadline, 'dd. MMM, HH:mm', {
-                                                            locale: isNorwegian ? nb : enUS,
-                                                        }) && (
-                                                        <Center>
+                                                    {status === 'authenticated' && (
+                                                        <Center mt="1rem">
                                                             <Text fontSize="md">
-                                                                {isNorwegian ? 'Stenger' : 'Closes'}{' '}
+                                                                {isNorwegian
+                                                                    ? 'Påmelding stenger'
+                                                                    : 'Registration closes'}{' '}
                                                                 {format(regDeadline, 'dd. MMM HH:mm', {
                                                                     locale: isNorwegian ? nb : enUS,
                                                                 })}

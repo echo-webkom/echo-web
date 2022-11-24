@@ -24,6 +24,9 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import NextLink from 'next/link';
+import { differenceInHours, format, formatISO, isBefore, isPast, parseISO } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import Countdown from '@components/countdown';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
 import { userIsComplete } from '@api/user';
@@ -31,6 +34,7 @@ import type { User } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormQuestion from '@components/form-question';
 import LanguageContext from 'language-context';
+import useCountdown from '@hooks/use-countdown';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
     switch (statusCode) {
@@ -92,6 +96,9 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 
+    const regDate = parseISO(happening.registrationDate ?? formatISO(new Date()));
+    const { hours, minutes, seconds } = useCountdown(regDate);
+
     const toast = useToast();
 
     const { data: session, status } = useSession();
@@ -150,21 +157,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
 
     return (
         <Box data-testid="registration-form">
-            {userIsComplete(user) && (
-                <Button
-                    data-cy="reg-btn"
-                    w="100%"
-                    colorScheme="teal"
-                    onClick={() =>
-                        happening.additionalQuestions.length === 0
-                            ? void submitForm({ email: user.email, answers: [] })
-                            : onOpen()
-                    }
-                >
-                    {isNorwegian ? 'Klikk her for å melde deg på' : 'Click here to register'}
-                </Button>
-            )}
-            {!userIsComplete(user) && (
+            {user && !userIsComplete(user) && (
                 <>
                     <Alert status="warning" borderRadius="0.5rem" mb="5">
                         <AlertIcon />
@@ -176,6 +169,33 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                         </Button>
                     </NextLink>
                 </>
+            )}
+            {isBefore(new Date(), regDate) &&
+                (differenceInHours(regDate, new Date()) > 23 ? (
+                    <Center>
+                        <Text fontSize="xl">
+                            {isNorwegian ? `Påmelding åpner ` : `Registration opens `}
+                            {format(regDate, 'dd. MMM HH:mm', {
+                                locale: isNorwegian ? nb : enUS,
+                            })}
+                        </Text>
+                    </Center>
+                ) : (
+                    <Countdown hours={hours} minutes={minutes} seconds={seconds} />
+                ))}
+            {userIsComplete(user) && isPast(regDate) && (
+                <Button
+                    data-cy="reg-btn"
+                    w="100%"
+                    colorScheme="teal"
+                    onClick={() =>
+                        happening.additionalQuestions.length === 0
+                            ? void submitForm({ email: user.email, answers: [] })
+                            : onOpen()
+                    }
+                >
+                    {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                </Button>
             )}
 
             <Modal isOpen={isOpen} onClose={onClose}>
