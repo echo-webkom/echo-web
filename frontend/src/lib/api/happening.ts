@@ -171,7 +171,7 @@ const HappeningAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
-                return { message: !error.response ? '404' : error.message };
+                return { message: error.response ? error.message : '404' };
             }
 
             return {
