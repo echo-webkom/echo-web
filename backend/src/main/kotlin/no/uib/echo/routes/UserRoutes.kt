@@ -26,8 +26,8 @@ import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
@@ -271,7 +271,9 @@ fun Route.getAllUsers() {
 
         val users = transaction {
             addLogger(StdOutSqlLogger)
-            User.selectAll().map { it ->
+            User.select {
+                User.email like "%@student.uib.no" or (User.email like "%@uib.no")
+            }.map { it ->
                 UserJson(
                     it[User.email],
                     it[User.name],

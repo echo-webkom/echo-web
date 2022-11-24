@@ -19,7 +19,7 @@ const ProfilePage = (): JSX.Element => {
 
     return (
         <>
-            <SEO title={status === 'unauthenticated' ? 'Min profil' : 'Logg inn'} />
+            <SEO title={status === 'authenticated' ? 'Min profil' : 'Logg inn'} />
             {status === 'authenticated' && <ProfileInfo />}
             {status === 'loading' && (
                 <Center>
