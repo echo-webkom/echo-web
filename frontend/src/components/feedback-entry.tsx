@@ -37,7 +37,7 @@ const FeedbackEntry = ({ feedback, handleDelete, handleUpdate }: Props) => {
 
     const formattedDate = format(parseISO(feedback.sentAt), 'yyyy-MM-dd HH:mm');
 
-    const name = feedback.name !== '' ? feedback.name : 'Ukjent';
+    const name = feedback.name === '' ? 'Ukjent' : feedback.name;
 
     const toast = useToast();
 

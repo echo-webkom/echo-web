@@ -62,11 +62,11 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
             if (!happening || !data?.idToken) return;
             const result = await RegistrationAPI.getRegistrations(happening.slug, data.idToken);
 
-            if (!isErrorMessage(result)) {
+            if (isErrorMessage(result)) {
+                setRegsListError(result);
+            } else {
                 setRegsListError(null);
                 setRegsList(result);
-            } else {
-                setRegsListError(result);
             }
         };
         void fetchRegs();
@@ -226,7 +226,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
         date,
-        error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
+        error: isErrorMessage(happening) ? 'Det har skjedd en feil.' : null,
     };
 
     return {

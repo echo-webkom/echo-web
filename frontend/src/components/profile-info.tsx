@@ -70,10 +70,10 @@ const ProfileInfo = (): JSX.Element => {
 
             const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
-            if (!isErrorMessage(result)) {
-                setUser(result);
-            } else {
+            if (isErrorMessage(result)) {
                 setError(result);
+            } else {
+                setUser(result);
             }
         };
 
@@ -108,7 +108,7 @@ const ProfileInfo = (): JSX.Element => {
         const newUser: User = {
             email: user.email,
             name: user.name,
-            alternateEmail: profileFormVals.alternateEmail !== '' ? profileFormVals.alternateEmail : null,
+            alternateEmail: profileFormVals.alternateEmail === '' ? null : profileFormVals.alternateEmail,
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],

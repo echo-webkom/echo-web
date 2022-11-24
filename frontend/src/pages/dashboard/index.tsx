@@ -49,10 +49,10 @@ const DashboardPage = () => {
 
             const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
-            if (!isErrorMessage(result)) {
-                setUser(result);
-            } else {
+            if (isErrorMessage(result)) {
                 setError(result);
+            } else {
+                setUser(result);
             }
 
             setLoading(false);

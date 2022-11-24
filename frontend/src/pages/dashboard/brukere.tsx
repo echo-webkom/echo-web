@@ -42,10 +42,10 @@ const AdminUserPage = () => {
 
             const result = await UserAPI.getUsers(data.idToken);
 
-            if (!isErrorMessage(result)) {
-                setUsers(result);
-            } else {
+            if (isErrorMessage(result)) {
                 setError(result);
+            } else {
+                setUsers(result);
             }
 
             setLoading(false);
