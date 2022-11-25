@@ -47,13 +47,9 @@ fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolea
     return transaction {
         addLogger(StdOutSqlLogger)
 
-        val usersInRange = User.select {
-            User.degreeYear inList range
-        }.toList().map { it[User.email] }
-
         Registration.select {
             Registration.happeningSlug eq slug and
-                (Registration.userEmail inList usersInRange) and
+                (Registration.degreeYear inList range) and
                 (Registration.waitList eq waitList)
         }.count()
     }.toInt()
