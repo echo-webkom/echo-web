@@ -12676,10 +12676,10 @@ sanity-plugin-color-picker@1.0.3:
     rgb2hex "^0.1.10"
     styled-components "^4.4.1"
 
-sanity-plugin-markdown@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-markdown/-/sanity-plugin-markdown-2.1.1.tgz#1e17792a2aeb00d6da798d35b74acb1aa7080658"
-  integrity sha512-9fxt4Q/zv+BOJx2S3d8j6FSiaOLAEZHWPh63qm/77IWMX2+E4gVgtm4YOzF5EtS8vvSCmQ2+sVZQVrvJchj/nA==
+sanity-plugin-markdown@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-markdown/-/sanity-plugin-markdown-2.1.2.tgz#bcc9fb77a5023ea999d965d5340205043a77a6a4"
+  integrity sha512-dV/g7YuY5rGugv/dZ8mGHXoS160fGjFTTPX9jTl8tEZJCHYaIRTQu1GpQUfgmwxFoo4Kv5z6nF9ZZPPO5dHnaA==
   dependencies:
     "@reach/auto-id" "^0.13.2"
     react-markdown "^5.0.3"
