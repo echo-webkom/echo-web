@@ -98,7 +98,8 @@
             "unicorn/prefer-node-protocol": "off",
             "unicorn/no-new-array": "off",
             "unicorn/numeric-separators-style": "off",
-            "unicorn/no-array-reduce": "off"
+            "unicorn/no-array-reduce": "off",
+            "unicorn/no-array-callback-reference": "off"
         }
     },
     "prettier": {

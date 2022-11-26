@@ -23,6 +23,7 @@ import { useSession } from 'next-auth/react';
 import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
+import capitalize from '@utils/capitalize';
 
 interface Props {
     registration: Registration;
@@ -106,6 +107,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                         Nei
                     </Td>
                 )}
+                <Td>{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
                     <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} colorScheme="red">
                         Slett
