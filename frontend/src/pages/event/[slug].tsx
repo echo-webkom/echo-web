@@ -85,22 +85,24 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} as={Section}>
                             <>
-                                {happening.happeningType === 'BEDPRES' && happening.companyLink && happening.logoUrl && (
-                                    <LinkBox mb="1em">
-                                        <NextLink href={happening.companyLink} passHref>
-                                            <LinkOverlay href={happening.companyLink} isExternal>
-                                                <Center>
-                                                    <Image
-                                                        src={happening.logoUrl}
-                                                        alt="Bedriftslogo"
-                                                        width={300}
-                                                        height={300}
-                                                    />
-                                                </Center>
-                                            </LinkOverlay>
-                                        </NextLink>
-                                    </LinkBox>
-                                )}
+                                {happening.happeningType === 'BEDPRES' &&
+                                    happening.companyLink &&
+                                    happening.logoUrl && (
+                                        <LinkBox mb="1em">
+                                            <NextLink href={happening.companyLink} passHref>
+                                                <LinkOverlay href={happening.companyLink} isExternal>
+                                                    <Center>
+                                                        <Image
+                                                            src={happening.logoUrl}
+                                                            alt="Bedriftslogo"
+                                                            width={300}
+                                                            height={300}
+                                                        />
+                                                    </Center>
+                                                </LinkOverlay>
+                                            </NextLink>
+                                        </LinkBox>
+                                    )}
                                 <HappeningMetaInfo
                                     date={parseISO(happening.date)}
                                     location={happening.location}
