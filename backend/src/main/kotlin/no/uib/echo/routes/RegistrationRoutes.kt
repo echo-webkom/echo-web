@@ -34,6 +34,7 @@ import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.User
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
@@ -124,6 +125,18 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
                     }
                 }.firstOrNull()
 
+                val answers = transaction {
+                    addLogger(StdOutSqlLogger)
+
+                    Answer.select {
+                        Answer.registrationEmail.lowerCase() eq reg[Registration.userEmail].lowercase() and (Answer.happeningSlug eq hap[Happening.slug])
+                    }.toList()
+                }.map {
+                    AnswerJson(
+                        it[Answer.question], it[Answer.answer]
+                    )
+                }
+
                 RegistrationJson(
                     reg[Registration.userEmail],
                     user?.get(User.alternateEmail),
@@ -133,17 +146,8 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
                     reg[Registration.happeningSlug],
                     reg[Registration.submitDate].toString(),
                     reg[Registration.waitList],
-                    transaction {
-                        addLogger(StdOutSqlLogger)
-
-                        Answer.select {
-                            Answer.registrationEmail.lowerCase() eq reg[Registration.userEmail].lowercase() and (Answer.happeningSlug eq hap[Happening.slug])
-                        }.toList()
-                    }.map {
-                        AnswerJson(
-                            it[Answer.question], it[Answer.answer]
-                        )
-                    },
+                    answers,
+                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList(),
                 )
             }
         }
@@ -211,7 +215,9 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             if (userDegreeYear == null || userDegreeYear !in 1..5) {
-                call.respond(HttpStatusCode.NonAuthoritativeInformation, resToJson(RegistrationResponse.InvalidDegreeYear))
+                call.respond(
+                    HttpStatusCode.NonAuthoritativeInformation, resToJson(RegistrationResponse.InvalidDegreeYear)
+                )
                 return@post
             }
 

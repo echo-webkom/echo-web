@@ -267,6 +267,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                             {notEmptyOrNull(questions) &&
                                                 questions.map((q, index) => <Th key={index}>{q}</Th>)}
                                             <Th>På venteliste?</Th>
+                                            <Th>Medlem av</Th>
                                             <Th>Slett påmelding</Th>
                                         </Tr>
                                     </Thead>

@@ -173,7 +173,7 @@ val user3 = UserJson(
     null,
     1,
     Degree.DVIT,
-    listOf("bedkom")
+    listOf("bedkom", "tilde")
 )
 val user4 = UserJson("bast4@student.uib.no", "Bachelor Student #4", "bachelor.student4@gmail.com", 2, Degree.BINF)
 val user5 = UserJson("bast5@student.uib.no", "Bachelor Student #5", "bachelor.student5@gmail.com", 3, Degree.IMO)

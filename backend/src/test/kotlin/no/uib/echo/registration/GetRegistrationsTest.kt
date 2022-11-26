@@ -103,7 +103,8 @@ class GetRegistrationsTest {
                             newReg.slug,
                             null,
                             u !in usersSublist,
-                            newReg.answers
+                            newReg.answers,
+                            u.memberships,
                         )
                     )
 

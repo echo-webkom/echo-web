@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
 import type { HappeningType } from '@api/happening';
-import { degreeDecoder } from '@utils/decoders';
+import { degreeDecoder, emptyArrayOnNilDecoder } from '@utils/decoders';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
@@ -30,6 +30,7 @@ const registrationDecoder = record({
     submitDate: string,
     waitList: boolean,
     answers: array(answerDecoder),
+    memberships: (value) => emptyArrayOnNilDecoder(string, value),
 });
 type Registration = decodeType<typeof registrationDecoder>;
 

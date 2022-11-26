@@ -29,7 +29,8 @@ data class RegistrationJson(
     val slug: String,
     val submitDate: String? = null,
     val waitList: Boolean? = null,
-    val answers: List<AnswerJson>,
+    val answers: List<AnswerJson> = emptyList(),
+    val memberships: List<String> = emptyList(),
 )
 
 object Registration : Table() {
@@ -73,7 +74,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
         if (p) "" else s
     }
 
-    return "email,name,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading" +
+    return "email,name,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading,memberships" +
         regs.joinToString("") { reg ->
             "\n" +
                 (reg.alternateEmail?.lowercase() ?: reg.email.lowercase()) + "," +
@@ -82,6 +83,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
                 reg.degreeYear.toString() + "," +
                 predOrEmpty(testing, reg.submitDate.toString() + ",") +
                 reg.waitList.toString() +
-                predOrEmpty(reg.answers.isEmpty(), reg.answers.joinToString("") { "," + it.answer })
+                predOrEmpty(reg.answers.isEmpty(), reg.answers.joinToString("") { "," + it.answer }) +
+                predOrEmpty(reg.memberships.isEmpty(), reg.memberships.joinToString(";", prefix = ","))
         }
 }
