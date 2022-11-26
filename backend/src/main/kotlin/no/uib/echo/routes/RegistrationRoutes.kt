@@ -69,7 +69,9 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
             }
         }
 
-        postRegistrationCount()
+        authenticate("auth-admin") {
+            postRegistrationCount()
+        }
     }
 }
 
@@ -491,21 +493,25 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
 
 fun Route.postRegistrationCount() {
     post("/registration/count") {
-        val slugs = call.receive<SlugJson>().slugs
+        try {
+            val slugs = call.receive<SlugJson>().slugs
 
-        val registrationCounts = transaction {
-            addLogger(StdOutSqlLogger)
+            val registrationCounts = transaction {
+                addLogger(StdOutSqlLogger)
 
-            slugs.map {
-                val count = countRegistrationsDegreeYear(it, 1..5, false)
-                val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
+                slugs.map {
+                    val count = countRegistrationsDegreeYear(it, 1..5, false)
+                    val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
 
-                RegistrationCountJson(it, count, waitListCount)
+                    RegistrationCountJson(it, count, waitListCount)
+                }
             }
-        }
 
-        call.respond(
-            HttpStatusCode.OK, registrationCounts
-        )
+            call.respond(
+                HttpStatusCode.OK, registrationCounts
+            )
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")
+        }
     }
 }

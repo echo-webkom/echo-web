@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { number, union, record, string, type decodeType, nil, boolean, array } from 'typescript-json-decoder';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
@@ -42,24 +41,26 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:808
 const FeedbackAPI = {
     sendFeedback: async (data: FormValues): Promise<FeedbackResponse> => {
         try {
-            await axios.post(`${BACKEND_URL}/feedback`, data, {
+            const { ok } = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'POST',
+                body: JSON.stringify(data),
                 headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode: number) => statusCode === 200,
             });
 
-            return successResponse;
+            return ok ? successResponse : errorResponse;
         } catch {
             return errorResponse;
         }
     },
     getFeedback: async (idToken: string): Promise<Array<Feedback> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${BACKEND_URL}/feedback`, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (status: number) => status < 500,
             });
+
+            const data = await response.json();
 
             if (isErrorMessage(data)) {
                 return data;
@@ -75,10 +76,13 @@ const FeedbackAPI = {
 
     updateFeedback: async (feedback: Feedback, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data } = await axios.put(`${BACKEND_URL}/feedback`, feedback, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'PUT',
+                body: JSON.stringify(feedback),
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-                validateStatus: (status: number) => status < 500,
             });
+
+            const data = await response.json();
 
             return string(data);
         } catch {
@@ -90,12 +94,15 @@ const FeedbackAPI = {
 
     deleteFeedback: async (id: number, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data, status } = await axios.delete(`${BACKEND_URL}/feedback`, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'DELETE',
+                body: JSON.stringify({ id }),
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-                data: { id },
             });
 
-            if (status === 200) return string(data);
+            const data = await response.json();
+
+            if (response.status === 200) return string(data);
 
             return { message: data };
         } catch {

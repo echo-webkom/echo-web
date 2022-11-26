@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { array, record, string, union, nil, type decodeType } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
@@ -24,7 +23,7 @@ const ProfileAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -47,7 +46,7 @@ const ProfileAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },

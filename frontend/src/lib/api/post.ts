@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { nil, union, array, record, string } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
@@ -67,7 +66,7 @@ const PostAPI = {
             return array(postDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getPosts' };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -103,15 +102,7 @@ const PostAPI = {
             return array(postDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
-            return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getPostBySlug',
-            };
+            return { message: JSON.stringify(error) };
         }
     },
 };
