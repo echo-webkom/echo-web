@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
-import axios from 'axios';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
@@ -17,12 +16,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (req.method === 'GET') {
             try {
-                const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
+                const params = new URLSearchParams({ download: 'y' }).toString();
+
+                const response = await fetch(`${BACKEND_URL}/registration/${slug}?${params}`, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
                     },
-                    validateStatus: (statusCode: number) => statusCode < 500,
                 });
+
+                const data = await response.json();
 
                 res.setHeader('Content-Type', 'text/csv');
                 res.setHeader(

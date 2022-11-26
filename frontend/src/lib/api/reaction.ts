@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { literal, union, number, record, array, string } from 'typescript-json-decoder';
 import { type ErrorMessage } from '@utils/error';
@@ -21,21 +20,23 @@ type Reaction = decodeType<typeof reactionDecoder>;
 const ReactionAPI = {
     get: async (slug: string, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
-                params: { slug },
+            const params = new URLSearchParams({ slug }).toString();
+
+            const response = await fetch(`${BACKEND_URL}/reaction/${slug}?${params}`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (status: number) => status < 500,
             });
 
-            if (status === 404) {
+            if (response.status === 404) {
                 return { message: 'Kunne ikke finne arrangementet.' };
             }
 
-            if (status === 401) {
+            if (response.status === 401) {
                 return { message: 'Du må være logget inn for å se arrangementet.' };
             }
+
+            const data = await response.json();
 
             return reactionDecoder(data);
         } catch {
@@ -48,16 +49,19 @@ const ReactionAPI = {
                 return { message: 'No token.' };
             }
 
-            const { data, status } = await axios.put(`${BACKEND_URL}/reaction`, null, {
-                params: { slug, reaction },
+            const params = new URLSearchParams({ slug, reaction }).toString();
+
+            const response = await fetch(`${BACKEND_URL}/reaction?${params}`, {
+                method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                     'Content-Type': 'application/json',
                 },
-                validateStatus: (status: number) => status < 500,
             });
 
-            if (status === 200) {
+            const data = await response.json();
+
+            if (response.status === 200) {
                 return reactionDecoder(data);
             }
 

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, boolean } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
@@ -36,7 +35,7 @@ const MinuteAPI = {
             return array(minuteDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getMinutes' };
+            return { message: JSON.stringify(error) };
         }
     },
 };
