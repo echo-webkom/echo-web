@@ -9,6 +9,16 @@ variable "location" {
   default     = "norwayeast"
 }
 
+variable "environment" {
+  type        = string
+  description = "Tags the resources with the environment, and sets backend environment."
+
+  validation {
+    condition     = var.environment == "preview"
+    error_message = "Can only be 'preview'."
+  }
+}
+
 variable "db_password" {
   type        = string
   description = "The password for the admin database user."
