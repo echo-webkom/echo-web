@@ -123,7 +123,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                             : null
                                     }
                                 />
-                                {happening.registrationDate && (
+                                {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
                                     <>
                                         <Divider my="1em" />
                                         {isFuture(regDeadline) && (
@@ -193,8 +193,9 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                     {regsList.length > 0 && (
                         <RegistrationsList
                             registrations={regsList}
-                            title={happening.title}
                             error={regsListError?.message ?? null}
+                            title={happening.title}
+                            studentGroups={happening.studentGroups}
                         />
                     )}
                 </>

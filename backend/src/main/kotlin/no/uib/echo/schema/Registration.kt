@@ -44,14 +44,30 @@ object Registration : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(userEmail, happeningSlug)
 }
 
-fun countRegistrationsDegreeYear(slug: String, range: IntRange, waitList: Boolean): Int {
+fun countRegistrationsDegreeYear(
+    slug: String,
+    range: IntRange,
+    waitList: Boolean,
+    studentGroupsToRemoveFromCount: List<String> = emptyList()
+): Int {
+    val usersInGroupsEmails = transaction {
+        addLogger(StdOutSqlLogger)
+
+        (User innerJoin StudentGroupMembership)
+            .select {
+                StudentGroupMembership.studentGroupName inList studentGroupsToRemoveFromCount and
+                    (StudentGroupMembership.userEmail eq User.email)
+            }.toList().map { it[StudentGroupMembership.userEmail] }
+    }
+
     return transaction {
         addLogger(StdOutSqlLogger)
 
         Registration.select {
             Registration.happeningSlug eq slug and
                 (Registration.degreeYear inList range) and
-                (Registration.waitList eq waitList)
+                (Registration.waitList eq waitList) and
+                (Registration.userEmail notInList usersInGroupsEmails)
         }.count()
     }.toInt()
 }
@@ -64,6 +80,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
         when (regs[0].answers.isEmpty()) {
             true ->
                 ""
+
             false ->
                 regs[0].answers.fold("") { acc, answerJson ->
                     acc + "," + answerJson.question.replace(",", " ")

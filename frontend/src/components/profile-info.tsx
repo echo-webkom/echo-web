@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 import { useState, useContext, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
@@ -30,13 +28,14 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
-import ErrorBox from './error-box';
+import ErrorBox from '@components/error-box';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
 import { UserAPI, userIsComplete } from '@api/user';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 import FormDegree from '@components/form-degree';
+import Unauthorized from '@components/unauthorized';
 import FormDegreeYear from '@components/form-degree-year';
 import IconText from '@components/icon-text';
 import Section from '@components/section';
@@ -133,14 +132,16 @@ const ProfileInfo = (): JSX.Element => {
         setLoading(false);
     };
 
+    if (error) {
+        return error.message === '401' ? <Unauthorized /> : <ErrorBox error={error.message} />;
+    }
+
     if (loading && !user)
         return (
             <Center>
                 <Spinner />
             </Center>
         );
-
-    if (error) return <ErrorBox error={`${error.message}`} />;
 
     if (!user) return <ErrorBox error="Det har skjedd en feil." />;
 
@@ -180,13 +181,14 @@ const ProfileInfo = (): JSX.Element => {
                             </Skeleton>
                         )}
                         <FormProvider {...methods}>
-                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                            {/* eslint-disable @typescript-eslint/no-misused-promises */}
                             <form
                                 data-cy="profile-form"
                                 id="profile-form"
                                 onSubmit={handleSubmit(submitForm)}
                                 onChange={() => setSaved(false)}
                             >
+                                {/* eslint-enable @typescript-eslint/no-misused-promises */}
                                 <FormControl>
                                     <InputGroup>
                                         <Input

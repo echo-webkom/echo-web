@@ -15,7 +15,9 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.getStudentGroupsForHappeningSlug
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -61,6 +63,10 @@ fun Route.deleteHappening() {
                 Registration.happeningSlug eq slug
             }
 
+            StudentGroupHappeningRegistration.deleteWhere {
+                StudentGroupHappeningRegistration.happeningSlug eq slug
+            }
+
             Happening.deleteWhere {
                 Happening.slug eq slug
             }
@@ -104,26 +110,36 @@ fun Route.getHappeningInfo() {
             return@get
         }
 
+        val studentGroupsToRemoveFromCount = getStudentGroupsForHappeningSlug(slug)
+
         val registrationCount = transaction {
             addLogger(StdOutSqlLogger)
 
             SpotRange.select {
                 SpotRange.happeningSlug eq slug
             }.toList().map {
+                val count =
+                    countRegistrationsDegreeYear(
+                        slug,
+                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                        false,
+                        studentGroupsToRemoveFromCount
+                    )
+
+                val waitListCount =
+                    countRegistrationsDegreeYear(
+                        slug,
+                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                        true,
+                        studentGroupsToRemoveFromCount
+                    )
+
                 SpotRangeWithCountJson(
                     it[SpotRange.spots],
                     it[SpotRange.minDegreeYear],
                     it[SpotRange.maxDegreeYear],
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        false
-                    ),
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        true
-                    )
+                    count,
+                    waitListCount,
                 )
             }
         }

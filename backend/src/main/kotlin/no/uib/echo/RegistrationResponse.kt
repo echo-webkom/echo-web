@@ -14,6 +14,7 @@ enum class RegistrationResponse {
     AlreadySubmitted,
     AlreadySubmittedWaitList,
     HappeningDoesntExist,
+    OnlyOpenForStudentGroups,
     TooEarly,
     TooLate,
     WaitList,
@@ -25,7 +26,8 @@ fun resToJson(
     res: RegistrationResponse,
     regDate: String? = null,
     spotRanges: List<SpotRangeJson>? = null,
-    waitListSpot: Long? = null
+    waitListSpot: Long? = null,
+    studentGroups: List<String>? = null,
 ): RegistrationResponseJson {
     when (res) {
         RegistrationResponse.NotSignedIn ->
@@ -60,6 +62,12 @@ fun resToJson(
                 res,
                 "Dette arrangementet finnes ikke.",
                 "Om du mener dette ikke stemmer, ta kontakt med Webkom."
+            )
+        RegistrationResponse.OnlyOpenForStudentGroups ->
+            return RegistrationResponseJson(
+                res,
+                "Du kan ikke melde deg på.",
+                "Dette arrangementet er kun åpent for ${studentGroups?.joinToString(", ") ?: "visse studentgrupper"}."
             )
         RegistrationResponse.NotInRange -> {
             var desc = "Dette arrangementet er kun åpent for "

@@ -24,7 +24,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import NextLink from 'next/link';
-import { differenceInHours, format, formatISO, isBefore, isPast, parseISO } from 'date-fns';
+import { differenceInHours, format, isBefore, isPast, parseISO } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
 import Countdown from '@components/countdown';
 import type { Happening, HappeningType, Question } from '@api/happening';
@@ -35,52 +35,13 @@ import { RegistrationAPI } from '@api/registration';
 import FormQuestion from '@components/form-question';
 import LanguageContext from 'language-context';
 import useCountdown from '@hooks/use-countdown';
+import hasOverlap from '@utils/has-overlap';
+import capitalize from '@utils/capitalize';
 
-const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
-    switch (statusCode) {
-        // OK
-        // The registration is submitted.
-        case 200: {
-            return 'success';
-        }
-
-        // ACCEPTED
-        // The bedpres spots are filled up,
-        // and the user is placed on the waitlist.
-        case 202: {
-            return 'warning';
-        }
-
-        // BAD_REQUEST
-        // The form has bad or invalid data.
-        case 400: {
-            return 'warning';
-        }
-
-        // FORBIDDEN
-        // User submits registration before bedpres is open (shouldn't be possible).
-        case 403: {
-            return 'warning';
-        }
-
-        // CONFLICT
-        // The bedpres the user is trying to sign up for does not exist.
-        case 409: {
-            return 'error';
-        }
-
-        // UNPROCESSABLE_ENTITY
-        // The registration already exists.
-        case 422: {
-            return 'warning';
-        }
-
-        // INTERNAL_SERVER_ERROR
-        // Something has gone horribly wrong.
-        default: {
-            return 'error';
-        }
-    }
+const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
+    if (statusCode === 200) return 'success';
+    if (statusCode === 202 || statusCode === 400 || statusCode === 422) return 'warning';
+    return 'error';
 };
 
 interface Props {
@@ -90,13 +51,23 @@ interface Props {
     loadingUser: boolean;
 }
 
+const chooseDate = (regDate: string | null, studentGroupRegDate: string | null, viaStudentGroupReg: boolean): Date => {
+    if (!regDate && !studentGroupRegDate) return new Date();
+    if (!regDate && studentGroupRegDate) return viaStudentGroupReg ? parseISO(studentGroupRegDate) : new Date();
+    if (regDate && !studentGroupRegDate) return parseISO(regDate);
+    if (regDate && studentGroupRegDate) return parseISO(viaStudentGroupReg ? studentGroupRegDate : regDate);
+    // Shouldn't be possible to reach this point, but TypeScript doesn't know that
+    return new Date();
+};
+
 const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useContext(LanguageContext);
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 
-    const regDate = parseISO(happening.registrationDate ?? formatISO(new Date()));
+    const viaStudentGroupReg = hasOverlap(happening.studentGroups, user?.memberships);
+    const regDate = chooseDate(happening.registrationDate, happening.studentGroupRegistrationDate, viaStudentGroupReg);
     const { hours, minutes, seconds } = useCountdown(regDate);
 
     const toast = useToast();
@@ -155,6 +126,18 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
             </Box>
         );
 
+    if (
+        !viaStudentGroupReg &&
+        !happening.registrationDate &&
+        happening.studentGroups &&
+        happening.studentGroups.length > 0
+    )
+        return (
+            <Box data-testid="registration-form">
+                <Text textAlign="center">Kun åpen for {happening.studentGroups.map(capitalize).join(', ')}.</Text>
+            </Box>
+        );
+
     return (
         <Box data-testid="registration-form">
             {user && !userIsComplete(user) && (
@@ -194,7 +177,11 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                             : onOpen()
                     }
                 >
-                    {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                    {isNorwegian
+                        ? viaStudentGroupReg
+                            ? 'Klikk for å melde deg på via studentgruppen din'
+                            : 'Klikk for å melde deg på'
+                        : 'Click to register'}
                 </Button>
             )}
 
