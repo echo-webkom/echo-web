@@ -12,6 +12,7 @@ import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.StudentGroup
+import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.validStudentGroups
@@ -31,6 +32,7 @@ private const val DEFAULT_PROD_POOL_SIZE = 50
 
 val tables: Array<Table> = arrayOf(
     Happening,
+    StudentGroupHappeningRegistration,
     Registration,
     Answer,
     SpotRange,

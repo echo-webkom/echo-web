@@ -31,7 +31,7 @@ import {
 } from '@chakra-ui/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { getTime, format, parseISO } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import ErrorBox from '@components/error-box';
 import type { Registration } from '@api/registration';
@@ -40,38 +40,36 @@ import RegistrationRow from '@components/registration-row';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import RegistrationPieChart from '@components/registration-pie-chart';
 import type { Degree } from '@utils/decoders';
+import hasOverlap from '@utils/has-overlap';
 
 interface Props {
     registrations: Array<Registration> | null;
     error: string | null;
     title: string;
+    studentGroups: Array<string> | null;
 }
 
-const RegistrationsList = ({ registrations, title, error }: Props) => {
+const RegistrationsList = ({ registrations, title, error, studentGroups }: Props) => {
     type DegreeType = 'all' | Degree;
 
-    const [data, setData] = useState<Array<Registration>>([]);
     const [degree, setDegree] = useState<DegreeType>('all');
     const [year, setYear] = useState<number>(0);
     // -1: ALL, 0: Only waitlist, 1: Only accepted
     const [waitlist, setWaitlist] = useState<number>(-1);
     const [search, setSearch] = useState<string>('');
+    const [hideStudentGroups, setHideStudentGroups] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (registrations) {
-            setData(
-                registrations
-                    .filter((reg) => reg.degree === degree || degree === 'all')
-                    .filter((reg) => reg.degreeYear === year || year === 0)
-                    .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
-                    .filter(
-                        (reg) =>
-                            reg.name.toLowerCase().includes(search.toLowerCase()) ||
-                            (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
-                    ),
-            );
-        }
-    }, [degree, registrations, waitlist, year, search]);
+    const filteredRegistrations =
+        registrations
+            ?.filter((reg) => reg.degree === degree || degree === 'all')
+            ?.filter((reg) => reg.degreeYear === year || year === 0)
+            ?.filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
+            ?.filter(
+                (reg) =>
+                    reg.name.toLowerCase().includes(search.toLowerCase()) ||
+                    (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
+            )
+            ?.filter((reg) => hasOverlap(reg.memberships, studentGroups) && !hideStudentGroups) ?? [];
 
     const questions =
         registrations
@@ -171,8 +169,9 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                 </Flex>
                                 <Center gap="3" flexDirection={['column', null, 'row']} w={['full', null, 'full']}>
                                     <Flex direction="column" w="full">
-                                        <Text>Søk:</Text>
-
+                                        <Text px="0.8rem" fontSize="md">
+                                            Søk:
+                                        </Text>
                                         <InputGroup>
                                             <Input
                                                 title="Søk på navn eller e-post"
@@ -192,7 +191,9 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </InputGroup>
                                     </Flex>
                                     <Flex direction="column" w="full">
-                                        <Text>Studieretning:</Text>
+                                        <Text px="0.8rem" fontSize="md">
+                                            Studieretning:
+                                        </Text>
                                         <Select
                                             title="Studieretning"
                                             value={degree}
@@ -210,7 +211,9 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </Select>
                                     </Flex>
                                     <Flex direction="column" w="full">
-                                        <Text>Årstrinn:</Text>
+                                        <Text px="0.8rem" fontSize="md">
+                                            Årstrinn:
+                                        </Text>
                                         <Select
                                             title="Årstrinn"
                                             value={year}
@@ -229,7 +232,9 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </Select>
                                     </Flex>
                                     <Flex direction="column" w="full">
-                                        <Text>Venteliste:</Text>
+                                        <Text px="0.8rem" fontSize="md">
+                                            Venteliste:
+                                        </Text>
                                         <Select
                                             title="Venteliste"
                                             value={waitlist}
@@ -238,6 +243,19 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                             <option value={-1}>Alle</option>
                                             <option value={1}>Bare venteliste</option>
                                             <option value={0}>Uten venteliste</option>
+                                        </Select>
+                                    </Flex>
+                                    <Flex direction="column" w="full">
+                                        <Text fontSize="md">Skjul studentgruppepåmeldinger:</Text>
+                                        <Select
+                                            title="Skjul studentgrupperpåmeldinger"
+                                            value={hideStudentGroups ? 'ja' : 'nei'}
+                                            onChange={(evt) =>
+                                                setHideStudentGroups(evt.target.value === 'nei' ? false : true)
+                                            }
+                                        >
+                                            <option value="nei">Nei</option>
+                                            <option value="ja">Ja</option>
                                         </Select>
                                     </Flex>
                                     <Flex mt="auto">
@@ -272,7 +290,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </Tr>
                                     </Thead>
                                     <Tbody>
-                                        {data
+                                        {filteredRegistrations
                                             .sort((a, b) => {
                                                 if (a.waitList && !b.waitList) return 1;
                                                 else if (!a.waitList && b.waitList) return -1;
@@ -284,10 +302,11 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                                         key={reg.email}
                                                         registration={reg}
                                                         questions={questions}
+                                                        studentGroups={studentGroups}
                                                     />
                                                 );
                                             })}
-                                        {data.length === 0 && (
+                                        {filteredRegistrations.length === 0 && (
                                             <Td colSpan={100} fontSize="3xl" py="10">
                                                 <Center>
                                                     <Text>Ingen påmeldinger som passer dine kriterier</Text>

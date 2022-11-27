@@ -31,9 +31,11 @@ import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationCountJson
 import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.User
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getStudentGroupsForHappeningSlug
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
@@ -236,14 +238,40 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
                 return@post
             }
 
-            if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
-                call.respond(
-                    HttpStatusCode.Forbidden,
-                    resToJson(
-                        RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
-                    )
-                )
+            val userStudentGroups = getUserStudentGroups(user[User.email])
+            val studentGroups = transaction {
+                addLogger(StdOutSqlLogger)
+
+                StudentGroupHappeningRegistration.select {
+                    StudentGroupHappeningRegistration.happeningSlug eq happening[Happening.slug]
+                }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
+            }
+
+            if (happening[Happening.onlyForStudentGroups] && !userStudentGroups.any { studentGroups.contains(it) }) {
+                call.respond(HttpStatusCode.Forbidden, resToJson(RegistrationResponse.OnlyOpenForStudentGroups, studentGroups = studentGroups))
                 return@post
+            }
+
+            if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
+                if (happening[Happening.studentGroupRegistrationDate] != null && DateTime(happening[Happening.studentGroupRegistrationDate]).isAfterNow) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(
+                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                        )
+                    )
+                    return@post
+                }
+
+                if (!getUserStudentGroups(user[User.email]).any { studentGroups.contains(it) }) {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        resToJson(
+                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                        )
+                    )
+                    return@post
+                }
             }
 
             if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
@@ -267,10 +295,16 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             val countRegsInSpotRange = countRegistrationsDegreeYear(
-                registration.slug, correctRange.minDegreeYear..correctRange.maxDegreeYear, false
+                registration.slug,
+                correctRange.minDegreeYear..correctRange.maxDegreeYear,
+                false,
+                getStudentGroupsForHappeningSlug(registration.slug)
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
-                registration.slug, correctRange.minDegreeYear..correctRange.maxDegreeYear, true
+                registration.slug,
+                correctRange.minDegreeYear..correctRange.maxDegreeYear,
+                true,
+                getStudentGroupsForHappeningSlug(registration.slug)
             )
 
             val waitList = correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0
@@ -461,17 +495,15 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
 fun Route.postRegistrationCount() {
     post("/registration/count") {
         val slugs = call.receive<SlugJson>().slugs
+
         val registrationCounts = transaction {
             addLogger(StdOutSqlLogger)
 
             slugs.map {
-                val count = Registration.select {
-                    Registration.happeningSlug eq it
-                }.count()
+                val studentGroupsToRemoveFromCount = getStudentGroupsForHappeningSlug(it)
 
-                val waitListCount = Registration.select {
-                    Registration.happeningSlug eq it and (Registration.waitList eq true)
-                }.count()
+                val count = countRegistrationsDegreeYear(it, 1..5, false, studentGroupsToRemoveFromCount)
+                val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
 
                 RegistrationCountJson(it, count, waitListCount)
             }

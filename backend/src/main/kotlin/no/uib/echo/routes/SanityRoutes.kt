@@ -38,9 +38,19 @@ fun Route.sanitySync() {
         )
 
         val query = """
-            *[_type == 'happening' && defined(registrationDate) && defined(spotRanges) && count(spotRanges) > 0 && defined(studentGroupName) && !(_id in path('drafts.**'))] {
+            *[_type == 'happening' &&
+              (
+                (defined(registrationDate) && defined(spotRanges) && count(spotRanges) > 0) ||
+                (defined(studentGroupRegistrationDate) && defined(studentGroups))
+              ) &&
+              defined(studentGroupName) &&
+              !(_id in path('drafts.**'))] {
                 "slug": slug.current, 
-                title, registrationDate, 
+                title,
+                registrationDate, 
+                studentGroupRegistrationDate,
+                studentGroups,
+                onlyForStudentGroups,
                 "happeningDate": date, spotRanges[] -> { 
                     spots, 
                     minDegreeYear, 

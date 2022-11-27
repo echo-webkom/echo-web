@@ -46,6 +46,10 @@ const UserAPI = {
                 };
             }
 
+            if (status === 401) {
+                return { message: '401' };
+            }
+
             const user = userDecoder(data);
 
             return { ...user, name, email };
