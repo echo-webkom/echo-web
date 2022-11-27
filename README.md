@@ -16,7 +16,7 @@ Vi jobber hele tiden med å forbedre den,
 og setter stor pris på om du sier ifra om noe er feil,
 eller du har idéer til nye endringer!
 
-Fyll gjerne ut skjemaet [her](https://forms.gle/r9LNMFjanUNP7Gph9),
+Send oss gjerne en tilbakemelding via skjemaet nederst i høyre hjørne på https://echo.uib.no,
 eller send oss en mail på [webkom-styret@echo.uib.no](mailto:webkom-styret@echo.uib.no).
 
 ## Oppsett for utviklere
