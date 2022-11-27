@@ -21,73 +21,44 @@ export const authOptions: NextAuthOptions = {
 
             const signInOnlyCollectData = process.env.SIGN_IN_ONLY_COLLECT_DATA === 'true';
 
-            if (account?.access_token && account.id_token && profile?.email && profile.name) {
-                const groups = await FeideGroupAPI.getGroups(account.access_token);
+            if (!account?.access_token || !account.id_token || !profile?.email || !profile.name) return '/500';
 
-                if (isErrorMessage(groups)) {
-                    if (signInOnlyCollectData) {
-                        // eslint-disable-next-line no-console
-                        console.log('Could not get group, but only collecting data');
-                        void FeedbackAPI.sendFeedback({
-                            email: profile.email,
-                            name: profile.name,
-                            message: JSON.stringify(groups),
-                        });
-                        return true;
-                    }
-                    // eslint-disable-next-line no-console
-                    console.log('Failed to fetch groups:', groups);
-                    return '/500';
-                }
+            const groups = await FeideGroupAPI.getGroups(account.access_token);
 
-                const isMember = groups.map((group) => group.id).some((id) => allValidFeideGroups.includes(id));
+            if (isErrorMessage(groups)) {
+                // eslint-disable-next-line no-console
+                console.log('Failed to fetch groups:', groups);
+                return '/500';
+            }
 
-                if (!isMember) {
-                    if (signInOnlyCollectData) {
-                        // eslint-disable-next-line no-console
-                        console.log('User is not a member of any valid group, but only collecting data');
-                        void FeedbackAPI.sendFeedback({
-                            email: profile.email,
-                            name: profile.name,
-                            message: JSON.stringify(groups),
-                        });
-                    } else {
-                        return '/nei';
-                    }
-                }
+            const isMember = groups.map((group) => group.id).some((id) => allValidFeideGroups.includes(id));
 
-                const { email, name } = profile;
-
-                const response = await UserAPI.postInitialUser(account.id_token, email, name);
-
-                if (isErrorMessage(response)) {
-                    if (signInOnlyCollectData) {
-                        // eslint-disable-next-line no-console
-                        console.log('User could not be created, but only collecting data');
-                        void FeedbackAPI.sendFeedback({
-                            email,
-                            name,
-                            message: response.message,
-                        });
-                        return true;
-                    }
-                    return '/500';
-                }
-
-                if (response.status === 200 || response.status === 409) {
-                    return true;
-                }
-
+            if (!isMember) {
                 if (signInOnlyCollectData) {
                     // eslint-disable-next-line no-console
-                    console.log('User could not be created (status not 200 or 409), but only collecting data');
+                    console.log('User is not a member of any valid group, but only collecting data');
                     void FeedbackAPI.sendFeedback({
-                        email,
-                        name,
-                        message: `Unknown error: ${JSON.stringify(response)}`,
+                        email: profile.email,
+                        name: profile.name,
+                        message: JSON.stringify(groups),
                     });
-                    return true;
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.log('Denying user access, not a member of any valid group');
+                    return '/nei';
                 }
+            }
+
+            const { email, name } = profile;
+
+            const response = await UserAPI.postInitialUser(account.id_token, email, name);
+
+            if (isErrorMessage(response)) {
+                return '/500';
+            }
+
+            if (response.status === 200 || response.status === 409) {
+                return true;
             }
 
             return '/500';
