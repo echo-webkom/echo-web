@@ -238,7 +238,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             val userStudentGroups = getUserStudentGroups(user[User.email])
-            val studentGroups = transaction {
+            val happeningStudentGroups = transaction {
                 addLogger(StdOutSqlLogger)
 
                 StudentGroupHappeningRegistration.select {
@@ -246,13 +246,13 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
                 }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
             }
 
-            if (happening[Happening.onlyForStudentGroups] && !userStudentGroups.any { studentGroups.contains(it) }) {
-                call.respond(HttpStatusCode.Forbidden, resToJson(RegistrationResponse.OnlyOpenForStudentGroups, studentGroups = studentGroups))
+            if (happening[Happening.onlyForStudentGroups] && !userStudentGroups.any { happeningStudentGroups.contains(it) }) {
+                call.respond(HttpStatusCode.Forbidden, resToJson(RegistrationResponse.OnlyOpenForStudentGroups, studentGroups = happeningStudentGroups))
                 return@post
             }
 
             if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
-                if (happening[Happening.studentGroupRegistrationDate] != null && DateTime(happening[Happening.studentGroupRegistrationDate]).isAfterNow) {
+                if (happening[Happening.studentGroupRegistrationDate] != null || DateTime(happening[Happening.studentGroupRegistrationDate]).isAfterNow) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
@@ -262,7 +262,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
                     return@post
                 }
 
-                if (!getUserStudentGroups(user[User.email]).any { studentGroups.contains(it) }) {
+                if (!userStudentGroups.any { happeningStudentGroups.contains(it) }) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
