@@ -252,7 +252,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             if (DateTime(happening[Happening.registrationDate]).isAfterNow) {
-                if (happening[Happening.studentGroupRegistrationDate] != null || DateTime(happening[Happening.studentGroupRegistrationDate]).isAfterNow) {
+                if (happening[Happening.studentGroupRegistrationDate] != null && DateTime(happening[Happening.studentGroupRegistrationDate]).isAfterNow) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
