@@ -48,26 +48,14 @@ fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
     waitList: Boolean,
-    studentGroupsToRemoveFromCount: List<String> = emptyList()
 ): Int {
-    val usersInGroupsEmails = transaction {
-        addLogger(StdOutSqlLogger)
-
-        (User innerJoin StudentGroupMembership)
-            .select {
-                StudentGroupMembership.studentGroupName inList studentGroupsToRemoveFromCount and
-                    (StudentGroupMembership.userEmail eq User.email)
-            }.toList().map { it[StudentGroupMembership.userEmail] }
-    }
-
     return transaction {
         addLogger(StdOutSqlLogger)
 
         Registration.select {
             Registration.happeningSlug eq slug and
                 (Registration.degreeYear inList range) and
-                (Registration.waitList eq waitList) and
-                (Registration.userEmail notInList usersInGroupsEmails)
+                (Registration.waitList eq waitList)
         }.count()
     }.toInt()
 }

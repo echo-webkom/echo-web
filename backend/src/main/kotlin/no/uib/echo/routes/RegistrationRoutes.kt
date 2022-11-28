@@ -35,7 +35,6 @@ import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.User
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
-import no.uib.echo.schema.getStudentGroupsForHappeningSlug
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
@@ -298,13 +297,11 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
                 false,
-                getStudentGroupsForHappeningSlug(registration.slug)
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
                 true,
-                getStudentGroupsForHappeningSlug(registration.slug)
             )
 
             val waitList = correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0
@@ -500,9 +497,7 @@ fun Route.postRegistrationCount() {
             addLogger(StdOutSqlLogger)
 
             slugs.map {
-                val studentGroupsToRemoveFromCount = getStudentGroupsForHappeningSlug(it)
-
-                val count = countRegistrationsDegreeYear(it, 1..5, false, studentGroupsToRemoveFromCount)
+                val count = countRegistrationsDegreeYear(it, 1..5, false)
                 val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
 
                 RegistrationCountJson(it, count, waitListCount)
