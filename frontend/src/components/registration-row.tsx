@@ -114,7 +114,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                 <Td
                     fontSize="md"
                     fontWeight={userIsEligibleForEarlyReg ? 'bold' : 'normal'}
-                    color={userIsEligibleForEarlyReg ? 'green.400' : 'white'}
+                    color={userIsEligibleForEarlyReg ? 'green.400' : 'inherit'}
                     fontStyle={userIsEligibleForEarlyReg ? 'italic' : 'normal'}
                 >
                     {registration.memberships.map(capitalize).join(', ')}
