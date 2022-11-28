@@ -17,7 +17,6 @@ import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.countRegistrationsDegreeYear
-import no.uib.echo.schema.getStudentGroupsForHappeningSlug
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
