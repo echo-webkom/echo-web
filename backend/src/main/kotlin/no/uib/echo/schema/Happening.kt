@@ -152,6 +152,7 @@ fun insertOrUpdateHappening(
             it[happeningDate] = DateTime(newHappening.happeningDate)
             it[studentGroupName] = newHappening.studentGroupName.lowercase()
             it[studentGroupRegistrationDate] = DateTime(newHappening.studentGroupRegistrationDate)
+            it[onlyForStudentGroups] = newHappening.onlyForStudentGroups ?: false
         }
 
         SpotRange.deleteWhere {

@@ -45,7 +45,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
 
     const { data } = useSession();
 
-    const viaStudentGroupReg = hasOverlap(studentGroups, registration.memberships);
+    const userIsEligibleForEarlyReg = hasOverlap(studentGroups, registration.memberships);
 
     const handleDelete = async () => {
         if (!data?.idToken) {
@@ -113,9 +113,9 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                 )}
                 <Td
                     fontSize="md"
-                    fontWeight={viaStudentGroupReg ? 'bold' : 'normal'}
-                    color={viaStudentGroupReg ? 'green.400' : 'white'}
-                    fontStyle={viaStudentGroupReg ? 'italic' : 'normal'}
+                    fontWeight={userIsEligibleForEarlyReg ? 'bold' : 'normal'}
+                    color={userIsEligibleForEarlyReg ? 'green.400' : 'white'}
+                    fontStyle={userIsEligibleForEarlyReg ? 'italic' : 'normal'}
                 >
                     {registration.memberships.map(capitalize).join(', ')}
                 </Td>

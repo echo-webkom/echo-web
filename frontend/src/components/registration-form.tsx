@@ -51,11 +51,15 @@ interface Props {
     loadingUser: boolean;
 }
 
-const chooseDate = (regDate: string | null, studentGroupRegDate: string | null, viaStudentGroupReg: boolean): Date => {
+const chooseDate = (
+    regDate: string | null,
+    studentGroupRegDate: string | null,
+    userIsEligibleForEarlyReg: boolean,
+): Date => {
     if (!regDate && !studentGroupRegDate) return new Date();
-    if (!regDate && studentGroupRegDate) return viaStudentGroupReg ? parseISO(studentGroupRegDate) : new Date();
+    if (!regDate && studentGroupRegDate) return userIsEligibleForEarlyReg ? parseISO(studentGroupRegDate) : new Date();
     if (regDate && !studentGroupRegDate) return parseISO(regDate);
-    if (regDate && studentGroupRegDate) return parseISO(viaStudentGroupReg ? studentGroupRegDate : regDate);
+    if (regDate && studentGroupRegDate) return parseISO(userIsEligibleForEarlyReg ? studentGroupRegDate : regDate);
     // Shouldn't be possible to reach this point, but TypeScript doesn't know that
     return new Date();
 };
@@ -66,8 +70,12 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 
-    const viaStudentGroupReg = hasOverlap(happening.studentGroups, user?.memberships);
-    const regDate = chooseDate(happening.registrationDate, happening.studentGroupRegistrationDate, viaStudentGroupReg);
+    const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
+    const regDate = chooseDate(
+        happening.registrationDate,
+        happening.studentGroupRegistrationDate,
+        userIsEligibleForEarlyReg,
+    );
     const { hours, minutes, seconds } = useCountdown(regDate);
 
     const toast = useToast();
@@ -127,7 +135,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
         );
 
     if (
-        !viaStudentGroupReg &&
+        !userIsEligibleForEarlyReg &&
         !happening.registrationDate &&
         happening.studentGroups &&
         happening.studentGroups.length > 0
@@ -177,11 +185,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                             : onOpen()
                     }
                 >
-                    {isNorwegian
-                        ? viaStudentGroupReg
-                            ? 'Klikk for å melde deg på via studentgruppen din'
-                            : 'Klikk for å melde deg på'
-                        : 'Click to register'}
+                    {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
                 </Button>
             )}
 

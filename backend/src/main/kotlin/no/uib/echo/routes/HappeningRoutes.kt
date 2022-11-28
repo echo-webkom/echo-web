@@ -110,8 +110,6 @@ fun Route.getHappeningInfo() {
             return@get
         }
 
-        val studentGroupsToRemoveFromCount = getStudentGroupsForHappeningSlug(slug)
-
         val registrationCount = transaction {
             addLogger(StdOutSqlLogger)
 
