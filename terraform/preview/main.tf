@@ -74,7 +74,7 @@ resource "azurerm_container_group" "echo_web_preview" {
     memory = 0.5
 
     environment_variables = {
-      "MAX_POOL_SIZE" = "5"
+      "MAX_POOL_SIZE" = "10"
       "DEV"           = "jaj"
     }
 
