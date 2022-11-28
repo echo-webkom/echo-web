@@ -193,6 +193,7 @@ export default {
                     { title: 'Tilde', value: 'tilde' },
                     { title: 'Hyggkom', value: 'hyggkom' },
                     { title: 'ESC', value: 'esc' },
+                    { title: 'Makerspace', value: 'makerspace' },
                 ],
                 layout: 'dropdown',
             },
