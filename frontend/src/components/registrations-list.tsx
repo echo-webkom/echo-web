@@ -69,7 +69,10 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                     reg.name.toLowerCase().includes(search.toLowerCase()) ||
                     (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
             )
-            ?.filter((reg) => hasOverlap(reg.memberships, studentGroups) && !hideStudentGroups) ?? [];
+            ?.filter(
+                (reg) =>
+                    !(notEmptyOrNull(studentGroups) && hasOverlap(reg.memberships, studentGroups) && hideStudentGroups),
+            ) ?? [];
 
     const questions =
         registrations
@@ -265,9 +268,10 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                                 setYear(0);
                                                 setWaitlist(-1);
                                                 setSearch('');
+                                                setHideStudentGroups(false);
                                             }}
                                         >
-                                            Reset filter
+                                            Nullstill filter
                                         </Button>
                                     </Flex>
                                 </Center>
