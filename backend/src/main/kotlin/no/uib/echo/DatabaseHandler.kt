@@ -54,8 +54,7 @@ class DatabaseHandler(
     private val dbUsername = dbUrl.userInfo.split(":")[0]
     private val dbPassword = dbUrl.userInfo.split(":")[1]
     private val maxPoolSize = if (dev) DEFAULT_DEV_POOL_SIZE
-    else if (mbMaxPoolSize == null) DEFAULT_PROD_POOL_SIZE
-    else mbMaxPoolSize.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
+    else mbMaxPoolSize?.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(
