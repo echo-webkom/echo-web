@@ -161,6 +161,12 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                     </NextLink>
                 </>
             )}
+            {user && userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
+                <Alert status="info" borderRadius="0.5rem" mb="5">
+                    <AlertIcon />
+                    Du kan melde deg på dette arrangementet tidligere enn andre
+                </Alert>
+            )}
             {isBefore(new Date(), regDate) &&
                 (differenceInHours(regDate, new Date()) > 23 ? (
                     <Center>
