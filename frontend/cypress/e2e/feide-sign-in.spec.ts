@@ -11,16 +11,19 @@ describe('Feide sign in tests', () => {
         for (const { username, password, email, name, alternateEmail, degree, degreeYear } of feide) {
             beforeEach(() => {
                 cy.viewport(1280, 720);
-                signIn(username, password, email, name);
             });
 
             describe('User', () => {
                 it('can sign in with Feide and reach profile page.', () => {
+                    signIn(username, password, email, name);
+
                     cy.visit('/profile');
                     cy.url().should('contain', 'profile');
                 });
 
                 it('can submit profile info.', () => {
+                    signIn(username, password, email, name);
+
                     cy.visit('/profile');
                     cy.get('[data-cy="profile-alt-email"]').clear().type(alternateEmail);
                     cy.get('[data-cy="profile-degree"]').select(degree);
@@ -31,6 +34,8 @@ describe('Feide sign in tests', () => {
                 });
 
                 it('can visit profile page and see persisted profile info.', () => {
+                    signIn(username, password, email, name);
+
                     cy.visit('/profile');
                     cy.get('[data-cy="profile-alt-email"]').should('have.value', alternateEmail);
                     cy.get('[data-cy="profile-degree"]').find('option:selected').should('have.text', degree);

@@ -12,16 +12,16 @@ describe('Happening registration', () => {
         for (const { username, password, email, name } of feide) {
             beforeEach(() => {
                 cy.viewport(1280, 720);
-                signIn(username, password, email, name);
             });
 
             for (const { slug } of happenings) {
                 describe('Happening form registration', () => {
-                    beforeEach(() => {
-                        cy.visit(`/event/${slug}`);
-                    });
-
                     it('should register user to happening', () => {
+                        signIn(username, password, email, name);
+
+                        cy.visit(`/event/${slug}`);
+
+                        cy.wait(1000);
                         cy.get('[data-cy=reg-btn]').click();
 
                         cy.get('li[class=chakra-toast]').contains('Påmeldingen din er registrert!');

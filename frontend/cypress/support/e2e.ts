@@ -1,6 +1,6 @@
 const signIn = (username: string, password: string, email: string, name: string) => {
     cy.session(
-        'feide',
+        [username],
         () => {
             cy.visit('/');
 

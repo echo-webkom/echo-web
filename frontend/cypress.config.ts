@@ -8,17 +8,15 @@ export default defineConfig({
         specPattern: [
             '**/entry-box.spec.ts',
             '**/nav.spec.ts',
-            // Can't get Feide to work in Cypress
-            // '**/feide-sign-in.spec.ts',
-            // '**/happening-registration.spec.ts',
+            '**/feide-sign-in.spec.ts',
+            '**/happening-registration.spec.ts',
         ],
         experimentalSessionAndOrigin: true,
-        experimentalModifyObstructiveThirdPartyCode: false,
         watchForFileChanges: false,
     },
 
     retries: {
-        runMode: 2,
+        runMode: 3,
     },
 
     component: {
