@@ -3,7 +3,7 @@ import type { decodeType } from 'typescript-json-decoder';
 import { array, literal, union } from 'typescript-json-decoder';
 import type { ErrorMessage } from '@utils/error';
 
-const studentGroups: Array<StudentGroup> = ['webkom', 'bedkom', 'gnist', 'tilde', 'hovedstyret'];
+const studentGroups: Array<StudentGroup> = ['webkom', 'bedkom', 'gnist', 'tilde', 'hovedstyret', 'hyggkom', 'esc'];
 
 const studentGroupDecoder = union(
     literal('webkom'),
@@ -11,6 +11,8 @@ const studentGroupDecoder = union(
     literal('gnist'),
     literal('tilde'),
     literal('hovedstyret'),
+    literal('hyggkom'),
+    literal('esc'),
 );
 type StudentGroup = decodeType<typeof studentGroupDecoder>;
 

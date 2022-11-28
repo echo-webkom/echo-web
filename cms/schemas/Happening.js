@@ -191,6 +191,8 @@ export default {
                     { title: 'Webkom', value: 'webkom' },
                     { title: 'Gnist', value: 'gnist' },
                     { title: 'Tilde', value: 'tilde' },
+                    { title: 'Hyggkom', value: 'hyggkom' },
+                    { title: 'ESC', value: 'esc' },
                 ],
                 layout: 'dropdown',
             },
