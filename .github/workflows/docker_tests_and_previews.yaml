@@ -144,8 +144,7 @@ jobs:
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
-          build: yarn build
-          start: yarn start
+          start: yarn dev
           wait-on: 'http://localhost:3000, http://localhost:8080/status'
           config: video=false
           browser: firefox
@@ -154,6 +153,7 @@ jobs:
           NEXTAUTH_SECRET: very-secret-string-123
           FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
           FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
+          SIGN_IN_DISABLE_CHECK: true
 
       - name: Upload Cypress screenshots (only on failure)
         uses: actions/upload-artifact@v3

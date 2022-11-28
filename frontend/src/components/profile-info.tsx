@@ -232,7 +232,12 @@ const ProfileInfo = (): JSX.Element => {
                                             ? 'Lagre endringer'
                                             : 'Save changes'}
                                     </Button>
-                                    <Button onClick={() => void signOut()} colorScheme="red" width="50%">
+                                    <Button
+                                        data-cy="sign-out-btn"
+                                        onClick={() => void signOut()}
+                                        colorScheme="red"
+                                        width="50%"
+                                    >
                                         {isNorwegian ? 'Logg ut' : 'Sign out'}
                                     </Button>
                                 </HStack>
