@@ -20,6 +20,9 @@ const useCountdown = (toDate: Date): CountdownObject => {
     const [ms, setMs] = useState(initialMs); // state with current interval
 
     useEffect(() => {
+        // initial sync to avoid wrong date
+        setMs(differenceInMilliseconds(toDate, new Date()));
+
         const interval = setInterval(() => {
             if (ms < 0) {
                 clearInterval(interval); // countdown has reached 0
@@ -37,7 +40,7 @@ const useCountdown = (toDate: Date): CountdownObject => {
         return () => {
             clearInterval(interval);
         };
-    });
+    }, [toDate, ms]);
 
     return formatMs(ms);
 };
