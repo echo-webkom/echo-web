@@ -8,8 +8,7 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
-import type { User } from '@api/user';
-import { UserAPI } from '@api/user';
+import useUser from '@hooks/use-user';
 import RegistrationsList from '@components/registrations-list';
 import type { Happening, HappeningInfo } from '@api/happening';
 import { HappeningAPI } from '@api/happening';
@@ -33,29 +32,13 @@ interface Props {
 }
 
 const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
-    const { data, status } = useSession();
+    const { data } = useSession();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
-    const [user, setUser] = useState<User | null>(null);
-    const [loadingUser, setLoadingUser] = useState<boolean>(false);
     const isNorwegian = useLanguage();
+    const { signedIn } = useUser();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!data?.user?.email || !data.user.name || !data.idToken) return;
-            setLoadingUser(true);
-
-            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
-
-            if (!isErrorMessage(result)) {
-                setUser(result);
-            }
-            setLoadingUser(false);
-        };
-        void fetchUser();
-    }, [data]);
 
     useEffect(() => {
         const fetchRegs = async () => {
@@ -127,18 +110,13 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                     <>
                                         <Divider my="1em" />
                                         {isFuture(regDeadline) && (
-                                            <RegistrationForm
-                                                happening={happening}
-                                                type={happening.happeningType}
-                                                user={user}
-                                                loadingUser={loadingUser}
-                                            />
+                                            <RegistrationForm happening={happening} type={happening.happeningType} />
                                         )}
                                         {isBefore(date, parseISO(happening.date)) &&
                                             isAfter(date, regDate) &&
                                             isBefore(date, regDeadline) && (
                                                 <>
-                                                    {status === 'authenticated' && (
+                                                    {signedIn && (
                                                         <Center mt="1rem">
                                                             <Text fontSize="md">
                                                                 {isNorwegian

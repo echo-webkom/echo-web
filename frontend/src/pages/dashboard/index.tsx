@@ -12,13 +12,9 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
-import type { ErrorMessage } from '@utils/error';
-import { isErrorMessage } from '@utils/error';
-import type { User } from '@api/user';
-import { UserAPI } from '@api/user';
+import useUser from '@hooks/use-user';
 
 const adminRoutes = [
     {
@@ -34,32 +30,10 @@ const adminRoutes = [
 ];
 
 const DashboardPage = () => {
-    const [user, setUser] = useState<User | null>();
-    const [error, setError] = useState<ErrorMessage>();
-    const [loading, setLoading] = useState<boolean>(true);
+    const { user, loading, error } = useUser();
     const [isWebkom, setIsWebkom] = useState<boolean>(false);
 
-    const { data } = useSession();
-
     const bg = useColorModeValue('gray.200', 'gray.800');
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!data?.user?.email || !data.user.name || !data.idToken) return;
-
-            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
-
-            if (isErrorMessage(result)) {
-                setError(result);
-            } else {
-                setUser(result);
-            }
-
-            setLoading(false);
-        };
-
-        void fetchUser();
-    }, [data]);
 
     useEffect(() => {
         if (user) {

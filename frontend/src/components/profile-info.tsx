@@ -33,18 +33,17 @@ import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
 import { UserAPI, userIsComplete } from '@api/user';
 import { isErrorMessage } from '@utils/error';
-import type { ErrorMessage } from '@utils/error';
 import FormDegree from '@components/form-degree';
 import Unauthorized from '@components/unauthorized';
 import FormDegreeYear from '@components/form-degree-year';
 import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
+import useUser from '@hooks/use-user';
 
-const ProfileInfo = (): JSX.Element => {
-    const [user, setUser] = useState<User | null>();
-    const [error, setError] = useState<ErrorMessage>();
-    const [loading, setLoading] = useState<boolean>(true);
+const ProfileInfo = () => {
+    const { user, loading: userLoading, error, setUser } = useUser();
+    const [loading, setLoading] = useState<boolean>(userLoading);
 
     const [saved, setSaved] = useState<boolean>(false);
     const [satisfied, setSatisfied] = useState<boolean>(false);
@@ -62,22 +61,6 @@ const ProfileInfo = (): JSX.Element => {
     const iconColor = useColorModeValue('black', 'white');
 
     const { data, status } = useSession();
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!data?.idToken || !data.user?.email || !data.user.name) return;
-
-            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
-
-            if (isErrorMessage(result)) {
-                setError(result);
-            } else {
-                setUser(result);
-            }
-        };
-
-        void fetchUser();
-    }, [data]);
 
     useEffect(() => {
         if (user) {
