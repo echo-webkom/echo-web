@@ -1,6 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
@@ -22,8 +22,8 @@ import Article from '@components/article';
 import HappeningMetaInfo from '@components/happening-meta-info';
 import RegistrationForm from '@components/registration-form';
 import Section from '@components/section';
-import LanguageContext from 'language-context';
 import ReactionButtons from '@components/reaction-buttons';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     happening: Happening | null;
@@ -38,7 +38,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const [user, setUser] = useState<User | null>(null);
     const [loadingUser, setLoadingUser] = useState<boolean>(false);
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
 

@@ -1,11 +1,10 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
-import { useContext } from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     event: Happening;
@@ -13,7 +12,7 @@ interface Props {
 }
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const totalRegs =
         registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;

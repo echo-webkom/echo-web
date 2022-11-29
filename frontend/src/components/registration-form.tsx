@@ -18,7 +18,6 @@ import {
     AlertIcon,
     Center,
 } from '@chakra-ui/react';
-import { useContext } from 'react';
 import { useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -33,7 +32,7 @@ import { userIsComplete } from '@api/user';
 import type { User } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormQuestion from '@components/form-question';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 import useCountdown from '@hooks/use-countdown';
 import hasOverlap from '@utils/has-overlap';
 import capitalize from '@utils/capitalize';
@@ -66,7 +65,7 @@ const chooseDate = (
 
 const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
 

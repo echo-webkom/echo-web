@@ -1,8 +1,7 @@
-import { useContext } from 'react';
 import type { SelectProps } from '@chakra-ui/react';
 import { Heading, FormControl, FormLabel, Select } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props extends SelectProps {
     isHeading?: boolean;
@@ -12,7 +11,7 @@ interface Props extends SelectProps {
 
 const FormDegreeYear = ({ isHeading = false, hideLabel = false, isRequired = false, ...props }: Props) => {
     const { register } = useFormContext();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const headingText = isNorwegian ? 'Årstrinn' : 'Year';
 
     return (

@@ -15,10 +15,10 @@ import {
     type IconProps,
 } from '@chakra-ui/react';
 import { addDays, eachDayOfInterval, getISOWeek, getISOWeekYear, isSameDay, startOfWeek, subDays } from 'date-fns';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
-import HappeningCalendarBox from './happening-calendar-box';
-import LanguageContext from 'language-context';
+import HappeningCalendarBox from '@components/happening-calendar-box';
+import useLanguage from '@hooks/use-language';
 import capitalize from '@utils/capitalize';
 import type { Happening } from '@api/happening';
 
@@ -40,7 +40,7 @@ interface Props {
 }
 
 const EventCalendar = ({ happenings }: Props) => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const bedpresColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');

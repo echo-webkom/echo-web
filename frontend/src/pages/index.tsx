@@ -3,7 +3,6 @@ import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VSta
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore } from 'date-fns';
 import type { GetStaticProps } from 'next';
-import { useContext } from 'react';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
 import SEO from '@components/seo';
@@ -20,7 +19,7 @@ import type { JobAdvert } from '@api/job-advert';
 import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import getRssXML from '@utils/generate-rss-feed';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 import FeedbackPopup from '@components/feedback-popup';
 
 const IndexPage = ({
@@ -40,7 +39,7 @@ const IndexPage = ({
 }): JSX.Element => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
     const enableFeedbackPopup = process.env.NEXT_PUBLIC_ENABLE_FEEDBACK_POPUP?.toLowerCase() === 'true';
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);

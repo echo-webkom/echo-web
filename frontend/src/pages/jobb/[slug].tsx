@@ -1,5 +1,4 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { useContext } from 'react';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Spinner, VStack } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
@@ -21,9 +20,9 @@ import MapMarkdownChakra from '@utils/markdown';
 import IconText from '@components/icon-text';
 import translateJobType from '@utils/translate-job-type';
 import ButtonLink from '@components/button-link';
-import LanguageContext from 'language-context';
 import { imgUrlFor } from '@api/sanity';
 import degreeYearText from '@utils/degree-year-text';
+import useLangugage from '@hooks/use-language';
 
 interface Props {
     jobAdvert: JobAdvert | null;
@@ -31,7 +30,7 @@ interface Props {
 
 const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
     const router = useRouter();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLangugage();
 
     return (
         <>

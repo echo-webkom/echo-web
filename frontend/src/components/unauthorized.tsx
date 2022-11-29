@@ -1,9 +1,8 @@
 import { useColorModeValue, Center, Flex, Spacer, Button, Text, Link } from '@chakra-ui/react';
-import { useContext } from 'react';
 import { signIn } from 'next-auth/react';
 import { IoMdHome } from 'react-icons/io';
 import Section from '@components/section';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 const Unauthorized = () => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
@@ -11,7 +10,7 @@ const Unauthorized = () => {
     const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     return (
         <Center>

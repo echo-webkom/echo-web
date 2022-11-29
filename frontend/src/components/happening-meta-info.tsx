@@ -1,6 +1,5 @@
 import { VStack, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { useContext } from 'react';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
@@ -9,7 +8,7 @@ import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
 import CalendarPopup from '@components/calendar-popup';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     date: Date;
@@ -38,7 +37,7 @@ const HappeningMetaInfo = ({
     spotRangeCounts,
     spotRangesFromCms,
 }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
     // This means spots from CMS will be displayed if backend does not respond.

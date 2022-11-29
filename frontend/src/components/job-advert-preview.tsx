@@ -10,19 +10,18 @@ import {
     useColorModeValue,
     Wrap,
 } from '@chakra-ui/react';
-import { useContext } from 'react';
 import { format } from 'date-fns';
 import NextLink from 'next/link';
 import type { JobAdvert } from '@api/job-advert';
 import degreeYearText from '@utils/degree-year-text';
 import translateJobType from '@utils/translate-job-type';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     return (
         <LinkBox

@@ -12,13 +12,12 @@ import {
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import type { RefObject } from 'react';
-import { useContext } from 'react';
-import LanguageContext from 'language-context';
 import NavLink, { NavLinkButton } from '@components/nav-link';
 import ColorModeButton from '@components/color-mode-button';
+import useLanguage from '@hooks/use-language';
 
 const NavLinks = (): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const { status } = useSession();
     const router = useRouter();
     const onProfileClick = () => {
@@ -62,7 +61,8 @@ interface Props {
 }
 
 const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
+
     return (
         <>
             <Box flex="2 1 auto" data-cy="navbar-standard" pb="1rem" pl={['0.5rem', null, null, null, '3rem', '4rem']}>
