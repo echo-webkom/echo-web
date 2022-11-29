@@ -23,17 +23,16 @@ import {
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { MdOutlineFeedback } from 'react-icons/md';
-import { useContext } from 'react';
 import type { FeedbackResponse, FeedbackFormValues } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 const FeedbackButton = () => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const { onOpen, isOpen, onClose } = useDisclosure();
 

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -39,7 +39,7 @@ import Unauthorized from '@components/unauthorized';
 import FormDegreeYear from '@components/form-degree-year';
 import IconText from '@components/icon-text';
 import Section from '@components/section';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 const ProfileInfo = (): JSX.Element => {
     const [user, setUser] = useState<User | null>();
@@ -49,7 +49,7 @@ const ProfileInfo = (): JSX.Element => {
     const [saved, setSaved] = useState<boolean>(false);
     const [satisfied, setSatisfied] = useState<boolean>(false);
 
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
         defaultValues: {
             degree: user?.degree ?? null,

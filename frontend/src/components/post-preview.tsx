@@ -1,11 +1,10 @@
-import { useContext } from 'react';
 import type { BoxProps } from '@chakra-ui/react';
 import { Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import removeMD from 'remove-markdown';
 import type { Post } from '@api/post';
 import hasLongWord from '@utils/has-long-word';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props extends BoxProps {
     post: Post;
@@ -17,7 +16,7 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
     const isMobile = useBreakpointValue([true, false]);
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const localeTitle = (): string => {
         /* eslint-disable */
         const output = isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;

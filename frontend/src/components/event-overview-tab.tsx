@@ -1,9 +1,9 @@
 import { Center, Button, TabPanel, Box } from '@chakra-ui/react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import EntryList from './entry-list';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     happenings: Array<Happening>;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const EventOverviewTab = ({ happenings, type, registrationCounts, previewPerPage }: Props) => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const [page, setPage] = useState(0);
     const [visibleHappenings, setVisibleHappenings] = useState(
         happenings.slice(0, previewPerPage + page * previewPerPage),

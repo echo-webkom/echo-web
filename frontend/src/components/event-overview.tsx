@@ -1,11 +1,10 @@
 import { Box, Heading, Tab, TabList, TabPanels, Tabs } from '@chakra-ui/react';
 import { isFuture, isPast } from 'date-fns';
-import { useContext } from 'react';
 import Section from './section';
 import EventOverviewTab from './event-overview-tab';
 import type { RegistrationCount } from '@api/registration';
 import type { Happening } from '@api/happening';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     events: Array<Happening>;
@@ -15,7 +14,7 @@ interface Props {
 }
 
 const EventOverview = ({ title, events, type, registrationCounts }: Props) => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const n = type === 'bedpres' ? 3 : 5;
 
