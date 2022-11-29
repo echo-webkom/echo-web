@@ -23,9 +23,9 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import NextLink from 'next/link';
-import { differenceInHours, format, isBefore, isPast, parseISO } from 'date-fns';
+import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
-import Countdown from '@components/countdown';
+import CountdownButton from '@components/countdown-button';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
 import { userIsComplete } from '@api/user';
@@ -33,7 +33,6 @@ import type { User } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormQuestion from '@components/form-question';
 import useLanguage from '@hooks/use-language';
-import useCountdown from '@hooks/use-countdown';
 import hasOverlap from '@utils/has-overlap';
 import capitalize from '@utils/capitalize';
 
@@ -75,10 +74,8 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
         happening.studentGroupRegistrationDate,
         userIsEligibleForEarlyReg,
     );
-    const { hours, minutes, seconds } = useCountdown(regDate);
 
     const toast = useToast();
-
     const { data: session, status } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
@@ -174,24 +171,22 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                     {isNorwegian ? 'Dette er et internt arrangement.' : 'This is a private event.'}
                 </Alert>
             )}
-            {isBefore(new Date(), regDate) &&
-                (differenceInHours(regDate, new Date()) > 23 ? (
-                    <Center>
-                        <Text fontSize="xl">
-                            {isNorwegian ? `Påmelding åpner ` : `Registration opens `}
-                            {format(regDate, 'dd. MMM HH:mm', {
-                                locale: isNorwegian ? nb : enUS,
-                            })}
-                        </Text>
-                    </Center>
-                ) : (
-                    <Countdown hours={hours} minutes={minutes} seconds={seconds} />
-                ))}
-            {userIsComplete(user) && isPast(regDate) && (
-                <Button
+            {isBefore(new Date(), regDate) && differenceInHours(regDate, new Date()) >= 24 && (
+                <Center>
+                    <Text fontSize="xl">
+                        {isNorwegian ? `Påmelding åpner ` : `Registration opens `}
+                        {format(regDate, 'dd. MMM HH:mm', {
+                            locale: isNorwegian ? nb : enUS,
+                        })}
+                    </Text>
+                </Center>
+            )}
+            {userIsComplete(user) && differenceInHours(regDate, new Date()) < 24 && (
+                <CountdownButton
                     data-cy="reg-btn"
                     w="100%"
                     colorScheme="teal"
+                    date={regDate}
                     onClick={() =>
                         happening.additionalQuestions.length === 0
                             ? void submitForm({ email: user.email, answers: [] })
@@ -199,7 +194,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                     }
                 >
                     {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
-                </Button>
+                </CountdownButton>
             )}
 
             <Modal isOpen={isOpen} onClose={onClose}>
