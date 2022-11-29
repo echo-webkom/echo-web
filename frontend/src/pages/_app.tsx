@@ -9,6 +9,7 @@ import Fonts from '@styles/fonts';
 import theme from '@styles/theme';
 import Layout from '@components/layout';
 import { LanguageProvider } from '@hooks/use-language';
+import { UserProvider } from '@hooks/use-user';
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps<SessionProviderProps>): JSX.Element => {
     const router = useRouter();
@@ -17,20 +18,22 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps<Sessi
     return (
         <LanguageProvider>
             <SessionProvider session={session}>
-                <ChakraProvider theme={theme}>
-                    <NextNProgress
-                        color="#29D"
-                        startPosition={0.15}
-                        stopDelayMs={200}
-                        height={4}
-                        options={{ showSpinner: false }}
-                    />
-                    {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color="#ffffff" />}
-                    <Fonts />
-                    <Layout>
-                        <Component {...pageProps} key={router} />
-                    </Layout>
-                </ChakraProvider>
+                <UserProvider>
+                    <ChakraProvider theme={theme}>
+                        <NextNProgress
+                            color="#29D"
+                            startPosition={0.15}
+                            stopDelayMs={200}
+                            height={4}
+                            options={{ showSpinner: false }}
+                        />
+                        {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color="#ffffff" />}
+                        <Fonts />
+                        <Layout>
+                            <Component {...pageProps} key={router} />
+                        </Layout>
+                    </ChakraProvider>
+                </UserProvider>
             </SessionProvider>
         </LanguageProvider>
     );
