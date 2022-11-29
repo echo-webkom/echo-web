@@ -84,8 +84,8 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!session?.idToken) {
             toast({
-                title: 'Du er ikke logget inn.',
-                description: 'Logg inn for å melde deg på.',
+                title: isNorwegian ? 'Du er ikke logget inn.' : 'You are not signed in.',
+                description: isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.',
                 status: 'warning',
             });
             return;
@@ -129,7 +129,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     if (status === 'unauthenticated')
         return (
             <Box data-testid="registration-form">
-                <Text textAlign="center">Logg inn for å melde deg på</Text>
+                <Text textAlign="center">{isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.'}</Text>
             </Box>
         );
 
@@ -151,7 +151,9 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                 <>
                     <Alert status="warning" borderRadius="0.5rem" mb="5">
                         <AlertIcon />
-                        Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
+                        {isNorwegian
+                            ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
+                            : 'You must fill out all necessary information to be able to register for events!'}
                     </Alert>
                     <NextLink href="/profile" passHref>
                         <Button w="100%" rightIcon={<MdOutlineArrowForward />} colorScheme="teal" variant="outline">
@@ -163,13 +165,13 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
             {user && userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
                 <Alert status="info" borderRadius="0.5rem" mb="5">
                     <AlertIcon />
-                    Du kan melde deg på dette arrangementet tidligere enn andre
+                    Du kan melde deg på dette arrangementet tidligere enn andre.
                 </Alert>
             )}
             {user && happening.onlyForStudentGroups && (
                 <Alert status="info" borderRadius="0.5rem" mb="5">
                     <AlertIcon />
-                    Dette er et internt arrangement
+                    {isNorwegian ? 'Dette er et internt arrangement.' : 'This is a private event.'}
                 </Alert>
             )}
             {isBefore(new Date(), regDate) &&

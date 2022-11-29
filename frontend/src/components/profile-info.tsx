@@ -143,7 +143,7 @@ const ProfileInfo = (): JSX.Element => {
             </Center>
         );
 
-    if (!user) return <ErrorBox error="Det har skjedd en feil." />;
+    if (!user) return <ErrorBox error={isNorwegian ? 'Det har skjedd en feil.' : 'An error has ocurred.'} />;
 
     return (
         <Center>
@@ -176,7 +176,9 @@ const ProfileInfo = (): JSX.Element => {
                             <Skeleton isLoaded={!loading}>
                                 <Alert status="warning" borderRadius="0.5rem" mb="6">
                                     <AlertIcon />
-                                    Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!
+                                    {isNorwegian
+                                        ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
+                                        : 'You must fill out all required information to be able to sign up for events!'}
                                 </Alert>
                             </Skeleton>
                         )}
