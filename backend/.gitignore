@@ -4,6 +4,7 @@ kt/
 .graphqlconfig
 schema.graphql
 *.dump
+!test_data.dump
 bin/
 
 ### Created by https://www.gitignore.io

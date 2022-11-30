@@ -1,0 +1,327 @@
+name: Docker tests & previews
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  packages: write
+  actions: read
+
+env:
+  IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+  TAG: ${{ github.sha }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
+
+jobs:
+  build_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Login to GitHub Container Registry
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build backend with cache and push to registry
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          cd backend
+          docker build \
+            --cache-from "$IMAGE_NAME/backend:latest" \
+            -t "$IMAGE_NAME/backend:$GITHUB_SHA" \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            .
+          docker push "$IMAGE_NAME/backend" --all-tags
+        env:
+          DOCKER_BUILDKIT: 1
+
+  kotest_tests:
+    runs-on: ubuntu-latest
+    needs: build_backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Pull Docker image
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+
+      - name: Run Kotest tests with Docker Compose
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: docker compose -f backend/docker-compose.kotest.yaml up --exit-code-from=backend
+        env:
+          ADMIN_KEY: admin-passord
+
+  cypress_e2e_tests:
+    runs-on: ubuntu-latest
+    needs: [build_backend]
+    env:
+      ADMIN_KEY: admin-passord
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files, frontend
+        id: changed-files-frontend
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            frontend/**
+            yarn.lock
+            package.json
+            .github/workflows/docker_tests_and_previews.yaml
+          files_ignore: |
+            *.md
+            *.png
+            *.ico
+            *.svg
+            *.test.tsx
+            frontend/.gitignore
+            frontend/.env.example
+
+      - name: Get changed files, backend
+        id: changed-files-backend
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Backend changed, pull Docker image
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
+        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+
+      - name: Backend didn't change, pull Docker image
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed != 'true'
+        run: docker pull "$IMAGE_NAME/backend:latest"
+
+      - name: Start backend
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
+        run: |
+          cd backend
+          docker compose up &
+        env:
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+
+      - name: Run Cypress end-to-end tests
+        if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
+        uses: cypress-io/github-action@v4.2.1
+        with:
+          working-directory: frontend
+          install-command: yarn --frozen-lockfile
+          start: yarn dev
+          wait-on: 'http://localhost:3000, http://localhost:8080/status'
+          config: video=false
+          browser: firefox
+        env:
+          SANITY_DATASET: testing
+          NEXTAUTH_SECRET: very-secret-string-123
+          FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
+          FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
+          SIGN_IN_DISABLE_CHECK: true
+
+      - name: Upload Cypress screenshots (only on failure)
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+
+  migration_tests:
+    runs-on: ubuntu-latest
+    needs: [build_backend]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            backend/src/main/resources/db/migration/*.sql
+            backend/gradle.properties
+
+      - name: Pull Docker image
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+
+      - name: Download database dump
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          heroku pg:backups:capture -a $HEROKU_APP_NAME
+          heroku pg:backups:download -a $HEROKU_APP_NAME
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: 'echo-web-backend-prod'
+
+      - name: Run migration tests
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          docker compose -f backend/docker-compose.yaml up database --wait
+          docker cp latest.dump backend-database-1:/
+          docker exec -i backend-database-1 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d postgres latest.dump || true
+          docker compose -f backend/docker-compose.yaml up backend & (sleep 15 && docker kill backend-backend-1)
+        env:
+          TEST_MIGRATION: true
+          ADMIN_KEY: admin-passord
+
+  backend_preview:
+    runs-on: ubuntu-latest
+    needs: [build_backend]
+    outputs:
+      preview_backend_url: ${{ steps.preview_deploy.outputs.BACKEND_URL || steps.default_value.outputs.BACKEND_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set BACKEND_URL default value
+        id: default_value
+        run: echo "BACKEND_URL=https://echo-web-containers-dev.norwayeast.azurecontainer.io" >> $GITHUB_OUTPUT
+
+      - name: Get changed files, backend
+        id: changed-files-backend
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            backend/**
+          files_ignore: |
+            backend/.gitignore
+            backend/.env.example
+
+      - name: Get changed files, Terraform
+        id: changed-files-tf
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            terraform/preview/**
+
+      - name: Setup Terraform
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Set environment variables
+        id: env_vars
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        run: |
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
+          echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
+        env:
+          BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
+
+      - name: Deploy preview container
+        id: preview_deploy
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        run: |
+          cd terraform/preview
+          terraform init
+          terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
+          terraform apply -auto-approve -lock-timeout=15m
+          # Get backend url and output it
+          echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHUB_OUTPUT
+        env:
+          TF_VAR_resource_group_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
+          TF_VAR_location: norwayeast
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
+          TF_VAR_backend_image: '${{ env.IMAGE_NAME }}/backend:${{ steps.env_vars.outputs.BACKEND_TAG }}'
+          ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
+          ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+          WORKSPACE_NAME: ${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}
+
+      - name: Find comment
+        id: fc
+        if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
+        uses: peter-evans/find-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: beep boop!
+
+      - name: Create comment
+        if: steps.fc.outputs.comment-id == '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **beep boop!**
+
+            I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
+
+      - name: Update comment
+        if: steps.fc.outputs.comment-id != '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            **beep boop!**
+
+            I just deployed a *new* backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rewind:
+
+  vercel_preview:
+    runs-on: ubuntu-latest
+    needs: [backend_preview]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+          PR_LABELS: false
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_BalajEhvjfBqbkouJFI9761w
+          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
+          BUILD_ENV: |
+            SANITY_DATASET=production
+            ADMIN_KEY=${{ secrets.ADMIN_KEY_DEV }}
+            NEXT_PUBLIC_BACKEND_URL=${{ needs.backend_preview.outputs.preview_backend_url }}
+            NEXTAUTH_SECRET=secret123AsDef£123
+
+      - name: Seed backend with Sanity data
+        run: curl -v ${{ needs.backend_preview.outputs.preview_backend_url }}/sanity -u admin:$TF_VAR_admin_key --basic || true

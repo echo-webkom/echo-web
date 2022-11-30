@@ -25,7 +25,7 @@ interface MenuDropdownProps {
 
 const MenuDropdown = (props: MenuDropdownProps) => {
     return (
-        <Accordion allowMultiple allowToggle defaultIndex={props.isOpen ? 0 : undefined}>
+        <Accordion allowToggle defaultIndex={props.isOpen ? 0 : undefined}>
             <AccordionItem border="hidden">
                 <h2>
                     <AccordionButton px={0} _hover={{ textDecoration: 'underline' }}>
@@ -106,6 +106,8 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                         { name: 'Makerspace 🛠️', href: '/om-echo/studentgrupper/makerspace' },
                         { name: 'Tilde 🥳', href: '/om-echo/studentgrupper/tilde' },
                         { name: 'Webkom 💻', href: '/om-echo/studentgrupper/webkom' },
+                        { name: 'Hyggkom 🫶', href: '/om-echo/studentgrupper/hyggkom' },
+                        { name: 'ESC 🏟️', href: '/om-echo/studentgrupper/esc' },
                     ],
                 },
                 {

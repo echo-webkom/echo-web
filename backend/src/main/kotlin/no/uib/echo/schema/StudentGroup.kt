@@ -8,9 +8,11 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
+val validStudentGroups = listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret", "hyggkom", "esc", "makerspace")
+
 object StudentGroup : Table("student_group") {
     val name: Column<String> = text("group_name").check("valid_student_group") {
-        it inList listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret")
+        it inList validStudentGroups
     }
 
     override val primaryKey: PrimaryKey = PrimaryKey(name)
@@ -24,8 +26,9 @@ object StudentGroupMembership : Table("student_group_membership") {
 }
 
 fun getGroupMembers(group: String?): List<String> {
-    if (group == null)
+    if (group == null) {
         return emptyList()
+    }
 
     return transaction {
         addLogger(StdOutSqlLogger)
@@ -34,5 +37,31 @@ fun getGroupMembers(group: String?): List<String> {
             StudentGroupMembership.studentGroupName eq group.lowercase() or
                 (StudentGroupMembership.studentGroupName eq "webkom")
         }.toList().map { it[StudentGroupMembership.userEmail].lowercase() }
+    }
+}
+
+fun _getGroupMembers(group: String?): List<String> {
+    if (group == null) {
+        return emptyList()
+    }
+
+    return transaction {
+        addLogger(StdOutSqlLogger)
+
+        StudentGroupMembership.select {
+            StudentGroupMembership.studentGroupName eq group.lowercase()
+        }.toList().map { it[StudentGroupMembership.userEmail].lowercase() }
+    }
+}
+
+fun getUserStudentGroups(email: String): List<String> = transaction {
+    addLogger(StdOutSqlLogger)
+
+    StudentGroupMembership.select {
+        StudentGroupMembership.userEmail eq email
+    }.toList().map {
+        it[StudentGroupMembership.studentGroupName]
+    }.ifEmpty {
+        emptyList()
     }
 }

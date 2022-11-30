@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
-import { number, array, string, literal, union, nil, record } from 'typescript-json-decoder';
+import { boolean, number, array, string, literal, union, nil, record } from 'typescript-json-decoder';
 import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import { emptyArrayOnNilDecoder } from '@utils/decoders';
@@ -48,6 +48,9 @@ const happeningDecoder = record({
     date: string,
     registrationDate: union(string, nil),
     registrationDeadline: union(string, nil),
+    studentGroupRegistrationDate: union(string, nil),
+    studentGroups: union(array(string), nil),
+    onlyForStudentGroups: union(boolean, nil),
     body: (value) =>
         typeof value === 'string'
             ? { no: string(value), en: string(value) }
@@ -65,7 +68,6 @@ type Happening = decodeType<typeof happeningDecoder>;
 
 const happeningInfoDecoder = record({
     spotRanges: array(spotRangeCountDecoder),
-    regVerifyToken: (value) => (value === undefined ? null : string(value)),
 });
 type HappeningInfo = decodeType<typeof happeningInfoDecoder>;
 
@@ -84,6 +86,9 @@ const HappeningAPI = {
                     date,
                     registrationDate,
                     registrationDeadline,
+                    studentGroupRegistrationDate,
+                    studentGroups,
+                    onlyForStudentGroups,
                     "body": select(
                         body.en != null => {"no": body.no, "en": body.en},
                         body.no != null => {"no": body.no, "en": null},
@@ -132,6 +137,9 @@ const HappeningAPI = {
                     date,
                     registrationDate,
                     registrationDeadline,
+                    studentGroupRegistrationDate,
+                    studentGroups,
+                    onlyForStudentGroups,
                     "body": select(
                         body.en != null => {"no": body.no, "en": body.en},
                         body.no != null => {"no": body.no, "en": null},
@@ -172,7 +180,7 @@ const HappeningAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
-                return { message: !error.response ? '404' : error.message };
+                return { message: error.response ? error.message : '404' };
             }
 
             return {
@@ -181,9 +189,9 @@ const HappeningAPI = {
         }
     },
 
-    getHappeningInfo: async (auth: string, slug: string, backendUrl: string): Promise<HappeningInfo | ErrorMessage> => {
+    getHappeningInfo: async (auth: string, slug: string): Promise<HappeningInfo | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${backendUrl}/happening/${slug}`, {
+            const { data } = await axios.get(`${BACKEND_URL}/happening/${slug}`, {
                 auth: {
                     username: 'admin',
                     password: auth,

@@ -1,18 +1,7 @@
-import {
-    Icon,
-    LinkBox,
-    LinkOverlay,
-    SimpleGrid,
-    Text,
-    useColorModeValue,
-    Wrap,
-    WrapItem,
-    Image,
-    Center,
-} from '@chakra-ui/react';
+import { Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue, Image, Center, Box } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
-
+import LanguageMenu from '@components/language-menu';
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
 const vercelLogo = '/powered-by-vercel.svg';
@@ -22,25 +11,17 @@ const Footer = (): JSX.Element => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
 
     return (
-        <Wrap
-            position="absolute"
-            bottom="0"
-            justify="center"
-            bg="bg.dark.secondary"
-            p="1.5rem"
-            width="100%"
-            overflow="hidden"
-        >
+        <Box bg="bg.dark.secondary" data-testid="footer">
             <SimpleGrid
-                as={WrapItem}
                 columns={[1, 2, 4]}
                 justifyItems="center"
                 alignItems="center"
                 spacingX="3em"
                 spacingY="3em"
-                w="1400px"
+                py="2em"
                 px="1em"
-                data-testid="footer"
+                maxW="1400px"
+                mx="auto"
             >
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
                     <Center>
@@ -105,6 +86,7 @@ const Footer = (): JSX.Element => {
                 </SimpleGrid>
 
                 <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
+                    <LanguageMenu />
                     <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         <NextLink href="mailto:echo@uib.no" passHref>
                             <LinkOverlay isExternal>
@@ -137,7 +119,7 @@ const Footer = (): JSX.Element => {
                     </LinkBox>
                 </SimpleGrid>
             </SimpleGrid>
-        </Wrap>
+        </Box>
     );
 };
 

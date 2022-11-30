@@ -3,7 +3,6 @@ import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VSta
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore } from 'date-fns';
 import type { GetStaticProps } from 'next';
-import { useContext } from 'react';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
 import SEO from '@components/seo';
@@ -20,7 +19,8 @@ import type { JobAdvert } from '@api/job-advert';
 import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import getRssXML from '@utils/generate-rss-feed';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
+import FeedbackPopup from '@components/feedback-popup';
 
 const IndexPage = ({
     bedpreses,
@@ -38,7 +38,8 @@ const IndexPage = ({
     jobs: Array<JobAdvert>;
 }): JSX.Element => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
-    const isNorwegian = useContext(LanguageContext);
+    const enableFeedbackPopup = process.env.NEXT_PUBLIC_ENABLE_FEEDBACK_POPUP?.toLowerCase() === 'true';
+    const isNorwegian = useLanguage();
 
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
@@ -50,7 +51,7 @@ const IndexPage = ({
                 mx={['0rem', null, null, '3rem']}
                 my={['1rem', null, '2rem', '2.5rem']}
             >
-                <Heading textAlign="center" size={headingSize} color="white">
+                <Heading textAlign="center" size={headingSize} color={banner.textColor}>
                     {banner.text}
                 </Heading>
             </Section>
@@ -83,6 +84,7 @@ const IndexPage = ({
                 ) : (
                     <BannerComponent banner={banner} />
                 ))}
+            {enableFeedbackPopup && <FeedbackPopup />}
             <VStack spacing="5" mb="5">
                 <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                     <GridItem>
@@ -176,10 +178,7 @@ export const getStaticProps: GetStaticProps = async () => {
         .slice(0, bedpresLimit);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(
-        slugs,
-        process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080',
-    );
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
 
     return {
         props: {

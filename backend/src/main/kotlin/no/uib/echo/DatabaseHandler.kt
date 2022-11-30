@@ -7,16 +7,20 @@ import no.uib.echo.schema.Feedback
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.HappeningJson
+import no.uib.echo.schema.Reaction
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.StudentGroup
+import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
+import no.uib.echo.schema.validStudentGroups
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -25,6 +29,19 @@ import java.net.URI
 
 private const val DEFAULT_DEV_POOL_SIZE = 10
 private const val DEFAULT_PROD_POOL_SIZE = 50
+
+val tables: Array<Table> = arrayOf(
+    Happening,
+    StudentGroupHappeningRegistration,
+    Registration,
+    Answer,
+    SpotRange,
+    User,
+    Feedback,
+    StudentGroup,
+    StudentGroupMembership,
+    Reaction
+)
 
 class DatabaseHandler(
     private val dev: Boolean,
@@ -37,8 +54,7 @@ class DatabaseHandler(
     private val dbUsername = dbUrl.userInfo.split(":")[0]
     private val dbPassword = dbUrl.userInfo.split(":")[1]
     private val maxPoolSize = if (dev) DEFAULT_DEV_POOL_SIZE
-    else if (mbMaxPoolSize == null) DEFAULT_PROD_POOL_SIZE
-    else mbMaxPoolSize.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
+    else mbMaxPoolSize?.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(
@@ -75,9 +91,7 @@ class DatabaseHandler(
                 transaction {
                     addLogger(StdOutSqlLogger)
 
-                    SchemaUtils.create(
-                        Happening, Registration, Answer, SpotRange, User, Feedback, StudentGroup, StudentGroupMembership
-                    )
+                    SchemaUtils.create(*tables)
                 }
                 if (shouldInsertTestData) {
                     insertTestData()
@@ -89,7 +103,6 @@ class DatabaseHandler(
     }
 
     private fun insertTestData() {
-        val studentGroups = listOf("webkom", "bedkom", "tilde")
         val happenings = listOf(
             HappeningJson(
                 "bedriftspresentasjon-med-bekk",
@@ -98,15 +111,18 @@ class DatabaseHandler(
                 "2030-03-09T16:15+01:00",
                 spotRanges = listOf(
                     SpotRangeJson(
-                        11, 1, 2
+                        11,
+                        1,
+                        2
                     ),
                     SpotRangeJson(
-                        9, 3, 5
+                        9,
+                        3,
+                        5
                     )
                 ),
                 HAPPENING_TYPE.BEDPRES,
-                "bedkom@echo.uib.no",
-                studentGroups[1]
+                validStudentGroups[1]
             ),
             HappeningJson(
                 "fest-med-tilde",
@@ -115,12 +131,13 @@ class DatabaseHandler(
                 "2030-06-02T14:20+01:00",
                 spotRanges = listOf(
                     SpotRangeJson(
-                        20, 1, 5
+                        20,
+                        1,
+                        5
                     )
                 ),
                 HAPPENING_TYPE.EVENT,
-                "tilde@echo.uib.no",
-                studentGroups[2]
+                validStudentGroups[2]
             )
         )
 
@@ -128,7 +145,7 @@ class DatabaseHandler(
             transaction {
                 addLogger(StdOutSqlLogger)
 
-                StudentGroup.batchInsert(studentGroups) {
+                StudentGroup.batchInsert(validStudentGroups) {
                     this[StudentGroup.name] = it
                 }
 
@@ -138,8 +155,6 @@ class DatabaseHandler(
                     this[Happening.happeningType] = it.type.toString()
                     this[Happening.registrationDate] = DateTime(it.registrationDate)
                     this[Happening.happeningDate] = DateTime(it.happeningDate)
-                    this[Happening.organizerEmail] = it.organizerEmail.lowercase()
-                    this[Happening.regVerifyToken] = it.slug
                     this[Happening.studentGroupName] = it.studentGroupName.lowercase()
                 }
 

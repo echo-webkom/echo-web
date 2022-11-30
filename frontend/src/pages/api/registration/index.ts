@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 import axios from 'axios';
-import { array, string } from 'typescript-json-decoder';
-import { registrationDecoder } from '@api/registration';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
@@ -19,62 +17,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (req.method === 'GET') {
             try {
-                const type = req.query.type as string;
-
-                if (type === 'download') {
-                    const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
-                        headers: {
-                            Authorization: `Bearer ${JWT_TOKEN}`,
-                        },
-                        validateStatus: (statusCode: number) => statusCode < 500,
-                    });
-
-                    res.setHeader('Content-Type', 'text/csv');
-                    res.setHeader(
-                        'Content-Disposition',
-                        `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
-                    );
-
-                    res.status(200).send(data);
-                    return;
-                }
-
-                const { data, status } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
+                const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
                     },
                     validateStatus: (statusCode: number) => statusCode < 500,
                 });
 
-                if (status === 200) {
-                    res.status(200).json(array(registrationDecoder)(data));
-                    return;
-                }
+                res.setHeader('Content-Type', 'text/csv');
+                res.setHeader(
+                    'Content-Disposition',
+                    `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
+                );
 
-                res.status(401).json({ message: JSON.stringify(data) });
-                return;
-            } catch {
-                res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
-                return;
-            }
-        }
-
-        if (req.method === 'DELETE') {
-            try {
-                const email = req.query.email as string;
-                const { data, status } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`, {
-                    headers: {
-                        Authorization: `Bearer ${JWT_TOKEN}`,
-                    },
-                    validateStatus: (statusCode: number) => statusCode < 500,
-                });
-
-                if (status === 200) {
-                    res.status(200).json(string(data));
-                    return;
-                }
-
-                res.status(401).json({ message: 'Du har ikke tilgang til denne siden.' });
+                res.status(200).send(data);
                 return;
             } catch {
                 res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });

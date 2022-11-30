@@ -19,10 +19,14 @@ import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.bachelors
+import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.masters
+import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -33,10 +37,14 @@ fun Application.userRoutes() {
             getUser()
             postUser()
             putUser()
+            getAllUsers()
         }
     }
 }
 
+/**
+ * Returns the user with the given email. Email is taken from the JWT token.
+ */
 fun Route.getUser() {
     get("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -58,15 +66,7 @@ fun Route.getUser() {
             return@get
         }
 
-        val memberships = transaction {
-            addLogger(StdOutSqlLogger)
-
-            StudentGroupMembership.select {
-                StudentGroupMembership.userEmail eq email
-            }.toList().map {
-                it[StudentGroupMembership.studentGroupName]
-            }
-        }
+        val memberships = getUserStudentGroups(email)
 
         call.respond(
             HttpStatusCode.OK,
@@ -75,13 +75,16 @@ fun Route.getUser() {
                 user[User.name],
                 user[User.alternateEmail],
                 user[User.degreeYear],
-                user[User.degree]?.let { Degree.valueOf(it) },
-                memberships.ifEmpty { emptyList() }
+                nullableStringToDegree(user[User.degree]),
+                memberships
             )
         )
     }
 }
 
+/**
+ * Creates a new user with the given email. Email is taken from the JWT token.
+ */
 fun Route.postUser() {
     post("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -129,6 +132,9 @@ fun Route.postUser() {
     }
 }
 
+/**
+ * Updates the user with the given email. Email is taken from the JWT token.
+ */
 fun Route.putUser() {
     put("/user") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
@@ -183,7 +189,7 @@ fun Route.putUser() {
             }
 
             if (result == null) {
-                transaction {
+                val newUser = transaction {
                     addLogger(StdOutSqlLogger)
                     User.insert {
                         it[User.email] = email
@@ -192,12 +198,25 @@ fun Route.putUser() {
                         it[degree] = user.degree.toString()
                         it[degreeYear] = user.degreeYear
                     }
+
+                    User.select {
+                        User.email eq email
+                    }.first()
                 }
-                call.respond(HttpStatusCode.OK, "User created with email = $email")
-                return@put
+                call.respond(
+                    HttpStatusCode.OK,
+                    UserJson(
+                        newUser[User.email],
+                        newUser[User.name],
+                        newUser[User.alternateEmail],
+                        newUser[User.degreeYear],
+                        nullableStringToDegree(newUser[User.degree]),
+                        emptyList()
+                    )
+                )
             }
 
-            transaction {
+            val updatedUser = transaction {
                 addLogger(StdOutSqlLogger)
                 User.update({
                     User.email eq email
@@ -207,14 +226,69 @@ fun Route.putUser() {
                     it[degree] = user.degree.toString()
                     it[degreeYear] = user.degreeYear
                 }
+
+                User.select {
+                    User.email eq email
+                }.first()
             }
+
+            val memberships = getUserStudentGroups(email)
+
             call.respond(
                 HttpStatusCode.OK,
-                "User updated with email = $email, name = ${user.name}, alternateEmail = $alternateEmail, degree = ${user.degree}, degreeYear = ${user.degreeYear}"
+                UserJson(
+                    updatedUser[User.email],
+                    updatedUser[User.name],
+                    updatedUser[User.alternateEmail],
+                    updatedUser[User.degreeYear],
+                    nullableStringToDegree(updatedUser[User.degree]),
+                    memberships
+                )
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()
         }
+    }
+}
+
+/**
+ * Gets a list of all users. Only available to admins/webkom.
+ */
+fun Route.getAllUsers() {
+    get("/users") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        if (email !in getGroupMembers("webkom")) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val users = transaction {
+            addLogger(StdOutSqlLogger)
+            User.select {
+                User.email like "%@student.uib.no" or (User.email like "%@uib.no")
+            }.map { it ->
+                UserJson(
+                    it[User.email],
+                    it[User.name],
+                    it[User.alternateEmail],
+                    it[User.degreeYear],
+                    nullableStringToDegree(it[User.degree]),
+                    StudentGroupMembership.select {
+                        StudentGroupMembership.userEmail eq it[User.email]
+                    }.toList().map {
+                        it[StudentGroupMembership.studentGroupName]
+                    }.ifEmpty { emptyList() }
+                )
+            }
+        }
+
+        call.respond(HttpStatusCode.OK, users)
     }
 }

@@ -45,8 +45,8 @@ data class SlugJson(
 @Serializable
 data class RegistrationCountJson(
     val slug: String,
-    val count: Long,
-    val waitListCount: Long
+    val count: Int,
+    val waitListCount: Int,
 )
 
 fun selectSpotRanges(slug: String): List<SpotRangeJson> {

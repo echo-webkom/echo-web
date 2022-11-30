@@ -1,11 +1,11 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { parseISO, format, formatISO, differenceInMilliseconds, isBefore, isAfter, differenceInHours } from 'date-fns';
-import { useTimeout, Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
+import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
@@ -19,65 +19,58 @@ import type { Registration } from '@api/registration';
 import ErrorBox from '@components/error-box';
 import SEO from '@components/seo';
 import Article from '@components/article';
-import Countdown from '@components/countdown';
 import HappeningMetaInfo from '@components/happening-meta-info';
 import RegistrationForm from '@components/registration-form';
 import Section from '@components/section';
-import LanguageContext from 'language-context';
+import ReactionButtons from '@components/reaction-buttons';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     happening: Happening | null;
-    backendUrl: string;
     happeningInfo: HappeningInfo | null;
     date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Props): JSX.Element => {
-    const router = useRouter();
+const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
+    const { data, status } = useSession();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
-    const time =
-        !happening ||
-        differenceInMilliseconds(regDate, date) < 0 ||
-        differenceInMilliseconds(regDate, date) > 172_800_000
-            ? null
-            : differenceInMilliseconds(regDate, date);
     const [user, setUser] = useState<User | null>(null);
-    const isNorwegian = useContext(LanguageContext);
+    const [loadingUser, setLoadingUser] = useState<boolean>(false);
+    const isNorwegian = useLanguage();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
 
-    useTimeout(() => {
-        if (happening?.registrationDate) void router.replace(router.asPath, undefined, { scroll: false });
-    }, time);
-
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await UserAPI.getUser();
+            if (!data?.user?.email || !data.user.name || !data.idToken) return;
+            setLoadingUser(true);
+
+            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
 
             if (!isErrorMessage(result)) {
                 setUser(result);
             }
+            setLoadingUser(false);
         };
         void fetchUser();
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening) return;
+            if (!happening || !data?.idToken) return;
+            const result = await RegistrationAPI.getRegistrations(happening.slug, data.idToken);
 
-            const result = await RegistrationAPI.getRegistrations(happening.slug);
-
-            if (!isErrorMessage(result)) {
+            if (isErrorMessage(result)) {
+                setRegsListError(result);
+            } else {
                 setRegsListError(null);
                 setRegsList(result);
-            } else {
-                setRegsListError(result);
             }
         };
         void fetchRegs();
-    }, [happening]);
+    }, [happening, data?.idToken]);
 
     return (
         <>
@@ -92,22 +85,24 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} as={Section}>
                             <>
-                                {happening.happeningType === 'BEDPRES' && happening.companyLink && happening.logoUrl && (
-                                    <LinkBox mb="1em">
-                                        <NextLink href={happening.companyLink} passHref>
-                                            <LinkOverlay href={happening.companyLink} isExternal>
-                                                <Center>
-                                                    <Image
-                                                        src={happening.logoUrl}
-                                                        alt="Bedriftslogo"
-                                                        width={300}
-                                                        height={300}
-                                                    />
-                                                </Center>
-                                            </LinkOverlay>
-                                        </NextLink>
-                                    </LinkBox>
-                                )}
+                                {happening.happeningType === 'BEDPRES' &&
+                                    happening.companyLink &&
+                                    happening.logoUrl && (
+                                        <LinkBox mb="1em">
+                                            <NextLink href={happening.companyLink} passHref>
+                                                <LinkOverlay href={happening.companyLink} isExternal>
+                                                    <Center>
+                                                        <Image
+                                                            src={happening.logoUrl}
+                                                            alt="Bedriftslogo"
+                                                            width={300}
+                                                            height={300}
+                                                        />
+                                                    </Center>
+                                                </LinkOverlay>
+                                            </NextLink>
+                                        </LinkBox>
+                                    )}
                                 <HappeningMetaInfo
                                     date={parseISO(happening.date)}
                                     location={happening.location}
@@ -128,43 +123,28 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                             : null
                                     }
                                 />
-                                {happening.registrationDate && (
+                                {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
                                     <>
                                         <Divider my="1em" />
-                                        {isBefore(date, regDate) &&
-                                            (differenceInHours(regDate, date) > 23 ? (
-                                                <Center>
-                                                    <Text fontSize="2xl">
-                                                        {isNorwegian ? `Åpner ` : `Opens `}
-                                                        {format(regDate, 'dd. MMM, HH:mm', {
-                                                            locale: isNorwegian ? nb : enUS,
-                                                        })}
-                                                    </Text>
-                                                </Center>
-                                            ) : (
-                                                <Countdown date={regDate} />
-                                            ))}
+                                        {isFuture(regDeadline) && (
+                                            <RegistrationForm
+                                                happening={happening}
+                                                type={happening.happeningType}
+                                                user={user}
+                                                loadingUser={loadingUser}
+                                            />
+                                        )}
                                         {isBefore(date, parseISO(happening.date)) &&
                                             isAfter(date, regDate) &&
                                             isBefore(date, regDeadline) && (
                                                 <>
-                                                    <RegistrationForm
-                                                        happening={happening}
-                                                        type={happening.happeningType}
-                                                        backendUrl={backendUrl}
-                                                        regVerifyToken={happeningInfo?.regVerifyToken ?? null}
-                                                        user={user}
-                                                    />
-                                                    {format(parseISO(happening.date), 'dd. MMM, HH:mm', {
-                                                        locale: isNorwegian ? nb : enUS,
-                                                    }) !==
-                                                        format(regDeadline, 'dd. MMM, HH:mm', {
-                                                            locale: isNorwegian ? nb : enUS,
-                                                        }) && (
-                                                        <Center>
+                                                    {status === 'authenticated' && (
+                                                        <Center mt="1rem">
                                                             <Text fontSize="md">
-                                                                {isNorwegian ? 'Stenger' : 'Closes'}{' '}
-                                                                {format(regDeadline, 'dd. MMM, HH:mm', {
+                                                                {isNorwegian
+                                                                    ? 'Påmelding stenger'
+                                                                    : 'Registration closes'}{' '}
+                                                                {format(regDeadline, 'dd. MMM HH:mm', {
                                                                     locale: isNorwegian ? nb : enUS,
                                                                 })}
                                                             </Text>
@@ -204,14 +184,18 @@ const HappeningPage = ({ happening, backendUrl, happeningInfo, date, error }: Pr
                                               '(No english version avalible) \n\n' + happening.body.no
                                     }
                                 />
+                                <Center>
+                                    <ReactionButtons slug={happening.slug} />
+                                </Center>
                             </Section>
                         </GridItem>
                     </Grid>
                     {regsList.length > 0 && (
                         <RegistrationsList
                             registrations={regsList}
-                            title={happening.title}
                             error={regsListError?.message ?? null}
+                            title={happening.title}
+                            studentGroups={happening.studentGroups}
                         />
                     )}
                 </>
@@ -227,33 +211,17 @@ interface Params extends ParsedUrlQuery {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { slug } = context.params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
-    const hiddenHappeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug, backendUrl);
-    const happeningInfo = { ...hiddenHappeningInfo, regVerifyToken: null };
+    const happeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug);
 
     const date = Date.now();
 
-    if (isErrorMessage(happening)) {
-        if (happening.message === '404') {
-            return {
-                notFound: true,
-            };
-        }
-    } else if (happening.registrationDate && isAfter(date, parseISO(happening.registrationDate))) {
-        const props: Props = {
-            happening: isErrorMessage(happening) ? null : happening,
-            happeningInfo: isErrorMessage(hiddenHappeningInfo) ? null : hiddenHappeningInfo,
-            date,
-            backendUrl,
-            error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
-        };
-
+    if (isErrorMessage(happening) && happening.message === '404') {
         return {
-            props,
+            notFound: true,
         };
     }
 
@@ -261,8 +229,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
         date,
-        backendUrl,
-        error: !isErrorMessage(happening) ? null : 'Det har skjedd en feil.',
+        error: isErrorMessage(happening) ? 'Det har skjedd en feil.' : null,
     };
 
     return {

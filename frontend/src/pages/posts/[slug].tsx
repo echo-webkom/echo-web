@@ -1,5 +1,4 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { useContext } from 'react';
 import { Box, Center, Divider, Flex, Heading, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
@@ -14,8 +13,7 @@ import type { Post } from '@api/post';
 import { PostAPI } from '@api/post';
 import { isErrorMessage } from '@utils/error';
 import MapMarkdownChakra from '@utils/markdown';
-import LanguageMenu from '@components/language-menu';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     post: Post;
@@ -23,7 +21,7 @@ interface Props {
 
 const PostPage = ({ post }: Props): JSX.Element => {
     const router = useRouter();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
     const localeTitle = () => (isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no);
 
@@ -44,7 +42,6 @@ const PostPage = ({ post }: Props): JSX.Element => {
                                     {localeTitle()}
                                 </Heading>
                                 <Spacer />
-                                <LanguageMenu />
                             </Flex>
 
                             <Divider mb="0.5em" />

@@ -97,7 +97,9 @@
             "unicorn/prevent-abbreviations": "off",
             "unicorn/prefer-node-protocol": "off",
             "unicorn/no-new-array": "off",
-            "unicorn/numeric-separators-style": "off"
+            "unicorn/numeric-separators-style": "off",
+            "unicorn/no-array-reduce": "off",
+            "unicorn/no-array-callback-reference": "off"
         }
     },
     "prettier": {
@@ -108,43 +110,43 @@
         "tabWidth": 4
     },
     "dependencies": {
-        "@chakra-ui/react": "2.3.5",
-        "@emotion/react": "11.10.4",
-        "@emotion/styled": "11.10.4",
+        "@chakra-ui/react": "2.4.1",
+        "@emotion/react": "11.10.5",
+        "@emotion/styled": "11.10.5",
         "@sanity/client": "3.4.1",
         "@sanity/image-url": "1.0.1",
         "axios": "0.27.2",
         "calendar-link": "2.2.0",
-        "canvas-confetti": "1.5.1",
+        "canvas-confetti": "1.6.0",
         "date-fns": "2.29.3",
-        "framer-motion": "7.5.3",
+        "framer-motion": "7.6.12",
         "markdown-to-jsx": "7.1.7",
-        "next": "12.3.1",
-        "next-auth": "4.14.0",
+        "next": "12.3.4",
+        "next-auth": "4.17.0",
         "next-pwa": "5.6.0",
         "nextjs-progressbar": "0.0.16",
         "randomcolor": "0.6.2",
         "react": "18.2.0",
         "react-dom": "18.2.0",
-        "react-hook-form": "7.37.0",
+        "react-hook-form": "7.39.6",
         "react-icons": "4.6.0",
         "react-snowfall": "1.2.1",
-        "recharts": "2.1.15",
+        "recharts": "2.1.16",
         "remove-markdown": "0.5.0",
-        "typescript-json-decoder": "1.0.10"
+        "typescript-json-decoder": "1.0.11"
     },
     "devDependencies": {
-        "@types/canvas-confetti": "1.4.3",
-        "@types/node": "16.11.65",
+        "@types/canvas-confetti": "1.6.0",
+        "@types/node": "16.18.3",
         "@types/randomcolor": "0.5.6",
-        "@types/react": "18.0.21",
-        "@types/react-dom": "18.0.6",
+        "@types/react": "18.0.25",
+        "@types/react-dom": "18.0.9",
         "@types/remove-markdown": "0.3.1",
-        "@typescript-eslint/eslint-plugin": "5.40.0",
-        "@typescript-eslint/parser": "5.40.0",
-        "cypress": "10.10.0",
-        "eslint-config-next": "12.3.1",
-        "eslint-plugin-unicorn": "44.0.2",
-        "typescript": "4.8.4"
+        "@typescript-eslint/eslint-plugin": "5.44.0",
+        "@typescript-eslint/parser": "5.44.0",
+        "cypress": "11.2.0",
+        "eslint-config-next": "12.3.4",
+        "eslint-plugin-unicorn": "45.0.0",
+        "typescript": "4.9.3"
     }
 }

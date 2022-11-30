@@ -6,6 +6,7 @@ import type { ErrorMessage } from '@utils/error';
 
 const bannerDecoder = record({
     color: string,
+    textColor: string,
     text: string,
     linkTo: union(string, nil),
     isExternal: boolean,
@@ -19,6 +20,7 @@ const BannerAPI = {
             const query = `
                     *[_type == "banner" && !(_id in path('drafts.**'))] {
                         color,
+                        textColor,
                         text,
                         linkTo,
                         isExternal
@@ -30,7 +32,7 @@ const BannerAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             if (axios.isAxiosError(error)) {
-                return { message: !error.response ? '404' : error.message };
+                return { message: error.response ? error.message : '404' };
             }
 
             return {

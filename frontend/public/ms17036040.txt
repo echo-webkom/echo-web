@@ -1,0 +1,5 @@
+﻿{
+  "Description": "Domain ownership verification file for Microsoft 365 - place in the website root",
+  "Domain": "echo.uib.no",
+  "Id": "10086e44-d4c5-4039-ab23-dc49610f7879"
+}

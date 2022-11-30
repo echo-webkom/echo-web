@@ -88,6 +88,50 @@ export default {
             ],
         },
         {
+            name: 'studentGroupRegistrationDate',
+            title: 'Når skal tidlig påmelding for studentgrupper åpne? Den stenger når vanlig påmelding åpner',
+            type: 'datetime',
+            validation: (Rule) =>
+                Rule.custom((studentGroupRegistrationDate, context) =>
+                    typeof context.document.studentGroups !== 'undefined' &&
+                    context.document.studentGroups.length > 0 &&
+                    typeof studentGroupRegistrationDate === 'undefined'
+                        ? 'Må ha dato for tidlig påmelding for studentgrupper om det er definert studentgrupper.'
+                        : true,
+                ),
+        },
+        {
+            name: 'studentGroups',
+            title: 'Hvilke studentgrupper har tidlig påmelding?',
+            type: 'array',
+            of: [{ type: 'string' }],
+            validation: (Rule) =>
+                Rule.custom((studentGroups, context) =>
+                    typeof context.document.studentGroupRegistrationDate !== 'undefined' &&
+                    typeof studentGroups === 'undefined'
+                        ? 'Må angi studentgrupper om det er definert tidlig påmelding for studentgrupper.'
+                        : true,
+                ),
+            options: {
+                list: [
+                    { title: 'Hovedstyret', value: 'hovedstyret' },
+                    { title: 'Bedkom', value: 'bedkom' },
+                    { title: 'Webkom', value: 'webkom' },
+                    { title: 'Gnist', value: 'gnist' },
+                    { title: 'Tilde', value: 'tilde' },
+                    { title: 'Hyggkom', value: 'hyggkom' },
+                    { title: 'ESC', value: 'esc' },
+                    { title: 'Makerspace', value: 'makerspace' },
+                ],
+                layout: 'dropdown',
+            },
+        },
+        {
+            name: 'onlyForStudentGroups',
+            title: 'Åpen kun for studentgrupper?',
+            type: 'boolean',
+        },
+        {
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
@@ -191,6 +235,9 @@ export default {
                     { title: 'Webkom', value: 'webkom' },
                     { title: 'Gnist', value: 'gnist' },
                     { title: 'Tilde', value: 'tilde' },
+                    { title: 'Hyggkom', value: 'hyggkom' },
+                    { title: 'ESC', value: 'esc' },
+                    { title: 'Makerspace', value: 'makerspace' },
                 ],
                 layout: 'dropdown',
             },

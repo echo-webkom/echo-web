@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
 import type { HappeningType } from '@api/happening';
-import { type Degree, degreeDecoder } from '@utils/decoders';
+import { degreeDecoder, emptyArrayOnNilDecoder } from '@utils/decoders';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
@@ -22,15 +22,15 @@ type Answer = decodeType<typeof answerDecoder>;
 
 const registrationDecoder = record({
     email: string,
-    firstName: string,
-    lastName: string,
+    alternateEmail: union(string, nil),
+    name: string,
     degree: degreeDecoder,
     degreeYear: number,
     slug: string,
-    terms: boolean,
     submitDate: string,
     waitList: boolean,
     answers: array(answerDecoder),
+    memberships: (value) => emptyArrayOnNilDecoder(string, value),
 });
 type Registration = decodeType<typeof registrationDecoder>;
 
@@ -50,40 +50,27 @@ const genericError = {
 // Values directly from the form (aka form fields)
 interface FormValues {
     email: string;
-    firstName: string;
-    lastName: string;
-    degree: Degree;
-    degreeYear: number;
-    terms1: boolean;
-    terms2: boolean;
-    terms3: boolean;
     answers: Array<string>;
 }
 
 // The data from the form + slug and type
 interface FormRegistration {
     email: string;
-    firstName: string;
-    lastName: string;
-    degree: Degree;
-    degreeYear: number;
     slug: string;
     type: HappeningType;
-    terms: boolean;
     answers: Array<Answer>;
-    regVerifyToken: string | null;
 }
 
-const registrationRoute = 'registration';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const RegistrationAPI = {
     submitRegistration: async (
         registration: FormRegistration,
-        backendUrl: string,
+        idToken: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${backendUrl}/${registrationRoute}`, registration, {
-                headers: { 'Content-Type': 'application/json' },
+            const { data, status } = await axios.post(`${BACKEND_URL}/registration`, registration, {
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
                 validateStatus: (statusCode: number) => {
                     return statusCode < 500;
                 },
@@ -117,9 +104,11 @@ const RegistrationAPI = {
         }
     },
 
-    getRegistrations: async (slug: string): Promise<Array<Registration> | ErrorMessage> => {
+    getRegistrations: async (slug: string, idToken: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`/api/registration?slug=${slug}`);
+            const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
 
             if (isErrorMessage(data)) {
                 return data;
@@ -136,23 +125,23 @@ const RegistrationAPI = {
     deleteRegistration: async (
         slug: string,
         email: string,
+        idToken: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const { data } = await axios.delete(`/api/registration?slug=${slug}&email=${email}`);
+            const { data } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
 
-            return { response: data, error: null };
+            return { response: string(data), error: null };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { response: null, error: JSON.stringify(error) };
         }
     },
 
-    getRegistrationCountForSlugs: async (
-        slugs: Array<string>,
-        backendUrl: string,
-    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
+    getRegistrationCountForSlugs: async (slugs: Array<string>): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${backendUrl}/${registrationRoute}/count`, { slugs });
+            const { data } = await axios.post(`${BACKEND_URL}/registration/count`, { slugs });
             return array(registrationCountDecoder)(data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -201,7 +190,6 @@ const RegistrationAPI = {
 export {
     RegistrationAPI,
     registrationDecoder,
-    registrationRoute,
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,
