@@ -103,7 +103,6 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
 
-    const [firstName, lastName] = user && user.name !== '' ? fullNameToSplitName(user.name) : [undefined, undefined];
     const { data: session, status } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
