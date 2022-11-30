@@ -30,17 +30,19 @@ const AdminUserPage = () => {
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
-    const { data } = useSession();
+    const idToken = useSession().data?.idToken;
 
     useEffect(() => {
         const fetchUsers = async () => {
-            if (!data?.idToken) {
-                setError({ message: 'Du er ikke logget inn.' });
+            setError(null);
+
+            if (!idToken) {
                 setLoading(false);
+                setError({ message: 'Du må være logget inn for å se denne siden.' });
                 return;
             }
 
-            const result = await UserAPI.getUsers(data.idToken);
+            const result = await UserAPI.getUsers(idToken);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -52,7 +54,7 @@ const AdminUserPage = () => {
         };
 
         void fetchUsers();
-    }, [data?.idToken]);
+    }, [idToken]);
 
     return (
         <>
