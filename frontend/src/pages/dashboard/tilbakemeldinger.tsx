@@ -31,13 +31,19 @@ const FeedbackPage = () => {
 
     const gridColumns = [1, null, null, null, 2];
 
-    const { data } = useSession();
+    const idToken = useSession().data?.idToken;
 
     useEffect(() => {
         const getFeedbacks = async () => {
-            if (!data?.idToken) return;
+            setError(null);
 
-            const result = await FeedbackAPI.getFeedback(data.idToken);
+            if (!idToken) {
+                setLoading(false);
+                setError({ message: 'Du må være logget inn for å se denne siden.' });
+                return;
+            }
+
+            const result = await FeedbackAPI.getFeedback(idToken);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -49,12 +55,21 @@ const FeedbackPage = () => {
         };
 
         void getFeedbacks();
-    }, [data?.idToken]);
+    }, [idToken]);
 
     const handleDelete = async (id: number) => {
-        if (!data?.idToken) return;
+        if (!idToken) {
+            toast({
+                title: 'Kunne ikke slette tilbakemelding',
+                description: 'Du må være logget inn for å slette en tilbakemelding.',
+                status: 'error',
+                duration: 5000,
+            });
 
-        await FeedbackAPI.deleteFeedback(id, data.idToken);
+            return;
+        }
+
+        await FeedbackAPI.deleteFeedback(id, idToken);
 
         toast({
             title: 'Tilbakemeldingen ble slettet!',
@@ -67,8 +82,18 @@ const FeedbackPage = () => {
     };
 
     const handleUpdate = async (feedback: Feedback) => {
-        if (!data?.idToken) return;
-        await FeedbackAPI.updateFeedback(feedback, data.idToken);
+        if (!idToken) {
+            toast({
+                title: 'Kunne ikke markere tilbakemelding som lest',
+                description: 'Du må være logget inn for å markere en tilbakemelding som lest.',
+                status: 'error',
+                duration: 5000,
+            });
+
+            return;
+        }
+
+        await FeedbackAPI.updateFeedback(feedback, idToken);
 
         toast({
             title: feedback.isRead ? 'Markert som lest' : 'Markert som ulest',
