@@ -14,13 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import FeedbackEntry from '@components/feedback-entry';
+import useUser from '@hooks/use-user';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
@@ -31,7 +31,7 @@ const FeedbackPage = () => {
 
     const gridColumns = [1, null, null, null, 2];
 
-    const idToken = useSession().data?.idToken;
+    const { idToken } = useUser();
 
     useEffect(() => {
         const getFeedbacks = async () => {

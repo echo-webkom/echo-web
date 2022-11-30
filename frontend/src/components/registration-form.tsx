@@ -18,7 +18,6 @@ import {
     AlertIcon,
     Center,
 } from '@chakra-ui/react';
-import { useSession } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
@@ -65,7 +64,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
-    const { user, loading, signedIn } = useUser();
+    const { user, loading, signedIn, idToken } = useUser();
 
     const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
     const regDate = chooseDate(
@@ -75,8 +74,6 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     );
 
     const toast = useToast();
-
-    const { data: session } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!signedIn) {
@@ -97,8 +94,8 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 }),
                 type: type,
             },
-            // signedIn === true implies idToken is not null
-            session!.idToken,
+            // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
+            idToken!,
         );
 
         if (statusCode === 200 || statusCode === 202) {

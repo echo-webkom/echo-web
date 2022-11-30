@@ -5,7 +5,6 @@ import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-f
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
 import useUser from '@hooks/use-user';
@@ -32,18 +31,17 @@ interface Props {
 }
 
 const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
-    const { data } = useSession();
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
-    const { signedIn } = useUser();
+    const { signedIn, idToken } = useUser();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening || !data?.idToken) return;
-            const result = await RegistrationAPI.getRegistrations(happening.slug, data.idToken);
+            if (!happening || !idToken) return;
+            const result = await RegistrationAPI.getRegistrations(happening.slug, idToken);
 
             if (isErrorMessage(result)) {
                 setRegsListError(result);
@@ -53,7 +51,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
             }
         };
         void fetchRegs();
-    }, [happening, data?.idToken]);
+    }, [happening, idToken]);
 
     return (
         <>

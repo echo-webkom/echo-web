@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -24,13 +23,14 @@ import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
+import useUser from '@hooks/use-user';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
-    const idToken = useSession().data?.idToken;
+    const { idToken } = useUser();
 
     useEffect(() => {
         const fetchUsers = async () => {

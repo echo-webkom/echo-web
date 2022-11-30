@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
@@ -42,7 +42,7 @@ import useLanguage from '@hooks/use-language';
 import useUser from '@hooks/use-user';
 
 const ProfileInfo = () => {
-    const { user, loading: userLoading, error, setUser } = useUser();
+    const { user, loading: userLoading, error, signedIn, setUser, idToken } = useUser();
     const [loading, setLoading] = useState<boolean>(userLoading);
 
     const [saved, setSaved] = useState<boolean>(false);
@@ -60,8 +60,6 @@ const ProfileInfo = () => {
     const toast = useToast();
     const iconColor = useColorModeValue('black', 'white');
 
-    const { data, status } = useSession();
-
     useEffect(() => {
         if (user) {
             setValue('degree', user.degree);
@@ -74,7 +72,7 @@ const ProfileInfo = () => {
     }, [user, setValue]);
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
-        if (!user || status !== 'authenticated') {
+        if (!user || !signedIn) {
             toast({
                 title: isNorwegian ? 'Du er ikke logget inn' : 'You are not signed in',
                 description: isNorwegian ? 'Vennligst prøv på nytt' : 'Please try again',
@@ -96,7 +94,8 @@ const ProfileInfo = () => {
             memberships: [],
         };
 
-        const res = await UserAPI.putUser(newUser, data.idToken);
+        // !user || !signed in implies idToken is not null, fuck off typescript.
+        const res = await UserAPI.putUser(newUser, idToken!);
 
         if (isErrorMessage(res)) {
             toast({

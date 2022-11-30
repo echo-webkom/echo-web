@@ -19,12 +19,12 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { useSession } from 'next-auth/react';
 import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import hasOverlap from '@utils/has-overlap';
+import useUser from '@hooks/use-user';
 
 interface Props {
     registration: Registration;
@@ -43,12 +43,12 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
 
     const router = useRouter();
 
-    const { data } = useSession();
+    const { idToken, signedIn } = useUser();
 
     const userIsEligibleForEarlyReg = hasOverlap(studentGroups, registration.memberships);
 
     const handleDelete = async () => {
-        if (!data?.idToken) {
+        if (!signedIn) {
             toast({
                 title: 'Du er ikke logget inn',
                 status: 'error',
@@ -57,7 +57,8 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
             return;
         }
 
-        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, data.idToken);
+        // !signedIn implies idToken is not null
+        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken!);
 
         onClose();
 
