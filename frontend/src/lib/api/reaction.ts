@@ -19,7 +19,7 @@ const reactionDecoder = record({
 type Reaction = decodeType<typeof reactionDecoder>;
 
 const ReactionAPI = {
-    get: async (slug: string, idToken: string | undefined): Promise<Reaction | ErrorMessage> => {
+    get: async (slug: string, idToken: string | undefined | null): Promise<Reaction | ErrorMessage> => {
         try {
             if (!idToken) {
                 return { message: 'No token.' };
@@ -46,10 +46,10 @@ const ReactionAPI = {
             return { message: 'Noe gikk galt. Prøv igjen senere.' };
         }
     },
-    post: async (
+    put: async (
         slug: string,
         reaction: ReactionType,
-        idToken: string | undefined,
+        idToken: string | undefined | null,
     ): Promise<Reaction | ErrorMessage> => {
         try {
             if (!idToken) {

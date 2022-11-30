@@ -1,10 +1,10 @@
 import type { ButtonProps } from '@chakra-ui/react';
 import { useToast, ButtonGroup, Button, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import type { Reaction, ReactionType } from '@api/reaction';
 import ReactionAPI from '@api/reaction';
 import { isErrorMessage } from '@utils/error';
+import useUser from '@hooks/use-user';
 
 const reactions = {
     like: {
@@ -35,13 +35,13 @@ interface Props {
 
 const ReactionButtons = ({ slug }: Props) => {
     const toast = useToast();
-    const session = useSession();
+    const { idToken } = useUser();
 
     const [data, setData] = useState<Reaction | null>(null);
 
     useEffect(() => {
         const fetchReactions = async () => {
-            const result = await ReactionAPI.get(slug, session.data?.idToken);
+            const result = await ReactionAPI.get(slug, idToken);
 
             if (isErrorMessage(result)) {
                 return;
@@ -51,10 +51,10 @@ const ReactionButtons = ({ slug }: Props) => {
         };
 
         void fetchReactions();
-    }, [session.data?.idToken, slug, toast]);
+    }, [idToken, slug, toast]);
 
     const handleClick = async (reaction: ReactionType) => {
-        const result = await ReactionAPI.post(slug, reaction, session.data?.idToken);
+        const result = await ReactionAPI.put(slug, reaction, idToken);
 
         if (isErrorMessage(result)) {
             toast({

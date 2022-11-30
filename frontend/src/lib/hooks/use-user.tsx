@@ -5,6 +5,7 @@ import { isErrorMessage, type ErrorMessage } from '@utils/error';
 
 interface HookObject {
     user: User | null;
+    idToken: string | null;
     signedIn: boolean;
     loading: boolean;
     error: ErrorMessage | null;
@@ -13,6 +14,7 @@ interface HookObject {
 
 const UserContext = createContext<HookObject>({
     user: null,
+    idToken: null,
     signedIn: false,
     loading: true,
     error: null,
@@ -22,18 +24,27 @@ const UserContext = createContext<HookObject>({
 const UserProvider = ({ children }: { children: ReactNode }) => {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User | null>(null);
+    const [idToken, setIdToken] = useState<string | null>(session?.idToken ?? null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<ErrorMessage | null>(null);
 
+    const signedIn = status === 'authenticated' && !!user && !!idToken;
+
     useEffect(() => {
         const fetchUser = async () => {
-            if (!session?.user?.email || !session.user.name || !session.idToken) {
+            const userEmail = session?.user?.email ?? null;
+            const userName = session?.user?.name ?? null;
+            const sessionIdToken = session?.idToken ?? null;
+
+            if (!userEmail || !userName || !sessionIdToken) {
                 setLoading(false);
+                setIdToken(null);
                 return;
             }
+            setIdToken(sessionIdToken);
             setLoading(true);
 
-            const result = await UserAPI.getUser(session.user.email, session.user.name, session.idToken);
+            const result = await UserAPI.getUser(userEmail, userName, sessionIdToken);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -48,8 +59,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     return (
         <UserContext.Provider
             value={{
-                signedIn: status === 'authenticated' && user !== null,
+                signedIn,
                 user,
+                idToken,
                 loading,
                 error,
                 setUser,
