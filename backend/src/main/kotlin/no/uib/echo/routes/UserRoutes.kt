@@ -313,6 +313,6 @@ fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: Strin
                 .withClaim("email", email)
                 .withExpiresAt(Date(System.currentTimeMillis() + (1000 * 60 * 60)))
                 .sign(Algorithm.HMAC256(secret))
-        call.respond(hashMapOf("token" to token))
+        call.respond(token)
     }
 }

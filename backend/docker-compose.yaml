@@ -20,12 +20,12 @@ services:
       DEV: 'yes'
       # Values from .env file
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      AUTH_SECRET: ${AUTH_SECRET:-very_secret_string_123}
+      # Optional values from .env file
       SENDGRID_API_KEY:
       SEND_EMAIL_REGISTRATION:
       TEST_MIGRATION:
       PORT:
-      DISABLE_JWT_AUTH:
-      AUTH_SECRET:
 
   database:
     build:

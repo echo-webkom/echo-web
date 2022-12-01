@@ -146,6 +146,20 @@ const UserAPI = {
             };
         }
     },
+
+    getTestToken: async (email: string): Promise<string | ErrorMessage> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/token/${email}`);
+
+            const token = await response.text();
+
+            return response.status === 200 ? token : { message: response.statusText };
+        } catch (error) {
+            return {
+                message: JSON.stringify(error),
+            };
+        }
+    },
 };
 
 const userIsComplete = (user: User | null): user is User =>
