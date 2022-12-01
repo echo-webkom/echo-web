@@ -24,7 +24,7 @@ import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import hasOverlap from '@utils/has-overlap';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 interface Props {
     registration: Registration;
@@ -43,22 +43,21 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
 
     const router = useRouter();
 
-    const { idToken, signedIn } = useUser();
+    const { idToken, signedIn } = useAuth();
 
     const userIsEligibleForEarlyReg = hasOverlap(studentGroups, registration.memberships);
 
     const handleDelete = async () => {
-        if (!signedIn) {
+        if (!signedIn || !idToken) {
             toast({
-                title: 'Du er ikke logget inn',
+                title: 'Du er ikke logget inn.',
                 status: 'error',
                 isClosable: true,
             });
             return;
         }
 
-        // !signedIn implies idToken is not null
-        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken!);
+        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken);
 
         onClose();
 

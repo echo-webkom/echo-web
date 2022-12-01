@@ -16,11 +16,11 @@ import type { RefObject } from 'react';
 import NavLink, { NavLinkButton } from '@components/nav-link';
 import ColorModeButton from '@components/color-mode-button';
 import useLanguage from '@hooks/use-language';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 const NavLinks = (): JSX.Element => {
     const isNorwegian = useLanguage();
-    const { signedIn, loading } = useUser();
+    const { signedIn, loading } = useAuth();
     const router = useRouter();
     const onProfileClick = () => {
         if (signedIn) {

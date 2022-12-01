@@ -39,10 +39,10 @@ import FormDegreeYear from '@components/form-degree-year';
 import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 const ProfileInfo = () => {
-    const { user, loading: userLoading, error, signedIn, setUser, idToken } = useUser();
+    const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
     const [loading, setLoading] = useState<boolean>(userLoading);
 
     const [saved, setSaved] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const ProfileInfo = () => {
     const iconColor = useColorModeValue('black', 'white');
 
     useEffect(() => {
-        if (user) {
+        if (signedIn && user) {
             setValue('degree', user.degree);
             setValue('degreeYear', user.degreeYear);
             setValue('alternateEmail', user.alternateEmail);
@@ -69,10 +69,10 @@ const ProfileInfo = () => {
             setSatisfied(userIsComplete(user));
             setLoading(false);
         }
-    }, [user, setValue]);
+    }, [user, signedIn, setValue]);
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
-        if (!user || !signedIn) {
+        if (!user || !idToken || !signedIn) {
             toast({
                 title: isNorwegian ? 'Du er ikke logget inn' : 'You are not signed in',
                 description: isNorwegian ? 'Vennligst prøv på nytt' : 'Please try again',
@@ -94,8 +94,7 @@ const ProfileInfo = () => {
             memberships: [],
         };
 
-        // !user || !signed in implies idToken is not null, fuck off typescript.
-        const res = await UserAPI.putUser(newUser, idToken!);
+        const res = await UserAPI.putUser(newUser, idToken);
 
         if (isErrorMessage(res)) {
             toast({
@@ -118,14 +117,14 @@ const ProfileInfo = () => {
         return error.message === '401' ? <Unauthorized /> : <ErrorBox error={error.message} />;
     }
 
-    if (loading && !user)
+    if (loading || userLoading)
         return (
             <Center>
                 <Spinner />
             </Center>
         );
 
-    if (!user) return <ErrorBox error={isNorwegian ? 'Det har skjedd en feil.' : 'An error has ocurred.'} />;
+    if (!signedIn || !user) return <Unauthorized />;
 
     return (
         <Center>

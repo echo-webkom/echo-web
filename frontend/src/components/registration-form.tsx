@@ -33,7 +33,7 @@ import FormQuestion from '@components/form-question';
 import useLanguage from '@hooks/use-language';
 import hasOverlap from '@utils/has-overlap';
 import capitalize from '@utils/capitalize';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -64,7 +64,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
-    const { user, loading, signedIn, idToken } = useUser();
+    const { user, loading, signedIn, idToken } = useAuth();
 
     const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
     const regDate = chooseDate(
@@ -76,7 +76,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const toast = useToast();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        if (!signedIn) {
+        if (!signedIn || !idToken) {
             toast({
                 title: isNorwegian ? 'Du er ikke logget inn.' : 'You are not signed in.',
                 description: isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.',
@@ -95,7 +95,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 type: type,
             },
             // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
-            idToken!,
+            idToken,
         );
 
         if (statusCode === 200 || statusCode === 202) {

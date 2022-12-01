@@ -9,7 +9,7 @@ import Fonts from '@styles/fonts';
 import theme from '@styles/theme';
 import Layout from '@components/layout';
 import { LanguageProvider } from '@hooks/use-language';
-import { UserProvider } from '@hooks/use-user';
+import { UserProvider } from '@hooks/use-auth';
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps<SessionProviderProps>): JSX.Element => {
     const router = useRouter();

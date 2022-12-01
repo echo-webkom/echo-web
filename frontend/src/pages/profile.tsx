@@ -2,10 +2,10 @@ import { Spinner, Center } from '@chakra-ui/react';
 import Unauthorized from '@components/unauthorized';
 import ProfileInfo from '@components/profile-info';
 import SEO from '@components/seo';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 const ProfilePage = (): JSX.Element => {
-    const { loading, signedIn } = useUser();
+    const { loading, signedIn } = useAuth();
 
     return (
         <>

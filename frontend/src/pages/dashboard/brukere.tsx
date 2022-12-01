@@ -23,20 +23,20 @@ import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
-    const { idToken } = useUser();
+    const { signedIn, idToken, error: userError } = useAuth();
 
     useEffect(() => {
         const fetchUsers = async () => {
             setError(null);
 
-            if (!idToken) {
+            if (!signedIn || !idToken) {
                 setLoading(false);
                 setError({ message: 'Du må være logget inn for å se denne siden.' });
                 return;
@@ -54,16 +54,16 @@ const AdminUserPage = () => {
         };
 
         void fetchUsers();
-    }, [idToken]);
+    }, [idToken, signedIn]);
 
     return (
         <>
             <SEO title="Administrer brukere" />
             <Section>
-                {error && (
+                {(error || userError) && (
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
-                        <Text>{error.message}</Text>
+                        <Text>{error?.message ?? userError?.message}</Text>
                         <Button>
                             <NextLink href="/" passHref>
                                 <Link>Tilbake til forsiden</Link>
