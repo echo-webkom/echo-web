@@ -16,7 +16,7 @@ export default defineConfig({
     },
 
     retries: {
-        runMode: 3,
+        runMode: 5,
     },
 
     component: {
