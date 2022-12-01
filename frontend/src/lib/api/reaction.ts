@@ -45,10 +45,6 @@ const ReactionAPI = {
     },
     put: async (slug: string, reaction: ReactionType, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
-            if (!idToken) {
-                return { message: 'No token.' };
-            }
-
             const params = new URLSearchParams({ slug, reaction }).toString();
 
             const response = await fetch(`${BACKEND_URL}/reaction?${params}`, {

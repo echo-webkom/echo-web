@@ -76,14 +76,13 @@ const UserAPI = {
                 }),
                 headers: {
                     Authorization: `Bearer ${idToken}`,
+                    'Content-Type': 'application/json',
                 },
             });
 
-            const data = await response.json();
-
             return {
                 status: response.status,
-                response: data,
+                response: `User created with email = ${email} and name = ${name}`,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
