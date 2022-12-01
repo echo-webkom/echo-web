@@ -15,8 +15,8 @@ project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
 
 plugins {
     application
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("jvm") version "1.7.22"
+    kotlin("plugin.serialization") version "1.7.22"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("com.adarshr.test-logger") version "3.2.0"
@@ -64,7 +64,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.22")
 
     testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
 }
