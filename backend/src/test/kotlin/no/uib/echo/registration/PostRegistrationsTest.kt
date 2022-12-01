@@ -51,6 +51,7 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.usersWithAdmin
 
 class PostRegistrationsTest {
     companion object {
