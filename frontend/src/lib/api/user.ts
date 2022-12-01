@@ -105,15 +105,16 @@ const UserAPI = {
                 },
             });
 
-            const data = await response.json();
-
             if (response.status === 200) {
+                const data = await response.json();
                 return userDecoder(data);
-            }
+            } else {
+                const data = await response.text();
 
-            return {
-                message: string(data),
-            };
+                return {
+                    message: data,
+                };
+            }
         } catch (error) {
             console.log(error); // eslint-disable-line
 

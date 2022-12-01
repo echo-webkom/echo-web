@@ -53,6 +53,7 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.uib.echo.usersWithAdmin
 
 class GetRegistrationsTest {
     companion object {
@@ -197,7 +198,7 @@ private fun insertTestData() {
             this[StudentGroup.name] = it
         }
 
-        User.batchInsert(users) {
+        User.batchInsert(usersWithAdmin) {
             this[User.email] = it.email
             this[User.name] = it.name
             this[User.alternateEmail] = it.alternateEmail
@@ -205,7 +206,7 @@ private fun insertTestData() {
             this[User.degreeYear] = it.degreeYear
         }
 
-        for (user in users) {
+        for (user in usersWithAdmin) {
             StudentGroupMembership.batchInsert(user.memberships) {
                 this[StudentGroupMembership.userEmail] = user.email
                 this[StudentGroupMembership.studentGroupName] = it

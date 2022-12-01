@@ -217,6 +217,7 @@ fun Route.putUser() {
                         emptyList()
                     )
                 )
+                return@put
             }
 
             val updatedUser = transaction {

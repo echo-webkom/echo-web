@@ -9,7 +9,7 @@ interface Auth {
     signedIn: boolean;
     loading: boolean;
     error: ErrorMessage | null;
-    setUser: (user: User) => void;
+    setUser: (user: User | null) => void;
 }
 
 const AuthContext = createContext<Auth>({

@@ -23,8 +23,8 @@ import {
     AlertIcon,
     SimpleGrid,
     GridItem,
-    Icon,
     Spinner,
+    Icon,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
@@ -117,126 +117,124 @@ const ProfileInfo = () => {
         return error.message === '401' ? <Unauthorized /> : <ErrorBox error={error.message} />;
     }
 
-    if (loading || userLoading)
-        return (
-            <Center>
-                <Spinner />
-            </Center>
-        );
-
     if (!signedIn || !user) return <Unauthorized />;
 
     return (
-        <Center>
-            <SimpleGrid columns={2} gap={4} w={['95%', '90%', '80%', '60%']}>
-                <GridItem colSpan={2}>
-                    <Section>
-                        <Center mb="1rem">
-                            <Heading size={['xl', null, '2xl']}>{isNorwegian ? 'Min profil' : 'My profile'}</Heading>
-                        </Center>
-                        <Divider my="1rem" />
-                        <IconText iconColor={iconColor} data-cy="profile-name" icon={CgProfile} text={user.name} />
-                        <IconText
-                            iconColor={iconColor}
-                            data-cy="profile-email"
-                            icon={MdOutlineEmail}
-                            text={user.email}
-                        />
-                        {user.memberships.length > 0 && (
+        <Skeleton isLoaded={!userLoading}>
+            <Center>
+                <SimpleGrid columns={2} gap={4} w={['95%', '90%', '80%', '60%']}>
+                    <GridItem colSpan={2}>
+                        <Section>
+                            <Center mb="1rem">
+                                <Heading size={['xl', null, '2xl']}>
+                                    {isNorwegian ? 'Min profil' : 'My profile'}
+                                </Heading>
+                            </Center>
+                            <Divider my="1rem" />
+                            <IconText iconColor={iconColor} data-cy="profile-name" icon={CgProfile} text={user.name} />
                             <IconText
                                 iconColor={iconColor}
-                                icon={BiGroup}
-                                text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
+                                data-cy="profile-email"
+                                icon={MdOutlineEmail}
+                                text={user.email}
                             />
-                        )}
-                    </Section>
-                </GridItem>
-                <GridItem colSpan={2}>
-                    <Section>
-                        {!satisfied && (
-                            <Skeleton isLoaded={!loading}>
-                                <Alert status="warning" borderRadius="0.5rem" mb="6">
-                                    <AlertIcon />
-                                    {isNorwegian
-                                        ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
-                                        : 'You must fill out all required information to be able to sign up for events!'}
-                                </Alert>
-                            </Skeleton>
-                        )}
-                        <FormProvider {...methods}>
-                            {/* eslint-disable @typescript-eslint/no-misused-promises */}
-                            <form
-                                data-cy="profile-form"
-                                id="profile-form"
-                                onSubmit={handleSubmit(submitForm)}
-                                onChange={() => setSaved(false)}
-                            >
-                                {/* eslint-enable @typescript-eslint/no-misused-promises */}
-                                <FormControl>
-                                    <InputGroup>
-                                        <Input
-                                            data-cy="profile-alt-email"
-                                            type="email"
-                                            placeholder={isNorwegian ? 'Alternativ e-post' : 'Alternate email'}
-                                            mb="1rem"
-                                            {...register('alternateEmail')}
-                                        />
-                                        <InputRightAddon>
-                                            <Tooltip
-                                                label={
-                                                    isNorwegian
-                                                        ? 'Denne vil bli brukt i stedet for studentmailen din når du melder deg på et arrangement'
-                                                        : 'Your alternate email will be used instead of your student email when you sign up for an event.'
-                                                }
-                                            >
-                                                <span>
-                                                    <Icon as={BsQuestion} p="0.1rem" w={8} h={8} />
-                                                </span>
-                                            </Tooltip>
-                                        </InputRightAddon>
-                                    </InputGroup>
-                                </FormControl>
-                                <FormDegree data-cy="profile-degree" hideLabel py="1rem" />
-                                <FormDegreeYear data-cy="profile-degree-year" hideLabel py="1rem" />
-                                <HStack mt={4} gap={4}>
-                                    <Button
-                                        isLoading={loading}
-                                        disabled={saved}
-                                        type="submit"
-                                        form="profile-form"
-                                        colorScheme="teal"
-                                        width="50%"
-                                    >
-                                        {saved
-                                            ? isNorwegian
-                                                ? 'Endringer lagret!'
-                                                : 'Changes saved!'
-                                            : isNorwegian
-                                            ? 'Lagre endringer'
-                                            : 'Save changes'}
+                            {user.memberships.length > 0 && (
+                                <IconText
+                                    iconColor={iconColor}
+                                    icon={BiGroup}
+                                    text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
+                                />
+                            )}
+                        </Section>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                        <Section>
+                            {!satisfied && (
+                                <Skeleton isLoaded={!loading}>
+                                    <Alert status="warning" borderRadius="0.5rem" mb="6">
+                                        <AlertIcon />
+                                        {isNorwegian
+                                            ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
+                                            : 'You must fill out all required information to be able to sign up for events!'}
+                                    </Alert>
+                                </Skeleton>
+                            )}
+                            <FormProvider {...methods}>
+                                {/* eslint-disable @typescript-eslint/no-misused-promises */}
+                                <form
+                                    data-cy="profile-form"
+                                    id="profile-form"
+                                    onSubmit={handleSubmit(submitForm)}
+                                    onChange={() => setSaved(false)}
+                                >
+                                    {/* eslint-enable @typescript-eslint/no-misused-promises */}
+                                    <FormControl>
+                                        <InputGroup>
+                                            <Input
+                                                data-cy="profile-alt-email"
+                                                type="email"
+                                                placeholder={isNorwegian ? 'Alternativ e-post' : 'Alternate email'}
+                                                mb="1rem"
+                                                {...register('alternateEmail')}
+                                            />
+                                            <InputRightAddon>
+                                                <Tooltip
+                                                    label={
+                                                        isNorwegian
+                                                            ? 'Denne vil bli brukt i stedet for studentmailen din når du melder deg på et arrangement'
+                                                            : 'Your alternate email will be used instead of your student email when you sign up for an event.'
+                                                    }
+                                                >
+                                                    <span>
+                                                        <Icon as={BsQuestion} p="0.1rem" w={8} h={8} />
+                                                    </span>
+                                                </Tooltip>
+                                            </InputRightAddon>
+                                        </InputGroup>
+                                    </FormControl>
+                                    <FormDegree data-cy="profile-degree" hideLabel py="1rem" />
+                                    <FormDegreeYear data-cy="profile-degree-year" hideLabel py="1rem" />
+                                    <HStack mt={4} gap={4}>
+                                        <Button
+                                            isLoading={loading}
+                                            disabled={saved}
+                                            type="submit"
+                                            form="profile-form"
+                                            colorScheme="teal"
+                                            width="50%"
+                                        >
+                                            {loading && <Spinner />}
+                                            {saved && !loading
+                                                ? isNorwegian
+                                                    ? 'Endringer lagret!'
+                                                    : 'Changes saved!'
+                                                : isNorwegian
+                                                ? 'Lagre endringer'
+                                                : 'Save changes'}
+                                        </Button>
+                                        <Button
+                                            data-cy="sign-out-btn"
+                                            onClick={() => void signOut()}
+                                            colorScheme="red"
+                                            width="50%"
+                                        >
+                                            {isNorwegian ? 'Logg ut' : 'Sign out'}
+                                        </Button>
+                                    </HStack>
+                                </form>
+                            </FormProvider>
+                            {user.memberships.includes('webkom') && (
+                                <NextLink href="/dashboard" passHref>
+                                    <Button w="100%" as="a" colorScheme="blue" my="1rem">
+                                        Til dashboard
                                     </Button>
-                                    <Button
-                                        data-cy="sign-out-btn"
-                                        onClick={() => void signOut()}
-                                        colorScheme="red"
-                                        width="50%"
-                                    >
-                                        {isNorwegian ? 'Logg ut' : 'Sign out'}
-                                    </Button>
-                                </HStack>
-                            </form>
-                        </FormProvider>
-                        {user.memberships.includes('webkom') && (
-                            <NextLink href="/dashboard" passHref>
-                                <Button w="100%" as="a" colorScheme="blue" my="1rem">
-                                    Til dashboard
-                                </Button>
-                            </NextLink>
-                        )}
-                    </Section>
-                </GridItem>
-            </SimpleGrid>
-        </Center>
+                                </NextLink>
+                            )}
+                        </Section>
+                    </GridItem>
+                </SimpleGrid>
+            </Center>
+        </Skeleton>
     );
 };
 
