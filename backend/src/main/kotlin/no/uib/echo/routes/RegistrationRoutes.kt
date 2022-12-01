@@ -374,14 +374,14 @@ fun Route.deleteRegistration() {
         val slug = call.parameters["slug"]
 
         if (slug == null) {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest, "slug is null")
             return@delete
         }
 
         val paramEmail = call.parameters["email"]
 
         if (paramEmail == null) {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest, "email is null")
             return@delete
         }
 
@@ -415,7 +415,7 @@ fun Route.deleteRegistration() {
             }
 
             if (reg == null) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "reg is null")
                 return@delete
             }
 
