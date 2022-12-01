@@ -1,5 +1,3 @@
-// eslint-disable @typescript-eslint/prefer-nullish-coalescing
-
 import type { TableRowProps } from '@chakra-ui/react';
 import {
     Heading,
@@ -68,6 +66,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
+                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 description: `Slettet påmeding med email '${registration.alternateEmail || registration.email}'.`,
                 isClosable: true,
             });
@@ -89,7 +88,9 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                 data-cy={`reg-row-${registration.email}`}
                 key={JSON.stringify(registration)}
             >
+                {/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */}
                 <Td fontSize="md">{registration.alternateEmail || registration.email}</Td>
+                {/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */}
                 <Td fontSize="md">{registration.name}</Td>
                 <Td fontSize="md">{registration.degree}</Td>
                 <Td fontSize="md">{registration.degreeYear}</Td>
@@ -136,6 +137,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
+                        {/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */}
                         <Heading
                             size="md"
                             pb="0.5rem"
@@ -143,6 +145,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                         >{`Er du sikker på at du vil slette påmeldingen med email '${
                             registration.alternateEmail || registration.email
                         }'?`}</Heading>
+                        {/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */}
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
