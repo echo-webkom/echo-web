@@ -24,6 +24,7 @@ services:
       DEV: 'yes'
       # Values from .env file
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      AUTH_SECRET: ${AUTH_SECRET:-very_secret_string_123}
 
   database:
     image: postgres:13.8-alpine

@@ -81,6 +81,7 @@ resource "azurerm_container_group" "echo_web_preview" {
     secure_environment_variables = {
       "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.short_rg_name}.${var.location}.azurecontainer.io:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
+      "AUTH_SECRET"  = var.auth_secret
     }
   }
 

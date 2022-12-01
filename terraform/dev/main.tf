@@ -112,6 +112,7 @@ resource "azurerm_container_group" "echo_web_containers" {
     secure_environment_variables = {
       "DATABASE_URL" = "postgres://${var.db_user}%40${var.db_name}:${var.db_password}@${azurerm_postgresql_server.echo_web_db.fqdn}:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
+      "AUTH_SECRET"  = var.auth_secret
     }
   }
 

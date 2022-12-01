@@ -18,6 +18,7 @@ env:
   TF_VAR_container_group_name: echo-web-containers-dev
   TF_VAR_backend_container_name: echo-web-backend-dev
   TF_VAR_admin_key: ${{ secrets.ADMIN_KEY_DEV }}
+  TF_VAR_auth_secret: ${{ secrets.AUTH_SECRET }}
   ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432

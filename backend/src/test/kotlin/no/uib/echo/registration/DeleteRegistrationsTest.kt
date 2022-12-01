@@ -5,7 +5,9 @@ import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -17,6 +19,7 @@ import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
+import no.uib.echo.adminUser
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
@@ -85,10 +88,21 @@ class DeleteRegistrationsTest {
             val usersSublist = listOf(user1, user2, user3, user4, user5)
             val waitListUsers = listOf(user6, user7, user8, user9, user10)
 
+            val getAdminTokenCall = client.get("/token/${adminUser.email}")
+
+            getAdminTokenCall.status shouldBe HttpStatusCode.OK
+            val adminToken: String = getAdminTokenCall.body()
+
             for (t in be) {
                 for (u in usersSublist) {
+                    val getTokenCall = client.get("/token/${u.email}")
+
+                    getTokenCall.status shouldBe HttpStatusCode.OK
+                    val token: String = getTokenCall.body()
+
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg(hap9(t).slug, u))
                     }
 
@@ -99,8 +113,14 @@ class DeleteRegistrationsTest {
                 }
 
                 for (u in waitListUsers) {
+                    val getTokenCall = client.get("/token/${u.email}")
+
+                    getTokenCall.status shouldBe HttpStatusCode.OK
+                    val token: String = getTokenCall.body()
+
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg(hap9(t).slug, u))
                     }
 
@@ -114,7 +134,9 @@ class DeleteRegistrationsTest {
                 // previously on the wait list are now moved off the wait list.
                 for (u in usersSublist) {
                     val regEmail = u.email.lowercase()
-                    val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail")
+                    val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail") {
+                        bearerAuth(adminToken)
+                    }
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
                     deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
@@ -126,7 +148,9 @@ class DeleteRegistrationsTest {
                 for (u in waitListUsers) {
                     val waitListRegEmail = u.email.lowercase()
                     val deleteWaitListRegCall =
-                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail")
+                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail") {
+                            bearerAuth(adminToken)
+                        }
 
                     deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
                     deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = $waitListRegEmail and slug = ${

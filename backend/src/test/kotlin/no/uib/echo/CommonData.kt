@@ -187,4 +187,6 @@ val user10 = UserJson("arinf@student.uib.no", "Årinf Student", "arinf.student@g
 
 val users = listOf(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 
+val adminUser = UserJson("admin@student.uib.no", "Admin Dude", "admin@gmail.com", 5, Degree.INF, listOf("webkom"))
+
 val be = listOf(HAPPENING_TYPE.BEDPRES, HAPPENING_TYPE.EVENT)

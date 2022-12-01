@@ -1,10 +1,16 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { FeideGroupAPI } from '@api/feide-group';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
 import { FeedbackAPI } from '@api/feedback';
 import { allValidFeideGroups } from '@utils/degree';
+
+const isProd = (process.env.VERCEL_ENV ?? 'production') === 'production';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+const testEmail = 'test.mctest@student.uib.no';
+const testName = 'Test McTest';
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -12,6 +18,32 @@ export const authOptions: NextAuthOptions = {
     },
     callbacks: {
         async signIn({ account, profile }) {
+            if (!isProd) {
+                const testToken = await UserAPI.getTestToken(testEmail);
+
+                if (isErrorMessage(testToken)) {
+                    // eslint-disable-next-line no-console
+                    console.error(testToken.message);
+                    return '/500';
+                }
+
+                const response = await UserAPI.postInitialUser(testToken, testEmail, testName);
+
+                if (isErrorMessage(response)) {
+                    // eslint-disable-next-line no-console
+                    console.error(response.message);
+                    return '/500';
+                }
+
+                if (response.status === 200 || response.status === 409) {
+                    return true;
+                }
+
+                // eslint-disable-next-line no-console
+                console.log('Failed to create user:', response);
+                return '/500';
+            }
+
             const signInDisabeCheck = process.env.SIGN_IN_DISABLE_CHECK === 'true';
             if (signInDisabeCheck) {
                 // eslint-disable-next-line no-console
@@ -21,7 +53,11 @@ export const authOptions: NextAuthOptions = {
 
             const signInOnlyCollectData = process.env.SIGN_IN_ONLY_COLLECT_DATA === 'true';
 
-            if (!account?.access_token || !account.id_token || !profile?.email || !profile.name) return '/500';
+            if (!account?.access_token || !account.id_token || !profile?.email || !profile.name) {
+                // eslint-disable-next-line no-console
+                console.error('Missing data in sign in');
+                return '/500';
+            }
 
             const groups = await FeideGroupAPI.getGroups(account.access_token);
 
@@ -54,6 +90,8 @@ export const authOptions: NextAuthOptions = {
             const response = await UserAPI.postInitialUser(account.id_token, email, name);
 
             if (isErrorMessage(response)) {
+                // eslint-disable-next-line no-console
+                console.log('Failed to create user:', response);
                 return '/500';
             }
 
@@ -61,11 +99,22 @@ export const authOptions: NextAuthOptions = {
                 return true;
             }
 
+            // eslint-disable-next-line no-console
+            console.log('Failed to create user:', response);
             return '/500';
         },
-        // eslint-disable-next-line @typescript-eslint/require-await
         async jwt({ token, account }) {
-            if (account) {
+            if (!isProd) {
+                const testToken = await UserAPI.getTestToken(testEmail);
+
+                if (isErrorMessage(testToken)) {
+                    // eslint-disable-next-line no-console
+                    console.log('Failed to get test token:', testToken);
+                } else {
+                    token.idToken = testToken;
+                    token.accessToken = 'bruh';
+                }
+            } else if (account) {
                 token.idToken = account.id_token;
                 token.accessToken = account.access_token;
             }
@@ -76,7 +125,21 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             const { idToken, accessToken } = token;
 
-            if (typeof idToken === 'string' && typeof accessToken === 'string') {
+            if (!isProd) {
+                try {
+                    const response = await fetch(`${BACKEND_URL}/token/${testEmail}`, {
+                        method: 'GET',
+                    });
+
+                    const testToken = await response.text();
+
+                    session.idToken = testToken;
+                    session.accessToken = 'bruh';
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.log(error);
+                }
+            } else if (typeof idToken === 'string' && typeof accessToken === 'string') {
                 session.idToken = idToken;
                 session.accessToken = accessToken;
             }
@@ -85,29 +148,50 @@ export const authOptions: NextAuthOptions = {
         },
     },
     providers: [
-        {
-            id: 'feide',
-            name: 'Feide',
-            type: 'oauth',
-            checks: process.env.SANITY_DATASET === 'testing' ? 'none' : undefined,
-            wellKnown: 'https://auth.dataporten.no/.well-known/openid-configuration',
-            authorization: {
-                params: {
-                    scope: 'email userinfo-name profile userid openid groups-edu groups-org groups-other',
-                },
-            },
-            clientId: process.env.FEIDE_CLIENT_ID,
-            clientSecret: process.env.FEIDE_CLIENT_SECRET,
-            idToken: true,
-            profile(profile) {
-                return {
-                    id: profile.sub,
-                    name: profile.name,
-                    email: profile.email,
-                    image: profile.picture,
-                };
-            },
-        },
+        isProd
+            ? {
+                  id: 'feide',
+                  name: 'Feide',
+                  type: 'oauth',
+                  checks: process.env.SANITY_DATASET === 'testing' ? 'none' : undefined,
+                  wellKnown: 'https://auth.dataporten.no/.well-known/openid-configuration',
+                  authorization: {
+                      params: {
+                          scope: 'email userinfo-name profile userid openid groups-edu groups-org groups-other',
+                      },
+                  },
+                  clientId: process.env.FEIDE_CLIENT_ID,
+                  clientSecret: process.env.FEIDE_CLIENT_SECRET,
+                  idToken: true,
+                  profile(profile) {
+                      return {
+                          id: profile.sub,
+                          name: profile.name,
+                          email: profile.email,
+                          image: profile.picture,
+                      };
+                  },
+              }
+            : CredentialsProvider({
+                  name: 'Credentials',
+                  credentials: {
+                      username: {
+                          label: 'Username',
+                          type: 'text',
+                          placeholder: 'test',
+                      },
+                      password: { label: 'Password', type: 'password' },
+                  },
+                  // eslint-disable-next-line @typescript-eslint/require-await
+                  async authorize() {
+                      return {
+                          id: '1',
+                          name: 'Test McTest',
+                          email: 'test.mctest@student.uib.no',
+                          image: 'https://i.pravatar.cc/150?u=jsmith@example.com',
+                      };
+                  },
+              }),
     ],
 };
 

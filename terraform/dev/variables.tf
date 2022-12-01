@@ -52,3 +52,8 @@ variable "admin_key" {
   type        = string
   description = "The ADMIN_KEY for the backend."
 }
+
+variable "auth_secret" {
+  type        = string
+  description = "The AUTH_SECRET for the backend."
+}
