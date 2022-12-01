@@ -152,7 +152,6 @@ jobs:
           SANITY_DATASET: testing
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: very-secret-string-123
-          NEXTAUTH_URL: http://localhost:3000
           FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
           FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
           SIGN_IN_DISABLE_CHECK: true
