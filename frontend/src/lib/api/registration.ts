@@ -115,14 +115,18 @@ const RegistrationAPI = {
         idToken: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const response = await fetch(`${BACKEND_URL}/registration/${slug}/${email}`, {
+            const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
+
+            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}` },
             });
 
-            const data = await response.json();
+            const responseText = await response.text();
 
-            return { response: string(data), error: null };
+            if (response.status === 200) return { response: responseText, error: null };
+
+            return { response: null, error: responseText };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { response: null, error: JSON.stringify(error) };
