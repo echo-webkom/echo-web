@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import { type User, UserAPI } from '@api/user';
 import { isErrorMessage, type ErrorMessage } from '@utils/error';
 
-interface HookObject {
+interface Auth {
     user: User | null;
     idToken: string | null;
     signedIn: boolean;
@@ -12,7 +12,7 @@ interface HookObject {
     setUser: (user: User) => void;
 }
 
-const UserContext = createContext<HookObject>({
+const AuthContext = createContext<Auth>({
     user: null,
     idToken: null,
     signedIn: false,
@@ -21,7 +21,7 @@ const UserContext = createContext<HookObject>({
     setUser: () => {},
 });
 
-const UserProvider = ({ children }: { children: ReactNode }) => {
+const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User | null>(null);
     const [idToken, setIdToken] = useState<string | null>(session?.idToken ?? null);
@@ -57,7 +57,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     }, [session]);
 
     return (
-        <UserContext.Provider
+        <AuthContext.Provider
             value={{
                 signedIn,
                 user,
@@ -68,11 +68,11 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
             }}
         >
             {children}
-        </UserContext.Provider>
+        </AuthContext.Provider>
     );
 };
 
-const useAuth = (): HookObject => useContext(UserContext);
+const useAuth = (): Auth => useContext(AuthContext);
 
 export default useAuth;
-export { UserProvider };
+export { AuthProvider };
