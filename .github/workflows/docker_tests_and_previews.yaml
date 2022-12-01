@@ -150,6 +150,7 @@ jobs:
           browser: firefox
         env:
           SANITY_DATASET: testing
+          NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: very-secret-string-123
           NEXTAUTH_URL: http://localhost:3000
           FEIDE_CLIENT_ID: ${{ secrets.FEIDE_CLIENT_ID }}
