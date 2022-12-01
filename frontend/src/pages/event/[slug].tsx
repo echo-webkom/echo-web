@@ -7,7 +7,7 @@ import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
-import useUser from '@hooks/use-user';
+import useAuth from '@hooks/use-auth';
 import RegistrationsList from '@components/registrations-list';
 import type { Happening, HappeningInfo } from '@api/happening';
 import { HappeningAPI } from '@api/happening';
@@ -34,13 +34,13 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
-    const { signedIn, idToken } = useUser();
+    const { signedIn, idToken } = useAuth();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
 
     useEffect(() => {
         const fetchRegs = async () => {
-            if (!happening || !idToken) return;
+            if (!happening || !signedIn || !idToken) return;
             const result = await RegistrationAPI.getRegistrations(happening.slug, idToken);
 
             if (isErrorMessage(result)) {
@@ -51,7 +51,7 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
             }
         };
         void fetchRegs();
-    }, [happening, idToken]);
+    }, [happening, idToken, signedIn]);
 
     return (
         <>

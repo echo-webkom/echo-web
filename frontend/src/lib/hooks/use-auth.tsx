@@ -72,7 +72,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-const useUser = (): HookObject => useContext(UserContext);
+const useAuth = (): HookObject => useContext(UserContext);
 
-export default useUser;
+export default useAuth;
 export { UserProvider };

@@ -14,7 +14,8 @@ import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import Section from '@components/section';
 import SEO from '@components/seo';
-import useUser from '@hooks/use-user';
+import ErrorBox from '@components/error-box';
+import useAuth from '@hooks/use-auth';
 
 const adminRoutes = [
     {
@@ -30,7 +31,7 @@ const adminRoutes = [
 ];
 
 const DashboardPage = () => {
-    const { user, loading, error } = useUser();
+    const { user, loading, signedIn, error } = useAuth();
     const [isWebkom, setIsWebkom] = useState<boolean>(false);
 
     const bg = useColorModeValue('gray.200', 'gray.800');
@@ -45,17 +46,19 @@ const DashboardPage = () => {
         <>
             <SEO title="Dashboard" />
             <Section>
-                {error && (
-                    <Center flexDirection="column" gap="5" py="10">
-                        <Heading>En feil har skjedd.</Heading>
-                        <Text>Du har ikke tilgang til denne siden.</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
-                    </Center>
-                )}
+                {!signedIn ||
+                    (!isWebkom && (
+                        <Center flexDirection="column" gap="5" py="10">
+                            <Heading>En feil har skjedd.</Heading>
+                            <Text>Du har ikke tilgang til denne siden.</Text>
+                            <Button>
+                                <NextLink href="/" passHref>
+                                    <Link>Tilbake til forsiden</Link>
+                                </NextLink>
+                            </Button>
+                        </Center>
+                    ))}
+                {error && <ErrorBox error={error.message} />}
                 {loading && (
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>Laster inn...</Heading>

@@ -19,12 +19,8 @@ const reactionDecoder = record({
 type Reaction = decodeType<typeof reactionDecoder>;
 
 const ReactionAPI = {
-    get: async (slug: string, idToken: string | undefined | null): Promise<Reaction | ErrorMessage> => {
+    get: async (slug: string, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
-            if (!idToken) {
-                return { message: 'No token.' };
-            }
-
             const { data, status } = await axios.get(`${BACKEND_URL}/reaction/${slug}`, {
                 params: { slug },
                 headers: {
@@ -46,11 +42,7 @@ const ReactionAPI = {
             return { message: 'Noe gikk galt. Prøv igjen senere.' };
         }
     },
-    put: async (
-        slug: string,
-        reaction: ReactionType,
-        idToken: string | undefined | null,
-    ): Promise<Reaction | ErrorMessage> => {
+    put: async (slug: string, reaction: ReactionType, idToken: string): Promise<Reaction | ErrorMessage> => {
         try {
             if (!idToken) {
                 return { message: 'No token.' };
