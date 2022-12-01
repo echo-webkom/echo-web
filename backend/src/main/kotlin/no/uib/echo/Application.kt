@@ -20,7 +20,6 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val dev = environment.config.propertyOrNull("ktor.dev") != null
     val testMigration = environment.config.property("ktor.testMigration").getString().toBooleanStrict()
-    val disableJwtAuth = environment.config.property("ktor.disableJwtAuth").getString().toBooleanStrict()
     val shouldInitDb = environment.config.property("ktor.shouldInitDb").getString().toBooleanStrict()
     val adminKey = environment.config.property("ktor.adminKey").getString()
     val databaseUrl = URI(environment.config.property("ktor.databaseUrl").getString())
@@ -31,6 +30,12 @@ fun Application.module() {
         true -> null
         false -> maybeSendGridApiKey
     }
+    val secret = environment.config.property("jwt.secret").getString()
+    val issuer = environment.config.property("jwt.issuer").getString()
+    val audience = environment.config.property("jwt.audience").getString()
+    val realm = environment.config.property("jwt.realm").getString()
+
+    val jwtConfig = if (dev) "auth-jwt-test" else "auth-jwt"
 
     if (sendGridApiKey == null && !dev && sendEmailReg) {
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg.")
@@ -46,12 +51,15 @@ fun Application.module() {
     }
 
     configureCORS()
-    configureAuthentication(adminKey)
+    configureAuthentication(adminKey, audience, issuer, secret, realm)
     configureContentNegotiation()
     configureRouting(
         featureToggles = FeatureToggles(sendEmailReg = sendEmailReg, rateLimit = true),
         dev = dev,
-        disableJwtAuth = disableJwtAuth,
-        sendGridApiKey = sendGridApiKey
+        sendGridApiKey = sendGridApiKey,
+        audience = audience,
+        issuer = issuer,
+        secret = secret,
+        jwtConfig = jwtConfig
     )
 }

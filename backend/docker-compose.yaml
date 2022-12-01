@@ -25,6 +25,7 @@ services:
       TEST_MIGRATION:
       PORT:
       DISABLE_JWT_AUTH:
+      AUTH_SECRET:
 
   database:
     build:
