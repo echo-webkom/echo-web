@@ -19,19 +19,22 @@ import no.uib.echo.routes.userRoutes
 fun Application.configureRouting(
     featureToggles: FeatureToggles,
     dev: Boolean = false,
-    disableJwtAuth: Boolean = false,
-    sendGridApiKey: String? = null
+    sendGridApiKey: String? = null,
+    audience: String,
+    issuer: String,
+    secret: String,
+    jwtConfig: String,
 ) {
     routing { getStatus() }
 
     registrationRoutes(
-        disableJwtAuth = disableJwtAuth,
         sendEmail = featureToggles.sendEmailReg,
         sendGridApiKey = sendGridApiKey,
+        jwtConfig = jwtConfig
     )
     happeningRoutes()
     feedbackRoutes()
-    userRoutes()
+    userRoutes(dev, audience, issuer, secret, jwtConfig)
     reactionRoutes()
     sanityRoutes(dev)
     studentGroupRoutes()

@@ -1,5 +1,7 @@
 package no.uib.echo.routes
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -31,10 +33,18 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
+import java.util.Date
 
-fun Application.userRoutes() {
+fun Application.userRoutes(
+    dev: Boolean = false,
+    audience: String,
+    issuer: String,
+    secret: String,
+    jwtConfig: String
+) {
     routing {
-        authenticate("auth-jwt") {
+        getToken(dev, audience, issuer, secret)
+        authenticate(jwtConfig) {
             getUser()
             postUser()
             putUser()
@@ -43,12 +53,11 @@ fun Application.userRoutes() {
     }
 }
 
-/**
- * Returns the user with the given email. Email is taken from the JWT token.
- */
+/** Returns the user with the given email. Email is taken from the JWT token. */
 fun Route.getUser() {
     get("/user") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
             call.respond(HttpStatusCode.Unauthorized)
@@ -57,9 +66,7 @@ fun Route.getUser() {
 
         val user = transaction {
             addLogger(StdOutSqlLogger)
-            User.select {
-                User.email eq email
-            }.firstOrNull()
+            User.select { User.email eq email }.firstOrNull()
         }
 
         if (user == null) {
@@ -83,12 +90,11 @@ fun Route.getUser() {
     }
 }
 
-/**
- * Creates a new user with the given email. Email is taken from the JWT token.
- */
+/** Creates a new user with the given email. Email is taken from the JWT token. */
 fun Route.postUser() {
     post("/user") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
             call.respond(HttpStatusCode.Unauthorized)
@@ -106,9 +112,7 @@ fun Route.postUser() {
             val existingUser = transaction {
                 addLogger(StdOutSqlLogger)
 
-                User.select {
-                    User.email eq email
-                }.firstOrNull()
+                User.select { User.email eq email }.firstOrNull()
             }
 
             if (existingUser != null) {
@@ -125,7 +129,10 @@ fun Route.postUser() {
                 }
             }
 
-            call.respond(HttpStatusCode.OK, "New user created with email = $email and name = ${user.name}.")
+            call.respond(
+                HttpStatusCode.OK,
+                "New user created with email = $email and name = ${user.name}."
+            )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()
@@ -133,12 +140,11 @@ fun Route.postUser() {
     }
 }
 
-/**
- * Updates the user with the given email. Email is taken from the JWT token.
- */
+/** Updates the user with the given email. Email is taken from the JWT token. */
 fun Route.putUser() {
     put("/user") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
             call.respond(
@@ -184,9 +190,7 @@ fun Route.putUser() {
 
             val result = transaction {
                 addLogger(StdOutSqlLogger)
-                User.select {
-                    User.email eq email
-                }.firstOrNull()
+                User.select { User.email eq email }.firstOrNull()
             }
 
             if (result == null) {
@@ -200,9 +204,7 @@ fun Route.putUser() {
                         it[degreeYear] = user.degreeYear
                     }
 
-                    User.select {
-                        User.email eq email
-                    }.first()
+                    User.select { User.email eq email }.first()
                 }
                 call.respond(
                     HttpStatusCode.OK,
@@ -219,9 +221,7 @@ fun Route.putUser() {
 
             val updatedUser = transaction {
                 addLogger(StdOutSqlLogger)
-                User.update({
-                    User.email eq email
-                }) {
+                User.update({ User.email eq email }) {
                     it[name] = user.name
                     it[User.alternateEmail] = alternateEmail
                     it[degree] = user.degree.toString()
@@ -229,9 +229,7 @@ fun Route.putUser() {
                     it[modifiedAt] = DateTime.now()
                 }
 
-                User.select {
-                    User.email eq email
-                }.first()
+                User.select { User.email eq email }.first()
             }
 
             val memberships = getUserStudentGroups(email)
@@ -254,12 +252,11 @@ fun Route.putUser() {
     }
 }
 
-/**
- * Gets a list of all users. Only available to admins/webkom.
- */
+/** Gets a list of all users. Only available to admins/webkom. */
 fun Route.getAllUsers() {
     get("/users") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
             call.respond(HttpStatusCode.Unauthorized)
@@ -273,24 +270,49 @@ fun Route.getAllUsers() {
 
         val users = transaction {
             addLogger(StdOutSqlLogger)
-            User.select {
-                User.email like "%@student.uib.no" or (User.email like "%@uib.no")
-            }.map { it ->
-                UserJson(
-                    it[User.email],
-                    it[User.name],
-                    it[User.alternateEmail],
-                    it[User.degreeYear],
-                    nullableStringToDegree(it[User.degree]),
-                    StudentGroupMembership.select {
-                        StudentGroupMembership.userEmail eq it[User.email]
-                    }.toList().map {
-                        it[StudentGroupMembership.studentGroupName]
-                    }.ifEmpty { emptyList() }
-                )
-            }
+            User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
+                .map { it ->
+                    UserJson(
+                        it[User.email],
+                        it[User.name],
+                        it[User.alternateEmail],
+                        it[User.degreeYear],
+                        nullableStringToDegree(it[User.degree]),
+                        StudentGroupMembership.select {
+                            StudentGroupMembership.userEmail eq it[User.email]
+                        }
+                            .toList()
+                            .map { it[StudentGroupMembership.studentGroupName] }
+                            .ifEmpty { emptyList() }
+                    )
+                }
         }
 
         call.respond(HttpStatusCode.OK, users)
+    }
+}
+
+/** Used for testing purposes */
+fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: String) {
+    get("/token/{email}") {
+        val email = call.parameters["email"]
+
+        if (email == null) {
+            call.respond(HttpStatusCode.BadRequest, "No email supplied")
+            return@get
+        }
+
+        if (!dev) {
+            call.respond(HttpStatusCode.Forbidden, "Only available in dev mode ! >:(")
+            return@get
+        }
+        val token =
+            JWT.create()
+                .withAudience(audience)
+                .withIssuer(issuer)
+                .withClaim("email", email)
+                .withExpiresAt(Date(System.currentTimeMillis() + (1000 * 60 * 60)))
+                .sign(Algorithm.HMAC256(secret))
+        call.respond(hashMapOf("token" to token))
     }
 }
