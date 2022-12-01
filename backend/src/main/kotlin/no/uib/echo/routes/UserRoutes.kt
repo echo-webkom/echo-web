@@ -30,6 +30,7 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import org.joda.time.DateTime
 
 fun Application.userRoutes() {
     routing {
@@ -225,6 +226,7 @@ fun Route.putUser() {
                     it[User.alternateEmail] = alternateEmail
                     it[degree] = user.degree.toString()
                     it[degreeYear] = user.degreeYear
+                    it[modifiedAt] = DateTime.now()
                 }
 
                 User.select {
