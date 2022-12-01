@@ -144,8 +144,8 @@ jobs:
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
-          build: yarn build
-          start: yarn start
+          build: env NODE_ENV=development yarn build --no-lint
+          start: env NODE_ENV=development yarn start
           wait-on: 'http://localhost:3000, http://localhost:8080/status'
           config: video=false
           browser: firefox
