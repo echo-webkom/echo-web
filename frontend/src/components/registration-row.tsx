@@ -1,3 +1,5 @@
+// eslint-disable @typescript-eslint/prefer-nullish-coalescing
+
 import type { TableRowProps } from '@chakra-ui/react';
 import {
     Heading,
@@ -66,7 +68,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
-                description: `Slettet påmeding med email '${registration.alternateEmail ?? registration.email}'.`,
+                description: `Slettet påmeding med email '${registration.alternateEmail || registration.email}'.`,
                 isClosable: true,
             });
         } else {
@@ -87,7 +89,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                 data-cy={`reg-row-${registration.email}`}
                 key={JSON.stringify(registration)}
             >
-                <Td fontSize="md">{registration.alternateEmail ?? registration.email}</Td>
+                <Td fontSize="md">{registration.alternateEmail || registration.email}</Td>
                 <Td fontSize="md">{registration.name}</Td>
                 <Td fontSize="md">{registration.degree}</Td>
                 <Td fontSize="md">{registration.degreeYear}</Td>
@@ -139,7 +141,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                             pb="0.5rem"
                             lineHeight="1.5"
                         >{`Er du sikker på at du vil slette påmeldingen med email '${
-                            registration.alternateEmail ?? registration.email
+                            registration.alternateEmail || registration.email
                         }'?`}</Heading>
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
