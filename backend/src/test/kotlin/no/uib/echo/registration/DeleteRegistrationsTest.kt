@@ -40,7 +40,7 @@ import no.uib.echo.user6
 import no.uib.echo.user7
 import no.uib.echo.user8
 import no.uib.echo.user9
-import no.uib.echo.users
+import no.uib.echo.usersWithAdmin
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -50,7 +50,6 @@ import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import no.uib.echo.usersWithAdmin
 
 class DeleteRegistrationsTest {
     companion object {
