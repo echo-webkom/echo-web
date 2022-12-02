@@ -30,7 +30,7 @@ fun Application.module() {
         true -> null
         false -> maybeSendGridApiKey
     }
-    val secret = environment.config.property("jwt.secret").getString()
+    val secret = environment.config.propertyOrNull("jwt.secret")?.getString()
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()
     val realm = environment.config.property("jwt.realm").getString()
@@ -39,6 +39,10 @@ fun Application.module() {
 
     if (sendGridApiKey == null && !dev && sendEmailReg) {
         throw Exception("SENDGRID_API_KEY not defined in non-dev environment, with SEND_EMAIL_REGISTRATION = $sendEmailReg.")
+    }
+
+    if (secret == null && dev) {
+        throw Exception("AUTH_SECRET not defined in dev environment.")
     }
 
     if (shouldInitDb) {

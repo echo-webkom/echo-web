@@ -39,7 +39,7 @@ fun Application.userRoutes(
     dev: Boolean = false,
     audience: String,
     issuer: String,
-    secret: String,
+    secret: String?,
     jwtConfig: String
 ) {
     routing {
@@ -294,7 +294,7 @@ fun Route.getAllUsers() {
 }
 
 /** Used for testing purposes */
-fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: String) {
+fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: String?) {
     get("/token/{email}") {
         val email = call.parameters["email"]
 
@@ -303,7 +303,7 @@ fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: Strin
             return@get
         }
 
-        if (!dev) {
+        if (!dev || secret == null) {
             call.respond(HttpStatusCode.Forbidden, "Only available in dev mode ! >:(")
             return@get
         }

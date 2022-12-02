@@ -13,7 +13,7 @@ import io.ktor.server.auth.jwt.jwt
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-fun Application.configureAuthentication(adminKey: String, audience: String, devIssuer: String, secret: String, devRealm: String) {
+fun Application.configureAuthentication(adminKey: String, audience: String, devIssuer: String, secret: String?, devRealm: String) {
     install(Authentication) {
         basic("auth-admin") {
             realm = "Access to registrations and happenings."
@@ -43,20 +43,22 @@ fun Application.configureAuthentication(adminKey: String, audience: String, devI
             }
         }
 
-        jwt("auth-jwt-test") {
-            realm = devRealm
-            verifier(
-                JWT
-                    .require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(devIssuer)
-                    .build()
-            )
-            validate { credential ->
-                if (credential.payload.getClaim("email").asString() != "") {
-                    JWTPrincipal(credential.payload)
-                } else {
-                    null
+        if (secret != null) {
+            jwt("auth-jwt-test") {
+                realm = devRealm
+                verifier(
+                    JWT
+                        .require(Algorithm.HMAC256(secret))
+                        .withAudience(audience)
+                        .withIssuer(devIssuer)
+                        .build()
+                )
+                validate { credential ->
+                    if (credential.payload.getClaim("email").asString() != "") {
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        null
+                    }
                 }
             }
         }
