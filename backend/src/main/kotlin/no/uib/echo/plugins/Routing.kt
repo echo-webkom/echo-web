@@ -22,7 +22,7 @@ fun Application.configureRouting(
     sendGridApiKey: String? = null,
     audience: String,
     issuer: String,
-    secret: String,
+    secret: String?,
     jwtConfig: String,
 ) {
     routing { getStatus() }
