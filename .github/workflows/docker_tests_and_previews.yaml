@@ -280,7 +280,7 @@ jobs:
         uses: peter-evans/find-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body-includes: beep boop!
+          body-includes: '<!-- BACKEND PREVIEW BOT -->'
 
       - name: Create comment
         if: steps.fc.outputs.comment-id == '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
@@ -289,9 +289,13 @@ jobs:
           token: ${{ secrets.REPO_PAT }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
+            <!-- BACKEND PREVIEW BOT -->
+
             **beep boop!**
 
             I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
+
+            - [ ] check this box to restart the backend preview, if you are getting errors.
 
       - name: Update comment
         if: steps.fc.outputs.comment-id != '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
@@ -301,9 +305,13 @@ jobs:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           edit-mode: replace
           body: |
+            <!-- BACKEND PREVIEW BOT -->
+
             **beep boop!**
 
-            I just deployed a *new* backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rewind:
+            I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
+
+            - [ ] check this box to restart the backend preview, if you are getting errors.
 
   vercel_preview:
     runs-on: ubuntu-latest
