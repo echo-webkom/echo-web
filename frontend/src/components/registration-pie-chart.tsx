@@ -3,10 +3,12 @@ import randomColor from 'randomcolor';
 import { Center, useColorModeValue } from '@chakra-ui/react';
 import { allDegrees } from '@utils/degree';
 import type { Registration } from '@api/registration';
+import capitalize from '@utils/capitalize';
+import { studentGroups } from '@api/dashboard';
 
 interface Props {
     registrations: Array<Registration>;
-    field: 'degree' | 'year';
+    field: 'degree' | 'year' | 'studentGroup';
 }
 
 const RegistrationPieChart = ({ registrations, field }: Props) => {
@@ -30,7 +32,21 @@ const RegistrationPieChart = ({ registrations, field }: Props) => {
         };
     });
 
-    const regs = field === 'degree' ? regsByDegree : regsByYear;
+    const regsByStudentGroup = [...studentGroups, 'Ingen'].map((group) => {
+        return {
+            name: `${capitalize(group)}`,
+            value: registrations
+                .map((reg) => (reg.memberships.length === 0 ? { ...reg, memberships: ['Ingen'] } : reg))
+                .filter((reg) => reg.memberships.includes(group)).length,
+            color: randomColor({ luminosity }),
+        };
+    });
+
+    const regs = (() => {
+        if (field === 'degree') return regsByDegree;
+        else if (field === 'year') return regsByYear;
+        else return regsByStudentGroup;
+    })();
 
     const renderCustomizedLabel = ({
         cx,
