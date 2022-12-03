@@ -333,6 +333,12 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                     </Heading>
                                     <RegistrationPieChart registrations={registrations} field="year" />
                                 </GridItem>
+                                <GridItem>
+                                    <Heading size="md" my="1rem">
+                                        Antall påmeldinger per undergruppe
+                                    </Heading>
+                                    <RegistrationPieChart registrations={registrations} field="studentGroup" />
+                                </GridItem>
                                 <GridItem colSpan={[1, 1, null, 2]}>
                                     <Heading size="md" my="2rem">
                                         Antall påmeldinger over tid
