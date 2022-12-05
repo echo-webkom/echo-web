@@ -74,7 +74,8 @@ resource "azurerm_container_group" "echo_web_preview" {
     memory = 0.5
 
     environment_variables = {
-      "ENVIRONMENT" = var.environment
+      "MAX_POOL_SIZE" = 7
+      "ENVIRONMENT"   = var.environment
     }
 
     secure_environment_variables = {
