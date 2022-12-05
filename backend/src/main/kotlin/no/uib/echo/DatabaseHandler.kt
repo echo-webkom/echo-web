@@ -46,22 +46,27 @@ val tables: Array<Table> = arrayOf(
 )
 
 class DatabaseHandler(
-    private val dev: Boolean,
-    private val testMigration: Boolean,
+    private val env: Environment,
+    private val migrateDb: Boolean,
     dbUrl: URI,
     mbMaxPoolSize: String?
 ) {
     private val dbPort = if (dbUrl.port == -1) 5432 else dbUrl.port
-    private val dbUrl = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
+    private val dbUrlStr = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
     private val dbUsername = dbUrl.userInfo.split(":")[0]
     private val dbPassword = dbUrl.userInfo.split(":")[1]
-    private val maxPoolSize = if (dev) DEFAULT_DEV_POOL_SIZE
-    else mbMaxPoolSize?.toIntOrNull() ?: DEFAULT_PROD_POOL_SIZE
+    // MAX_POOL_SIZE takes precedence if it is not null, else we have defaults 20 and 10 for prod and dev/preview respectively.
+    private val maxPoolSize =
+        mbMaxPoolSize?.toIntOrNull()
+            ?: if (env == Environment.PRODUCTION)
+                DEFAULT_PROD_POOL_SIZE
+            else
+                DEFAULT_DEV_POOL_SIZE
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(
             HikariConfig().apply {
-                jdbcUrl = dbUrl
+                jdbcUrl = dbUrlStr
                 username = dbUsername
                 password = dbPassword
                 driverClassName = "org.postgresql.Driver"
@@ -72,21 +77,20 @@ class DatabaseHandler(
     }
 
     private fun migrate() {
-        Flyway.configure().baselineOnMigrate(true).dataSource(dbUrl, dbUsername, dbPassword).load().migrate()
+        Flyway.configure().baselineOnMigrate(true).dataSource(dbUrlStr, dbUsername, dbPassword).load().migrate()
     }
 
     private val conn by lazy {
         Database.connect(dataSource())
     }
 
-    fun init(shouldInsertTestData: Boolean = true) {
+    fun init(insertTestData: Boolean = true) {
         // Need to use connection once to open.
         transaction(conn) {
             addLogger(StdOutSqlLogger)
         }
 
-        // Only migrate if not running on local machine
-        if (!dev || testMigration) {
+        if (env == Environment.PRODUCTION || migrateDb) {
             migrate()
         } else {
             try {
@@ -95,7 +99,7 @@ class DatabaseHandler(
 
                     SchemaUtils.create(*tables)
                 }
-                if (shouldInsertTestData) {
+                if (insertTestData) {
                     insertTestData()
                 }
             } catch (e: Exception) {

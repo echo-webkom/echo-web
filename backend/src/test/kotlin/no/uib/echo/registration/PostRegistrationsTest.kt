@@ -15,6 +15,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
+import no.uib.echo.Environment
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
@@ -55,8 +56,8 @@ import kotlin.test.Test
 class PostRegistrationsTest {
     companion object {
         val db = DatabaseHandler(
-            dev = true,
-            testMigration = false,
+            env = Environment.PREVIEW,
+            migrateDb = false,
             dbUrl = URI(System.getenv("DATABASE_URL")),
             mbMaxPoolSize = null
         )

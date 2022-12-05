@@ -10,7 +10,12 @@ variable "location" {
 
 variable "environment" {
   type        = string
-  description = "Tags the resources with the environment."
+  description = "Tags the resources with the environment, and sets backend environment."
+
+  validation {
+    condition     = contains(["production", "development", "preview"], var.environment)
+    error_message = "Valid values for environment are: 'production', 'development' and 'preview'."
+  }
 }
 
 variable "db_user" {
