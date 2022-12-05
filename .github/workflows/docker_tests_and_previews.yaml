@@ -47,7 +47,7 @@ jobs:
           cd backend
           docker build \
             --cache-from "$IMAGE_NAME/backend:latest" \
-            -t "$IMAGE_NAME/backend:$GITHUB_SHA" \
+            -t "$IMAGE_NAME/backend:$TAG" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             .
           docker push "$IMAGE_NAME/backend" --all-tags
@@ -56,7 +56,7 @@ jobs:
 
   kotest_tests:
     runs-on: ubuntu-latest
-    needs: build_backend
+    needs: [build_backend]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -75,7 +75,7 @@ jobs:
 
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+        run: docker pull "$IMAGE_NAME/backend:$TAG"
 
       - name: Run Kotest tests with Docker Compose
         if: steps.changed-files.outputs.any_changed == 'true'
@@ -124,7 +124,7 @@ jobs:
 
       - name: Backend changed, pull Docker image
         if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
-        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+        run: docker pull "$IMAGE_NAME/backend:$TAG"
 
       - name: Backend didn't change, pull Docker image
         if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed != 'true'
@@ -184,7 +184,7 @@ jobs:
 
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: docker pull "$IMAGE_NAME/backend:$GITHUB_SHA"
+        run: docker pull "$IMAGE_NAME/backend:$TAG"
 
       - name: Download database dump
         if: steps.changed-files.outputs.any_changed == 'true'
