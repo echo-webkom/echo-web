@@ -171,7 +171,6 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                             registrations={regsList}
                             error={regsListError?.message ?? null}
                             title={happening.title}
-                            studentGroups={happening.studentGroups}
                         />
                     )}
                 </>
