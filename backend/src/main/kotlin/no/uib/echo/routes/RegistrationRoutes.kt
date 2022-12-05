@@ -33,9 +33,11 @@ import no.uib.echo.schema.RegistrationJson
 import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.User
+import no.uib.echo.schema.WaitingListUUID
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
+import no.uib.echo.schema.notifyWaitingList
 import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
@@ -49,15 +51,15 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
+import java.util.UUID
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, jwtConfig: String) {
     routing {
         authenticate(jwtConfig) {
             getRegistrations()
-            deleteRegistration()
+            deleteRegistration(sendGridApiKey)
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
         }
 
@@ -318,6 +320,13 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             if (waitList) {
+                transaction {
+                    WaitingListUUID.insert {
+                        it[uuid] = UUID.randomUUID().toString().replace("-", "")
+                        it[userEmail] = registration.email.lowercase()
+                        it[happeningSlug] = registration.slug
+                    }
+                }
                 call.respond(
                     HttpStatusCode.Accepted,
                     resToJson(RegistrationResponse.WaitList, waitListSpot = waitListSpot.toLong())
@@ -344,7 +353,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
     }
 }
 
-fun Route.deleteRegistration() {
+fun Route.deleteRegistration(SendGridApiKey: String?) {
     delete("/registration/{slug}/{email}") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
@@ -408,6 +417,13 @@ fun Route.deleteRegistration() {
             }
 
             if (reg[Registration.waitList]) {
+                // if the person that was deleted was on a waiting list:
+                transaction {
+                    WaitingListUUID.deleteWhere {
+                        WaitingListUUID.happeningSlug eq hap[Happening.slug] and
+                            (WaitingListUUID.userEmail.lowerCase() eq decodedParamEmail)
+                    }
+                }
                 call.respond(
                     HttpStatusCode.OK,
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
@@ -427,14 +443,12 @@ fun Route.deleteRegistration() {
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
                 )
             } else {
-                transaction {
-                    Registration.update({ Registration.userEmail eq highestOnWaitList[Registration.userEmail].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
-                        it[waitList] = false
-                    }
+                if (SendGridApiKey != null) {
+                    notifyWaitingList(slug, SendGridApiKey)
                 }
                 call.respond(
                     HttpStatusCode.OK,
-                    "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " + "and registration with email = ${highestOnWaitList[Registration.userEmail].lowercase()} moved off wait list."
+                    "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted"
                 )
             }
         } catch (e: Exception) {

@@ -31,6 +31,13 @@ data class RegistrationJson(
     val memberships: List<String> = emptyList(),
 )
 
+@Serializable
+data class EmailRegistrationJson(
+    val email: String,
+    val alternateEmail: String? = null,
+    val slug: String,
+)
+
 object Registration : Table() {
     val userEmail: Column<String> = text("user_email") references User.email
     val happeningSlug: Column<String> = text("happening_slug") references Happening.slug

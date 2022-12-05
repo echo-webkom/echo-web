@@ -16,6 +16,7 @@ import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.WaitingListUUID
 import no.uib.echo.schema.validStudentGroups
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
@@ -40,7 +41,8 @@ val tables: Array<Table> = arrayOf(
     Feedback,
     StudentGroup,
     StudentGroupMembership,
-    Reaction
+    Reaction,
+    WaitingListUUID
 )
 
 class DatabaseHandler(
