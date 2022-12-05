@@ -23,18 +23,16 @@ import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
-import hasOverlap from '@utils/has-overlap';
 import useAuth from '@hooks/use-auth';
 
 interface Props {
     registration: Registration;
     questions: Array<string> | null;
-    studentGroups: Array<string> | null;
 }
 
 const MotionTr = motion<TableRowProps>(Tr);
 
-const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
+const RegistrationRow = ({ registration, questions }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
@@ -44,8 +42,6 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
     const router = useRouter();
 
     const { idToken, signedIn } = useAuth();
-
-    const userIsEligibleForEarlyReg = hasOverlap(studentGroups, registration.memberships);
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -114,14 +110,7 @@ const RegistrationRow = ({ registration, questions, studentGroups }: Props) => {
                         Nei
                     </Td>
                 )}
-                <Td
-                    fontSize="md"
-                    fontWeight={userIsEligibleForEarlyReg ? 'bold' : 'normal'}
-                    color={userIsEligibleForEarlyReg ? 'green.400' : 'inherit'}
-                    fontStyle={userIsEligibleForEarlyReg ? 'italic' : 'normal'}
-                >
-                    {registration.memberships.map(capitalize).join(', ')}
-                </Td>
+                <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
                     <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} colorScheme="red">
                         Slett
