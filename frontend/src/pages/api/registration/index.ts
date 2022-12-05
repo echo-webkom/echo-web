@@ -17,14 +17,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'GET') {
             try {
                 const params = new URLSearchParams({ download: 'y' }).toString();
-
                 const response = await fetch(`${BACKEND_URL}/registration/${slug}?${params}`, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
                     },
+                    redirect: 'follow',
                 });
 
-                const data = await response.json();
+                const data = await response.text();
 
                 res.setHeader('Content-Type', 'text/csv');
                 res.setHeader(
