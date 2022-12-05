@@ -19,12 +19,6 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body-includes: '<!-- BACKEND PREVIEW BOT -->'
 
-      - name: Print comment ID & author
-        run: |
-          echo ${{ steps.fc.outputs.comment-id }}
-          echo ${{ steps.fc.outputs.comment-author }}
-          echo ${{ steps.fc.outputs.comment-body }}
-
       - name: Get formatted branch name, to get resource group & container group name
         id: env_vars
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
