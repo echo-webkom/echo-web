@@ -15,6 +15,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
+import no.uib.echo.Environment
 import no.uib.echo.isEmailValid
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.StudentGroupMembership
@@ -36,14 +37,14 @@ import org.joda.time.DateTime
 import java.util.Date
 
 fun Application.userRoutes(
-    dev: Boolean = false,
+    env: Environment,
     audience: String,
     issuer: String,
     secret: String?,
     jwtConfig: String
 ) {
     routing {
-        getToken(dev, audience, issuer, secret)
+        getToken(env, audience, issuer, secret)
         authenticate(jwtConfig) {
             getUser()
             postUser()
@@ -294,7 +295,7 @@ fun Route.getAllUsers() {
 }
 
 /** Used for testing purposes */
-fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: String?) {
+fun Route.getToken(env: Environment, audience: String, issuer: String, secret: String?) {
     get("/token/{email}") {
         val email = call.parameters["email"]
 
@@ -303,8 +304,8 @@ fun Route.getToken(dev: Boolean, audience: String, issuer: String, secret: Strin
             return@get
         }
 
-        if (!dev || secret == null) {
-            call.respond(HttpStatusCode.Forbidden, "Only available in dev mode ! >:(")
+        if (env == Environment.PRODUCTION || secret == null) {
+            call.respond(HttpStatusCode.Forbidden, "Only available in dev or preview environment! >:(")
             return@get
         }
         val token =

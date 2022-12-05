@@ -7,6 +7,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import no.uib.echo.Environment
 import no.uib.echo.FeatureToggles
 import no.uib.echo.routes.feedbackRoutes
 import no.uib.echo.routes.happeningRoutes
@@ -18,7 +19,7 @@ import no.uib.echo.routes.userRoutes
 
 fun Application.configureRouting(
     featureToggles: FeatureToggles,
-    dev: Boolean = false,
+    env: Environment,
     sendGridApiKey: String? = null,
     audience: String,
     issuer: String,
@@ -34,9 +35,9 @@ fun Application.configureRouting(
     )
     happeningRoutes()
     feedbackRoutes()
-    userRoutes(dev, audience, issuer, secret, jwtConfig)
+    userRoutes(env, audience, issuer, secret, jwtConfig)
     reactionRoutes()
-    sanityRoutes(dev)
+    sanityRoutes(env)
     studentGroupRoutes()
 }
 

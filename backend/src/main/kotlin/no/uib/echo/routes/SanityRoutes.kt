@@ -10,6 +10,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
+import no.uib.echo.Environment
 import no.uib.echo.SanityClient
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.insertOrUpdateHappening
@@ -20,9 +21,9 @@ data class SanityResponse(
     val result: List<HappeningJson>
 )
 
-fun Application.sanityRoutes(dev: Boolean) {
+fun Application.sanityRoutes(env: Environment) {
     routing {
-        authenticate("auth-admin", optional = dev) {
+        authenticate("auth-admin", optional = env != Environment.PRODUCTION) {
             sanitySync()
         }
     }

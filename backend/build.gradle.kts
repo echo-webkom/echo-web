@@ -8,7 +8,6 @@ val postgres_version: String by project
 val hikari_version: String by project
 val kotest_version: String by project
 val flyway_version: String by project
-val sendgrid_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
