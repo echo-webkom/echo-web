@@ -21,7 +21,9 @@ const Layout = ({ children }: Props): JSX.Element => {
 
     return (
         <AnimatedIcons n={50}>
-            {!SSR && getMonth(new Date()) === 11 && <Snowfall snowflakeCount={200} color="#ffffff" />}
+            {!SSR && getMonth(new Date()) === 11 && (
+                <Snowfall style={{ zIndex: -1 }} snowflakeCount={200} color="#ffffff" />
+            )}
             <Flex direction="column" minH="100vh" data-testid="layout">
                 <Header />
                 <Box maxW="1500" w={['97%', null, null, '90%']} m="auto">
