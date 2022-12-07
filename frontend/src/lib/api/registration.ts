@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
 import type { HappeningType } from '@api/happening';
@@ -69,34 +68,20 @@ const RegistrationAPI = {
         idToken: string,
     ): Promise<{ response: Response; statusCode: number }> => {
         try {
-            const { data, status } = await axios.post(`${BACKEND_URL}/registration`, registration, {
+            const response = await fetch(`${BACKEND_URL}/registration`, {
+                method: 'POST',
+                body: JSON.stringify(registration),
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-                validateStatus: (statusCode: number) => {
-                    return statusCode < 500;
-                },
             });
+
+            const data = await response.json();
 
             return {
                 response: responseDecoder(data),
-                statusCode: status,
+                statusCode: response.status,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error)) {
-                if (error.response) {
-                    return {
-                        response: { ...genericError, code: 'InternalServerError' },
-                        statusCode: error.response.status,
-                    };
-                }
-                if (error.request) {
-                    return {
-                        response: { ...genericError, code: 'NoResponseError' },
-                        statusCode: 500,
-                    };
-                }
-            }
-
             return {
                 response: { ...genericError, code: 'RequestError' },
                 statusCode: 500,
@@ -106,9 +91,11 @@ const RegistrationAPI = {
 
     getRegistrations: async (slug: string, idToken: string): Promise<Array<Registration> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
+            const response = await fetch(`${BACKEND_URL}/registration/${slug}?json=y`, {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
+
+            const data = await response.json();
 
             if (isErrorMessage(data)) {
                 return data;
@@ -128,33 +115,45 @@ const RegistrationAPI = {
         idToken: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const { data } = await axios.delete(`${BACKEND_URL}/registration/${slug}/${email}`, {
+            const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
+
+            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}`, {
+                method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}` },
             });
 
-            return { response: string(data), error: null };
+            const responseText = await response.text();
+
+            if (response.status === 200) return { response: responseText, error: null };
+
+            return { response: null, error: responseText };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { response: null, error: JSON.stringify(error) };
         }
     },
 
-    getRegistrationCountForSlugs: async (slugs: Array<string>): Promise<Array<RegistrationCount> | ErrorMessage> => {
+    getRegistrationCountForSlugs: async (
+        slugs: Array<string>,
+        auth: string,
+    ): Promise<Array<RegistrationCount> | ErrorMessage> => {
         try {
-            const { data } = await axios.post(`${BACKEND_URL}/registration/count`, { slugs });
+            const response = await fetch(`${BACKEND_URL}/registration/count`, {
+                method: 'POST',
+                body: JSON.stringify({ slugs }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Basic ${Buffer.from(`admin:${auth}`).toString('base64')}`,
+                },
+            });
+
+            const data = await response.json();
+
             return array(registrationCountDecoder)(data);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (!error.response) {
-                    return { message: '404' };
-                }
-                return {
-                    message: error.response.status === 404 ? '404' : 'Fail @ getRegistrationCountForSlugs',
-                };
-            }
-
+            console.log(error); // eslint-disable-line
             return {
-                message: 'Fail @ getRegistrationCountForSlugs',
+                message: JSON.stringify(error),
             };
         }
     },

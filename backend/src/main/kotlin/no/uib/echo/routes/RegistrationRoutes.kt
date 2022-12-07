@@ -42,40 +42,38 @@ import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.net.URLDecoder
 
-fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, disableJwtAuth: Boolean) {
+fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, jwtConfig: String) {
     routing {
-        if (disableJwtAuth) {
-            getRegistrations(true)
-            deleteRegistration(true)
+        authenticate(jwtConfig) {
+            getRegistrations()
+            deleteRegistration()
             getUserIsRegistered()
-            postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail, disableJwtAuth = true)
-        } else {
-            authenticate("auth-jwt") {
-                getRegistrations()
-                deleteRegistration()
-                getUserIsRegistered()
-                postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
-            }
+            postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
         }
 
-        postRegistrationCount()
+        authenticate("auth-admin") {
+            postRegistrationCount()
+        }
     }
 }
 
-fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
+fun Route.getRegistrations() {
     get("/registration/{slug}") {
-        var email: String? = null
-        if (!disableJwtAuth) {
-            email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-            if (email == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@get
-            }
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
         }
 
         val slug = call.parameters["slug"]
@@ -90,8 +88,6 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
         val testing = call.request.queryParameters["testing"] != null
 
         val hap = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select { Happening.slug eq slug }.firstOrNull()
         }
 
@@ -100,16 +96,12 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
             return@get
         }
 
-        if (!disableJwtAuth) {
-            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
-                call.respond(HttpStatusCode.Forbidden)
-                return@get
-            }
+        if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
         }
 
         val regs = transaction {
-            addLogger(StdOutSqlLogger)
-
             Registration.select {
                 Registration.happeningSlug eq hap[Happening.slug]
             }.orderBy(Registration.submitDate to SortOrder.ASC).toList().map { reg ->
@@ -120,8 +112,6 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
                 }.firstOrNull()
 
                 val answers = transaction {
-                    addLogger(StdOutSqlLogger)
-
                     Answer.select {
                         Answer.registrationEmail.lowerCase() eq reg[Registration.userEmail].lowercase() and (Answer.happeningSlug eq hap[Happening.slug])
                     }.toList()
@@ -167,29 +157,24 @@ fun Route.getRegistrations(disableJwtAuth: Boolean = false) {
     }
 }
 
-fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJwtAuth: Boolean = false) {
+fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
     post("/registration") {
         try {
-            var email: String? = null
-            if (!disableJwtAuth) {
-                email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-                if (email == null) {
-                    call.respond(HttpStatusCode.Unauthorized, resToJson(RegistrationResponse.NotSignedIn))
-                    return@post
-                }
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized, resToJson(RegistrationResponse.NotSignedIn))
+                return@post
             }
 
             val registration = call.receive<FormRegistrationJson>()
 
-            if (!disableJwtAuth && email != registration.email) {
+            if (email != registration.email) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
 
             val user = transaction {
-                addLogger(StdOutSqlLogger)
-
                 User.select {
                     User.email.lowerCase() eq registration.email.lowercase()
                 }.firstOrNull()
@@ -216,8 +201,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             val happening = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Happening.select {
                     Happening.slug eq registration.slug
                 }.firstOrNull()
@@ -232,8 +215,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
 
             val userStudentGroups = getUserStudentGroups(user[User.email])
             val happeningStudentGroups = transaction {
-                addLogger(StdOutSqlLogger)
-
                 StudentGroupHappeningRegistration.select {
                     StudentGroupHappeningRegistration.happeningSlug eq happening[Happening.slug]
                 }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
@@ -301,8 +282,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             val waitListSpot = countRegsInSpotRangeWaitList + 1
 
             val oldReg = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.userEmail.lowerCase() eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug)
                 }.firstOrNull()
@@ -320,8 +299,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.insert {
                     it[userEmail] = registration.email.lowercase()
                     it[happeningSlug] = registration.slug
@@ -367,29 +344,26 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean, disableJ
     }
 }
 
-fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
+fun Route.deleteRegistration() {
     delete("/registration/{slug}/{email}") {
-        var email: String? = null
-        if (!disableJwtAuth) {
-            email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-            if (email == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@delete
-            }
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@delete
         }
 
         val slug = call.parameters["slug"]
 
         if (slug == null) {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest, "slug is null")
             return@delete
         }
 
         val paramEmail = call.parameters["email"]
 
         if (paramEmail == null) {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.BadRequest, "email is null")
             return@delete
         }
 
@@ -398,8 +372,6 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
         }.lowercase()
 
         val hap = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select { Happening.slug eq slug }.firstOrNull()
         }
 
@@ -408,30 +380,24 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
             return@delete
         }
 
-        if (!disableJwtAuth) {
-            if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
-                call.respond(HttpStatusCode.Forbidden)
-                return@delete
-            }
+        if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@delete
         }
 
         try {
             val reg = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
                 }.firstOrNull()
             }
 
             if (reg == null) {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(HttpStatusCode.BadRequest, "reg is null")
                 return@delete
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Answer.deleteWhere {
                     Answer.happeningSlug eq hap[Happening.slug] and (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
                 }
@@ -450,8 +416,6 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
             }
 
             val highestOnWaitList = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.waitList eq true and (Registration.happeningSlug eq hap[Happening.slug])
                 }.orderBy(Registration.submitDate).firstOrNull()
@@ -464,8 +428,6 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
                 )
             } else {
                 transaction {
-                    addLogger(StdOutSqlLogger)
-
                     Registration.update({ Registration.userEmail eq highestOnWaitList[Registration.userEmail].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
                         it[waitList] = false
                     }
@@ -508,21 +470,23 @@ fun Route.getUserIsRegistered() {
 
 fun Route.postRegistrationCount() {
     post("/registration/count") {
-        val slugs = call.receive<SlugJson>().slugs
+        try {
+            val slugs = call.receive<SlugJson>().slugs
 
-        val registrationCounts = transaction {
-            addLogger(StdOutSqlLogger)
+            val registrationCounts = transaction {
+                slugs.map {
+                    val count = countRegistrationsDegreeYear(it, 1..5, false)
+                    val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
 
-            slugs.map {
-                val count = countRegistrationsDegreeYear(it, 1..5, false)
-                val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
-
-                RegistrationCountJson(it, count, waitListCount)
+                    RegistrationCountJson(it, count, waitListCount)
+                }
             }
-        }
 
-        call.respond(
-            HttpStatusCode.OK, registrationCounts
-        )
+            call.respond(
+                HttpStatusCode.OK, registrationCounts
+            )
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")
+        }
     }
 }

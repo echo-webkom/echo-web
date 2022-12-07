@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, union, nil, record, string, boolean } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
@@ -31,10 +30,6 @@ const BannerAPI = {
             return array(union(bannerDecoder, nil))(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error)) {
-                return { message: error.response ? error.message : '404' };
-            }
-
             return {
                 message: 'Fail @ getBanner',
             };

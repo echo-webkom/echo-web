@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -15,8 +16,10 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
+import no.uib.echo.Environment
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
+import no.uib.echo.adminUser
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
@@ -42,9 +45,8 @@ import no.uib.echo.user7
 import no.uib.echo.user8
 import no.uib.echo.user9
 import no.uib.echo.users
+import no.uib.echo.usersWithAdmin
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -55,8 +57,8 @@ import kotlin.test.Test
 class GetRegistrationsTest {
     companion object {
         val db = DatabaseHandler(
-            dev = true,
-            testMigration = false,
+            env = Environment.PREVIEW,
+            migrateDb = false,
             dbUrl = URI(System.getenv("DATABASE_URL")),
             mbMaxPoolSize = null
         )
@@ -88,6 +90,11 @@ class GetRegistrationsTest {
             val usersSublist = listOf(user1, user2, user3, user4, user5)
             val waitListUsers = listOf(user6, user7, user8, user9, user10)
 
+            val getAdminTokenCall = client.get("/token/${adminUser.email}")
+
+            getAdminTokenCall.status shouldBe HttpStatusCode.OK
+            val adminToken: String = getAdminTokenCall.body()
+
             for (t in be) {
                 val regsList = mutableListOf<RegistrationJson>()
 
@@ -108,8 +115,14 @@ class GetRegistrationsTest {
                         )
                     )
 
+                    val getTokenCall = client.get("/token/${u.email}")
+
+                    getTokenCall.status shouldBe HttpStatusCode.OK
+                    val token: String = getTokenCall.body()
+
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(newReg)
                     }
 
@@ -136,12 +149,16 @@ class GetRegistrationsTest {
                 happeningInfo.spotRanges[0].regCount shouldBe hap9(t).spotRanges[0].spots
                 happeningInfo.spotRanges[0].waitListCount shouldBe waitListUsers.size
 
-                val getRegistrationsListCall = client.get("/registration/${hap9(t).slug}?download=y&testing=y")
+                val getRegistrationsListCall = client.get("/registration/${hap9(t).slug}?download=y&testing=y") {
+                    bearerAuth(adminToken)
+                }
 
                 getRegistrationsListCall.status shouldBe HttpStatusCode.OK
                 getRegistrationsListCall.bodyAsText() shouldBe toCsv(regsList, testing = true)
 
-                val getRegistrationsListJsonCall = client.get("/registration/${hap9(t).slug}?json=y&testing=y")
+                val getRegistrationsListJsonCall = client.get("/registration/${hap9(t).slug}?json=y&testing=y") {
+                    bearerAuth(adminToken)
+                }
 
                 getRegistrationsListJsonCall.status shouldBe HttpStatusCode.OK
                 val registrationsList: List<RegistrationJson> = getRegistrationsListJsonCall.body()
@@ -174,13 +191,11 @@ class GetRegistrationsTest {
 
 private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }
 
-        User.batchInsert(users) {
+        User.batchInsert(usersWithAdmin) {
             this[User.email] = it.email
             this[User.name] = it.name
             this[User.alternateEmail] = it.alternateEmail
@@ -188,7 +203,7 @@ private fun insertTestData() {
             this[User.degreeYear] = it.degreeYear
         }
 
-        for (user in users) {
+        for (user in usersWithAdmin) {
             StudentGroupMembership.batchInsert(user.memberships) {
                 this[StudentGroupMembership.userEmail] = user.email
                 this[StudentGroupMembership.studentGroupName] = it

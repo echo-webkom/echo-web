@@ -26,8 +26,8 @@ const FormDegree = ({ isHeading = false, hideLabel = false, isRequired = false, 
                     )}
                 </FormLabel>
             )}
-            <Select {...register('degree')} {...props}>
-                <option selected hidden disabled value="">
+            <Select {...register('degree')} {...props} defaultValue="">
+                <option hidden disabled value="">
                     {isNorwegian ? 'Velg studieretning' : 'Select field of study'}
                 </option>
                 <option value="DTEK">Datateknologi</option>

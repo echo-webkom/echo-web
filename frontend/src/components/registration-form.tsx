@@ -40,6 +40,7 @@ import useLanguage from '@hooks/use-language';
 import hasOverlap from '@utils/has-overlap';
 import capitalize from '@utils/capitalize';
 import { isErrorMessage } from '@utils/error';
+import useAuth from '@hooks/use-auth';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -50,8 +51,6 @@ const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
 interface Props {
     happening: Happening;
     type: HappeningType;
-    user: User | null;
-    loadingUser: boolean;
 }
 
 const chooseDate = (
@@ -67,12 +66,13 @@ const chooseDate = (
     return new Date();
 };
 
-const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
     const { isOpen: isUnRegisterOpen, onOpen: onUnRegisterOpen, onClose: onUnRegisterClose } = useDisclosure();
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
+    const { user, loading, signedIn, idToken } = useAuth();
 
     const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
     const regDate = chooseDate(
@@ -107,7 +107,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
     const { data: session, status } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        if (!session?.idToken) {
+        if (!signedIn || !idToken) {
             toast({
                 title: isNorwegian ? 'Du er ikke logget inn.' : 'You are not signed in.',
                 description: isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.',
@@ -125,7 +125,8 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                 }),
                 type: type,
             },
-            session.idToken,
+            // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
+            idToken,
         );
 
         if (statusCode === 200 || statusCode === 202) {
@@ -142,7 +143,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
         });
     };
 
-    if (status === 'loading' || loadingUser)
+    if (loading)
         return (
             <Box data-testid="registration-form">
                 <Center>
@@ -151,7 +152,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
             </Box>
         );
 
-    if (status === 'unauthenticated')
+    if (!signedIn)
         return (
             <Box data-testid="registration-form">
                 <Text textAlign="center">{isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.'}</Text>
@@ -172,7 +173,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
 
     return (
         <Box data-testid="registration-form">
-            {user && !userIsComplete(user) && (
+            {!userIsComplete(user) && (
                 <>
                     <Alert status="warning" borderRadius="0.5rem" mb="5">
                         <AlertIcon />
@@ -187,13 +188,13 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                     </NextLink>
                 </>
             )}
-            {user && userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
+            {userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
                 <Alert status="info" borderRadius="0.5rem" mb="5">
                     <AlertIcon />
                     Du kan melde deg på dette arrangementet tidligere enn andre.
                 </Alert>
             )}
-            {user && happening.onlyForStudentGroups && (
+            {happening.onlyForStudentGroups && (
                 <Alert status="info" borderRadius="0.5rem" mb="5">
                     <AlertIcon />
                     {isNorwegian ? 'Dette er et internt arrangement.' : 'This is a private event.'}

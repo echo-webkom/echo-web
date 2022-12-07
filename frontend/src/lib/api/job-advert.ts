@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, string, record, literal, union, number } from 'typescript-json-decoder';
 import SanityAPI from '@api/sanity';
@@ -58,7 +57,7 @@ const JobAdvertAPI = {
             return array(jobAdvertDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdverts' };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -84,7 +83,7 @@ const JobAdvertAPI = {
             return array(jobAdvertDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdvertBySlug' };
+            return { message: JSON.stringify(error) };
         }
     },
 };

@@ -31,7 +31,7 @@ resource "azurerm_resource_group" "echo_web" {
   location = var.location
 
   tags = {
-    environment = "preview"
+    environment = var.environment
   }
 }
 
@@ -46,7 +46,7 @@ resource "azurerm_storage_account" "caddy_preview_storage" {
   enable_https_traffic_only = true
 
   tags = {
-    "environment" = "preview"
+    "environment" = var.environment
   }
 }
 
@@ -74,13 +74,14 @@ resource "azurerm_container_group" "echo_web_preview" {
     memory = 0.5
 
     environment_variables = {
-      "MAX_POOL_SIZE" = "10"
-      "DEV"           = "jaj"
+      "MAX_POOL_SIZE" = 7
+      "ENVIRONMENT"   = var.environment
     }
 
     secure_environment_variables = {
       "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.short_rg_name}.${var.location}.azurecontainer.io:5432/postgres"
       "ADMIN_KEY"    = var.admin_key
+      "AUTH_SECRET"  = var.auth_secret
     }
   }
 
@@ -145,7 +146,7 @@ resource "azurerm_container_group" "echo_web_preview" {
   }
 
   tags = {
-    "environment" = "preview"
+    "environment" = var.environment
   }
 }
 

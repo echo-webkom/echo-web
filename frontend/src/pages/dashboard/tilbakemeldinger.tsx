@@ -14,13 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import FeedbackEntry from '@components/feedback-entry';
+import useAuth from '@hooks/use-auth';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
@@ -31,13 +31,13 @@ const FeedbackPage = () => {
 
     const gridColumns = [1, null, null, null, 2];
 
-    const idToken = useSession().data?.idToken;
+    const { signedIn, idToken } = useAuth();
 
     useEffect(() => {
         const getFeedbacks = async () => {
             setError(null);
 
-            if (!idToken) {
+            if (!signedIn || !idToken) {
                 setLoading(false);
                 setError({ message: 'Du må være logget inn for å se denne siden.' });
                 return;
@@ -55,17 +55,16 @@ const FeedbackPage = () => {
         };
 
         void getFeedbacks();
-    }, [idToken]);
+    }, [idToken, signedIn]);
 
     const handleDelete = async (id: number) => {
-        if (!idToken) {
+        if (!signedIn || !idToken) {
             toast({
                 title: 'Kunne ikke slette tilbakemelding',
                 description: 'Du må være logget inn for å slette en tilbakemelding.',
                 status: 'error',
                 duration: 5000,
             });
-
             return;
         }
 
@@ -82,14 +81,13 @@ const FeedbackPage = () => {
     };
 
     const handleUpdate = async (feedback: Feedback) => {
-        if (!idToken) {
+        if (!signedIn || !idToken) {
             toast({
                 title: 'Kunne ikke markere tilbakemelding som lest',
                 description: 'Du må være logget inn for å markere en tilbakemelding som lest.',
                 status: 'error',
                 duration: 5000,
             });
-
             return;
         }
 

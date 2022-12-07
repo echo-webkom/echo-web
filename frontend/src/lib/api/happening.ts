@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { boolean, number, array, string, literal, union, nil, record } from 'typescript-json-decoder';
 import type { ErrorMessage } from '@utils/error';
@@ -120,7 +119,7 @@ const HappeningAPI = {
             return array(happeningDecoder)(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: handleError(axios.isAxiosError(error) ? error.response?.status ?? 500 : 500) };
+            return { message: handleError(500) };
         }
     },
 
@@ -179,26 +178,25 @@ const HappeningAPI = {
             return array(happeningDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error)) {
-                return { message: error.response ? error.message : '404' };
-            }
-
-            return {
-                message: 'Fail @ getHappeningsBySlug',
-            };
+            return { message: JSON.stringify(error) };
         }
     },
 
     getHappeningInfo: async (auth: string, slug: string): Promise<HappeningInfo | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${BACKEND_URL}/happening/${slug}`, {
-                auth: {
-                    username: 'admin',
-                    password: auth,
+            const response = await fetch(`${BACKEND_URL}/happening/${slug}`, {
+                headers: {
+                    Authorization: `Basic ${Buffer.from(`admin:${auth}`).toString('base64')}`,
                 },
             });
 
-            return happeningInfoDecoder(data);
+            if (response.status === 200) {
+                const result = await response.json();
+
+                return happeningInfoDecoder(result);
+            }
+
+            return { message: `${response.status} ${response.statusText}` };
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: JSON.stringify(error) };
@@ -206,7 +204,7 @@ const HappeningAPI = {
     },
     getUserIsRegistered: async (email: string, slug: string): Promise<boolean | ErrorMessage> => {
         try {
-            const { status } = await axios.get(`${BACKEND_URL}/user/registrations/${email}/${slug}`);
+            const { status } = await fetch(`${BACKEND_URL}/user/registrations/${email}/${slug}`);
             return status === 200;
         } catch (error) {
             return { message: 'Error in getUserIsRegistered' };

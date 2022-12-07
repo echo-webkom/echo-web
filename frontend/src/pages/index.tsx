@@ -144,6 +144,9 @@ const IndexPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
+
     const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
         HappeningAPI.getHappeningsByType(0, 'BEDPRES'),
         HappeningAPI.getHappeningsByType(0, 'EVENT'),
@@ -178,7 +181,9 @@ export const getStaticProps: GetStaticProps = async () => {
         .slice(0, bedpresLimit);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
+
+    if (isErrorMessage(registrationCountsResponse)) throw new Error(registrationCountsResponse.message);
 
     return {
         props: {

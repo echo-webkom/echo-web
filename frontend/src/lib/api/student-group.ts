@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string, union, nil } from 'typescript-json-decoder';
 import { profileDecoder } from './profile';
@@ -45,7 +44,7 @@ const StudentGroupAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -75,7 +74,7 @@ const StudentGroupAPI = {
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -107,14 +106,8 @@ const StudentGroupAPI = {
             return array(studentGroupDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupBySlug',
+                message: JSON.stringify(error),
             };
         }
     },

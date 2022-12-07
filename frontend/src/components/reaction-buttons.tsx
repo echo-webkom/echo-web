@@ -1,10 +1,10 @@
 import type { ButtonProps } from '@chakra-ui/react';
 import { useToast, ButtonGroup, Button, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import type { Reaction, ReactionType } from '@api/reaction';
 import ReactionAPI from '@api/reaction';
 import { isErrorMessage } from '@utils/error';
+import useAuth from '@hooks/use-auth';
 
 const reactions = {
     like: {
@@ -35,13 +35,15 @@ interface Props {
 
 const ReactionButtons = ({ slug }: Props) => {
     const toast = useToast();
-    const session = useSession();
+    const { signedIn, idToken } = useAuth();
 
     const [data, setData] = useState<Reaction | null>(null);
 
     useEffect(() => {
         const fetchReactions = async () => {
-            const result = await ReactionAPI.get(slug, session.data?.idToken);
+            if (!signedIn || !idToken) return;
+
+            const result = await ReactionAPI.get(slug, idToken);
 
             if (isErrorMessage(result)) {
                 return;
@@ -51,10 +53,21 @@ const ReactionButtons = ({ slug }: Props) => {
         };
 
         void fetchReactions();
-    }, [session.data?.idToken, slug, toast]);
+    }, [signedIn, idToken, slug]);
 
     const handleClick = async (reaction: ReactionType) => {
-        const result = await ReactionAPI.post(slug, reaction, session.data?.idToken);
+        if (!signedIn || !idToken) {
+            toast({
+                title: 'Du er ikke logget inn.',
+                description: 'Du må være logget inn for å reagere.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        const result = await ReactionAPI.put(slug, reaction, idToken);
 
         if (isErrorMessage(result)) {
             toast({

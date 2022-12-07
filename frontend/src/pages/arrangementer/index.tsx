@@ -50,6 +50,9 @@ const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
 };
 
 export const getStaticProps = async () => {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
+
     const eventsResponse = await HappeningAPI.getHappeningsByType(0, 'EVENT');
     const bedpressesResponse = await HappeningAPI.getHappeningsByType(0, 'BEDPRES');
 
@@ -57,7 +60,7 @@ export const getStaticProps = async () => {
     if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);
 
     const slugs = [...bedpressesResponse, ...eventsResponse].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
 
     return {
         props: {

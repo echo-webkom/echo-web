@@ -37,48 +37,43 @@ import ErrorBox from '@components/error-box';
 import type { Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
-import notEmptyOrNull from '@utils/not-empty-or-null';
 import RegistrationPieChart from '@components/registration-pie-chart';
 import type { Degree } from '@utils/decoders';
-import hasOverlap from '@utils/has-overlap';
+import type { StudentGroup } from '@api/dashboard';
+import capitalize from '@utils/capitalize';
 
 interface Props {
-    registrations: Array<Registration> | null;
+    registrations: Array<Registration>;
     error: string | null;
     title: string;
-    studentGroups: Array<string> | null;
 }
 
-const RegistrationsList = ({ registrations, title, error, studentGroups }: Props) => {
+const RegistrationsList = ({ registrations, title, error }: Props) => {
     type DegreeType = 'all' | Degree;
+    type StudentGroupType = 'all' | StudentGroup;
 
     const [degree, setDegree] = useState<DegreeType>('all');
     const [year, setYear] = useState<number>(0);
     // -1: ALL, 0: Only waitlist, 1: Only accepted
     const [waitlist, setWaitlist] = useState<number>(-1);
     const [search, setSearch] = useState<string>('');
-    const [hideStudentGroups, setHideStudentGroups] = useState<boolean>(false);
+    const [studentGroup, setStudentGroup] = useState<StudentGroupType>('all');
 
-    const filteredRegistrations =
-        registrations
-            ?.filter((reg) => reg.degree === degree || degree === 'all')
-            ?.filter((reg) => reg.degreeYear === year || year === 0)
-            ?.filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
-            ?.filter(
-                (reg) =>
-                    reg.name.toLowerCase().includes(search.toLowerCase()) ||
-                    (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
-            )
-            ?.filter(
-                (reg) =>
-                    !(notEmptyOrNull(studentGroups) && hasOverlap(reg.memberships, studentGroups) && hideStudentGroups),
-            ) ?? [];
+    const filteredRegistrations = registrations
+        .filter((reg) => reg.degree === degree || degree === 'all')
+        .filter((reg) => reg.degreeYear === year || year === 0)
+        .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
+        .filter(
+            (reg) =>
+                reg.name.toLowerCase().includes(search.toLowerCase()) ||
+                (reg.alternateEmail ?? reg.email).toLowerCase().includes(search.toLowerCase()),
+        )
+        .filter((reg) => reg.memberships.includes(studentGroup) || studentGroup === 'all');
 
-    const questions =
-        registrations
-            ?.flatMap((reg) => reg.answers)
-            ?.map((ans) => ans.question)
-            ?.filter((e, i, arr) => arr.indexOf(e) === i) ?? null;
+    const questions = registrations
+        .flatMap((reg) => reg.answers)
+        .map((ans) => ans.question)
+        .filter((e, i, arr) => arr.indexOf(e) === i);
 
     const toast = useToast();
 
@@ -87,19 +82,17 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
     const justifyHeading = useBreakpointValue({ base: 'center', lg: 'left' });
 
     const registrationsOverTime = registrations
-        ?.filter((reg) => !reg.waitList)
-        ?.map((reg, index) => ({
+        .filter((reg) => !reg.waitList)
+        .map((reg, index) => ({
             key: getTime(parseISO(reg.submitDate)),
             value: index + 1,
         }));
 
     return (
         <Section mt="1rem" minW="100%">
-            {error && !registrations && <ErrorBox error={error} />}
-            {registrations && registrations.length === 0 && !error && (
-                <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>
-            )}
-            {registrations && registrations.length > 0 && !error && (
+            {error && <ErrorBox error={error} />}
+            {registrations.length === 0 && !error && <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>}
+            {registrations.length > 0 && !error && (
                 <Tabs>
                     <TabList>
                         <Tab>Påmeldinger</Tab>
@@ -200,7 +193,7 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                         <Select
                                             title="Studieretning"
                                             value={degree}
-                                            onChange={(evt) => setDegree(evt.target.value as Degree | 'all')}
+                                            onChange={(evt) => setDegree(evt.target.value as DegreeType)}
                                         >
                                             <option value="all">Alle</option>
                                             {registrations
@@ -249,16 +242,21 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                         </Select>
                                     </Flex>
                                     <Flex direction="column" w="full">
-                                        <Text fontSize="md">Skjul studentgruppepåmeldinger:</Text>
+                                        <Text fontSize="md">Studentgruppe:</Text>
                                         <Select
-                                            title="Skjul studentgrupperpåmeldinger"
-                                            value={hideStudentGroups ? 'ja' : 'nei'}
-                                            onChange={(evt) =>
-                                                setHideStudentGroups(evt.target.value === 'nei' ? false : true)
-                                            }
+                                            title="Studentgruppe"
+                                            value={studentGroup}
+                                            onChange={(evt) => setStudentGroup(evt.target.value as StudentGroupType)}
                                         >
-                                            <option value="nei">Nei</option>
-                                            <option value="ja">Ja</option>
+                                            <option value="all">Alle</option>
+                                            {registrations
+                                                .flatMap((reg) => reg.memberships)
+                                                .filter((e, i, arr) => arr.indexOf(e) === i)
+                                                .map((sg) => (
+                                                    <option key={sg} value={sg}>
+                                                        {capitalize(sg)}
+                                                    </option>
+                                                ))}
                                         </Select>
                                     </Flex>
                                     <Flex mt="auto">
@@ -268,7 +266,7 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                                 setYear(0);
                                                 setWaitlist(-1);
                                                 setSearch('');
-                                                setHideStudentGroups(false);
+                                                setStudentGroup('all');
                                             }}
                                         >
                                             Nullstill filter
@@ -286,8 +284,9 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                             <Th>Navn</Th>
                                             <Th>Studieretning</Th>
                                             <Th>Årstrinn</Th>
-                                            {notEmptyOrNull(questions) &&
-                                                questions.map((q, index) => <Th key={index}>{q}</Th>)}
+                                            {questions.map((q, index) => (
+                                                <Th key={index}>{q}</Th>
+                                            ))}
                                             <Th>På venteliste?</Th>
                                             <Th>Medlem av</Th>
                                             <Th>Slett påmelding</Th>
@@ -306,7 +305,6 @@ const RegistrationsList = ({ registrations, title, error, studentGroups }: Props
                                                         key={reg.email}
                                                         registration={reg}
                                                         questions={questions}
-                                                        studentGroups={studentGroups}
                                                     />
                                                 );
                                             })}

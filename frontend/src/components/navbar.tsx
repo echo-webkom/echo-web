@@ -8,20 +8,22 @@ import {
     DrawerOverlay,
     Flex,
     Heading,
+    Skeleton,
 } from '@chakra-ui/react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import type { RefObject } from 'react';
 import NavLink, { NavLinkButton } from '@components/nav-link';
 import ColorModeButton from '@components/color-mode-button';
 import useLanguage from '@hooks/use-language';
+import useAuth from '@hooks/use-auth';
 
 const NavLinks = (): JSX.Element => {
     const isNorwegian = useLanguage();
-    const { status } = useSession();
+    const { signedIn, loading } = useAuth();
     const router = useRouter();
     const onProfileClick = () => {
-        if (status === 'authenticated') {
+        if (signedIn) {
             void router.push('/profile');
         } else {
             void signIn('feide');
@@ -40,14 +42,14 @@ const NavLinks = (): JSX.Element => {
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
             <NavLink text={isNorwegian ? 'Om echo' : 'About echo'} href="/om-echo/om-oss" data-cy="om-oss" />
             <Flex data-cy="min-profil">
-                {status === 'authenticated' && (
-                    <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />
-                )}
-                {status === 'unauthenticated' && (
-                    <NavLinkButton onClick={() => void onProfileClick()}>
-                        {isNorwegian ? 'Logg inn' : 'Sign in'}
-                    </NavLinkButton>
-                )}
+                <Skeleton isLoaded={!loading}>
+                    {signedIn && <NavLink text={isNorwegian ? 'Min profil' : 'My profile'} href="/profile" />}
+                    {!signedIn && (
+                        <NavLinkButton onClick={() => void onProfileClick()}>
+                            {isNorwegian ? 'Logg inn' : 'Sign in'}
+                        </NavLinkButton>
+                    )}
+                </Skeleton>
             </Flex>
             <ColorModeButton />
         </Flex>

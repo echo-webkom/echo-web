@@ -8,7 +8,7 @@ export default defineConfig({
         specPattern: [
             '**/entry-box.spec.ts',
             '**/nav.spec.ts',
-            '**/feide-sign-in.spec.ts',
+            '**/sign-in.spec.ts',
             '**/happening-registration.spec.ts',
         ],
         experimentalSessionAndOrigin: true,
@@ -16,7 +16,7 @@ export default defineConfig({
     },
 
     retries: {
-        runMode: 3,
+        runMode: 5,
     },
 
     component: {

@@ -5,6 +5,8 @@ import io.kotest.matchers.shouldNotBe
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -13,6 +15,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
+import no.uib.echo.Environment
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.be
@@ -41,8 +44,6 @@ import no.uib.echo.user5
 import no.uib.echo.user6
 import no.uib.echo.users
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -53,8 +54,8 @@ import kotlin.test.Test
 class PostRegistrationsTest {
     companion object {
         val db = DatabaseHandler(
-            dev = true,
-            testMigration = false,
+            env = Environment.PREVIEW,
+            migrateDb = false,
             dbUrl = URI(System.getenv("DATABASE_URL")),
             mbMaxPoolSize = null
         )
@@ -84,10 +85,16 @@ class PostRegistrationsTest {
                 }
             }
 
-            for (t in be) {
-                for (u in users) {
+            for (u in users) {
+                val getTokenCall = client.get("/token/${u.email}")
+
+                getTokenCall.status shouldBe HttpStatusCode.OK
+                val token: String = getTokenCall.body()
+
+                for (t in be) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg(hap1(t).slug, u))
                     }
 
@@ -110,10 +117,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 for (slug in listOf(hap1(t).slug, hap2(t).slug)) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg(slug, user1))
                     }
 
@@ -134,9 +147,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap1(t).slug, user1).copy(answers = emptyList()))
                 }
 
@@ -156,9 +176,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap1(t).slug, user1))
                 }
 
@@ -169,6 +196,7 @@ class PostRegistrationsTest {
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap1(t).slug, user1))
                 }
 
@@ -188,9 +216,21 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall1 = client.get("/token/${user1.email}")
+
+            getTokenCall1.status shouldBe HttpStatusCode.OK
+            val token1: String = getTokenCall1.body()
+
+            val getTokenCall2 = client.get("/token/${user2.email}")
+
+            getTokenCall2.status shouldBe HttpStatusCode.OK
+            val token2: String = getTokenCall2.body()
+
             for (t in be) {
                 val fillUpRegsCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token1)
                     setBody(exReg(hap8(t).slug, user1))
                 }
 
@@ -201,6 +241,7 @@ class PostRegistrationsTest {
 
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token2)
                     setBody(exReg(hap8(t).slug, user2))
                 }
 
@@ -211,6 +252,7 @@ class PostRegistrationsTest {
 
                 val submitRegAgainCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token2)
                     setBody(exReg(hap8(t).slug, user2))
                 }
 
@@ -230,9 +272,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap3(t).slug, user1))
                 }
 
@@ -252,9 +301,15 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap10(t).slug, user1))
                 }
 
@@ -274,10 +329,17 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall =
                     client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg("ikke-eksisterende-happening-som-ikke-finnes-engang", user1))
                     }
 
@@ -297,9 +359,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall = client.get("/token/${user1.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token)
                     setBody(exReg(hap8(t).slug, user1))
                 }
 
@@ -309,8 +378,14 @@ class PostRegistrationsTest {
                 res.code shouldBe RegistrationResponse.OK
 
                 for (u in listOf(user2, user3, user4, user5)) {
+                    val getOtherTokenCall = client.get("/token/${u.email}")
+
+                    getOtherTokenCall.status shouldBe HttpStatusCode.OK
+                    val otherToken: String = getOtherTokenCall.body()
+
                     val submitRegWaitListCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(otherToken)
                         setBody(exReg(hap8(t).slug, u))
                     }
 
@@ -331,9 +406,21 @@ class PostRegistrationsTest {
                     json()
                 }
             }
+
+            val getTokenCall1 = client.get("/token/${user1.email}")
+
+            getTokenCall1.status shouldBe HttpStatusCode.OK
+            val token1: String = getTokenCall1.body()
+
+            val getTokenCall2 = client.get("/token/${user6.email}")
+
+            getTokenCall2.status shouldBe HttpStatusCode.OK
+            val token2: String = getTokenCall2.body()
+
             for (t in be) {
                 val submitRegCall = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token1)
                     setBody(exReg(hap5(t).slug, user1))
                 }
 
@@ -344,6 +431,7 @@ class PostRegistrationsTest {
 
                 val submitRegCall2 = client.post("/registration") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(token2)
                     setBody(exReg(hap4(t).slug, user6))
                 }
 
@@ -363,10 +451,16 @@ class PostRegistrationsTest {
                     json()
                 }
             }
-            for (t in be) {
-                for (u in users) {
+            for (u in users) {
+                val getTokenCall = client.get("/token/${u.email}")
+
+                getTokenCall.status shouldBe HttpStatusCode.OK
+                val token: String = getTokenCall.body()
+
+                for (t in be) {
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
+                        bearerAuth(token)
                         setBody(exReg(hap7(t).slug, u))
                     }
 
@@ -381,8 +475,6 @@ class PostRegistrationsTest {
 
 private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }

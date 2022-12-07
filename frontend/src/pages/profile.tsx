@@ -1,22 +1,22 @@
-import { useSession } from 'next-auth/react';
 import { Spinner, Center } from '@chakra-ui/react';
 import Unauthorized from '@components/unauthorized';
 import ProfileInfo from '@components/profile-info';
 import SEO from '@components/seo';
+import useAuth from '@hooks/use-auth';
 
 const ProfilePage = (): JSX.Element => {
-    const { status } = useSession();
+    const { loading, signedIn } = useAuth();
 
     return (
         <>
-            <SEO title={status === 'authenticated' ? 'Min profil' : 'Logg inn'} />
-            {status === 'authenticated' && <ProfileInfo />}
-            {status === 'loading' && (
+            <SEO title={signedIn ? 'Min profil' : 'Logg inn'} />
+            {loading && (
                 <Center>
                     <Spinner />
                 </Center>
             )}
-            {status === 'unauthenticated' && <Unauthorized />}
+            {signedIn && <ProfileInfo />}
+            {!signedIn && <Unauthorized />}
         </>
     );
 };

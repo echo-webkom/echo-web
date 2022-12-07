@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
+import no.uib.echo.Environment
 import no.uib.echo.be
 import no.uib.echo.hap1
 import no.uib.echo.schema.StudentGroup
@@ -16,8 +17,6 @@ import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.validStudentGroups
 import no.uib.echo.tables
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -28,8 +27,8 @@ import kotlin.test.Test
 class DeleteHappeningTest {
     companion object {
         val db = DatabaseHandler(
-            dev = true,
-            testMigration = false,
+            env = Environment.PREVIEW,
+            migrateDb = false,
             dbUrl = URI(System.getenv("DATABASE_URL")),
             mbMaxPoolSize = null
         )
@@ -88,8 +87,6 @@ class DeleteHappeningTest {
 
 private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }

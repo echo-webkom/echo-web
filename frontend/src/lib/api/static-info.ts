@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { decodeType } from 'typescript-json-decoder';
 import { array, record, string } from 'typescript-json-decoder';
 import { slugDecoder } from '@utils/decoders';
@@ -45,14 +44,8 @@ const StaticInfoAPI = {
             return array(staticInfoDecoder)(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStaticInfoBySlug',
+                message: JSON.stringify(error),
             };
         }
     },

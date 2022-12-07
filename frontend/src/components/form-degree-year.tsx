@@ -27,8 +27,8 @@ const FormDegreeYear = ({ isHeading = false, hideLabel = false, isRequired = fal
                     )}
                 </FormLabel>
             )}
-            <Select {...register('degreeYear')} {...props}>
-                <option selected hidden disabled value="">
+            <Select {...register('degreeYear')} {...props} defaultValue="">
+                <option hidden disabled value="">
                     {isNorwegian ? 'Velg årstrinn' : 'Select year'}
                 </option>
                 <option value={1}>{isNorwegian ? '1. trinn' : '1. year'}</option>
