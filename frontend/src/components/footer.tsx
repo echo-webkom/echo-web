@@ -13,6 +13,8 @@ import {
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import LanguageMenu from '@components/language-menu';
+import { Link } from '@chakra-ui/react'
+
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
 const vercelLogo = '/powered-by-vercel.svg';
@@ -35,11 +37,15 @@ const Footer = (): JSX.Element => {
                 maxW="1400px"
                 mx="auto"
             >
-                <GridItem colSpan={[1, 2, 4]} color={'white'}>
+                
+                <GridItem colSpan={[1, 2, 4]} color={'white'} fontSize={'2xl'}>
+                    
                     <Text> Hvis du har opplevde noe jævlig, så kan du få en skulder å gråte på </Text>
-                    <Text justifySelf={'center'}>
-                        <button>Klikk her </button>
-                    </Text>
+                    <Center>
+                    <Link href='https://echo.uib.no' isExternal>
+                        Klikk her!
+                        </Link>
+                    </Center>
                 </GridItem>
 
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
