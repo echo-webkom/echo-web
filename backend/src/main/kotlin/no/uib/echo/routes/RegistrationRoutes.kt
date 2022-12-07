@@ -456,7 +456,7 @@ fun Route.getUserIsRegistered() {
         }
 
         val userRegistered = transaction {
-            Registration.select {Registration.userEmail eq email and(Happening.slug eq slug)}.firstOrNull()
+            Registration.select {Registration.userEmail eq email and(Registration.happeningSlug eq slug)}.firstOrNull()
         }
         if (userRegistered == null){
             call.respond(HttpStatusCode.NotFound)

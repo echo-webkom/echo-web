@@ -86,8 +86,10 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
-            if (user) {
-                const isRegistered = await HappeningAPI.getUserIsRegistered(user.email, happening.slug);
+            if (user && idToken) {
+                const isRegistered = await HappeningAPI.getUserIsRegistered(user.email, happening.slug, idToken);
+                console.log(isRegistered);
+
                 if (isErrorMessage(isRegistered)) {
                     setRegistered(false);
                     return;
@@ -99,7 +101,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
             setRegistered(false);
         };
         void fetchIsRegistered();
-    }, []);
+    }, [user, registered]);
 
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
