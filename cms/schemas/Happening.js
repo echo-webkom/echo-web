@@ -133,13 +133,13 @@ export default {
         },
         {
             name: 'deductible',
-            title: 'Må deltageren betale egenandel?',
+            title: 'Må deltakeren betale egenandel?',
             initialValue: false,
             type: 'boolean',
         },
         {
             name: 'deductiblePayment',
-            title: 'Hva må deltageren betale i egenandel?',
+            title: 'Hva må deltakeren betale i egenandel?',
             type: 'string',
             validation: (Rule) =>
                 Rule.custom((deductiblePayment, context) =>
