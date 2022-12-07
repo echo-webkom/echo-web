@@ -23,7 +23,6 @@ interface Props {
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
     spotRangesFromCms: Array<SpotRange> | null;
-    deductible: boolean;
     deductiblePayment: string | null;
 }
 
@@ -40,7 +39,6 @@ const HappeningMetaInfo = ({
     companyLink,
     spotRangeCounts,
     spotRangesFromCms,
-    deductible,
     deductiblePayment,
 }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
@@ -156,11 +154,11 @@ const HappeningMetaInfo = ({
             ) : (
                 <IconText icon={ImLocation} text={location} />
             )}
-            {deductible && deductiblePayment && signedIn && (
+            {deductiblePayment && signedIn && (
                 <IconText
                     icon={GiTwoCoins}
                     text={`${isNorwegian ? 'Egenandel' : 'Deductible'}: 
-                ${deductiblePayment} kr`}
+                    ${deductiblePayment} kr`}
                 />
             )}
             {contactEmail && (
