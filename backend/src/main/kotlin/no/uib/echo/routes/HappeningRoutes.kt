@@ -18,8 +18,6 @@ import no.uib.echo.schema.SpotRangeWithCountJson
 import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -43,8 +41,6 @@ fun Route.deleteHappening() {
         }
 
         val hapDeleted = transaction {
-            addLogger(StdOutSqlLogger)
-
             val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
             if (!happeningExists) {
                 return@transaction false
@@ -97,8 +93,6 @@ fun Route.getHappeningInfo() {
         }
 
         val happening = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select {
                 Happening.slug eq slug
             }.firstOrNull()
@@ -110,8 +104,6 @@ fun Route.getHappeningInfo() {
         }
 
         val registrationCount = transaction {
-            addLogger(StdOutSqlLogger)
-
             SpotRange.select {
                 SpotRange.happeningSlug eq slug
             }.toList().map {

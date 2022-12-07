@@ -1,4 +1,5 @@
 package no.uib.echo
+
 enum class Environment {
     PRODUCTION,
     DEVELOPMENT,

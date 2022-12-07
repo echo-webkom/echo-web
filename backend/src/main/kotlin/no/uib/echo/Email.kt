@@ -17,8 +17,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.IOException
@@ -71,8 +69,6 @@ suspend fun sendConfirmationEmail(
     waitListSpot: Long?
 ) {
     val hap = transaction {
-        addLogger(StdOutSqlLogger)
-
         Happening.select {
             Happening.slug eq registration.slug
         }.firstOrNull()
