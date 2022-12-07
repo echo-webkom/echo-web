@@ -1,4 +1,15 @@
-import { Icon, LinkBox, LinkOverlay, SimpleGrid, Text, useColorModeValue, Image, Center, Box } from '@chakra-ui/react';
+import {
+    Icon,
+    GridItem,
+    LinkBox,
+    LinkOverlay,
+    SimpleGrid,
+    Text,
+    useColorModeValue,
+    Image,
+    Center,
+    Box,
+} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import LanguageMenu from '@components/language-menu';
@@ -13,6 +24,7 @@ const Footer = (): JSX.Element => {
     return (
         <Box bg="bg.dark.secondary" data-testid="footer">
             <SimpleGrid
+                row={2}
                 columns={[1, 2, 4]}
                 justifyItems="center"
                 alignItems="center"
@@ -23,6 +35,13 @@ const Footer = (): JSX.Element => {
                 maxW="1400px"
                 mx="auto"
             >
+                <GridItem colSpan={[1, 2, 4]} color={'white'}>
+                    <Text> Hvis du har opplevde noe jævlig, så kan du få en skulder å gråte på </Text>
+                    <Text justifySelf={'center'}>
+                        <button>Klikk her </button>
+                    </Text>
+                </GridItem>
+
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
                     <Center>
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
