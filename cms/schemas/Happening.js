@@ -47,6 +47,12 @@ export default {
             },
         },
         {
+            name: 'date',
+            title: 'Dato for arrangementet',
+            validation: (Rule) => Rule.required(),
+            type: 'datetime',
+        },
+        {
             name: 'happeningType',
             title: 'Er arrangementet en bedriftspresentasjon?',
             validation: (Rule) => Rule.required(),
@@ -60,10 +66,15 @@ export default {
             },
         },
         {
-            name: 'date',
-            title: 'Dato for arrangementet',
+            name: 'isRegistration',
+            title: 'Skal arrangementet ha påmelding?',
+            description:
+                'Det vil si intern påmelding via. nettsiden. Dersom arrangementet har ekstern påmelding skal denne knappen ikke velges. For å kunne skru av denne igjen, må begge feltene under være tomme.',
             validation: (Rule) => Rule.required(),
-            type: 'datetime',
+            type: 'boolean',
+            initialValue: false,
+            hidden: ({ document, value }) => !value && !document?.happeningType,
+            readOnly: ({ value, document }) => value && (document?.registrationDate || document?.registrationDeadline),
         },
         {
             name: 'registrationDate',
@@ -77,6 +88,7 @@ export default {
                         ? 'Må ha dato for påmelding om det er definert arrangementsplasser.'
                         : true,
                 ),
+            hidden: ({ document, value }) => !value && !document?.isRegistration,
         },
         {
             name: 'registrationDeadline',
@@ -91,12 +103,24 @@ export default {
                 ),
                 Rule.optional().min(Rule.valueOfField('registrationDate')).max(Rule.valueOfField('date')),
             ],
+            hidden: ({ document, value }) => !value && !document?.isRegistration,
+        },
+        {
+            name: 'earlyReg',
+            title: 'Skal undergrupper kunne melde seg på tidligere?',
+            description:
+                'Ved en bedpres kan f.eks. bedkom kunne melde seg på tidligere. For å kunne skru av denne igjen, må begge feltene under være tomme.',
+            type: 'boolean',
+            initialValue: false,
+            hidden: ({ document, value }) => !value && (!document?.registrationDate || !document?.registrationDeadline),
+            readOnly: ({ value, document }) =>
+                value && (document?.studentGroupRegistrationDate || document?.studentGroups),
         },
         {
             name: 'studentGroupRegistrationDate',
-            title: 'Når skal tidlig påmelding for studentgrupper åpne? Den stenger når vanlig påmelding åpner',
+            title: 'Når skal tidlig påmelding for studentgrupper åpne?',
             type: 'datetime',
-            validation: (Rule) =>
+            validation: (Rule) => [
                 Rule.custom((studentGroupRegistrationDate, context) =>
                     typeof context.document.studentGroups !== 'undefined' &&
                     context.document.studentGroups.length > 0 &&
@@ -104,19 +128,32 @@ export default {
                         ? 'Må ha dato for tidlig påmelding for studentgrupper om det er definert studentgrupper.'
                         : true,
                 ),
+                Rule.custom((studentGroupRegistrationDate, context) =>
+                    context.document.earlyReg && typeof studentGroupRegistrationDate === 'undefined'
+                        ? 'Må ha dato dersom tidlig påmelding er på'
+                        : true,
+                ),
+            ],
+            hidden: ({ document, value }) => !value && document?.earlyReg === false,
         },
         {
             name: 'studentGroups',
             title: 'Hvilke studentgrupper har tidlig påmelding?',
             type: 'array',
             of: [{ type: 'string' }],
-            validation: (Rule) =>
+            validation: (Rule) => [
                 Rule.custom((studentGroups, context) =>
                     typeof context.document.studentGroupRegistrationDate !== 'undefined' &&
                     typeof studentGroups === 'undefined'
                         ? 'Må angi studentgrupper om det er definert tidlig påmelding for studentgrupper.'
                         : true,
                 ),
+                Rule.custom((studentGroups, context) =>
+                    context.document.earlyReg && typeof studentGroups === 'undefined'
+                        ? 'Må angi studentgroupper dersom tidlig påmelding er på'
+                        : true,
+                ),
+            ],
             options: {
                 list: [
                     { title: 'Hovedstyret', value: 'hovedstyret' },
@@ -130,11 +167,15 @@ export default {
                 ],
                 layout: 'dropdown',
             },
+            hidden: ({ document, value }) => !value && document?.earlyReg === false,
         },
         {
             name: 'onlyForStudentGroups',
             title: 'Åpen kun for studentgrupper?',
+            description: 'Dersom denne er valgt, vil kun undergruppene valgt over kunne melde seg på.',
             type: 'boolean',
+            initialValue: false,
+            hidden: ({ document, value }) => !value && !document?.studentGroupRegistrationDate,
         },
         {
             name: 'deductible',
@@ -169,6 +210,7 @@ export default {
                         ? 'Må ha logo om det er en bedpres.'
                         : true,
                 ),
+            hidden: ({ document, value }) => !value && document?.happeningType !== 'BEDPRES',
             type: 'image',
         },
         {
@@ -191,6 +233,7 @@ export default {
                         ? 'Må ha link til bedriften om det er en bedpres.'
                         : true,
                 ),
+            hidden: ({ document, value }) => !value && document?.happeningType !== 'BEDPRES',
             type: 'url',
         },
         {
@@ -205,6 +248,7 @@ export default {
                         : true,
                 ),
             type: 'string',
+            hidden: ({ document, value }) => !value && !document?.isRegistration,
         },
         {
             name: 'additionalQuestions',
@@ -221,6 +265,7 @@ export default {
                     ],
                 },
             ],
+            hidden: ({ document, value }) => !value && !document?.isRegistration,
         },
         {
             name: 'spotRanges',
@@ -244,6 +289,7 @@ export default {
                     ],
                 },
             ],
+            hidden: ({ document, value }) => !value && !document?.isRegistration,
         },
         {
             name: 'studentGroupName',
