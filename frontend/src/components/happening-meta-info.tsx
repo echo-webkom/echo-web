@@ -3,12 +3,14 @@ import { format } from 'date-fns';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
+import { GiTwoCoins } from 'react-icons/gi';
 import { MdEventSeat, MdLockOutline, MdLogout, MdLockOpen } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
 import CalendarPopup from '@components/calendar-popup';
 import useLanguage from '@hooks/use-language';
+import useAuth from '@hooks/use-auth';
 
 interface Props {
     date: Date;
@@ -21,6 +23,8 @@ interface Props {
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
     spotRangesFromCms: Array<SpotRange> | null;
+    deductible: boolean;
+    deductiblePayment: string | null;
 }
 
 const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
@@ -36,6 +40,8 @@ const HappeningMetaInfo = ({
     companyLink,
     spotRangeCounts,
     spotRangesFromCms,
+    deductible,
+    deductiblePayment,
 }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
@@ -64,6 +70,8 @@ const HappeningMetaInfo = ({
     const spotsForAll = minDegreeYear === 1 && maxDegreeYear === 5 && trueSpotRanges.length === 1;
 
     const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
+
+    const { signedIn } = useAuth();
 
     return (
         <VStack alignItems="left" spacing={3} data-cy="happening-meta-info">
@@ -147,6 +155,13 @@ const HappeningMetaInfo = ({
                 <IconText icon={ImLocation} text={location} link={locationLink} />
             ) : (
                 <IconText icon={ImLocation} text={location} />
+            )}
+            {deductible && deductiblePayment && signedIn && (
+                <IconText
+                    icon={GiTwoCoins}
+                    text={`${isNorwegian ? 'Egenandel' : 'Deductible'}: 
+                ${deductiblePayment} kr`}
+                />
             )}
             {contactEmail && (
                 <IconText

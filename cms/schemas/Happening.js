@@ -132,6 +132,23 @@ export default {
             type: 'boolean',
         },
         {
+            name: 'deductible',
+            title: 'Må deltageren betale egenandel?',
+            initialValue: false,
+            type: 'boolean',
+        },
+        {
+            name: 'deductiblePayment',
+            title: 'Hva må deltageren betale i egenandel?',
+            type: 'string',
+            validation: (Rule) =>
+                Rule.custom((deductiblePayment, context) =>
+                    !Number(context.document.deductiblePayment) && context.document.deductible
+                        ? 'Må oppgi beløp for egenandel (oppgi kun tall)'
+                        : true,
+                ),
+        },
+        {
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),

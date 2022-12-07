@@ -52,6 +52,8 @@ const happeningDecoder = record({
         typeof value === 'string'
             ? { no: string(value), en: string(value) }
             : record({ no: string, en: union(string, nil) })(value),
+    deductible: boolean,
+    deductiblePayment: union(string, nil),
     location: string,
     locationLink: union(string, nil),
     companyLink: union(string, nil),
@@ -93,6 +95,8 @@ const HappeningAPI = {
                         body.no != null => {"no": body.no, "en": null},
                         body
                       ),
+                    deductible,
+                    deductiblePayment,
                     location,
                     locationLink,
                     companyLink,
@@ -144,6 +148,8 @@ const HappeningAPI = {
                         body.no != null => {"no": body.no, "en": null},
                         body
                       ),
+                    deductible,
+                    deductiblePayment,
                     location,
                     locationLink,
                     companyLink,
