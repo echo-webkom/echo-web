@@ -93,6 +93,7 @@ const RegistrationForm = ({ happening, type, user, loadingUser }: Props): JSX.El
                     return;
                 }
                 setRegistered(isRegistered);
+
                 return;
             }
             setRegistered(false);

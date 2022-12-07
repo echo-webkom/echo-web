@@ -483,6 +483,8 @@ fun Route.deleteRegistration(disableJwtAuth: Boolean = false) {
 }
 
 fun Route.getUserIsRegistered() {
+
+
     get("/user/registrations/{email}/{slug}") {
         val email = call.parameters["email"]?.lowercase()
         val slug = call.parameters["slug"]
