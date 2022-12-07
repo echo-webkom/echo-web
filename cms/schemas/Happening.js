@@ -17,6 +17,11 @@ export default {
     },
     fields: [
         {
+            name: 'publishedOnce',
+            type: 'boolean',
+            hidden: true,
+        },
+        {
             name: 'title',
             title: 'Tittel',
             validation: (Rule) => Rule.required(),
