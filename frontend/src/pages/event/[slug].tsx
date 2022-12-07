@@ -93,6 +93,8 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                     slug={happening.slug}
                                     contactEmail={happening.contactEmail}
                                     companyLink={happening.companyLink}
+                                    deductible={happening.deductible}
+                                    deductiblePayment={happening.deductiblePayment}
                                     spotRangeCounts={
                                         happeningInfo?.spotRanges.length === 0
                                             ? null
