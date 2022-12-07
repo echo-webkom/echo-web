@@ -2,9 +2,7 @@ package no.uib.echo.schema
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
 import org.jetbrains.exposed.sql.jodatime.datetime
@@ -50,8 +48,6 @@ fun countRegistrationsDegreeYear(
     waitList: Boolean,
 ): Int {
     return transaction {
-        addLogger(StdOutSqlLogger)
-
         Registration.select {
             Registration.happeningSlug eq slug and
                 (Registration.degreeYear inList range) and

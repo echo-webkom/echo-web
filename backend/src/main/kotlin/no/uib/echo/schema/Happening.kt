@@ -4,9 +4,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -71,8 +69,6 @@ fun insertOrUpdateHappening(
     }
 
     val happening = transaction {
-        addLogger(StdOutSqlLogger)
-
         Happening.select {
             Happening.slug eq newHappening.slug
         }.firstOrNull()
@@ -80,8 +76,6 @@ fun insertOrUpdateHappening(
 
     val spotRanges = selectSpotRanges(newHappening.slug)
     val studentGroups = transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroupHappeningRegistration.select {
             StudentGroupHappeningRegistration.happeningSlug eq newHappening.slug
         }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
@@ -89,8 +83,6 @@ fun insertOrUpdateHappening(
 
     if (happening == null) {
         transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.insert {
                 it[slug] = newHappening.slug
                 it[title] = newHappening.title
@@ -144,8 +136,6 @@ fun insertOrUpdateHappening(
     }
 
     transaction {
-        addLogger(StdOutSqlLogger)
-
         Happening.update({ Happening.slug eq newHappening.slug }) {
             it[title] = newHappening.title
             it[registrationDate] = DateTime(newHappening.registrationDate)
@@ -198,14 +188,4 @@ fun spotRangesToString(spotRanges: List<SpotRangeJson>): String {
         "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
     }
     } ]"
-}
-
-fun getStudentGroupsForHappeningSlug(slug: String): List<String> {
-    return transaction {
-        addLogger(StdOutSqlLogger)
-
-        StudentGroupHappeningRegistration.select {
-            StudentGroupHappeningRegistration.happeningSlug eq slug
-        }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
-    }
 }

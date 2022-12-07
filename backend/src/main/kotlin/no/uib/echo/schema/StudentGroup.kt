@@ -1,9 +1,7 @@
 package no.uib.echo.schema
 
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -31,8 +29,6 @@ fun getGroupMembers(group: String?): List<String> {
     }
 
     return transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroupMembership.select {
             StudentGroupMembership.studentGroupName eq group.lowercase() or
                 (StudentGroupMembership.studentGroupName eq "webkom")
@@ -46,8 +42,6 @@ fun _getGroupMembers(group: String?): List<String> {
     }
 
     return transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroupMembership.select {
             StudentGroupMembership.studentGroupName eq group.lowercase()
         }.toList().map { it[StudentGroupMembership.userEmail].lowercase() }
@@ -55,8 +49,6 @@ fun _getGroupMembers(group: String?): List<String> {
 }
 
 fun getUserStudentGroups(email: String): List<String> = transaction {
-    addLogger(StdOutSqlLogger)
-
     StudentGroupMembership.select {
         StudentGroupMembership.userEmail eq email
     }.toList().map {

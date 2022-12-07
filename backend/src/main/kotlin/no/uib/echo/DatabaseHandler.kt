@@ -20,9 +20,7 @@ import no.uib.echo.schema.validStudentGroups
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -86,17 +84,13 @@ class DatabaseHandler(
 
     fun init(insertTestData: Boolean = true) {
         // Need to use connection once to open.
-        transaction(conn) {
-            addLogger(StdOutSqlLogger)
-        }
+        transaction(conn) {}
 
         if (env == Environment.PRODUCTION || migrateDb) {
             migrate()
         } else {
             try {
                 transaction {
-                    addLogger(StdOutSqlLogger)
-
                     SchemaUtils.create(*tables)
                 }
                 if (insertTestData) {
@@ -151,8 +145,6 @@ class DatabaseHandler(
 
         try {
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 StudentGroup.batchInsert(validStudentGroups) {
                     this[StudentGroup.name] = it
                 }

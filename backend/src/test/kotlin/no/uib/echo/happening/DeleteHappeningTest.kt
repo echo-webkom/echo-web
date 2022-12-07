@@ -17,8 +17,6 @@ import no.uib.echo.schema.insertOrUpdateHappening
 import no.uib.echo.schema.validStudentGroups
 import no.uib.echo.tables
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -89,8 +87,6 @@ class DeleteHappeningTest {
 
 private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }

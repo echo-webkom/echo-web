@@ -42,8 +42,6 @@ import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
@@ -90,8 +88,6 @@ fun Route.getRegistrations() {
         val testing = call.request.queryParameters["testing"] != null
 
         val hap = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select { Happening.slug eq slug }.firstOrNull()
         }
 
@@ -106,8 +102,6 @@ fun Route.getRegistrations() {
         }
 
         val regs = transaction {
-            addLogger(StdOutSqlLogger)
-
             Registration.select {
                 Registration.happeningSlug eq hap[Happening.slug]
             }.orderBy(Registration.submitDate to SortOrder.ASC).toList().map { reg ->
@@ -118,8 +112,6 @@ fun Route.getRegistrations() {
                 }.firstOrNull()
 
                 val answers = transaction {
-                    addLogger(StdOutSqlLogger)
-
                     Answer.select {
                         Answer.registrationEmail.lowerCase() eq reg[Registration.userEmail].lowercase() and (Answer.happeningSlug eq hap[Happening.slug])
                     }.toList()
@@ -183,8 +175,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             val user = transaction {
-                addLogger(StdOutSqlLogger)
-
                 User.select {
                     User.email.lowerCase() eq registration.email.lowercase()
                 }.firstOrNull()
@@ -211,8 +201,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             val happening = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Happening.select {
                     Happening.slug eq registration.slug
                 }.firstOrNull()
@@ -227,8 +215,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             val userStudentGroups = getUserStudentGroups(user[User.email])
             val happeningStudentGroups = transaction {
-                addLogger(StdOutSqlLogger)
-
                 StudentGroupHappeningRegistration.select {
                     StudentGroupHappeningRegistration.happeningSlug eq happening[Happening.slug]
                 }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
@@ -296,8 +282,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val waitListSpot = countRegsInSpotRangeWaitList + 1
 
             val oldReg = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.userEmail.lowerCase() eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug)
                 }.firstOrNull()
@@ -315,8 +299,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.insert {
                     it[userEmail] = registration.email.lowercase()
                     it[happeningSlug] = registration.slug
@@ -390,8 +372,6 @@ fun Route.deleteRegistration() {
         }.lowercase()
 
         val hap = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select { Happening.slug eq slug }.firstOrNull()
         }
 
@@ -407,8 +387,6 @@ fun Route.deleteRegistration() {
 
         try {
             val reg = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
                 }.firstOrNull()
@@ -420,8 +398,6 @@ fun Route.deleteRegistration() {
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Answer.deleteWhere {
                     Answer.happeningSlug eq hap[Happening.slug] and (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
                 }
@@ -440,8 +416,6 @@ fun Route.deleteRegistration() {
             }
 
             val highestOnWaitList = transaction {
-                addLogger(StdOutSqlLogger)
-
                 Registration.select {
                     Registration.waitList eq true and (Registration.happeningSlug eq hap[Happening.slug])
                 }.orderBy(Registration.submitDate).firstOrNull()
@@ -454,8 +428,6 @@ fun Route.deleteRegistration() {
                 )
             } else {
                 transaction {
-                    addLogger(StdOutSqlLogger)
-
                     Registration.update({ Registration.userEmail eq highestOnWaitList[Registration.userEmail].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
                         it[waitList] = false
                     }
@@ -478,8 +450,6 @@ fun Route.postRegistrationCount() {
             val slugs = call.receive<SlugJson>().slugs
 
             val registrationCounts = transaction {
-                addLogger(StdOutSqlLogger)
-
                 slugs.map {
                     val count = countRegistrationsDegreeYear(it, 1..5, false)
                     val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)

@@ -43,8 +43,6 @@ import no.uib.echo.user8
 import no.uib.echo.user9
 import no.uib.echo.usersWithAdmin
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -166,8 +164,6 @@ class DeleteRegistrationsTest {
 
 private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
         StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }

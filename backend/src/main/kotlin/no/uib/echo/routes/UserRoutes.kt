@@ -26,8 +26,6 @@ import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.masters
 import no.uib.echo.schema.nullableStringToDegree
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
@@ -66,7 +64,6 @@ fun Route.getUser() {
         }
 
         val user = transaction {
-            addLogger(StdOutSqlLogger)
             User.select { User.email eq email }.firstOrNull()
         }
 
@@ -111,8 +108,6 @@ fun Route.postUser() {
             }
 
             val existingUser = transaction {
-                addLogger(StdOutSqlLogger)
-
                 User.select { User.email eq email }.firstOrNull()
             }
 
@@ -122,8 +117,6 @@ fun Route.postUser() {
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 User.insert {
                     it[User.email] = email
                     it[name] = user.name
@@ -190,13 +183,11 @@ fun Route.putUser() {
             }
 
             val result = transaction {
-                addLogger(StdOutSqlLogger)
                 User.select { User.email eq email }.firstOrNull()
             }
 
             if (result == null) {
                 val newUser = transaction {
-                    addLogger(StdOutSqlLogger)
                     User.insert {
                         it[User.email] = email
                         it[name] = user.name
@@ -222,7 +213,6 @@ fun Route.putUser() {
             }
 
             val updatedUser = transaction {
-                addLogger(StdOutSqlLogger)
                 User.update({ User.email eq email }) {
                     it[name] = user.name
                     it[User.alternateEmail] = alternateEmail
@@ -271,7 +261,6 @@ fun Route.getAllUsers() {
         }
 
         val users = transaction {
-            addLogger(StdOutSqlLogger)
             User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
                 .map { it ->
                     UserJson(
