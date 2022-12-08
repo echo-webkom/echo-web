@@ -80,9 +80,20 @@ const UserAPI = {
                 },
             });
 
+            if (response.status === 200) {
+                return {
+                    status: response.status,
+                    response: `User created with email = ${email} and name = ${name}`,
+                };
+            } else if (response.status === 409) {
+                return {
+                    status: response.status,
+                    response: `User with email = ${email} already exists`,
+                };
+            }
+
             return {
-                status: response.status,
-                response: `User created with email = ${email} and name = ${name}`,
+                message: `Error creating user with email = ${email} and name = ${name}`,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
