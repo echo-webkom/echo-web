@@ -30,10 +30,18 @@ fun Application.sanityRoutes(env: Environment) {
 }
 
 fun Route.sanitySync() {
-    get("/sanity") {
+    get("/sanity/{dataset?}") {
+        val dataset = call.parameters["dataset"] ?: "production"
+        val validDatasets = listOf("production", "develop", "testing")
+
+        if (dataset !in validDatasets) {
+            call.respond(HttpStatusCode.BadRequest)
+            return@get
+        }
+
         val client = SanityClient(
             projectId = "pgq2pd26",
-            dataset = "production",
+            dataset = dataset,
             apiVersion = "v2021-10-21",
             useCdn = true
         )
