@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
                 if (isErrorMessage(testToken)) {
                     // eslint-disable-next-line no-console
                     console.error(testToken.message);
-                    return '/500';
+                    return `/500?msg=${encodeURIComponent(testToken.message)}`;
                 }
 
                 const response = await UserAPI.postInitialUser(testToken, testEmail, testName);
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
                 if (isErrorMessage(response)) {
                     // eslint-disable-next-line no-console
                     console.error(response.message);
-                    return '/500';
+                    return `/500?msg=${encodeURIComponent(response.message)}`;
                 }
 
                 if (response.status === 200 || response.status === 409) {
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
 
                 // eslint-disable-next-line no-console
                 console.log('Failed to create user:', response);
-                return '/500';
+                return `/500?msg=${encodeURIComponent(response.response)}`;
             }
 
             const signInDisabeCheck = process.env.SIGN_IN_DISABLE_CHECK === 'true';
