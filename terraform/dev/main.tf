@@ -109,6 +109,7 @@ resource "azurerm_container_group" "echo_web_containers" {
       "MAX_POOL_SIZE" = 7
       "ENVIRONMENT"   = var.environment
       "USE_JWT_TEST"  = "true"
+      "MIGRATE_DB"    = "true"
     }
 
     secure_environment_variables = {

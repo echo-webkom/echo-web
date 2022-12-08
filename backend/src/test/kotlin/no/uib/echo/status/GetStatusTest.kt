@@ -14,4 +14,16 @@ class GetStatusTest {
 
             res.status shouldBe HttpStatusCode.OK
         }
+
+    @Test
+    fun `Should rate limit after 200 requests`() =
+        testApplication {
+            for (i in 1..200) {
+                val res = client.get("/status")
+                res.status shouldBe HttpStatusCode.OK
+            }
+
+            val res = client.get("/status")
+            res.status shouldBe HttpStatusCode.TooManyRequests
+        }
 }
