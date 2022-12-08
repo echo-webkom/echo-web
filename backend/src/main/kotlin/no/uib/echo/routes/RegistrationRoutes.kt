@@ -448,12 +448,26 @@ fun Route.getUserIsRegistered() {
 
 
     get("/user/registrations/{email}/{slug}") {
+
+        val authEmail = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (authEmail == null){
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
         val email = call.parameters["email"]?.lowercase()
         val slug = call.parameters["slug"]
         if (email == null || slug == null){
             call.respond(HttpStatusCode.BadRequest, "email or slug missing")
             return@get
         }
+
+        if (authEmail != email){
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
 
         val userRegistered = transaction {
             Registration.select {Registration.userEmail eq email and(Registration.happeningSlug eq slug)}.firstOrNull()
