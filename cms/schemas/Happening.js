@@ -141,7 +141,7 @@ export default {
             name: 'deductiblePayment',
             title: 'Hva må deltakeren betale i egenandel?',
             type: 'string',
-            hidden: ({ document }) => !document?.deductible,
+            hidden: ({ document, value }) => !value && !document?.deductible,
             validation: (Rule) =>
                 Rule.custom((deductiblePayment, context) =>
                     !Number(context.document.deductiblePayment) && context.document.deductible
