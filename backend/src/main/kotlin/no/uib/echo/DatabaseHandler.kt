@@ -82,7 +82,7 @@ class DatabaseHandler(
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
     private val flyway: Flyway =
-        Flyway.configure().baselineVersion("27").dataSource(dbUrlStr, dbUsername, dbPassword).load()
+        Flyway.configure().baselineVersion("27").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword).load()
 
     private val conn by lazy {
         Database.connect(dataSource())
@@ -105,6 +105,8 @@ class DatabaseHandler(
                 return
             } catch (e: Exception) {
                 System.err.println("Migration failed, will try to create tables & baseline instead.")
+                // Remove flyway schema history table that was created by flyway.migrate()
+                flyway.clean()
             }
         }
 
