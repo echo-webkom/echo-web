@@ -34,11 +34,11 @@ fun Application.configureRouting(
         jwtConfig = jwtConfig
     )
     happeningRoutes()
-    feedbackRoutes()
+    feedbackRoutes(jwtConfig)
     userRoutes(env, audience, issuer, secret, jwtConfig)
-    reactionRoutes()
+    reactionRoutes(jwtConfig)
     sanityRoutes(env)
-    studentGroupRoutes()
+    studentGroupRoutes(jwtConfig)
 }
 
 fun Route.getStatus() {
