@@ -22,9 +22,9 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.studentGroupRoutes() {
+fun Application.studentGroupRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             studentGroup()
         }
     }
