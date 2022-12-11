@@ -130,7 +130,7 @@
         "react-hook-form": "7.40.0",
         "react-icons": "4.7.1",
         "react-snowfall": "1.2.1",
-        "recharts": "2.1.16",
+        "recharts": "2.2.0",
         "remove-markdown": "0.5.0",
         "typescript-json-decoder": "1.0.11"
     },
