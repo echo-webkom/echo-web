@@ -25,6 +25,11 @@ jobs:
         run: |
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
 
+      - name: Sign in to Azure
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+
       - name: Restart container
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
         # Resource group name & container group name are the same.
