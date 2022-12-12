@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import HappeningKeyInfo from '@components/happening-key-info';
+import ReactionCount from '@components/reaction-count';
 
 interface Props {
     event: Happening;
@@ -11,7 +12,7 @@ interface Props {
 
 const EventPreview = ({ event, registrationCounts }: Props): JSX.Element => {
     return (
-        <LinkBox data-testid={event.slug}>
+        <LinkBox data-testid={event.slug} position="relative">
             <Flex align="center" justifyContent="space-between" _hover={{ cursor: 'pointer' }}>
                 <Box flexBasis="60%">
                     <NextLink href={`/event/${event.slug}`} passHref>
@@ -24,6 +25,7 @@ const EventPreview = ({ event, registrationCounts }: Props): JSX.Element => {
                     <HappeningKeyInfo event={event} registrationCounts={registrationCounts} />
                 </Center>
             </Flex>
+            <ReactionCount slug={event.slug} position="absolute" left="3" bottom="-2.5" />
         </LinkBox>
     );
 };
