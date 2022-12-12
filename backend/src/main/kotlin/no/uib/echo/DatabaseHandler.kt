@@ -28,8 +28,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.net.URI
 
-private const val DEFAULT_DEV_POOL_SIZE = 10
-private const val DEFAULT_PROD_POOL_SIZE = 50
+private const val DEFAULT_DEV_POOL_SIZE = 7
+private const val DEFAULT_PROD_POOL_SIZE = 20
 
 val tables: Array<Table> = arrayOf(
     Happening,
@@ -55,7 +55,7 @@ class DatabaseHandler(
     private val dbUrlStr = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
     private val dbUsername = dbUrl.userInfo.split(":")[0]
     private val dbPassword = dbUrl.userInfo.split(":")[1]
-    // MAX_POOL_SIZE takes precedence if it is not null, else we have defaults 20 and 10 for prod and dev/preview respectively.
+    // MAX_POOL_SIZE takes precedence if it is not null, else we have defaults for prod and dev/preview defined above.
     private val maxPoolSize =
         mbMaxPoolSize?.toIntOrNull()
             ?: if (env == Environment.PRODUCTION)
@@ -76,9 +76,15 @@ class DatabaseHandler(
         )
     }
 
-    private fun migrate() {
-        Flyway.configure().baselineOnMigrate(true).dataSource(dbUrlStr, dbUsername, dbPassword).load().migrate()
-    }
+    /*
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        IT'S VERY IMPORTANT THAT baselineVersion MATCHES THE LATEST VERSION,
+        GIVEN BY THE NAME OF THE SQL FILE IN src/main/resources/db/migration
+        WITH THE HIGHEST PREFIX. I.E., "V29__xyz_abc.sql" IS VERSION "29".
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    */
+    private val flyway: Flyway =
+        Flyway.configure().baselineVersion("27").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword).load()
 
     private val conn by lazy {
         Database.connect(dataSource())
@@ -88,20 +94,35 @@ class DatabaseHandler(
         // Need to use connection once to open.
         transaction(conn) {}
 
+        // Migrate and return if in prod
         if (env == Environment.PRODUCTION || migrateDb) {
-            migrate()
-        } else {
+            flyway.migrate()
+            return
+        }
+
+        // Try to migrate and return if in dev
+        if (env == Environment.DEVELOPMENT) {
             try {
-                transaction {
-                    SchemaUtils.create(*tables)
-                }
-                if (insertTestData) {
-                    insertTestData()
-                }
+                flyway.migrate()
+                return
             } catch (e: Exception) {
-                System.err.println("Error creating tables.")
+                System.err.println("Migration failed, will try to create tables & baseline instead.")
+                // Remove flyway schema history table that was created by flyway.migrate()
+                flyway.clean()
             }
         }
+
+        try {
+            transaction { SchemaUtils.create(*tables) }
+        } catch (e: Exception) {
+            System.err.println("Error creating tables, assuming they already exists.")
+        }
+
+        if (insertTestData) insertTestData()
+
+        flyway.baseline()
+        // Try to migrate as well to confirm we are good.
+        flyway.migrate()
     }
 
     private fun insertTestData() {
