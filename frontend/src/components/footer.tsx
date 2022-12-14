@@ -9,11 +9,14 @@ import {
     Image,
     Center,
     Box,
+    HStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import LanguageMenu from '@components/language-menu';
-import { Link } from '@chakra-ui/react'
+import { TbAlertOctagon } from 'react-icons/tb';
+import LanguageContext from 'language-context';
+import { useContext } from 'react';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
@@ -22,6 +25,11 @@ const bekkLogo = '/bekk.png';
 
 const Footer = (): JSX.Element => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
+    const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
+    const textColor = useColorModeValue('button.light.text', 'button.dark.text');
+
+    const isNorwegian = useContext(LanguageContext);
 
     return (
         <Box bg="bg.dark.secondary" data-testid="footer">
@@ -37,15 +45,30 @@ const Footer = (): JSX.Element => {
                 maxW="1400px"
                 mx="auto"
             >
-                
                 <GridItem colSpan={[1, 2, 4]} color={'white'} fontSize={'2xl'}>
-                    
-                    <Text> Hvis du har opplevde noe jævlig, så kan du få en skulder å gråte på </Text>
-                    <Center>
-                    <Link href='https://echo.uib.no' isExternal>
-                        Klikk her!
-                        </Link>
-                    </Center>
+                    <HStack spacing="1em">
+                        <LinkBox>
+                            <NextLink href="https://echo.uib.no" passHref>
+                                <LinkOverlay isExternal aria-label="Link til Echo">
+                                    <HStack spacing="1em">
+                                        <Text textDecoration="underline">
+                                            Har du har opplevde noe ubehagelig på lesesal, varsle her{' '}
+                                        </Text>
+                                        <Icon
+                                            as={TbAlertOctagon}
+                                            borderRadius="full"
+                                            p="1.5"
+                                            bg={'red.400'}
+                                            color={textColor}
+                                            _hover={{ bg: 'red.500', transform: 'scale(1.05)' }}
+                                            boxSize={12}
+                                            zIndex="100"
+                                        />
+                                    </HStack>
+                                </LinkOverlay>
+                            </NextLink>
+                        </LinkBox>
+                    </HStack>
                 </GridItem>
 
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
