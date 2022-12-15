@@ -202,20 +202,6 @@ const HappeningAPI = {
             return { message: JSON.stringify(error) };
         }
     },
-    getUserIsRegistered: async (email: string, slug: string, idToken: string): Promise<boolean | ErrorMessage> => {
-        try {
-            const { status } = await fetch(`${BACKEND_URL}/user/registrations/${email}/${slug}`, {
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-            });
-            console.log(status);
-
-            return status === 200;
-        } catch (error) {
-            return { message: 'Error in getUserIsRegistered' };
-        }
-    },
 };
 
 export {
