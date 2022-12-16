@@ -7218,10 +7218,10 @@ framer-motion@6.3.0:
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-framer-motion@7.7.2:
-  version "7.7.2"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.7.2.tgz#88ae086515ba6d94e2dd8dc7589f8abedf3b5257"
-  integrity sha512-SDq4pansh+UxMtHuApQmyXbbb/oQu3LwhPByiGKXLrKRHxmHiq7VML0/mnFQQRIpWiYR/+wM4q8foFzeoaz8eg==
+framer-motion@7.7.3:
+  version "7.7.3"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.7.3.tgz#d6634577cc78db10fd5a55b71c3c3124e97376d3"
+  integrity sha512-O08sQUOnlvnUrsq/NU9zMB92oYkTXu8lodyTLBXggDvE5HwHs1ZVvcYKuCfvVAqfTmJXiHgYiANrqXfzpU4Plg==
   dependencies:
     "@motionone/dom" "10.13.1"
     hey-listen "^1.0.8"
