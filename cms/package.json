@@ -45,7 +45,7 @@
         "react-icons": "4.7.1",
         "sanity-plugin-color-picker": "1.0.3",
         "sanity-plugin-markdown": "2.1.2",
-        "sanity-plugin-media": "1.4.13",
+        "sanity-plugin-media": "1.4.14",
         "slugify": "1.6.5",
         "styled-components": "5.3.6"
     },
