@@ -15,11 +15,15 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: '**/cms/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/cms/yarn.lock') }}
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile --ignore-scripts
+        run: |
+          cd cms
+          yarn --frozen-lockfile --ignore-scripts
 
       - name: Build with yarn
-        run: yarn --cwd cms build
+        run: |
+          cmd cms
+          yarn build

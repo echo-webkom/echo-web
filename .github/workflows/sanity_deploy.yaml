@@ -15,14 +15,18 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: '**/cms/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/cms/yarn.lock') }}
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile --ignore-scripts
+        run: |
+          cd cms
+          yarn --frozen-lockfile --ignore-scripts
 
       - name: Deploy to Sanity
-        run: yarn --cwd cms sanity deploy
+        run: |
+          cd cms
+          yarn sanity deploy
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_API_DATASET: production

@@ -16,10 +16,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: '~/.cache'
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/frontend/package.json') }}
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: |
+          cd frontend
+          yarn --frozen-lockfile
 
       - name: Run Cypress component tests
-        run: yarn --cwd frontend test
+        run: |
+          cd frontend
+          yarn test

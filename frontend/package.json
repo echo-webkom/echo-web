@@ -10,7 +10,9 @@
         "dev": "next dev",
         "start": "next start",
         "lint": "next lint",
-        "test": "cypress run --component --config video=false,screenshotOnRunFailure=false"
+        "test": "cypress run --component --config video=false,screenshotOnRunFailure=false",
+        "pcheck": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md}\"",
+        "format": "prettier -w \"**/*.{ts,tsx,js,jsx,json,md}\""
     },
     "eslintConfig": {
         "parser": "@typescript-eslint/parser",
@@ -148,8 +150,12 @@
         "@typescript-eslint/eslint-plugin": "5.50.0",
         "@typescript-eslint/parser": "5.50.0",
         "cypress": "12.5.1",
+        "eslint": "8.33.0",
         "eslint-config-next": "13.1.6",
+        "eslint-config-prettier": "8.6.0",
+        "eslint-plugin-prettier": "4.2.1",
         "eslint-plugin-unicorn": "45.0.2",
+        "prettier": "2.8.3",
         "typescript": "4.9.5"
     }
 }

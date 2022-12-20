@@ -4,8 +4,8 @@ on:
     branches: [master]
 
 jobs:
-  lint_format:
-    name: 'Lint & format'
+  lint_format_frontend:
+    name: 'Lint & format frontend'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -14,16 +14,48 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: '**/frontend/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/frontend/yarn.lock') }}
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile --ignore-scripts
-
-      - name: Run linters
         run: |
-          yarn --cwd frontend next lint
-          yarn --cwd cms lint
+          cd frontend
+          yarn --frozen-lockfile --ignore-scripts
+
+      - name: Run linter
+        run: |
+          cd frontend
+          yarn lint
 
       - name: Run prettier check
-        run: yarn pcheck
+        run: |
+          cd frontend
+          yarn pcheck
+
+  lint_format_cms:
+    name: 'Lint & format CMS'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/cms/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/cms/yarn.lock') }}
+
+      - name: Install dependencies
+        run: |
+          cd cms
+          yarn --frozen-lockfile --ignore-scripts
+
+      - name: Run linter
+        run: |
+          cd cms
+          yarn lint
+
+      - name: Run prettier check
+        run: |
+          cd cms
+          yarn pcheck

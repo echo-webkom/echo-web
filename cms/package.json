@@ -8,8 +8,9 @@
         "dev": "sanity dev",
         "start": "sanity start",
         "build": "sanity build",
-        "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
-        "format": "prettier --write \"**/*.{js,jsx,json,md}\" && prettier --write --tab-width=2 \"**/*.{yaml,yml}\""
+        "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" && prettier --write --tab-width=2 \"**/*.{yaml,yml}\"",
+        "pcheck": "prettier -c \"**/*.{ts,tsx,js,jsx,json,md}\" && prettier -c --tab-width=2 \"**/*.{yaml,yml}\""
     },
     "eslintConfig": {
         "parserOptions": {
@@ -53,6 +54,10 @@
     "devDependencies": {
         "@sanity/cli": "3.2.6",
         "@sanity/eslint-config-studio": "2.0.1",
+        "eslint": "8.33.0",
+        "eslint-config-prettier": "8.6.0",
+        "eslint-plugin-prettier": "4.2.1",
+        "prettier": "2.8.3",
         "typescript": "4.9.5"
     }
 }

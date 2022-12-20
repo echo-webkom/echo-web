@@ -119,8 +119,8 @@ jobs:
         with:
           files: |
             frontend/**
-            yarn.lock
-            package.json
+            frontend/yarn.lock
+            frontend/package.json
             .github/workflows/docker_tests_and_previews.yaml
           files_ignore: |
             *.md
@@ -338,6 +338,7 @@ jobs:
       - name: Deploy to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
+          WORKING_DIRECTORY: frontend
           PR_LABELS: false
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
