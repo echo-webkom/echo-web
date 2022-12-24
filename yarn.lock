@@ -2490,10 +2490,10 @@
     get-random-values-esm "^1.0.0"
     lodash "^4.17.21"
 
-"@sanity/cli@2.35.0":
-  version "2.35.0"
-  resolved "https://registry.yarnpkg.com/@sanity/cli/-/cli-2.35.0.tgz#9773c6a5c46c55274cf0cbf1e721e3a419043a83"
-  integrity sha512-btMoU2W5PrvQL0J4RpA7tvZlo+27fY/aekU4SOa5DWV7nlUc7lMxljCbWdhkX7cQxR1wY/uKcgZeMPX+BPwaWg==
+"@sanity/cli@2.35.3":
+  version "2.35.3"
+  resolved "https://registry.yarnpkg.com/@sanity/cli/-/cli-2.35.3.tgz#fed22b9884edac89b49a1b259177207434c1cbf1"
+  integrity sha512-4itM8oi+K/94NA4qYm77o+qFjKlox3IaUhEtTUoh/Kj40Co6JGjN8YLg8ePCF9vjhUHNET+nPuYyZjA5m2t84A==
 
 "@sanity/client@3.4.1":
   version "3.4.1"
@@ -3117,10 +3117,10 @@
     lodash "^4.17.15"
     rxjs "^6.5.3"
 
-"@sanity/vision@2.35.2":
-  version "2.35.2"
-  resolved "https://registry.yarnpkg.com/@sanity/vision/-/vision-2.35.2.tgz#74d58f3148369a3f6114587c7b9422229f28112a"
-  integrity sha512-3bNsqCpY8yFX3Tcjuq7exSip5g0V76agOgFhLZ3cPNwuN298JNuirXXXSNd7rBaILYBPgYXSQHZHT4abbpNh3A==
+"@sanity/vision@2.35.3":
+  version "2.35.3"
+  resolved "https://registry.yarnpkg.com/@sanity/vision/-/vision-2.35.3.tgz#1e241ae6a2186aba85962ecd0899280e10aff073"
+  integrity sha512-7I0MN2gVT93qKNnoG+W32IuAS/o91Xn5HCOaB9tQ1y7ie2N3c7nVJutvcPK4Hqt68ZMK+qDUZnQFNJpYw9BKgg==
   dependencies:
     "@juggle/resize-observer" "^3.3.1"
     "@sanity/icons" "^1.3.4"
