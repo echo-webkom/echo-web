@@ -1,4 +1,4 @@
-import languages from '../languages';
+import languages from './languages';
 
 const localeMarkdown = {
     name: 'localeMarkdown',
