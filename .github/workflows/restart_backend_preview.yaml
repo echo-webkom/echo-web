@@ -40,7 +40,7 @@ jobs:
         # Resource group name & container group name are the same.
         run: az container restart --resource-group $GROUP_NAME --name $GROUP_NAME
         env:
-          GROUP_NAME: 'echo-web-${{ steps.env_vars.output.BRANCH_NAME_FORMATTED }}'
+          GROUP_NAME: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
 
       - name: Update comment to remove checkbox
