@@ -11908,7 +11908,7 @@ react-rx@^1.0.0-beta.6:
   dependencies:
     observable-callback "^1.0.1"
 
-react-select@^4.1.0:
+react-select@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-4.3.1.tgz#389fc07c9bc7cf7d3c377b7a05ea18cd7399cb81"
   integrity sha512-HBBd0dYwkF5aZk1zP81Wx5UsLIIT2lSvAY2JiJo199LjoLHoivjn9//KsmvQMEFGNhe58xyuOITjfxKCcGc62Q==
@@ -12666,14 +12666,15 @@ sanity-plugin-markdown@2.1.2:
     react-mde "^11.5.0"
     remark-gfm "^1.0.0"
 
-sanity-plugin-media@1.4.13:
-  version "1.4.13"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-1.4.13.tgz#6575838d218a4cb607ec11263c1bcee1ff5e6f2f"
-  integrity sha512-FYKZ45Vpp3qsUZ0s1IIU7b/aBKOXuAf+/FfTbapLjXYlHTg66OWgUEJ+lUV/dAN1nvNalKFbCBcGUKBSERw3ig==
+sanity-plugin-media@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-1.5.1.tgz#a196519bb89aad4d581132d7bf29693d4378c16c"
+  integrity sha512-yWg3LH7oGsvgqIGw0nff9UvSqKZygEc5JUFI6mb0HHS4ZQvwpUKpoKmIcvK58PZRYRfZ94uEhioug/8X2rRLNw==
   dependencies:
     "@hookform/resolvers" "2.0.0-beta.3"
     "@reduxjs/toolkit" "^1.8.1"
     "@sanity/ui" "^0.37.5"
+    "@sanity/uuid" "^3.0.1"
     "@tanem/react-nprogress" "^5.0.0"
     copy-to-clipboard "^3.3.1"
     date-fns "^2.27.0"
@@ -12686,7 +12687,7 @@ sanity-plugin-media@1.4.13:
     react-file-icon "^1.1.0"
     react-hook-form "^6.15.1"
     react-redux "^7.2.2"
-    react-select "^4.1.0"
+    react-select "^4.3.1"
     react-virtuoso "^2.11.0"
     redux "^4.0.5"
     redux-observable "^1.2.0"
