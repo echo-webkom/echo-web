@@ -3117,10 +3117,10 @@
     lodash "^4.17.15"
     rxjs "^6.5.3"
 
-"@sanity/vision@2.35.3":
-  version "2.35.3"
-  resolved "https://registry.yarnpkg.com/@sanity/vision/-/vision-2.35.3.tgz#1e241ae6a2186aba85962ecd0899280e10aff073"
-  integrity sha512-7I0MN2gVT93qKNnoG+W32IuAS/o91Xn5HCOaB9tQ1y7ie2N3c7nVJutvcPK4Hqt68ZMK+qDUZnQFNJpYw9BKgg==
+"@sanity/vision@2.35.4":
+  version "2.35.4"
+  resolved "https://registry.yarnpkg.com/@sanity/vision/-/vision-2.35.4.tgz#608b271dc57717b7ac059aad59bf3766b258d7c5"
+  integrity sha512-bYv3ZMTPgMxl+eP6cLLvylue5DJkxx8bKsLmWyRitLUlMcBtVk4SmcgNGazV6usPF5przbC9REfcUSO/WGk7GA==
   dependencies:
     "@juggle/resize-observer" "^3.3.1"
     "@sanity/icons" "^1.3.4"
