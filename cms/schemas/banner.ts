@@ -22,13 +22,13 @@ export default {
             name: 'color',
             title: 'Bannerfarge',
             validation: (Rule) => Rule.required(),
-            type: 'colorPicker',
+            type: 'color',
         },
         {
             name: 'textColor',
             title: 'Farge på bannertekst',
             validation: (Rule) => Rule.required(),
-            type: 'colorPicker',
+            type: 'color',
         },
         {
             name: 'linkTo',

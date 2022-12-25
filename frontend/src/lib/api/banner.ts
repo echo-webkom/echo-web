@@ -3,9 +3,11 @@ import { array, union, nil, record, string, boolean } from 'typescript-json-deco
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
+const colorDecoder = (val: unknown) => record({ hex: string })(val).hex;
+
 const bannerDecoder = record({
-    color: string,
-    textColor: string,
+    color: colorDecoder,
+    textColor: colorDecoder,
     text: string,
     linkTo: union(string, nil),
     isExternal: boolean,

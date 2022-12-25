@@ -1,4 +1,3 @@
-import sanityClient from 'part:@sanity/base/client';
 import slugify from 'slugify';
 import { MdEvent } from 'react-icons/md';
 
@@ -36,11 +35,13 @@ export default {
             readOnly: ({ document }) => document?.publishedOnce,
             options: {
                 source: 'title',
-                slugify: (input) => {
+                slugify: (input, schemaType, context) => {
                     const slug = slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true });
                     const query = 'count(*[_type == "happening" && slug.current == $slug]{_id})';
                     const params = { slug };
-                    return sanityClient
+                    const { getClient } = context;
+
+                    return getClient()
                         .fetch(query, params)
                         .then((count) => (count > 0 ? `${slug}-${count + 1}` : slug));
                 },
