@@ -13,19 +13,22 @@ interface Props {
 const EventPreview = ({ event, registrationCounts }: Props): JSX.Element => {
     return (
         <LinkBox data-testid={event.slug} position="relative">
-            <Flex align="center" justifyContent="space-between" _hover={{ cursor: 'pointer' }}>
+            <Flex minH="2em" align="center" justifyContent="space-between" _hover={{ cursor: 'pointer' }}>
                 <Box flexBasis="60%">
                     <NextLink href={`/event/${event.slug}`} passHref>
                         <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
-                            <Text ml="3">{event.title}</Text>
+                            <Text ml="3" my="2" position="relative">
+                                {event.title}
+                            </Text>
+                            <ReactionCount slug={event.slug} position="absolute" left="3" bottom="-3" />
                         </LinkOverlay>
                     </NextLink>
                 </Box>
+
                 <Center>
                     <HappeningKeyInfo event={event} registrationCounts={registrationCounts} />
                 </Center>
             </Flex>
-            <ReactionCount slug={event.slug} position="absolute" left="3" bottom="-2.5" />
         </LinkBox>
     );
 };
