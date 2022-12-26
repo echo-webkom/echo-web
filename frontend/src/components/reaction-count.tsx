@@ -8,9 +8,11 @@ import useAuth from '@hooks/use-auth';
 
 interface Props extends BoxProps {
     slug: string;
+    size?: number;
+    fontSize?: string;
 }
 
-const ReactionCount = ({ slug, ...props }: Props) => {
+const ReactionCount = ({ slug, size = 20, fontSize = '18px', ...props }: Props) => {
     const { signedIn, idToken } = useAuth();
 
     const [reactCount, setReactCount] = useState<number | null>(null);
@@ -39,8 +41,8 @@ const ReactionCount = ({ slug, ...props }: Props) => {
     return (
         <Flex opacity="60%" {...props}>
             <Center>
-                <CiHeart />
-                <Text>{`${reactCount}`}</Text>
+                <CiHeart size={size} />
+                <Text fontSize={fontSize}>{`${reactCount}`}</Text>
             </Center>
         </Flex>
     );
