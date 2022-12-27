@@ -1,4 +1,10 @@
-export default [
+interface Language {
+    id: string;
+    title: string;
+    isDefault: boolean;
+}
+
+const languages: Array<Language> = [
     {
         id: 'no',
         title: 'Norsk',
@@ -7,5 +13,8 @@ export default [
     {
         id: 'en',
         title: 'English',
+        isDefault: false,
     },
 ];
+
+export default languages;

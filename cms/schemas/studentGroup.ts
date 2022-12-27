@@ -1,5 +1,6 @@
 import { UsersIcon } from '@sanity/icons';
 import slugify from 'slugify';
+import { defineField, defineType, defineArrayMember } from 'sanity';
 
 const GROUP_TYPES = [
     { title: 'Undergruppe', value: 'subgroup' },
@@ -8,7 +9,7 @@ const GROUP_TYPES = [
     { title: 'Interessegruppe', value: 'intgroup' },
 ];
 
-export default {
+export default defineType({
     name: 'studentGroup',
     title: 'Studentgruppe',
     description: 'Undergruppe, underorganisasjon eller et echo-styre',
@@ -29,13 +30,13 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'name',
             title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
-        },
-        {
+        }),
+        defineField({
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
@@ -43,10 +44,10 @@ export default {
             type: 'slug',
             options: {
                 source: 'name',
-                slugify: (input) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
+                slugify: (input: string) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
             },
-        },
-        {
+        }),
+        defineField({
             name: 'groupType',
             title: 'Type',
             validation: (Rule) =>
@@ -62,38 +63,38 @@ export default {
                 list: GROUP_TYPES,
                 layout: 'dropdown',
             },
-        },
-        {
+        }),
+        defineField({
             name: 'info',
             title: 'Brødtekst',
             type: 'markdown',
-        },
-        {
+        }),
+        defineField({
             name: 'grpPicture',
             title: 'Gruppebilde',
             type: 'image',
-        },
-        {
+        }),
+        defineField({
             name: 'members',
             title: 'Medlemmer',
             type: 'array',
             of: [
-                {
+                defineArrayMember({
                     name: 'member',
                     title: 'Medlem',
                     type: 'object',
                     fields: [
-                        {
+                        defineField({
                             name: 'role',
                             title: 'Rolle',
                             type: 'string',
-                        },
-                        {
+                        }),
+                        defineField({
                             name: 'profile',
                             title: 'Profil',
                             type: 'reference',
                             to: [{ type: 'profile' }],
-                        },
+                        }),
                     ],
                     preview: {
                         select: {
@@ -102,8 +103,8 @@ export default {
                             subtitle: 'role',
                         },
                     },
-                },
+                }),
             ],
-        },
+        }),
     ],
-};
+});
