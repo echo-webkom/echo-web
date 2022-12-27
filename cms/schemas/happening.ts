@@ -1,6 +1,17 @@
 import slugify from 'slugify';
 import { CalendarIcon } from '@sanity/icons';
 
+const STUDENT_GROUPS = [
+    { title: 'Hovedstyret', value: 'hovedstyret' },
+    { title: 'Bedkom', value: 'bedkom' },
+    { title: 'Webkom', value: 'webkom' },
+    { title: 'Gnist', value: 'gnist' },
+    { title: 'Tilde', value: 'tilde' },
+    { title: 'Hyggkom', value: 'hyggkom' },
+    { title: 'ESC', value: 'esc' },
+    { title: 'Makerspace', value: 'makerspace' },
+];
+
 export default {
     name: 'happening',
     title: 'Arrangement',
@@ -11,7 +22,18 @@ export default {
         select: {
             media: 'logo',
             title: 'title',
-            subtitle: 'studentGroupName',
+            studentGroupName: 'studentGroupName',
+        },
+        prepare({ media, title, studentGroupName }) {
+            const [subtitle] = STUDENT_GROUPS.flatMap((option) =>
+                option.value === studentGroupName ? [option.title] : [],
+            );
+
+            return {
+                media,
+                title,
+                subtitle,
+            };
         },
     },
     fields: [
@@ -156,16 +178,7 @@ export default {
                 ),
             ],
             options: {
-                list: [
-                    { title: 'Hovedstyret', value: 'hovedstyret' },
-                    { title: 'Bedkom', value: 'bedkom' },
-                    { title: 'Webkom', value: 'webkom' },
-                    { title: 'Gnist', value: 'gnist' },
-                    { title: 'Tilde', value: 'tilde' },
-                    { title: 'Hyggkom', value: 'hyggkom' },
-                    { title: 'ESC', value: 'esc' },
-                    { title: 'Makerspace', value: 'makerspace' },
-                ],
+                list: STUDENT_GROUPS,
                 layout: 'dropdown',
             },
             hidden: ({ document, value }) => !value && document?.earlyReg === false,
@@ -299,16 +312,7 @@ export default {
             type: 'string',
             validation: (Rule) => Rule.required(),
             options: {
-                list: [
-                    { title: 'Hovedstyret', value: 'hovedstyret' },
-                    { title: 'Bedkom', value: 'bedkom' },
-                    { title: 'Webkom', value: 'webkom' },
-                    { title: 'Gnist', value: 'gnist' },
-                    { title: 'Tilde', value: 'tilde' },
-                    { title: 'Hyggkom', value: 'hyggkom' },
-                    { title: 'ESC', value: 'esc' },
-                    { title: 'Makerspace', value: 'makerspace' },
-                ],
+                list: STUDENT_GROUPS,
                 layout: 'dropdown',
             },
         },

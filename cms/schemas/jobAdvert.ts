@@ -1,6 +1,13 @@
 import slugify from 'slugify';
 import { MasterDetailIcon } from '@sanity/icons';
 
+const JOB_TYPES = [
+    { title: 'Fulltid', value: 'fulltime' },
+    { title: 'Deltid', value: 'parttime' },
+    { title: 'Internship', value: 'internship' },
+    { title: 'Sommerjobb', value: 'summerjob' },
+];
+
 export default {
     name: 'jobAdvert',
     title: 'Stillingsannonse',
@@ -10,7 +17,16 @@ export default {
         select: {
             media: 'logo',
             title: 'companyName',
-            subtitle: 'jobType',
+            jobType: 'jobType',
+        },
+        prepare({ media, title, jobType }) {
+            const [subtitle] = JOB_TYPES.flatMap((option) => (option.value === jobType ? [option.title] : []));
+
+            return {
+                media,
+                title,
+                subtitle,
+            };
         },
     },
     fields: [
@@ -71,12 +87,7 @@ export default {
             validation: (Rule) => Rule.required(),
             type: 'string',
             options: {
-                list: [
-                    { title: 'Fulltid', value: 'fulltime' },
-                    { title: 'Deltid', value: 'parttime' },
-                    { title: 'Internship', value: 'internship' },
-                    { title: 'Sommerjobb', value: 'summerjob' },
-                ],
+                list: JOB_TYPES,
                 layout: 'dropdown',
             },
         },

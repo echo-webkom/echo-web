@@ -1,6 +1,13 @@
 import { UsersIcon } from '@sanity/icons';
 import slugify from 'slugify';
 
+const GROUP_TYPES = [
+    { title: 'Undergruppe', value: 'subgroup' },
+    { title: 'Underorganisasjon', value: 'suborg' },
+    { title: 'Hovedstyre', value: 'board' },
+    { title: 'Interessegruppe', value: 'intgroup' },
+];
+
 export default {
     name: 'studentGroup',
     title: 'Studentgruppe',
@@ -10,7 +17,15 @@ export default {
     preview: {
         select: {
             title: 'name',
-            subtitle: 'groupType',
+            groupType: 'groupType',
+        },
+        prepare({ title, groupType }) {
+            const [subtitle] = GROUP_TYPES.flatMap((option) => (option.value === groupType ? option.title : []));
+
+            return {
+                title,
+                subtitle,
+            };
         },
     },
     fields: [
@@ -44,12 +59,7 @@ export default {
                     .error(),
             type: 'string',
             options: {
-                list: [
-                    { title: 'Undergruppe', value: 'subgroup' },
-                    { title: 'Underorganisasjon', value: 'suborg' },
-                    { title: 'Hovedstyre', value: 'board' },
-                    { title: 'Interessegruppe', value: 'intgroup' },
-                ],
+                list: GROUP_TYPES,
                 layout: 'dropdown',
             },
         },
