@@ -1,6 +1,7 @@
 import { BookIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
     name: 'author',
     title: 'Forfatter',
     icon: BookIcon,
@@ -12,11 +13,11 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'name',
             title: 'Forfatter',
             validation: (Rule) => Rule.required(),
             type: 'string',
-        },
+        }),
     ],
-};
+});

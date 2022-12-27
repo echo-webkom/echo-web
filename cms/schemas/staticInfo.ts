@@ -1,6 +1,7 @@
 import { BlockContentIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
     name: 'staticInfo',
     title: 'Static Info',
     icon: BlockContentIcon,
@@ -12,13 +13,13 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'name',
             title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
-        },
-        {
+        }),
+        defineField({
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
@@ -26,12 +27,12 @@ export default {
             options: {
                 source: 'name',
             },
-        },
-        {
+        }),
+        defineField({
             name: 'info',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'markdown',
-        },
+        }),
     ],
-};
+});

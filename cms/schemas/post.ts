@@ -1,5 +1,6 @@
 import slugify from 'slugify';
 import { EnvelopeIcon } from '@sanity/icons';
+import { defineField } from 'sanity';
 
 export default {
     name: 'post',
@@ -13,18 +14,18 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'publishedOnce',
             type: 'boolean',
             hidden: true,
-        },
-        {
+        }),
+        defineField({
             name: 'title',
             title: 'Tittel',
             validation: (Rule) => Rule.required(),
             type: 'localeString',
-        },
-        {
+        }),
+        defineField({
             name: 'slug',
             title: 'Slug (lenke)',
             validation: (Rule) => Rule.required(),
@@ -32,16 +33,16 @@ export default {
             type: 'slug',
             options: {
                 source: 'title',
-                slugify: (input) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
+                slugify: (input: string) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
             },
-        },
-        {
+        }),
+        defineField({
             name: 'body',
             title: 'Brødtekst',
             validation: (Rule) => Rule.required(),
             type: 'localeMarkdown',
-        },
-        {
+        }),
+        defineField({
             name: 'author',
             title: 'Forfatter',
             validation: (Rule) => Rule.required(),
@@ -51,11 +52,11 @@ export default {
                     type: 'author',
                 },
             ],
-        },
-        {
+        }),
+        defineField({
             name: 'thumbnail',
             title: 'Miniatyrbilde',
             type: 'image',
-        },
+        }),
     ],
 };
