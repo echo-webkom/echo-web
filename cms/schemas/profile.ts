@@ -1,6 +1,7 @@
 import { UserIcon } from '@sanity/icons';
+import { defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
     name: 'profile',
     title: 'Profil',
     description: 'Et medlem av en studentgruppe.',
@@ -13,19 +14,19 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'name',
             title: 'Navn',
             validation: (Rule) => Rule.required(),
             type: 'string',
-        },
-        {
+        }),
+        defineField({
             name: 'picture',
             title: 'Bilde',
             type: 'image',
             options: {
                 hotspot: true,
             },
-        },
+        }),
     ],
-};
+});

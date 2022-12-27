@@ -1,6 +1,7 @@
 import { HelpCircleIcon } from '@sanity/icons';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 
-export default {
+export default defineType({
     name: 'additionalQuestion',
     title: 'Tilleggsspørsmål',
     description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
@@ -12,13 +13,13 @@ export default {
         },
     },
     fields: [
-        {
+        defineField({
             name: 'questionText',
             title: 'Spørsmålstekst',
             validation: (Rule) => Rule.required(),
             type: 'string',
-        },
-        {
+        }),
+        defineField({
             name: 'inputType',
             title: 'Input-type',
             validation: (Rule) => Rule.required(),
@@ -27,19 +28,16 @@ export default {
                 list: ['radio', 'textbox'],
                 layout: 'dropdown',
             },
-        },
-        {
+        }),
+        defineField({
             name: 'alternatives',
             title: 'Alternativer',
             type: 'array',
             of: [
-                {
+                defineArrayMember({
                     type: 'string',
-                    options: {
-                        layout: 'tags',
-                    },
-                },
+                }),
             ],
-        },
+        }),
     ],
-};
+});
