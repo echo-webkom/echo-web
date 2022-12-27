@@ -1,10 +1,10 @@
-import { MdOutlineQuestionAnswer } from 'react-icons/md';
+import { HelpCircleIcon } from '@sanity/icons';
 
 export default {
     name: 'additionalQuestion',
     title: 'Tilleggsspørsmål',
     description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
-    icon: MdOutlineQuestionAnswer,
+    icon: HelpCircleIcon,
     type: 'document',
     preview: {
         select: {

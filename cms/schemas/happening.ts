@@ -1,11 +1,11 @@
 import slugify from 'slugify';
-import { MdEvent } from 'react-icons/md';
+import { CalendarIcon } from '@sanity/icons';
 
 export default {
     name: 'happening',
     title: 'Arrangement',
     description: 'Et arrangement (fest, workshop, bedpres, osv...).',
-    icon: MdEvent,
+    icon: CalendarIcon,
     type: 'document',
     preview: {
         select: {

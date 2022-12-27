@@ -1,10 +1,10 @@
-import { MdGroups } from 'react-icons/md';
+import { NumberIcon } from '@sanity/icons';
 
 export default {
     name: 'spotRange',
     title: 'Arrangementsplasser',
     description: 'Hvor mange plasser som er tildelt hvert trinn på et arrangement.',
-    icon: MdGroups,
+    icon: NumberIcon,
     type: 'document',
     preview: {
         select: {

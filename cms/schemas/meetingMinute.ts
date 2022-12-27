@@ -1,9 +1,9 @@
-import { AiOutlineFilePdf } from 'react-icons/ai';
+import { DocumentPdfIcon } from '@sanity/icons';
 
 export default {
     name: 'meetingMinute',
     title: 'Møtereferat',
-    icon: AiOutlineFilePdf,
+    icon: DocumentPdfIcon,
     type: 'document',
     preview: {
         select: {

@@ -1,11 +1,11 @@
-import { MdOutlineGroup } from 'react-icons/md';
+import { UsersIcon } from '@sanity/icons';
 import slugify from 'slugify';
 
 export default {
     name: 'studentGroup',
     title: 'Studentgruppe',
     description: 'Undergruppe, underorganisasjon eller et echo-styre',
-    icon: MdOutlineGroup,
+    icon: UsersIcon,
     type: 'document',
     preview: {
         select: {
