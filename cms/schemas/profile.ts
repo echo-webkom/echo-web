@@ -1,10 +1,10 @@
-import { MdPersonOutline } from 'react-icons/md';
+import { UserIcon } from '@sanity/icons';
 
 export default {
     name: 'profile',
     title: 'Profil',
     description: 'Et medlem av en studentgruppe.',
-    icon: MdPersonOutline,
+    icon: UserIcon,
     type: 'document',
     preview: {
         select: {

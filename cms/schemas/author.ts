@@ -1,9 +1,9 @@
-import { BsPencil } from 'react-icons/bs';
+import { BookIcon } from '@sanity/icons';
 
 export default {
     name: 'author',
     title: 'Forfatter',
-    icon: BsPencil,
+    icon: BookIcon,
     description: 'Den som har publisert innholdet (happening, post, osv...). Navn på undergruppe er foretrukket.',
     type: 'document',
     preview: {

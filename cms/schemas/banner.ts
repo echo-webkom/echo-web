@@ -1,10 +1,10 @@
-import { GrCircleInformation } from 'react-icons/gr';
+import { InfoOutlineIcon } from '@sanity/icons';
 
 export default {
     name: 'banner',
     title: 'Forsidebanner',
     description: 'Banner som vises øverst på forsiden',
-    icon: GrCircleInformation,
+    icon: InfoOutlineIcon,
     type: 'document',
     preview: {
         select: {

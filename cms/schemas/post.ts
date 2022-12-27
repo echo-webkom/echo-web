@@ -1,11 +1,11 @@
 import slugify from 'slugify';
-import { MdOutlineLibraryBooks } from 'react-icons/md';
+import { EnvelopeIcon } from '@sanity/icons';
 
 export default {
     name: 'post',
     title: 'Innlegg',
     type: 'document',
-    icon: MdOutlineLibraryBooks,
+    icon: EnvelopeIcon,
     preview: {
         select: {
             title: 'title.no',

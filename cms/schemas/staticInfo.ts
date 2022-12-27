@@ -1,9 +1,9 @@
-import { CgWebsite } from 'react-icons/cg';
+import { BlockContentIcon } from '@sanity/icons';
 
 export default {
     name: 'staticInfo',
     title: 'Static Info',
-    icon: CgWebsite,
+    icon: BlockContentIcon,
     description: 'Statisk Informasjon',
     type: 'document',
     preview: {

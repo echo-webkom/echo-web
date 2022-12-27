@@ -1,10 +1,10 @@
-import { MdOutlineLaptop } from 'react-icons/md';
 import slugify from 'slugify';
+import { MasterDetailIcon } from '@sanity/icons';
 
 export default {
     name: 'jobAdvert',
     title: 'Stillingsannonse',
-    icon: MdOutlineLaptop,
+    icon: MasterDetailIcon,
     type: 'document',
     preview: {
         select: {
