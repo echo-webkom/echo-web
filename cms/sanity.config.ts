@@ -1,4 +1,4 @@
-import { defineConfig } from 'sanity';
+import { Config, defineConfig } from 'sanity';
 import { deskTool } from 'sanity/desk';
 import { visionTool } from '@sanity/vision';
 import { markdownSchema } from 'sanity-plugin-markdown';
@@ -13,29 +13,39 @@ const defaultConfig = {
     projectId: 'pgq2pd26',
 };
 
-export default defineConfig([
-    {
-        ...defaultConfig,
-        name: 'production',
-        title: 'echo web',
-        icon: RocketIcon,
-        basePath: '/prod',
-        dataset: 'production',
-    },
-    {
-        ...defaultConfig,
-        name: 'develop',
-        title: 'echo web – Utvikling',
-        icon: TerminalIcon,
-        basePath: '/dev',
-        dataset: 'develop',
-    },
-    {
-        ...defaultConfig,
-        name: 'testing',
-        title: 'echo web – Testing',
-        icon: RobotIcon,
-        basePath: '/test',
-        dataset: 'testing',
-    },
-]);
+const prodConfig = defineConfig({
+    ...defaultConfig,
+    name: 'production',
+    title: 'echo web',
+    icon: RocketIcon,
+    basePath: '/prod',
+    dataset: 'production',
+});
+
+const devConfig = defineConfig({
+    ...defaultConfig,
+    name: 'develop',
+    title: 'echo web – Utvikling',
+    icon: TerminalIcon,
+    basePath: '/dev',
+    dataset: 'develop',
+});
+
+const testConfig = defineConfig({
+    ...defaultConfig,
+    name: 'testing',
+    title: 'echo web – Testing',
+    icon: RobotIcon,
+    basePath: '/test',
+    dataset: 'testing',
+});
+
+const getConfigs = (): Array<Config> => {
+    if (import.meta.env.DEV) {
+        return [prodConfig, devConfig, testConfig];
+    }
+
+    return [prodConfig];
+};
+
+export default getConfigs();
