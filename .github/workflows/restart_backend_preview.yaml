@@ -7,6 +7,7 @@ env:
   ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
   ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
   ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   restart_preview:
