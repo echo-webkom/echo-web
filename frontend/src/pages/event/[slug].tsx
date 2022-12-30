@@ -170,6 +170,9 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                     {regsList.length > 0 && (
                         <RegistrationsList
                             registrations={regsList}
+                            registrationDate={
+                                happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
+                            }
                             error={regsListError?.message ?? null}
                             title={happening.title}
                         />
