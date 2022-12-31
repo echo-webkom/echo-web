@@ -7,7 +7,6 @@ env:
   ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
   ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
   ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   restart_preview:
@@ -29,7 +28,12 @@ jobs:
         id: env_vars
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
         run: |
+          export BRANCH_NAME=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
+        env:
+          PR_NO: ${{ github.event.issue_number }}
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
 
       - name: Sign in to Azure
         uses: azure/login@v1
