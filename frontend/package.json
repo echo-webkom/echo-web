@@ -110,7 +110,7 @@
         "tabWidth": 4
     },
     "dependencies": {
-        "@chakra-ui/react": "2.4.4",
+        "@chakra-ui/react": "2.4.6",
         "@emotion/react": "11.10.5",
         "@emotion/styled": "11.10.5",
         "@sanity/client": "3.4.1",
