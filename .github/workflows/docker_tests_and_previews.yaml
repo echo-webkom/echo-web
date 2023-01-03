@@ -311,7 +311,7 @@ jobs:
           terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
           terraform apply -auto-approve -lock-timeout=15m
           # Get backend url and output it
-          echo "BACKEND_URL=$(terraform output -raw preview_backend_url)" >> $GITHUB_OUTPUT
+          echo "BACKEND_URL=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
         env:
           TF_VAR_rg_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}
