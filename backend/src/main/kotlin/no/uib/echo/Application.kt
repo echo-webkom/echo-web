@@ -5,10 +5,10 @@ import io.ktor.server.netty.EngineMain
 import no.uib.echo.plugins.configureAuthentication
 import no.uib.echo.plugins.configureCORS
 import no.uib.echo.plugins.configureContentNegotiation
+import no.uib.echo.plugins.configureDocs
 import no.uib.echo.plugins.configureRateLimit
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
-import no.uib.echo.plugins.configureDocs
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
