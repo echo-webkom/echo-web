@@ -8,6 +8,7 @@ import no.uib.echo.plugins.configureContentNegotiation
 import no.uib.echo.plugins.configureRateLimit
 import no.uib.echo.plugins.configureRouting
 import java.net.URI
+import no.uib.echo.plugins.configureDocs
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -67,4 +68,5 @@ fun Application.module() {
         jwtConfig = jwtConfig
     )
     configureRateLimit()
+    if (env != Environment.PRODUCTION) configureDocs()
 }
