@@ -1,4 +1,4 @@
-import type { Degree } from '@utils/decoders';
+import type { Degree } from '@utils/schemas';
 
 const allDegrees: Array<Degree> = [
     'DTEK',

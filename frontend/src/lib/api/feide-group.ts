@@ -1,33 +1,32 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { literal, union, date, record, boolean, optional, string, array } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
 
-const feideGroupDecoder = record({
-    id: string,
-    displayName: string,
-    basic: optional(union(literal('member'), literal('admin'), literal('owner'))),
-    description: optional(string),
-    type: optional(string),
-    parent: optional(string),
-    notBefore: optional(date),
-    notAfter: optional(date),
-    public: optional(boolean),
-    active: optional(boolean),
-    url: optional(string),
-    primaryOrgUnit: optional(boolean),
-    membership: record({
-        basic: optional(union(literal('member'), literal('admin'), literal('owner'))),
-        displayName: optional(string),
-        active: optional(boolean),
-        notBefore: optional(date),
-        fsroles: optional(array(string)),
-        subjectRelation: optional(string),
-        primaryOrgUnit: optional(boolean),
-        affiliation: optional(array(string)),
-        title: optional(array(string)),
+const feideGroupSchema = z.object({
+    id: z.string(),
+    displayName: z.string(),
+    basic: z.enum(['member', 'admin', 'owner']).optional(),
+    description: z.string().optional(),
+    type: z.string().optional(),
+    parent: z.string().optional(),
+    notBefore: z.date().optional(),
+    notAfter: z.date().optional(),
+    public: z.boolean().optional(),
+    active: z.boolean().optional(),
+    url: z.string().optional(),
+    primaryOrgUnit: z.boolean().optional(),
+    membership: z.object({
+        basic: z.enum(['member', 'admin', 'owner']).optional(),
+        displayName: z.string().optional(),
+        active: z.boolean().optional(),
+        notBefore: z.date().optional(),
+        fsroles: z.array(z.string()).optional(),
+        subjectRelation: z.string().optional(),
+        primaryOrgUnit: z.boolean().optional(),
+        affiliation: z.array(z.string()).optional(),
+        title: z.array(z.string()).optional(),
     }),
 });
-type FeideGroup = decodeType<typeof feideGroupDecoder>;
+type FeideGroup = z.infer<typeof feideGroupSchema>;
 
 const feideGroupEndpoint = 'https://groups-api.dataporten.no/groups';
 
@@ -65,7 +64,7 @@ const FeideGroupAPI = {
             const data = await response.json();
 
             if (response.status === 200) {
-                return array(feideGroupDecoder)(data);
+                return feideGroupSchema.array().parse(data);
             }
 
             return {
@@ -79,4 +78,4 @@ const FeideGroupAPI = {
     },
 };
 
-export { FeideGroupAPI, type FeideGroup, feideGroupDecoder };
+export { FeideGroupAPI, type FeideGroup, feideGroupSchema };

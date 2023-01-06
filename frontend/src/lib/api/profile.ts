@@ -1,12 +1,12 @@
-import { array, record, string, union, nil, type decodeType } from 'typescript-json-decoder';
+import { z } from 'zod';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
-const profileDecoder = record({
-    name: string,
-    imageUrl: union(string, nil),
+const profileSchema = z.object({
+    name: z.string(),
+    imageUrl: z.string().nullable(),
 });
-type Profile = decodeType<typeof profileDecoder>;
+type Profile = z.infer<typeof profileSchema>;
 
 const ProfileAPI = {
     getProfileByName: async (name: string): Promise<Profile | ErrorMessage> => {
@@ -19,7 +19,7 @@ const ProfileAPI = {
             `;
             const result = await SanityAPI.fetch(query);
 
-            return array(profileDecoder)(result)[0];
+            return profileSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
@@ -42,7 +42,7 @@ const ProfileAPI = {
 
             const result = await SanityAPI.fetch(query, params);
 
-            return array(profileDecoder)(result);
+            return profileSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
@@ -52,4 +52,4 @@ const ProfileAPI = {
     },
 };
 
-export { ProfileAPI, profileDecoder, type Profile };
+export { ProfileAPI, profileSchema, type Profile };

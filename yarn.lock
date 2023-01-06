@@ -12030,11 +12030,6 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript-json-decoder@1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.11.tgz#d110b974f737273127cca727aa4ecc7ebfa08dd0"
-  integrity sha512-YPv/6FTbcGQG2vj4LOT5pGJ9qYL3aex8zqybiQGkyU/BTRx/TRMt4t8gHLXMCt7tg9WLMJN3r7hixQDCt5+Suw==
-
 typescript@4.9.4:
   version "4.9.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.4.tgz#a2a3d2756c079abda241d75f149df9d561091e78"
@@ -12736,6 +12731,11 @@ zip-stream@^4.1.0:
     archiver-utils "^2.1.0"
     compress-commons "^4.1.0"
     readable-stream "^3.6.0"
+
+zod@^3.20.2:
+  version "3.20.2"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.2.tgz#068606642c8f51b3333981f91c0a8ab37dfc2807"
+  integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
 
 zwitch@^2.0.0:
   version "2.0.4"

@@ -1,8 +1,7 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { string, record, union, nil, number, array } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
-import type { Degree } from '@utils/decoders';
-import { degreeDecoder } from '@utils/decoders';
+import type { Degree } from '@utils/schemas';
+import { degreeSchema } from '@utils/schemas';
 
 // Values directly from the form (aka form fields)
 interface FormValues {
@@ -11,15 +10,15 @@ interface FormValues {
     degreeYear: number | null;
 }
 
-const userDecoder = record({
-    email: string,
-    alternateEmail: union(string, nil),
-    name: string,
-    degree: union(degreeDecoder, nil),
-    degreeYear: union(number, nil),
-    memberships: array(string),
+const userSchema = z.object({
+    email: z.string(),
+    alternateEmail: z.string().nullable(),
+    name: z.string(),
+    degree: degreeSchema.nullable(),
+    degreeYear: z.number().nullable(),
+    memberships: z.array(z.string()),
 });
-type User = decodeType<typeof userDecoder>;
+type User = z.infer<typeof userSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -50,7 +49,7 @@ const UserAPI = {
 
             const data = await response.json();
 
-            const user = userDecoder(data);
+            const user = userSchema.parse(data);
 
             return { ...user, name, email };
         } catch (error) {
@@ -118,7 +117,7 @@ const UserAPI = {
 
             if (response.status === 200) {
                 const data = await response.json();
-                return userDecoder(data);
+                return userSchema.parse(data);
             } else {
                 const data = await response.text();
 
@@ -146,7 +145,7 @@ const UserAPI = {
             const data = await response.json();
 
             if (response.status === 200) {
-                return array(userDecoder)(data);
+                return userSchema.array().parse(data);
             }
 
             return {
@@ -180,4 +179,4 @@ const userIsComplete = (user: User | null): user is User =>
     typeof user.degree === 'string' &&
     typeof user.degreeYear === 'number';
 
-export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User, userIsComplete };
+export { UserAPI, userSchema, type FormValues as ProfileFormValues, type User, userIsComplete };

@@ -1,19 +1,19 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { array, union, nil, record, string, boolean } from 'typescript-json-decoder';
+import { z } from 'zod';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
-const colorDecoder = (val: unknown) => record({ hex: string })(val).hex;
-
-const bannerDecoder = record({
-    color: colorDecoder,
-    textColor: colorDecoder,
-    text: string,
-    linkTo: union(string, nil),
-    isExternal: boolean,
+const colorSchema = z.object({
+    hex: z.string(),
 });
 
-type Banner = decodeType<typeof bannerDecoder>;
+const bannerSchema = z.object({
+    color: colorSchema,
+    textColor: colorSchema,
+    text: z.string(),
+    linkTo: z.string().nullable(),
+    isExternal: z.boolean(),
+});
+type Banner = z.infer<typeof bannerSchema>;
 
 const BannerAPI = {
     getBanner: async (): Promise<Banner | null | ErrorMessage> => {
@@ -29,7 +29,7 @@ const BannerAPI = {
 
             const result = await SanityAPI.fetch(query);
 
-            return array(union(bannerDecoder, nil))(result)[0];
+            return bannerSchema.array().parse(result)[0];
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
