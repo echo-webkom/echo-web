@@ -1,73 +1,71 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { boolean, number, array, string, literal, union, nil, record } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
-import { emptyArrayOnNilDecoder } from '@utils/decoders';
 import SanityAPI from '@api/sanity';
 
-const happeningTypeDecoder = union(literal('BEDPRES'), literal('EVENT'));
-type HappeningType = decodeType<typeof happeningTypeDecoder>;
+const happeningTypeSchema = z.enum(['BEDPRES', 'EVENT']);
+type HappeningType = z.infer<typeof happeningTypeSchema>;
 
-const questionDecoder = record({
-    questionText: string,
-    inputType: union(literal('radio'), literal('textbox')),
-    alternatives: union(nil, array(string)),
+const questionSchema = z.object({
+    questionText: z.string(),
+    inputType: z.enum(['radio', 'textbox']),
+    alternatives: z.array(z.string()).nullable(),
 });
-type Question = decodeType<typeof questionDecoder>;
+type Question = z.infer<typeof questionSchema>;
 
-const spotRangeCountDecoder = record({
-    spots: number,
-    minDegreeYear: number,
-    maxDegreeYear: number,
-    regCount: number,
-    waitListCount: number,
+const spotRangeCounterSchema = z.object({
+    spots: z.number(),
+    minDegreeYear: z.number(),
+    maxDegreeYear: z.number(),
+    regCount: z.number(),
+    waitListCount: z.number(),
 });
-type SpotRangeCount = decodeType<typeof spotRangeCountDecoder>;
+type SpotRangeCount = z.infer<typeof spotRangeCounterSchema>;
 
-const spotRangeDecoder = record({
-    spots: number,
-    minDegreeYear: number,
-    maxDegreeYear: number,
+const spotRangeSchema = z.object({
+    spots: z.number(),
+    minDegreeYear: z.number(),
+    maxDegreeYear: z.number(),
 });
-type SpotRange = decodeType<typeof spotRangeDecoder>;
+type SpotRange = z.infer<typeof spotRangeSchema>;
 
-const happeningDecoder = record({
-    _createdAt: string,
-    studentGroupName: union(
-        literal('hovedstyret'),
-        literal('bedkom'),
-        literal('webkom'),
-        literal('gnist'),
-        literal('tilde'),
-    ),
-    title: string,
-    slug: string,
-    date: string,
-    registrationDate: union(string, nil),
-    registrationDeadline: union(string, nil),
-    studentGroupRegistrationDate: union(string, nil),
-    studentGroups: union(array(string), nil),
-    onlyForStudentGroups: union(boolean, nil),
-    body: (value) =>
-        typeof value === 'string'
-            ? { no: string(value), en: string(value) }
-            : record({ no: string, en: union(string, nil) })(value),
-    deductiblePayment: union(string, nil),
-    location: string,
-    locationLink: union(string, nil),
-    companyLink: union(string, nil),
-    logoUrl: union(string, nil),
-    contactEmail: union(string, nil),
-    additionalQuestions: (value) => emptyArrayOnNilDecoder(questionDecoder, value),
-    spotRanges: (value) => emptyArrayOnNilDecoder(spotRangeDecoder, value),
-    happeningType: happeningTypeDecoder,
+const happeningSchema = z.object({
+    _createdAt: z.string(),
+    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde']),
+    title: z.string(),
+    slug: z.string(),
+    date: z.string(),
+    registrationDate: z.string().nullable(),
+    registrationDeadline: z.string().nullable(),
+    studentGroupRegistrationDate: z.string().nullable(),
+    studentGroups: z.array(z.string()).nullable(),
+    onlyForStudentGroups: z.boolean().nullable(),
+    body: z.object({
+        no: z.string(),
+        en: z.string().optional(),
+    }),
+    deductiblePayment: z.string().nullable(),
+    location: z.string(),
+    locationLink: z.string().nullable(),
+    companyLink: z.string().nullable(),
+    logoUrl: z.string().nullable(),
+    contactEmail: z.string().nullable(),
+    additionalQuestions: z
+        .array(questionSchema)
+        .nullable()
+        .transform((aq) => aq ?? []),
+    spotRanges: z
+        .array(spotRangeSchema)
+        .nullable()
+        .transform((sr) => sr ?? []),
+    happeningType: happeningTypeSchema,
 });
-type Happening = decodeType<typeof happeningDecoder>;
+type Happening = z.infer<typeof happeningSchema>;
 
-const happeningInfoDecoder = record({
-    spotRanges: array(spotRangeCountDecoder),
+const happeningInfoSchema = z.object({
+    spotRanges: z.array(spotRangeCounterSchema),
 });
-type HappeningInfo = decodeType<typeof happeningInfoDecoder>;
+type HappeningInfo = z.infer<typeof happeningInfoSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -89,11 +87,7 @@ const HappeningAPI = {
                     studentGroupRegistrationDate,
                     studentGroups,
                     onlyForStudentGroups,
-                    "body": select(
-                        body.en != null => {"no": body.no, "en": body.en},
-                        body.no != null => {"no": body.no, "en": null},
-                        body
-                      ),
+                    body,
                     deductiblePayment,
                     location,
                     locationLink,
@@ -113,12 +107,13 @@ const HappeningAPI = {
                         maxDegreeYear,
                         spots
                     }
-                }${limit}
+                }
+                ${limit}
             `;
 
             const result = await SanityAPI.fetch(query);
 
-            return array(happeningDecoder)(result);
+            return happeningSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: handleError(500) };
@@ -141,11 +136,7 @@ const HappeningAPI = {
                     studentGroupRegistrationDate,
                     studentGroups,
                     onlyForStudentGroups,
-                    "body": select(
-                        body.en != null => {"no": body.no, "en": body.en},
-                        body.no != null => {"no": body.no, "en": null},
-                        body
-                      ),
+                    body,
                     deductiblePayment,
                     location,
                     locationLink,
@@ -178,7 +169,7 @@ const HappeningAPI = {
 
             // Sanity returns a list with a single element,
             // therefore we need [0] to get the element out of the list.
-            return array(happeningDecoder)(result)[0];
+            return happeningSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: JSON.stringify(error) };
@@ -196,7 +187,7 @@ const HappeningAPI = {
             if (response.status === 200) {
                 const result = await response.json();
 
-                return happeningInfoDecoder(result);
+                return happeningInfoSchema.parse(result);
             }
 
             return { message: `${response.status} ${response.statusText}` };
@@ -208,6 +199,7 @@ const HappeningAPI = {
 };
 
 export {
+    happeningSchema,
     HappeningAPI,
     type SpotRange,
     type SpotRangeCount,

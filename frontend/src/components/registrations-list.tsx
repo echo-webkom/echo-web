@@ -38,7 +38,7 @@ import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
 import RegistrationPieChart from '@components/registration-pie-chart';
 import RegistrationsOverTime from '@components/registrations-over-time';
-import type { Degree } from '@utils/decoders';
+import type { Degree } from '@utils/schemas';
 import type { StudentGroup } from '@api/dashboard';
 import capitalize from '@utils/capitalize';
 

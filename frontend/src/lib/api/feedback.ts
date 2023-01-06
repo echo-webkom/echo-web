@@ -1,4 +1,4 @@
-import { number, union, record, string, type decodeType, nil, boolean, array } from 'typescript-json-decoder';
+import { z } from 'zod';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
 interface FormValues {
@@ -25,16 +25,15 @@ const errorResponse: FeedbackResponse = {
     description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
-const feedbackDecoder = record({
-    id: number,
-    email: union(string, nil),
-    name: union(string, nil),
-    message: string,
-    sentAt: string,
-    isRead: boolean,
+const feedbackSchema = z.object({
+    id: z.number(),
+    email: z.string().nullable(),
+    name: z.string().nullable(),
+    message: z.string(),
+    sentAt: z.string(),
+    isRead: z.boolean(),
 });
-
-type Feedback = decodeType<typeof feedbackDecoder>;
+type Feedback = z.infer<typeof feedbackSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -66,7 +65,7 @@ const FeedbackAPI = {
                 return data;
             }
 
-            return array(union(feedbackDecoder))(data);
+            return feedbackSchema.array().parse(data);
         } catch {
             return {
                 message: 'Noe gikk galt. Prøv igjen senere.',
@@ -84,7 +83,7 @@ const FeedbackAPI = {
 
             const data = await response.json();
 
-            return string(data);
+            return z.string().parse(data);
         } catch {
             return {
                 message: 'Kunne ikke markere tilbakemeldingen som lest/ulest.',
@@ -102,7 +101,7 @@ const FeedbackAPI = {
 
             const data = await response.json();
 
-            if (response.status === 200) return string(data);
+            if (response.status === 200) return z.string().parse(data);
 
             return { message: data };
         } catch {
@@ -113,4 +112,4 @@ const FeedbackAPI = {
     },
 };
 
-export { FeedbackAPI, type FormValues as FeedbackFormValues, type FeedbackResponse, type Feedback, feedbackDecoder };
+export { FeedbackAPI, type FormValues as FeedbackFormValues, type FeedbackResponse, type Feedback, feedbackSchema };

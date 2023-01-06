@@ -132,7 +132,7 @@
         "react-snowfall": "1.2.1",
         "recharts": "2.2.0",
         "remove-markdown": "0.5.0",
-        "typescript-json-decoder": "1.0.11"
+        "zod": "^3.20.2"
     },
     "devDependencies": {
         "@types/canvas-confetti": "1.6.0",
