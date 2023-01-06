@@ -31,7 +31,7 @@ jobs:
           export BRANCH_NAME=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
         env:
-          PR_NO: ${{ github.event.issue_number }}
+          PR_NO: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
 
