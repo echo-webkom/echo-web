@@ -7,8 +7,8 @@ const colorSchema = z.object({
 });
 
 const bannerSchema = z.object({
-    color: colorSchema,
-    textColor: colorSchema,
+    color: colorSchema.transform((c) => c.hex),
+    textColor: colorSchema.transform((c) => c.hex),
     text: z.string(),
     linkTo: z.string().nullable(),
     isExternal: z.boolean(),
