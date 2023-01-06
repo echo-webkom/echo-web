@@ -15,12 +15,12 @@ const degreeSchema = z.enum([
     // are only here for backwards compatibility.
     'IKT',
     'KOGNI',
+    'MISC',
     //
     'INF',
     'PROG',
     'ARMNINF',
     'POST',
-    'MISC',
 ]);
 type Degree = z.infer<typeof degreeSchema>;
 
