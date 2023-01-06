@@ -1,7 +1,6 @@
 import slugify from 'slugify';
 import { CalendarIcon } from '@sanity/icons';
 import { SlugSchemaType, SlugSourceContext, defineArrayMember, defineField, defineType } from 'sanity';
-import spotRange from './spotRange';
 
 const STUDENT_GROUPS = [
     { title: 'Hovedstyret', value: 'hovedstyret' },
@@ -104,14 +103,12 @@ export default defineType({
             name: 'registrationDate',
             title: 'Påmelding åpner',
             type: 'datetime',
+            /**
+             * Feltet må være satt dersom det er definert arrangementplasser.
+             */
             validation: (Rule) =>
-                Rule.custom((_registrationDate, context) => {
-                    if (typeof context.document?.spotRanges !== 'undefined') {
-                        return true;
-                    }
-
-                    const spotRanges = (context.document?.spotRanges as unknown as Array<unknown>) || [];
-                    if (spotRanges.length > 0) {
+                Rule.custom((registrationDate, context) => {
+                    if ((context.document?.spotRanges as any[]).length > 0 && !registrationDate) {
                         return 'Må ha dato for påmelding om det er definert arrangementsplasser.';
                     }
 
@@ -119,19 +116,36 @@ export default defineType({
                 }),
             hidden: ({ document, value }) => !value && !document?.isRegistration,
         }),
+        /**
+         * Feltet må være satt dersom det er definert en påmeldingsdato.
+         * Må være senere enn påmeldingsdatoen, og tidligere enn arrangementets dato.
+         */
         defineField({
             name: 'registrationDeadline',
             title: 'Påmelding stenger',
             type: 'datetime',
             validation: (Rule) =>
-                Rule.custom((registrationDeadline, context) =>
-                    typeof context.document?.registrationDate !== 'undefined' &&
-                    typeof registrationDeadline === 'undefined'
-                        ? 'Mangler deadline!'
-                        : true,
-                )
-                    .min(Rule.valueOfField('registrationDate') as unknown as string)
-                    .max(Rule.valueOfField('date') as unknown as string),
+                Rule.custom((registrationDeadline, context) => {
+                    const { document } = context;
+
+                    if (!document?.registrationDate) {
+                        return true;
+                    }
+
+                    if (!registrationDeadline) {
+                        return 'Må ha dato for påmeldingsfrist om det er definert en påmeldingsdato.';
+                    }
+
+                    if (new Date(registrationDeadline) < new Date(document.registrationDate as Date)) {
+                        return 'Påmeldingsfristen må være senere enn påmeldingsdatoen.';
+                    }
+
+                    if (new Date(registrationDeadline) > new Date(document.date as Date)) {
+                        return 'Påmeldingsfristen må være tidligere enn arrangementets dato.';
+                    }
+
+                    return true;
+                }),
             hidden: ({ document, value }) => !value && !document?.isRegistration,
         }),
         defineField({
@@ -149,45 +163,54 @@ export default defineType({
             name: 'studentGroupRegistrationDate',
             title: 'Når skal tidlig påmelding for studentgrupper åpne?',
             type: 'datetime',
+            /**
+             * Må være satt dersom det er definert studentgrupper.
+             */
             validation: (Rule) =>
-                Rule.custom((_studentGroupRegistrationDate, context) => {
-                    if (typeof context.document?.studentGroups !== 'undefined') {
-                        return true;
+                Rule.custom((studentGroupRegistrationDate, context) => {
+                    const { document } = context;
+
+                    if (!document?.earlyReg && studentGroupRegistrationDate) {
+                        return 'Du kan ikke ha en dato for tidlig påmelding for studentgrupper dersom tidlig påmelding ikke er på.';
                     }
 
-                    const studentGroups = (context.document?.studentGroups as unknown as Array<unknown>) || [];
-                    if (studentGroups.length > 0) {
-                        return 'Må ha dato for tidlig påmelding for studentgrupper om det er definert studentgrupper';
+                    if (document?.earlyReg && !studentGroupRegistrationDate) {
+                        return 'Må ha dato for tidlig påmelding for studentgrupper dersom tidlig påmelding er på.';
+                    }
+
+                    if (
+                        studentGroupRegistrationDate &&
+                        new Date(studentGroupRegistrationDate) > new Date(document?.registrationDate as Date)
+                    ) {
+                        return 'Tidlig påmelding for studentgrupper må være tidligere enn den normale påmeldingsdatoen.';
                     }
 
                     return true;
-                })
-                    .custom((studentGroupRegistrationDate, context) =>
-                        context.document?.earlyReg && typeof studentGroupRegistrationDate === 'undefined'
-                            ? 'Må ha dato dersom tidlig påmelding er på'
-                            : true,
-                    )
-                    .max(Rule.valueOfField('registrationDate') as unknown as string),
+                }),
             hidden: ({ document, value }) => !value && document?.earlyReg === false,
         }),
         defineField({
             name: 'studentGroups',
             title: 'Hvilke studentgrupper har tidlig påmelding?',
             type: 'array',
-            of: [{ type: 'string' }],
-            validation: (Rule) => [
-                Rule.custom((studentGroups, context) =>
-                    typeof context.document?.studentGroupRegistrationDate !== 'undefined' &&
-                    typeof studentGroups === 'undefined'
-                        ? 'Må angi studentgrupper om det er definert tidlig påmelding for studentgrupper.'
-                        : true,
-                ),
-                Rule.custom((studentGroups, context) =>
-                    context.document?.earlyReg && typeof studentGroups === 'undefined'
-                        ? 'Må angi studentgroupper dersom tidlig påmelding er på'
-                        : true,
-                ),
-            ],
+            of: [defineArrayMember({ type: 'string' })],
+            /**
+             * Må være satt dersom det er definert tidlig påmelding for studentgrupper.
+             */
+            validation: (Rule) =>
+                Rule.custom((studentGroups, context) => {
+                    const { document } = context;
+
+                    if (!document?.earlyReg && studentGroups && studentGroups.length > 0) {
+                        return 'Du kan ikke ha studentgrupper for tidlig påmelding dersom tidlig påmelding ikke er på.';
+                    }
+
+                    if (document?.earlyReg && !studentGroups) {
+                        return 'Må ha studentgrupper for tidlig påmelding dersom tidlig påmelding er på.';
+                    }
+
+                    return true;
+                }),
             options: {
                 list: STUDENT_GROUPS,
             },
@@ -213,8 +236,8 @@ export default defineType({
             type: 'string',
             hidden: ({ document, value }) => !value && !document?.deductible,
             validation: (Rule) =>
-                Rule.custom((_deductiblePayment, context) =>
-                    !Number(context.document?.deductiblePayment) && context.document?.deductible
+                Rule.custom((deductiblePayment, context) =>
+                    !Number(deductiblePayment) && context.document?.deductible
                         ? 'Må oppgi beløp for egenandel (oppgi kun tall)'
                         : true,
                 ),
@@ -280,14 +303,14 @@ export default defineType({
             description: 'Ekstra spørsmål til brukeren på et arrangement (f.eks. hvilken mat, allergier osv...)',
             type: 'array',
             of: [
-                {
+                defineArrayMember({
                     type: 'reference',
                     to: [
                         {
                             type: 'additionalQuestion',
                         },
                     ],
-                },
+                }),
             ],
             hidden: ({ document, value }) => !value && !document?.isRegistration,
         }),
