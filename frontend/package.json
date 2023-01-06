@@ -13,6 +13,9 @@
         "test": "cypress run --component --config video=false,screenshotOnRunFailure=false"
     },
     "eslintConfig": {
+        "plugins": [
+            "import"
+        ],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
             "ecmaFeatures": {
@@ -62,6 +65,7 @@
             "import/no-useless-path-segments": "error",
             "import/order": "error",
             "import/exports-last": "error",
+            "import/no-unresolved": "error",
             "import/group-exports": "error",
             "import/prefer-default-export": "error",
             "@typescript-eslint/array-type": [
@@ -100,6 +104,13 @@
             "unicorn/numeric-separators-style": "off",
             "unicorn/no-array-reduce": "off",
             "unicorn/no-array-callback-reference": "off"
+        },
+        "settings": {
+            "import/resolver": {
+                "typescript": {
+                    "alwaysTryTypes": true
+                }
+            }
         }
     },
     "prettier": {
