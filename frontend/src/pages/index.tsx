@@ -183,8 +183,6 @@ export const getStaticProps: GetStaticProps = async () => {
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
     const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
 
-    if (isErrorMessage(registrationCountsResponse)) throw new Error(registrationCountsResponse.message);
-
     return {
         props: {
             bedpreses,
