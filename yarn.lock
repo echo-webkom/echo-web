@@ -3419,10 +3419,10 @@
     object-assign "^4.1.1"
     rxjs "^6.0.0"
 
-"@sanity/color-input@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@sanity/color-input/-/color-input-3.0.1.tgz#6bf560410a72f99503f47430feff1ab3931cf34f"
-  integrity sha512-1YHM5di4fAUckMfDnCMM90mSyOAhxaooENKvnCfQXKaSgxNNe9fdSb80ftZJbOOrOtM2ylTeZeK5D1rCbFAePQ==
+"@sanity/color-input@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@sanity/color-input/-/color-input-3.0.2.tgz#03d4d5c948ec23d8db157dbe07dc810e06f55ee6"
+  integrity sha512-jeNLxuVmt2P7LhBKCPwXL/SSjA5uryIje3AdqhJT0nO/9l7Ghmd7h11GaXwMcm5GntUbm/AtLVyQtV3/v686WQ==
   dependencies:
     "@sanity/icons" "^2.0.0"
     "@sanity/incompatible-plugin" "^1.0.4"
