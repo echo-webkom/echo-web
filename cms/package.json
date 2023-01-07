@@ -35,7 +35,7 @@
         "tabWidth": 4
     },
     "dependencies": {
-        "@sanity/color-input": "3.0.1",
+        "@sanity/color-input": "3.0.2",
         "@sanity/icons": "2.2.1",
         "@sanity/vision": "3.1.4",
         "prop-types": "15.8.1",
