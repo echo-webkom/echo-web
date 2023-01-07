@@ -3494,10 +3494,10 @@
   resolved "https://registry.yarnpkg.com/@sanity/generate-help-url/-/generate-help-url-3.0.0.tgz#60e9cba61b82103ea3761730a53cd9310b98892d"
   integrity sha512-wtMYcV5GIDIhVyF/jjmdwq1GdlK07dRL40XMns73VbrFI7FteRltxv48bhYVZPcLkRXb0SHjpDS/icj9/yzbVA==
 
-"@sanity/icons@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@sanity/icons/-/icons-2.2.1.tgz#9f11ba724db89204230daf10ad89db42f2063e32"
-  integrity sha512-/RjvrNnYEhpPb4ijYz8LC2cWilwfN/ahyBfi9LA24CCuAc0fjyVkTIQwtG+LRZ9anHn7Z3zc+V/6hzgYQO6DPQ==
+"@sanity/icons@2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@sanity/icons/-/icons-2.2.2.tgz#678386dcd07ac481e456afd07f29be3c86c54c15"
+  integrity sha512-+Ks6LeYe44kjZSfcWFWj0zQRP48N3JisrZ9ia44QwG11y6bO9Wk8bfhu5o23FkyYrREu9CzQ0U+slSV7YsvcuQ==
 
 "@sanity/icons@^1.3":
   version "1.3.10"
