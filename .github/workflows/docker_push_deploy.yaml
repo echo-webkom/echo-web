@@ -37,6 +37,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -82,6 +83,7 @@ jobs:
         with:
           files: |
             terraform/**
+          since_last_remote_commit: true
 
       - name: List all changed files, Terraform
         run: |
@@ -99,6 +101,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, backend
         run: |

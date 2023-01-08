@@ -26,7 +26,7 @@
             "groupName": "Kotlin packages"
         },
         {
-            "matchpackagePatterns": ["^azurerm"],
+            "matchPackagePatterns": ["^azurerm"],
             "groupName": "Azure terraform provider"
         }
     ]
