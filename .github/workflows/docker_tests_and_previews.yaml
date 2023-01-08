@@ -33,6 +33,13 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files.outputs.any_changed }}"
+
       - name: Login to GitHub Container Registry
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
@@ -73,6 +80,13 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files.outputs.any_changed }}"
+
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$TAG"
@@ -112,6 +126,13 @@ jobs:
             frontend/.gitignore
             frontend/.env.example
 
+      - name: List all changed files, frontend
+        run: |
+          for file in ${{ steps.changed-files-frontend.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-frontend.outputs.any_changed }}"
+
       - name: Get changed files, backend
         id: changed-files-backend
         uses: tj-actions/changed-files@v35
@@ -121,6 +142,13 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+
+      - name: List all changed files, backend
+        run: |
+          for file in ${{ steps.changed-files-backend.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-backend.outputs.any_changed }}"
 
       - name: Backend changed, pull Docker image
         if: steps.changed-files-frontend.outputs.any_changed == 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
@@ -182,6 +210,13 @@ jobs:
             backend/src/main/resources/db/migration/*.sql
             backend/gradle.properties
 
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files.outputs.any_changed }}"
+
       - name: Pull Docker image
         if: steps.changed-files.outputs.any_changed == 'true'
         run: docker pull "$IMAGE_NAME/backend:$TAG"
@@ -231,12 +266,26 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
+      - name: List all changed files, backend
+        run: |
+          for file in ${{ steps.changed-files-backend.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-backend.outputs.any_changed }}"
+
       - name: Get changed files, Terraform
         id: changed-files-tf
         uses: tj-actions/changed-files@v35
         with:
           files: |
             terraform/preview/**
+
+      - name: List all changed files, Terraform
+        run: |
+          for file in ${{ steps.changed-files-tf.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-tf.outputs.any_changed }}"
 
       - name: Setup Terraform
         if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
