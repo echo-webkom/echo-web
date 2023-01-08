@@ -44,6 +44,13 @@ jobs:
             backend/.gitignore
             backend/.env.example
 
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files.outputs.any_changed }}"
+
       - name: Login to GitHub Container Registry
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: docker/login-action@v2
@@ -82,6 +89,13 @@ jobs:
           files: |
             terraform/**
 
+      - name: List all changed files, Terraform
+        run: |
+          for file in ${{ steps.changed-files-tf.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-tf.outputs.any_changed }}"
+
       - name: Get changed files, backend
         id: changed-files-backend
         uses: tj-actions/changed-files@v35
@@ -91,6 +105,13 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+
+      - name: List all changed files, backend
+        run: |
+          for file in ${{ steps.changed-files-backend.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+          echo "any_changed = ${{ steps.changed-files-backend.outputs.any_changed }}"
 
       - name: Setup Terraform
         if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
