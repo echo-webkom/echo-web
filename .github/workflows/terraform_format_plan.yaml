@@ -29,7 +29,6 @@ jobs:
       - name: Check format
         run: |
           cd terraform
-          terraform init
           terraform fmt -check -recursive
 
   terraform_plan:

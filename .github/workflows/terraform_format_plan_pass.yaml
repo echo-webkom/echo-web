@@ -1,4 +1,4 @@
-name: Terraform format
+name: Terraform format & plan
 on:
   pull_request:
     branches: [master]
@@ -11,7 +11,7 @@ jobs:
       - name: Do nothing
         run: echo 'Nothing to be done, passing checks.'
 
-  terraform_main:
+  terraform_plan:
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing
