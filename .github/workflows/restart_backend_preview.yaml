@@ -24,16 +24,18 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body-includes: '<!-- BACKEND PREVIEW BOT -->'
 
-      - name: Get formatted branch name, to get resource group & container group name
+      - name: Get formatted branch name, to get resource group & container group name & set backend URL from previous comment
         id: env_vars
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
         run: |
           export BRANCH_NAME=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
           echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g' | cut -c 1-16)" >> $GITHUB_OUTPUT
+          echo "BACKEND_URL=$(echo "$COMMENT_BODY" | grep -o 'https://.*\.io')" >> $GITHUB_OUTPUT
         env:
           PR_NO: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+          COMMENT_BODY: ${{ steps.fc.outputs.comment_body }}
 
       - name: Sign in to Azure
         uses: azure/login@v1
@@ -60,6 +62,6 @@ jobs:
 
             **beep boop!**
 
-            I just deployed a backend preview to ${{ steps.preview_deploy.outputs.BACKEND_URL }} :rocket:
+            I just deployed a backend preview to ${{ steps.env_vars.outputs.BACKEND_URL }} :rocket:
 
             - [ ] check this box to restart the backend preview, if you are getting errors.
