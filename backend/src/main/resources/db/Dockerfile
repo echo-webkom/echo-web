@@ -1,3 +1,3 @@
-FROM postgres:13.8-alpine
+FROM postgres:11-alpine
 
 COPY test_data.dump /

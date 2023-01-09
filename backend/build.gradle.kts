@@ -118,9 +118,3 @@ tasks.withType<KotlinCompile>().configureEach {
         jvmTarget = "17"
     }
 }
-
-// Heroku Gradle buildpack runs `./gradlew stage`,
-// therefore we make `stage` run `shadowJar`.
-task("stage") {
-    dependsOn("shadowJar")
-}
