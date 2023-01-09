@@ -35,7 +35,8 @@ jobs:
           PR_NO: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
-          COMMENT_BODY: ${{ steps.fc.outputs.comment_body }}
+          COMMENT_BODY: |
+            ${{ steps.fc.outputs.comment_body }}
 
       - name: Sign in to Azure
         uses: azure/login@v1
