@@ -1,4 +1,4 @@
-name: Push backend image & deploy backend
+name: Deploy backend
 on:
   push:
     branches: [master]
