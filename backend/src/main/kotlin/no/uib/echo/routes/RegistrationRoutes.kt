@@ -35,6 +35,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.net.URLDecoder
+import java.time.LocalDateTime
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, jwtConfig: String) {
     routing {
@@ -392,6 +393,13 @@ fun Route.deleteRegistration() {
                 Registration.deleteWhere {
                     Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
                 }
+
+                Deregistration.insert {
+                    it[userEmail] = decodedParamEmail
+                    it[happeningSlug] = hap[Happening.slug]
+                    it[reason] = toDelete.reason.orEmpty()
+                }
+
             }
 
             if (reg[Registration.waitList]) {
@@ -424,6 +432,7 @@ fun Route.deleteRegistration() {
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " + "and registration with email = ${highestOnWaitList[Registration.userEmail].lowercase()} moved off wait list."
                 )
             }
+
         } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
             e.printStackTrace()
