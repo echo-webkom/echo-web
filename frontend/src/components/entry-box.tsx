@@ -51,7 +51,7 @@ const EntryBox = ({
                 <Spacer />
                 {linkTo && (
                     <ButtonLink
-                        linkTo={linkTo}
+                        href={linkTo}
                         transition=".1s ease-out"
                         marginTop="7"
                         _hover={{ transform: 'scale(1.05)' }}

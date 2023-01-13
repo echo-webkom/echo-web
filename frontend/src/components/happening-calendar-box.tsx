@@ -1,5 +1,5 @@
 import {
-    LinkBox,
+    Box,
     Popover,
     PopoverArrow,
     PopoverTrigger,
@@ -8,6 +8,8 @@ import {
     PopoverContent,
     PopoverBody,
     useColorModeValue,
+    LinkBox,
+    LinkOverlay,
 } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import NextLink from 'next/link';
@@ -23,8 +25,8 @@ const HappeningCalendarBox = ({ happening }: Props) => {
     const otherColor = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
 
     return (
-        <NextLink href={`/event/${happening.slug}`}>
-            <LinkBox
+        <LinkBox>
+            <Box
                 bg={happening.happeningType === 'BEDPRES' ? bedpresColor : otherColor}
                 p="2"
                 borderRadius="0.25rem"
@@ -39,14 +41,14 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                     <PopoverContent m="2">
                         <PopoverArrow />
                         <PopoverHeader>
-                            {happening.happeningType === 'BEDPRES' ? (
+                            {happening.happeningType === 'BEDPRES' && (
                                 <Text as="em" fontWeight="bold" fontSize="sm">
                                     Bedpres
                                 </Text>
-                            ) : (
-                                ''
                             )}
-                            <Text fontWeight="extrabold">{happening.title}</Text>
+                            <LinkOverlay as={NextLink} href={`/event/${happening.slug}`}>
+                                <Text fontWeight="extrabold">{happening.title}</Text>
+                            </LinkOverlay>
                         </PopoverHeader>
                         <PopoverBody fontSize="lg">
                             <Text mb="2">@ {happening.location}</Text>
@@ -59,8 +61,8 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
-            </LinkBox>
-        </NextLink>
+            </Box>
+        </LinkBox>
     );
 };
 

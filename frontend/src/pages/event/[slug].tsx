@@ -1,9 +1,11 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
-import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
+/* eslint-disable import/no-duplicates */
+import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
+/* eslint-enable import/no-duplicates */
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
@@ -69,19 +71,15 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                 {happening.happeningType === 'BEDPRES' &&
                                     happening.companyLink &&
                                     happening.logoUrl && (
-                                        <LinkBox mb="1em">
-                                            <NextLink href={happening.companyLink} passHref>
-                                                <LinkOverlay href={happening.companyLink} isExternal>
-                                                    <Center>
-                                                        <Image
-                                                            src={happening.logoUrl}
-                                                            alt="Bedriftslogo"
-                                                            width={300}
-                                                            height={300}
-                                                        />
-                                                    </Center>
-                                                </LinkOverlay>
-                                            </NextLink>
+                                        <LinkBox>
+                                            <LinkOverlay as={NextLink} href={happening.companyLink}>
+                                                <Image
+                                                    src={happening.logoUrl}
+                                                    alt="Bedriftslogo"
+                                                    width={300}
+                                                    height={300}
+                                                />
+                                            </LinkOverlay>
                                         </LinkBox>
                                     )}
                                 <HappeningMetaInfo

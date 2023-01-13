@@ -1,5 +1,5 @@
-import type { BoxProps } from '@chakra-ui/react';
 import { Heading, LinkBox, LinkOverlay, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
+import type { BoxProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import removeMD from 'remove-markdown';
 import type { Post } from '@api/post';
@@ -10,14 +10,15 @@ interface Props extends BoxProps {
     post: Post;
 }
 
-const PostPreview = ({ post, ...props }: Props): JSX.Element => {
+const PostPreview = ({ post, ...props }: Props) => {
     const authorBg = useColorModeValue('highlight.light.secondary', 'highlight.dark.secondary');
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
     const textColor = useColorModeValue('text.light.secondary', 'text.dark.secondary');
     const isMobile = useBreakpointValue([true, false]);
     const isNorwegian = useLanguage();
-    const localeTitle = (): string => {
+
+    const localeTitle = () => {
         /* eslint-disable */
         const output = isNorwegian ? post.title.no : post.title.en ? post.title.en : post.title.no;
         return output;
@@ -42,22 +43,20 @@ const PostPreview = ({ post, ...props }: Props): JSX.Element => {
             alignSelf="center"
             {...props}
         >
-            <NextLink href={`/posts/${post.slug}`} passHref>
-                <LinkOverlay>
-                    <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
-                        {isMobile && hasLongWord(localeTitle())
-                            ? [...localeTitle().slice(0, 27), '...']
-                            : localeTitle()}
-                    </Heading>
-                    <Text fontStyle="italic">{`«${removeMD(
-                        isNorwegian
-                            ? post.body.no.slice(0, 100)
-                            : post.body.en
-                            ? post.body.en.slice(0, 100)
-                            : post.body.no.slice(0, 100),
-                    )} ...»`}</Text>
+            <Heading pt="1rem" size="lg" mb="1em" noOfLines={[2, null, null, 3]}>
+                <LinkOverlay as={NextLink} href={`/posts/${post.slug}`}>
+                    {isMobile && hasLongWord(localeTitle()) ? [...localeTitle().slice(0, 27), '...'] : localeTitle()}
                 </LinkOverlay>
-            </NextLink>
+            </Heading>
+            <Text fontStyle="italic">
+                {`«${removeMD(
+                    isNorwegian
+                        ? post.body.no.slice(0, 100)
+                        : post.body.en
+                        ? post.body.en.slice(0, 100)
+                        : post.body.no.slice(0, 100),
+                )} ...»`}
+            </Text>
             <Text
                 fontSize="md"
                 fontWeight="bold"

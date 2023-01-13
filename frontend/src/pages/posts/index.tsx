@@ -26,13 +26,13 @@ const PostCollectionPage = ({ posts }: Props): JSX.Element => {
             <Divider marginTop="8" marginBottom="5" />
             <Center mb="5">
                 {pageNumber !== 1 && (
-                    <ButtonLink linkTo={`posts?page=${pageNumber - 1}`} w="6rem" mr="0.5rem">
+                    <ButtonLink href={`posts?page=${pageNumber - 1}`} w="6rem" mr="0.5rem">
                         Forrige
                     </ButtonLink>
                 )}
                 {pageNumber * postsPerPage <= posts.length && (
                     <ButtonLink
-                        linkTo={`posts?page=${pageNumber + 1}`}
+                        href={`posts?page=${pageNumber + 1}`}
                         w="6rem"
                         ml="0.5rem"
                         transition=".1s ease-out"

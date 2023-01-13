@@ -1,8 +1,11 @@
-import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+/* eslint-disable import/no-duplicates */
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
+/* eslint-enable import/no-duplicates */
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import LogoAccesory from '@components/logo-accesory';
 
 const randomHeaderMessage = () => {
@@ -59,6 +62,12 @@ const randomHeaderMessage = () => {
 };
 
 const HeaderLogo = () => {
+    const [headerMessage, setHeaderMessage] = useState('');
+
+    useEffect(() => {
+        setHeaderMessage(randomHeaderMessage());
+    }, []);
+
     // Logo without any text
     const smallLogo = '/android-chrome-512x512.png';
 
@@ -86,35 +95,32 @@ const HeaderLogo = () => {
             borderRadius="0.5rem"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
             mr="0rem"
+            pos="relative"
         >
-            <Flex display={{ base: 'none', md: 'block' }}>
-                <Image src={bigLogo} alt="logo" width={260} height={77} />
-            </Flex>
-            <Flex display={{ base: 'block', md: 'none' }}>
-                <Image src={smallLogo} alt="logo" width={90} height={90} />
-            </Flex>
+            <LinkOverlay as={NextLink} href="/">
+                <Flex display={{ base: 'none', md: 'block' }}>
+                    <Image src={bigLogo} alt="logo" width={260} height={77} />
+                </Flex>
+
+                <Flex display={{ base: 'block', md: 'none' }}>
+                    <Image src={smallLogo} alt="logo" width={90} height={90} />
+                </Flex>
+            </LinkOverlay>
+
             {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
-            <NextLink href="/" passHref>
-                <LinkOverlay>
-                    <Flex position="absolute" bottom="-1rem" left="5%" w="20rem">
-                        <Text
-                            bg={textBg}
-                            pb="0.1rem"
-                            pt="0.2rem"
-                            px="1rem"
-                            align="left"
-                            color={textColor}
-                            fontSize="md"
-                            noOfLines={1}
-                            suppressHydrationWarning
-                            borderRadius="0.5rem"
-                            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
-                        >
-                            {randomHeaderMessage()}
-                        </Text>
-                    </Flex>
-                </LinkOverlay>
-            </NextLink>
+
+            <Box
+                pos="absolute"
+                rounded="md"
+                boxShadow="0 10px 20px rgba(0, 0, 0, 0.1)"
+                px="4"
+                py="1"
+                w="max"
+                bg={textBg}
+                color={textColor}
+            >
+                <Text fontSize="md">{headerMessage}</Text>
+            </Box>
         </LinkBox>
     );
 };
