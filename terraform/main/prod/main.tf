@@ -53,4 +53,5 @@ module "cg" {
   db_fqdn     = module.db.fqdn
   admin_key   = var.admin_key
   auth_secret = null
+  sendgrid_api_key = var.sendgrid_api_key
 }

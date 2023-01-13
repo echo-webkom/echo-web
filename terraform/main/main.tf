@@ -31,6 +31,7 @@ module "prod" {
   cg_name     = "echo-web-prod"
   db_password = var.db_password_prod
   admin_key   = var.admin_key_prod
+  sendgrid_api_key = var.sendgrid_api_key
 }
 
 module "dev" {
