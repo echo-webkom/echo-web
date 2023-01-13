@@ -64,3 +64,9 @@ variable "auth_secret" {
   description = "The AUTH_SECRET for the development and preview backend."
   nullable    = true
 }
+
+variable "sendgrid_api_key" {
+  type        = string
+  description = "The API key for SendGrid."
+  nullable = true
+}

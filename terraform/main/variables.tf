@@ -28,3 +28,8 @@ variable "auth_secret" {
   type        = string
   description = "The AUTH_SECRET for the development and preview backend."
 }
+
+variable "sendgrid_api_key" {
+  type        = string
+  description = "The API key for SendGrid."
+}
