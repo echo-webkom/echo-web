@@ -1,44 +1,46 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { array, record, string, number, boolean, optional, union, nil } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { HappeningType } from '@api/happening';
-import { degreeDecoder, emptyArrayOnNilDecoder } from '@utils/decoders';
+import { degreeSchema } from '@utils/schemas';
 import { isErrorMessage } from '@utils/error';
 import type { ErrorMessage } from '@utils/error';
 
-const responseDecoder = record({
-    code: string,
-    title: string,
-    desc: string,
-    date: optional(union(string, nil)),
+const responseSchema = z.object({
+    code: z.string(),
+    title: z.string(),
+    desc: z.string(),
+    date: z.string().nullable().optional(),
 });
-type Response = decodeType<typeof responseDecoder>;
+type Response = z.infer<typeof responseSchema>;
 
-const answerDecoder = record({
-    question: string,
-    answer: string,
+const answerSchema = z.object({
+    question: z.string(),
+    answer: z.string(),
 });
-type Answer = decodeType<typeof answerDecoder>;
+type Answer = z.infer<typeof answerSchema>;
 
-const registrationDecoder = record({
-    email: string,
-    alternateEmail: union(string, nil),
-    name: string,
-    degree: degreeDecoder,
-    degreeYear: number,
-    slug: string,
-    submitDate: string,
-    waitList: boolean,
-    answers: array(answerDecoder),
-    memberships: (value) => emptyArrayOnNilDecoder(string, value),
+const registrationSchema = z.object({
+    email: z.string(),
+    alternateEmail: z.string().nullable(),
+    name: z.string(),
+    degree: degreeSchema,
+    degreeYear: z.number(),
+    slug: z.string(),
+    submitDate: z.string(),
+    waitList: z.boolean(),
+    answers: z.array(answerSchema),
+    memberships: z
+        .array(z.string())
+        .nullable()
+        .transform((m) => m ?? []),
 });
-type Registration = decodeType<typeof registrationDecoder>;
+type Registration = z.infer<typeof registrationSchema>;
 
-const registrationCountDecoder = record({
-    slug: string,
-    count: number,
-    waitListCount: number,
+const registrationCountSchema = z.object({
+    slug: z.string(),
+    count: z.number(),
+    waitListCount: z.number(),
 });
-type RegistrationCount = decodeType<typeof registrationCountDecoder>;
+type RegistrationCount = z.infer<typeof registrationCountSchema>;
 
 const genericError = {
     title: 'Det har skjedd en feil.',
@@ -77,7 +79,7 @@ const RegistrationAPI = {
             const data = await response.json();
 
             return {
-                response: responseDecoder(data),
+                response: responseSchema.parse(data),
                 statusCode: response.status,
             };
         } catch (error) {
@@ -101,7 +103,7 @@ const RegistrationAPI = {
                 return data;
             }
 
-            return array(registrationDecoder)(data);
+            return registrationSchema.array().parse(data);
         } catch {
             return {
                 message: 'Fail @ getRegistrations',
@@ -149,7 +151,7 @@ const RegistrationAPI = {
 
             const data = await response.json();
 
-            return array(registrationCountDecoder)(data);
+            return registrationCountSchema.array().parse(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
@@ -175,7 +177,7 @@ const RegistrationAPI = {
 
 export {
     RegistrationAPI,
-    registrationDecoder,
+    registrationSchema,
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,

@@ -29,8 +29,7 @@ import {
     InputGroup,
     IconButton,
 } from '@chakra-ui/react';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import { getTime, format, parseISO } from 'date-fns';
+import { getTime, parseISO, isBefore, isAfter } from 'date-fns';
 import { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import ErrorBox from '@components/error-box';
@@ -38,17 +37,30 @@ import type { Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
 import RegistrationPieChart from '@components/registration-pie-chart';
-import type { Degree } from '@utils/decoders';
+import RegistrationsOverTime from '@components/registrations-over-time';
+import type { Degree } from '@utils/schemas';
 import type { StudentGroup } from '@api/dashboard';
 import capitalize from '@utils/capitalize';
 
 interface Props {
     registrations: Array<Registration>;
+    registrationDate: Date;
     error: string | null;
     title: string;
 }
+const regsFormatter = (regs: Array<Registration>) =>
+    regs
+        .map((reg, index) => ({
+            key: getTime(parseISO(reg.submitDate)),
+            value: index + 1,
+        }))
+        .map((reg, index, array) =>
+            array.some((e) => e.key === reg.key && array.indexOf(e) > index)
+                ? { key: reg.key - 1, value: reg.value }
+                : reg,
+        );
 
-const RegistrationsList = ({ registrations, title, error }: Props) => {
+const RegistrationsList = ({ registrations, registrationDate, title, error }: Props) => {
     type DegreeType = 'all' | Degree;
     type StudentGroupType = 'all' | StudentGroup;
 
@@ -70,6 +82,8 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
         )
         .filter((reg) => reg.memberships.includes(studentGroup) || studentGroup === 'all');
 
+    const numberOfRegistrations = filteredRegistrations.length;
+
     const questions = registrations
         .flatMap((reg) => reg.answers)
         .map((ans) => ans.question)
@@ -81,12 +95,15 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
     const headingSize = 'md';
     const justifyHeading = useBreakpointValue({ base: 'center', lg: 'left' });
 
-    const registrationsOverTime = registrations
-        .filter((reg) => !reg.waitList)
-        .map((reg, index) => ({
-            key: getTime(parseISO(reg.submitDate)),
-            value: index + 1,
-        }));
+    const registrationsOverTimeBefore = regsFormatter(
+        registrations.filter((reg) => !reg.waitList && isBefore(parseISO(reg.submitDate), registrationDate)),
+    );
+
+    const registrationsOverTimeAfter = regsFormatter(
+        registrations.filter((reg) => !reg.waitList && isAfter(parseISO(reg.submitDate), registrationDate)),
+    );
+
+    const hasEarlyRegistrations = registrationsOverTimeBefore.length > 0;
 
     return (
         <Section mt="1rem" minW="100%">
@@ -273,6 +290,7 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                         </Button>
                                     </Flex>
                                 </Center>
+                                <Text>Antall resultater: {numberOfRegistrations}</Text>
                             </Stack>
                             <Divider my="1rem" />
                             {/* mx value is the the negative of Section padding */}
@@ -333,31 +351,27 @@ const RegistrationsList = ({ registrations, title, error }: Props) => {
                                     </Heading>
                                     <RegistrationPieChart registrations={registrations} field="year" />
                                 </GridItem>
+                                <GridItem>
+                                    <Heading size="md" my="1rem">
+                                        Antall påmeldinger per undergruppe
+                                    </Heading>
+                                    <RegistrationPieChart registrations={registrations} field="studentGroup" />
+                                </GridItem>
+                                {hasEarlyRegistrations && (
+                                    <GridItem colSpan={[1, 1, null, 2]}>
+                                        <Heading size="md" my="2rem">
+                                            Antall påmeldinger over tid (tidlig påmelding)
+                                        </Heading>
+                                        <RegistrationsOverTime data={registrationsOverTimeBefore} />
+                                    </GridItem>
+                                )}
                                 <GridItem colSpan={[1, 1, null, 2]}>
                                     <Heading size="md" my="2rem">
-                                        Antall påmeldinger over tid
+                                        {`Antall påmeldinger over tid${
+                                            hasEarlyRegistrations ? ' (vanlig påmelding)' : ''
+                                        }`}
                                     </Heading>
-                                    <ResponsiveContainer width="100%" height={400}>
-                                        <LineChart width={500} height={300} data={registrationsOverTime}>
-                                            <XAxis
-                                                dataKey="key"
-                                                scale="linear"
-                                                tickFormatter={(value) => format(value, 'HH:mm:ss')}
-                                                domain={['dataMin', 'dataMax']}
-                                            />
-                                            <YAxis allowDecimals={false} domain={['dataMin', 'dataMax']} />
-                                            <Tooltip
-                                                labelFormatter={(label) => format(label, 'HH:mm:ss')}
-                                                formatter={(value) => [value, 'Antall påmeldinger']}
-                                                contentStyle={{
-                                                    backgroundColor: 'white',
-                                                    color: 'black',
-                                                }}
-                                            />
-                                            <CartesianGrid strokeDasharray="3 3" scale="linear" />
-                                            <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth="1.5" />
-                                        </LineChart>
-                                    </ResponsiveContainer>
+                                    <RegistrationsOverTime data={registrationsOverTimeAfter} />
                                 </GridItem>
                             </SimpleGrid>
                         </TabPanel>

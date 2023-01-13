@@ -13,6 +13,9 @@
         "test": "cypress run --component --config video=false,screenshotOnRunFailure=false"
     },
     "eslintConfig": {
+        "plugins": [
+            "import"
+        ],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
             "ecmaFeatures": {
@@ -62,6 +65,7 @@
             "import/no-useless-path-segments": "error",
             "import/order": "error",
             "import/exports-last": "error",
+            "import/no-unresolved": "error",
             "import/group-exports": "error",
             "import/prefer-default-export": "error",
             "@typescript-eslint/array-type": [
@@ -100,6 +104,13 @@
             "unicorn/numeric-separators-style": "off",
             "unicorn/no-array-reduce": "off",
             "unicorn/no-array-callback-reference": "off"
+        },
+        "settings": {
+            "import/resolver": {
+                "typescript": {
+                    "alwaysTryTypes": true
+                }
+            }
         }
     },
     "prettier": {
@@ -110,42 +121,43 @@
         "tabWidth": 4
     },
     "dependencies": {
-        "@chakra-ui/react": "2.4.2",
+        "@chakra-ui/react": "2.4.6",
         "@emotion/react": "11.10.5",
         "@emotion/styled": "11.10.5",
-        "@sanity/client": "3.4.1",
+        "@sanity/client": "4.0.1",
         "@sanity/image-url": "1.0.1",
+        "@vercel/analytics": "^0.1.6",
         "calendar-link": "2.2.0",
         "canvas-confetti": "1.6.0",
         "date-fns": "2.29.3",
-        "framer-motion": "7.6.18",
-        "markdown-to-jsx": "7.1.7",
+        "framer-motion": "8.3.3",
+        "markdown-to-jsx": "7.1.8",
         "next": "12.3.4",
-        "next-auth": "4.18.0",
+        "next-auth": "4.18.8",
         "next-pwa": "5.6.0",
         "nextjs-progressbar": "0.0.16",
         "randomcolor": "0.6.2",
         "react": "18.2.0",
         "react-dom": "18.2.0",
-        "react-hook-form": "7.40.0",
+        "react-hook-form": "7.41.5",
         "react-icons": "4.7.1",
         "react-snowfall": "1.2.1",
-        "recharts": "2.1.16",
+        "recharts": "2.2.0",
         "remove-markdown": "0.5.0",
-        "typescript-json-decoder": "1.0.11"
+        "zod": "^3.20.2"
     },
     "devDependencies": {
         "@types/canvas-confetti": "1.6.0",
-        "@types/node": "16.18.4",
+        "@types/node": "16.18.11",
         "@types/randomcolor": "0.5.7",
         "@types/react": "18.0.26",
-        "@types/react-dom": "18.0.9",
+        "@types/react-dom": "18.0.10",
         "@types/remove-markdown": "0.3.1",
-        "@typescript-eslint/eslint-plugin": "5.45.0",
-        "@typescript-eslint/parser": "5.45.0",
-        "cypress": "11.2.0",
+        "@typescript-eslint/eslint-plugin": "5.48.1",
+        "@typescript-eslint/parser": "5.48.1",
+        "cypress": "12.3.0",
         "eslint-config-next": "12.3.4",
-        "eslint-plugin-unicorn": "45.0.1",
-        "typescript": "4.9.3"
+        "eslint-plugin-unicorn": "45.0.2",
+        "typescript": "4.9.4"
     }
 }

@@ -1,0 +1,910 @@
+openapi: '3.0.3'
+info:
+  title: 'echo web backend API'
+  description: 'echo web backend API'
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /feedback:
+    delete:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+                enum:
+                  - 'EMPTY'
+                  - 'SUCCESS'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Error deleting feedback.'
+    get:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/FeedbackResponseJson'
+    post:
+      description: ''
+      responses:
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+                enum:
+                  - 'EMPTY'
+                  - 'SUCCESS'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+                enum:
+                  - 'EMPTY'
+                  - 'SUCCESS'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Error deleting feedback.'
+    put:
+      description: ''
+      responses:
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+                enum:
+                  - 'EMPTY'
+                  - 'SUCCESS'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Error putting feedback.'
+  /status:
+    get:
+      description: ''
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+  /studentgroup:
+    put:
+      description: ''
+      parameters:
+        - name: 'group'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+        - name: 'email'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+                Example#2:
+                  value: ''
+                Example#3:
+                  value: ''
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'array'
+                items:
+                  type: 'string'
+  /token/{email}:
+    get:
+      description: ''
+      parameters:
+        - name: 'email'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'No email supplied'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Only available in dev or preview environment! >:('
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+  /user:
+    get:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserJson'
+    post:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '409':
+          description: 'Conflict'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'User already exists.'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+    put:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: "Det har skjedd en feil. Vennligst prøv å logg inn og ut\
+                    \ igjen."
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Vennligst velg et gyldig trinn.'
+                Example#2:
+                  value: 'Vennligst skriv inn en gyldig e-post.'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+  /users:
+    get:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/UserJson'
+  /sanity/{dataset}:
+    get:
+      description: ''
+      parameters:
+        - name: 'dataset'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+  /reaction:
+    put:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+        - name: 'reaction'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Bad slug or reaction'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReactionsJson'
+  /reaction/{slug}:
+    get:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'No slug specified.'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReactionsJson'
+  /happening/{slug}:
+    delete:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'No slug specified.'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+    get:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'No slug specified.'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: "Happening doesn't exist."
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HappeningInfoJson'
+  /registration:
+    post:
+      description: ''
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '300':
+          description: 'Multiple Choices'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '203':
+          description: 'Non-Authoritative Information'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '409':
+          description: 'Conflict'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '422':
+          description: 'Unprocessable Entity'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '202':
+          description: 'Accepted'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RegistrationResponseJson'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+  /registration/{slug}:
+    get:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+        - name: 'download'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+        - name: 'json'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+        - name: 'testing'
+          in: 'query'
+          required: false
+          schema:
+            type: 'string'
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/RegistrationJson'
+            text/plain:
+              schema:
+                type: 'string'
+                format: 'byte'
+        '410':
+          description: 'Gone'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+  /registration/{slug}/{email}:
+    delete:
+      description: ''
+      parameters:
+        - name: 'slug'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+        - name: 'email'
+          in: 'path'
+          required: true
+          schema:
+            type: 'string'
+      responses:
+        '401':
+          description: 'Unauthorized'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '400':
+          description: 'Bad Request'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Error deleting registration.'
+                Example#2:
+                  value: 'reg is null'
+                Example#3:
+                  value: 'email is null'
+                Example#4:
+                  value: 'slug is null'
+        '404':
+          description: 'Not Found'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '403':
+          description: 'Forbidden'
+          content:
+            '*/*':
+              schema:
+                type: 'object'
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: ''
+                Example#2:
+                  value: ''
+  /registration/count:
+    post:
+      description: ''
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            '*/*':
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/RegistrationCountJson'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            '*/*':
+              schema:
+                type: 'string'
+              examples:
+                Example#1:
+                  value: 'Error getting registration counts.'
+components:
+  schemas:
+    FeedbackResponseJson:
+      type: 'object'
+      properties:
+        id:
+          type: 'integer'
+          format: 'int32'
+        email:
+          type: 'string'
+        name:
+          type: 'string'
+        message:
+          type: 'string'
+        sentAt:
+          type: 'string'
+    UserJson:
+      type: 'object'
+      properties:
+        email:
+          type: 'string'
+        name:
+          type: 'string'
+        alternateEmail:
+          type: 'string'
+        degreeYear:
+          type: 'integer'
+          format: 'int32'
+        degree:
+          type: 'string'
+          enum:
+            - 'DTEK'
+            - 'DSIK'
+            - 'DVIT'
+            - 'BINF'
+            - 'IMO'
+            - 'INF'
+            - 'PROG'
+            - 'ARMNINF'
+            - 'POST'
+            - 'MISC'
+            - 'IKT'
+            - 'KOGNI'
+        memberships:
+          type: 'array'
+          items:
+            type: 'string'
+    ReactionsJson:
+      type: 'object'
+      properties:
+        like:
+          type: 'integer'
+          format: 'int32'
+        rocket:
+          type: 'integer'
+          format: 'int32'
+        beer:
+          type: 'integer'
+          format: 'int32'
+        eyes:
+          type: 'integer'
+          format: 'int32'
+        fix:
+          type: 'integer'
+          format: 'int32'
+        reactedTo:
+          type: 'array'
+          items:
+            type: 'string'
+            enum:
+              - 'LIKE'
+              - 'ROCKET'
+              - 'BEER'
+              - 'EYES'
+              - 'FIX'
+    SpotRangeWithCountJson:
+      type: 'object'
+      properties:
+        spots:
+          type: 'integer'
+          format: 'int32'
+        minDegreeYear:
+          type: 'integer'
+          format: 'int32'
+        maxDegreeYear:
+          type: 'integer'
+          format: 'int32'
+        regCount:
+          type: 'integer'
+          format: 'int32'
+        waitListCount:
+          type: 'integer'
+          format: 'int32'
+    HappeningInfoJson:
+      type: 'object'
+      properties:
+        spotRanges:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/SpotRangeWithCountJson'
+    RegistrationResponseJson:
+      type: 'object'
+      properties:
+        code:
+          type: 'string'
+          enum:
+            - 'NotSignedIn'
+            - 'InvalidDegree'
+            - 'InvalidDegreeYear'
+            - 'DegreeYearMismatch'
+            - 'AlreadySubmitted'
+            - 'AlreadySubmittedWaitList'
+            - 'HappeningDoesntExist'
+            - 'OnlyOpenForStudentGroups'
+            - 'TooEarly'
+            - 'TooLate'
+            - 'WaitList'
+            - 'NotInRange'
+            - 'OK'
+        title:
+          type: 'string'
+        desc:
+          type: 'string'
+        date:
+          type: 'string'
+    AnswerJson:
+      type: 'object'
+      properties:
+        question:
+          type: 'string'
+        answer:
+          type: 'string'
+    RegistrationJson:
+      type: 'object'
+      properties:
+        email:
+          type: 'string'
+        alternateEmail:
+          type: 'string'
+        name:
+          type: 'string'
+        degree:
+          type: 'string'
+          enum:
+            - 'DTEK'
+            - 'DSIK'
+            - 'DVIT'
+            - 'BINF'
+            - 'IMO'
+            - 'INF'
+            - 'PROG'
+            - 'ARMNINF'
+            - 'POST'
+            - 'MISC'
+            - 'IKT'
+            - 'KOGNI'
+        degreeYear:
+          type: 'integer'
+          format: 'int32'
+        slug:
+          type: 'string'
+        submitDate:
+          type: 'string'
+        waitList:
+          type: 'boolean'
+        answers:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/AnswerJson'
+        memberships:
+          type: 'array'
+          items:
+            type: 'string'
+    RegistrationCountJson:
+      type: 'object'
+      properties:
+        slug:
+          type: 'string'
+        count:
+          type: 'integer'
+          format: 'int32'
+        waitListCount:
+          type: 'integer'
+          format: 'int32'

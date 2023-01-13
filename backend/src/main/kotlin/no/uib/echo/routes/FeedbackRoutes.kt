@@ -27,9 +27,9 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-fun Application.feedbackRoutes() {
+fun Application.feedbackRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             getFeedback()
             putFeedback()
             deleteFeedback()

@@ -1,16 +1,20 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { array, record, string, boolean } from 'typescript-json-decoder';
+import { z } from 'zod';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
-const minuteDecoder = record({
-    date: string,
-    allmote: boolean,
-    title: string,
-    document: (value) => record({ asset: record({ url: string }) })(value).asset.url,
+const minuteSchema = z.object({
+    date: z.string(),
+    allmote: z.boolean(),
+    title: z.string(),
+    document: z
+        .object({
+            asset: z.object({
+                url: z.string(),
+            }),
+        })
+        .transform((m) => m.asset.url),
 });
-
-type Minute = decodeType<typeof minuteDecoder>;
+type Minute = z.infer<typeof minuteSchema>;
 
 const MinuteAPI = {
     /**
@@ -32,7 +36,7 @@ const MinuteAPI = {
 
             const result = await SanityAPI.fetch(query);
 
-            return array(minuteDecoder)(result);
+            return minuteSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: JSON.stringify(error) };

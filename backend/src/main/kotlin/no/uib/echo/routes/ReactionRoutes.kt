@@ -25,9 +25,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.reactionRoutes() {
+fun Application.reactionRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             putReaction()
             getReactions()
         }

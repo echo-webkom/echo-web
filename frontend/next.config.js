@@ -23,6 +23,7 @@ module.exports = withPWA({
                 permanent: true,
             },
             { source: '/bedpres/:path', destination: '/event/:path', permanent: true },
+            { source: '/.well-known/security.txt', destination: '/security.txt', permanent: true },
         ];
     },
     reactStrictMode: true,

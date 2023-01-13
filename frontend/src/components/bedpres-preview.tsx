@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import HappeningKeyInfo from '@components/happening-key-info';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
+import ReactionCount from '@components/reaction-count';
 
 interface Props {
     bedpres: Happening;
@@ -24,11 +25,12 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
                 p={[0, null, null, null, 5]}
                 _hover={{ bg: hoverColor }}
             >
-                <Box>
+                <Box position="relative">
                     {/** Parent box is required to prevent child box from scaling inconsistently */}
                     <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
                         <Image src={logoUrl} alt={bedpres.title} layout="fill" objectFit="fill" />
                     </Box>
+                    <ReactionCount slug={bedpres.slug} position="absolute" right={['-7', '-10']} bottom={['-2', '0']} />
                 </Box>
                 <NextLink href={`/event/${bedpres.slug}`} passHref>
                     <LinkOverlay>

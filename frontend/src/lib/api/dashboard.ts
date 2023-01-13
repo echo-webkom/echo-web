@@ -1,5 +1,4 @@
-import type { decodeType } from 'typescript-json-decoder';
-import { array, literal, union } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
 
 const studentGroups: Array<StudentGroup> = [
@@ -13,17 +12,17 @@ const studentGroups: Array<StudentGroup> = [
     'makerspace',
 ];
 
-const studentGroupDecoder = union(
-    literal('webkom'),
-    literal('bedkom'),
-    literal('gnist'),
-    literal('tilde'),
-    literal('hovedstyret'),
-    literal('hyggkom'),
-    literal('esc'),
-    literal('makerspace'),
-);
-type StudentGroup = decodeType<typeof studentGroupDecoder>;
+const studentGroupSchema = z.enum([
+    'webkom',
+    'bedkom',
+    'gnist',
+    'tilde',
+    'hovedstyret',
+    'hyggkom',
+    'esc',
+    'makerspace',
+]);
+type StudentGroup = z.infer<typeof studentGroupSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -45,7 +44,7 @@ const DashboardAPI = {
 
             const data = await response.json();
 
-            if (response.status === 200) return array(studentGroupDecoder)(data);
+            if (response.status === 200) return studentGroupSchema.array().parse(data);
 
             return { message: data };
         } catch (error) {

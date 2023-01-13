@@ -1,4 +1,4 @@
-variable "resource_group_name" {
+variable "rg_name" {
   type        = string
   description = "The name of the resource group in which to create the resources."
 }
@@ -6,21 +6,12 @@ variable "resource_group_name" {
 variable "location" {
   type        = string
   description = "The Azure location where the resources should be created."
-}
-
-variable "environment" {
-  type        = string
-  description = "Tags the resources with the environment, and sets backend environment."
-
-  validation {
-    condition     = contains(["production", "development", "preview"], var.environment)
-    error_message = "Valid values for environment are: 'production', 'development' and 'preview'."
-  }
+  default     = "norwayeast"
 }
 
 variable "db_password" {
   type        = string
-  description = "The admin password for the database."
+  description = "The password for the admin database user."
 }
 
 variable "backend_image" {

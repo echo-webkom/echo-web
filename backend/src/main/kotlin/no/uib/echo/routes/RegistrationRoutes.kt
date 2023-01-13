@@ -22,23 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.resToJson
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.AnswerJson
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.FormRegistrationJson
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.RegistrationCountJson
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.SlugJson
-import no.uib.echo.schema.StudentGroupHappeningRegistration
-import no.uib.echo.schema.User
-import no.uib.echo.schema.countRegistrationsDegreeYear
-import no.uib.echo.schema.getGroupMembers
-import no.uib.echo.schema.getUserStudentGroups
-import no.uib.echo.schema.nullableStringToDegree
-import no.uib.echo.schema.selectSpotRanges
-import no.uib.echo.schema.toCsv
+import no.uib.echo.schema.*
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -353,14 +337,16 @@ fun Route.deleteRegistration() {
             return@delete
         }
 
-        val slug = call.parameters["slug"]
+        val toDelete = call.receive<DeleteRegistrationReasonJson>()
+
+        val slug = toDelete.slug
 
         if (slug == null) {
             call.respond(HttpStatusCode.BadRequest, "slug is null")
             return@delete
         }
 
-        val paramEmail = call.parameters["email"]
+        val paramEmail = toDelete.email
 
         if (paramEmail == null) {
             call.respond(HttpStatusCode.BadRequest, "email is null")
@@ -380,10 +366,11 @@ fun Route.deleteRegistration() {
             return@delete
         }
 
-        if (email !in getGroupMembers(hap[Happening.studentGroupName])) {
+        if (email !in getGroupMembers(hap[Happening.studentGroupName]) && email != paramEmail) {
             call.respond(HttpStatusCode.Forbidden)
             return@delete
         }
+
 
         try {
             val reg = transaction {

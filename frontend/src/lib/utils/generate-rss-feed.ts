@@ -4,10 +4,10 @@ import type { Post } from '@api/post';
 
 interface GenericEntry {
     slug: string;
-    title: string | { no: string; en: string } | { no: string; en: null };
+    title: string | { no: string; en?: string | undefined };
     publishedAt: string;
     author: string;
-    body: string | { no: string; en: string } | { no: string; en: null };
+    body: string | { no: string; en?: string | undefined };
     route: string;
 }
 
@@ -30,7 +30,7 @@ const generatePosts = (posts: Array<GenericEntry>): { postsXML: string; latestPo
                 <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
                 <guid isPermalink="false">https://echo.uib.no/posts/${post.slug}</guid>
                 <description>
-                
+
                     <![CDATA[${body.slice(0, 70)} ...]]>
                 </description>
                 <content>

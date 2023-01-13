@@ -11,7 +11,6 @@ export default defineConfig({
             '**/sign-in.spec.ts',
             '**/happening-registration.spec.ts',
         ],
-        experimentalSessionAndOrigin: true,
         watchForFileChanges: false,
     },
 
