@@ -32,6 +32,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -79,6 +80,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -125,6 +127,7 @@ jobs:
             *.test.tsx
             frontend/.gitignore
             frontend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, frontend
         run: |
@@ -142,6 +145,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, backend
         run: |
@@ -209,6 +213,7 @@ jobs:
           files: |
             backend/src/main/resources/db/migration/*.sql
             backend/gradle.properties
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -267,6 +272,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, backend
         run: |
@@ -282,6 +288,7 @@ jobs:
           files: |
             terraform/preview/**
             .github/workflows/docker_tests_and_previews.yaml
+          since_last_remote_commit: true
 
       - name: List all changed files, Terraform
         run: |
