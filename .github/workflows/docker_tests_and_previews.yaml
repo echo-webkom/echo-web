@@ -254,7 +254,9 @@ jobs:
 
       - name: Set BACKEND_URL default value
         id: default_value
-        run: echo "BACKEND_URL=https://echo-web-containers-dev.norwayeast.azurecontainer.io" >> $GITHUB_OUTPUT
+        run: echo "BACKEND_URL=$BACKEND_URL" >> $GITHUB_OUTPUT
+        env:
+          BACKEND_URL: 'https://echo-web-dev.norwayeast.azurecontainer.io'
 
       - name: Get changed files, backend
         id: changed-files-backend
