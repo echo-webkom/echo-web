@@ -1,7 +1,9 @@
 import type { ParsedUrlQuery } from 'querystring';
 import { Box, Center, Divider, Flex, Heading, HStack, Spacer, Spinner } from '@chakra-ui/react';
+/* eslint-disable import/no-duplicates */
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
+/* eslint-enable import/no-duplicates */
 import Markdown from 'markdown-to-jsx';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';

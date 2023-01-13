@@ -1,6 +1,8 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
+/* eslint-disable import/no-duplicates */
 import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
+/* eslint-enable import/no-duplicates */
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';

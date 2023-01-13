@@ -4,7 +4,7 @@ import { IoIosMenu } from 'react-icons/io';
 import NavBar from '@components/navbar';
 import HeaderLogo from '@components/header-logo';
 
-const Header = (): JSX.Element => {
+const Header = () => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // state for drawer
     const menuButtonRef = useRef<HTMLButtonElement>(null); // ref hook for drawer button
     const borderBg = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');

@@ -1,4 +1,4 @@
-import { Button, Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { Button, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
@@ -16,13 +16,9 @@ const NavLink = ({ href, text, 'data-cy': dataCy }: Props) => {
     const isActive = router?.pathname === href;
 
     return (
-        <LinkBox data-cy={dataCy} mr={['.6rem', null, null, null, '1.5rem']}>
-            <NextLink href={href} passHref>
-                <LinkOverlay as={Link} textDecoration={isActive ? 'underline' : ''}>
-                    {text}
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
+        <Link as={NextLink} href={href} textDecoration={isActive ? 'underline' : ''} data-cy={dataCy}>
+            {text}
+        </Link>
     );
 };
 

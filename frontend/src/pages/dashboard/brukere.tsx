@@ -7,14 +7,11 @@ import {
     Th,
     Tbody,
     Text,
-    Button,
     Center,
-    Link,
     Spinner,
     Flex,
     Spacer,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import Section from '@components/section';
 import SEO from '@components/seo';
@@ -24,6 +21,7 @@ import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
 import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
@@ -64,11 +62,7 @@ const AdminUserPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error?.message ?? userError?.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
+                        <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                     </Center>
                 )}
                 {loading && (
@@ -82,11 +76,7 @@ const AdminUserPage = () => {
                         <Flex>
                             <Heading>Administrer brukere</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                         </Flex>
 
                         <TableContainer>
