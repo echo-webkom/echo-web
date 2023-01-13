@@ -82,6 +82,8 @@ const RegistrationsList = ({ registrations, registrationDate, title, error }: Pr
         )
         .filter((reg) => reg.memberships.includes(studentGroup) || studentGroup === 'all');
 
+    const numberOfRegistrations = filteredRegistrations.length;
+
     const questions = registrations
         .flatMap((reg) => reg.answers)
         .map((ans) => ans.question)
@@ -288,6 +290,7 @@ const RegistrationsList = ({ registrations, registrationDate, title, error }: Pr
                                         </Button>
                                     </Flex>
                                 </Center>
+                                <Text>Antall resultater: {numberOfRegistrations}</Text>
                             </Stack>
                             <Divider my="1rem" />
                             {/* mx value is the the negative of Section padding */}
