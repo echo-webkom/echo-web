@@ -4,6 +4,9 @@ on:
     branches: [master]
     paths: ['terraform/**']
 
+permissions:
+  pull-requests: write
+
 env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
   TF_VAR_db_password_dev: ${{ secrets.DB_PASSWORD_DEV }}
@@ -42,7 +45,55 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Plan main configuration
+        id: tf_plan
         run: |
           cd terraform/main
-          terraform init
-          terraform plan -lock-timeout=15m
+          terraform init -lockfile=readonly
+          terraform plan -lock-timeout=15m -no-color
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.tf_plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.REPO_PAT }}
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const botComment = comments.find(comment =>
+              comment.body.includes('<!-- TERRAFORM PLAN -->')
+            )
+
+            const output = `<!-- TERRAFORM PLAN -->
+
+            #### 📖 Terraform plan: \`${{ steps.tf_plan.outcome }}\`
+
+            <details><summary>Show plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: output
+              })
+            }
