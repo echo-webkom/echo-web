@@ -286,7 +286,7 @@ jobs:
         uses: tj-actions/changed-files@v35
         with:
           files: |
-            terraform/preview/**
+            terraform/**
             .github/workflows/docker_tests_and_previews.yaml
           since_last_remote_commit: true
 
