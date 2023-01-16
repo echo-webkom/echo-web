@@ -11,7 +11,7 @@ env:
 jobs:
   restart_preview:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '<!-- BACKEND PREVIEW BOT -->') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
