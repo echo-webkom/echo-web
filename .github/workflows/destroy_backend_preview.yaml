@@ -31,7 +31,7 @@ jobs:
       - name: Destroy preview container
         run: |
           cd terraform/preview
-          terraform init
+          terraform init -lockfile=readonly
           terraform workspace select $WORKSPACE_NAME && \
             terraform destroy -auto-approve -lock-timeout=15m && \
             terraform workspace select default && \
