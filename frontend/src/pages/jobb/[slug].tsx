@@ -1,9 +1,7 @@
 import type { ParsedUrlQuery } from 'querystring';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Spinner, VStack } from '@chakra-ui/react';
-/* eslint-disable import/no-duplicates */
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import Markdown from 'markdown-to-jsx';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';

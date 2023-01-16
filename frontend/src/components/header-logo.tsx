@@ -1,8 +1,6 @@
 import { Box, Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
-/* eslint-disable import/no-duplicates */
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';

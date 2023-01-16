@@ -13,10 +13,8 @@ import {
     Text,
     useColorModeValue,
 } from '@chakra-ui/react';
-/* eslint-disable import/no-duplicates */
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import NextLink from 'next/link';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import type { Minute } from '@api/minute';

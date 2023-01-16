@@ -12,10 +12,8 @@ import {
     LinkOverlay,
 } from '@chakra-ui/react';
 import { google, outlook, yahoo, ics } from 'calendar-link';
-/* eslint-disable import/no-duplicates */
 import { addHours, format } from 'date-fns';
 import { nb } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import NextLink from 'next/link';
 import { FaFileDownload, FaGoogle, FaYahoo } from 'react-icons/fa';
 import { SiMicrosoftoutlook } from 'react-icons/si';
