@@ -7,7 +7,8 @@
     "prCreation": "not-pending",
     "ignoreDeps": ["openjdk", "node", "postgres"],
     "updateInternalDeps": true,
-    "additionalBranchPrefix": "{{parentDir}}-",
+    "additionalBranchPrefix": "{{#if (containsString depName 'azurerm')}}{{else}}{{parentDir}}-{{/if}}",
+    "rangeStrategy": "pin",
     "packageRules": [
         {
             "matchPackagePatterns": ["^org.jetbrains.exposed"],
