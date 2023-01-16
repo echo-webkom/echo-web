@@ -17,7 +17,7 @@ const CountdownButton = ({ date, children, ...props }: Props): JSX.Element => {
     return (
         <Center data-testid="bedpres-not-open" my="3">
             <Text
-                fontFamily="Open Sans"
+                fontFamily="opensans"
                 fontWeight="bold"
                 fontSize={['5xl', null, null, '2xl', '3xl', '5xl']}
                 textAlign="center"

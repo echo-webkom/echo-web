@@ -1,4 +1,30 @@
 import { useBreakpointValue } from '@chakra-ui/react';
+// eslint-disable-next-line camelcase
+import { IBM_Plex_Serif, IBM_Plex_Mono, Raleway, Open_Sans } from '@next/font/google';
+
+const ibmPlexSerif = IBM_Plex_Serif({
+    weight: ['400'],
+    subsets: ['latin'],
+    fallback: ['serif'],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+    weight: ['400'],
+    subsets: ['latin'],
+    fallback: ['monospace'],
+});
+
+const raleway = Raleway({
+    weight: ['400'],
+    subsets: ['latin'],
+    fallback: ['Consolas', 'Courier New', 'monospace'],
+});
+
+const openSans = Open_Sans({
+    weight: ['400'],
+    subsets: ['latin'],
+    fallback: ['Consolas', 'Courier New', 'monospace'],
+});
 
 const defaultPalette = {
     transparent: 'transparent',
@@ -102,8 +128,10 @@ const defaultPalette = {
 
 const mainTheme = {
     fonts: {
-        heading: 'IBM Plex Serif',
-        body: 'Raleway',
+        heading: ibmPlexSerif.style.fontFamily,
+        body: raleway.style.fontFamily,
+        mono: ibmPlexMono.style.fontFamily,
+        opensans: openSans.style.fontFamily,
     },
     styles: {
         global: ({ colorMode }: { colorMode: string }) => ({
