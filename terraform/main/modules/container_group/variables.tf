@@ -34,11 +34,6 @@ variable "environment" {
   }
 }
 
-variable "db_name" {
-  type        = string
-  description = "The name of the database."
-}
-
 variable "db_user" {
   type        = string
   description = "The name of the admin database user."
