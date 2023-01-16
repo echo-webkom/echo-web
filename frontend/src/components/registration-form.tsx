@@ -24,10 +24,8 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import NextLink from 'next/link';
-/* eslint-disable import/no-duplicates */
 import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import CountdownButton from '@components/countdown-button';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';

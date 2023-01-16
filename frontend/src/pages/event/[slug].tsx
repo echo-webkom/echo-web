@@ -2,10 +2,8 @@ import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
-/* eslint-disable import/no-duplicates */
 import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
-/* eslint-enable import/no-duplicates */
 import Image from 'next/image';
 import NextLink from 'next/link';
 import type { ErrorMessage } from '@utils/error';
