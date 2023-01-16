@@ -47,7 +47,6 @@ module "cg" {
   law_key          = azurerm_log_analytics_workspace.law.primary_shared_key
   location         = azurerm_resource_group.rg.location
   environment      = local.environment
-  db_name          = local.db_name
   db_user          = local.db_user
   db_password      = var.db_password
   db_fqdn          = module.db.fqdn

@@ -1,35 +1,39 @@
 # Database
 
-resource "azurerm_postgresql_server" "db" {
+resource "azurerm_postgresql_flexible_server" "db" {
   location            = var.location
   name                = var.db_name
   resource_group_name = var.rg_name
 
-  administrator_login          = var.db_user
-  administrator_login_password = var.db_password
+  administrator_login    = var.db_user
+  administrator_password = var.db_password
 
-  sku_name   = "B_Gen5_1"
-  version    = "11"
-  storage_mb = 5120
+  sku_name   = "B_Standard_B1ms"
+  version    = "14"
+  storage_mb = 32768
 
-  backup_retention_days        = 7
-  geo_redundant_backup_enabled = false
-  auto_grow_enabled            = false
+  backup_retention_days = 7
 
-  ssl_enforcement_enabled          = true
-  ssl_minimal_tls_version_enforced = "TLS1_2"
+  zone = 1
 
   tags = {
     "environment" = var.environment
+  }
+
+  lifecycle {
+    ignore_changes = [
+      zone
+    ]
+
+    prevent_destroy = true
   }
 }
 
 # Firewall for Postgres, allows all traffic from Azure
 
-resource "azurerm_postgresql_firewall_rule" "db_firewall" {
-  name                = "${var.db_name}-firewall"
-  resource_group_name = var.rg_name
-  server_name         = azurerm_postgresql_server.db.name
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
+resource "azurerm_postgresql_flexible_server_firewall_rule" "db_firewall" {
+  name             = "${var.db_name}-firewall"
+  server_id        = azurerm_postgresql_flexible_server.db.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
