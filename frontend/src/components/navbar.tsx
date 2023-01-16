@@ -37,7 +37,7 @@ const NavLinks = (): JSX.Element => {
             fontSize={['3xl', null, null, 'lg', '2xl']}
             justify="flex-end"
             alignItems="center"
-            gap="3"
+            gap="5"
         >
             <NavLink text={isNorwegian ? 'Hjem' : 'Home'} href="/" data-cy="hjem" />
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
