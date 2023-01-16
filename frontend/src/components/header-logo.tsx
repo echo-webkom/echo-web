@@ -111,9 +111,9 @@ const HeaderLogo = () => {
 
             <Box
                 pos="absolute"
-                rounded="md"
+                rounded="lg"
                 boxShadow="0 10px 20px rgba(0, 0, 0, 0.1)"
-                px="4"
+                px="3"
                 py="1"
                 w="max"
                 bg={textBg}

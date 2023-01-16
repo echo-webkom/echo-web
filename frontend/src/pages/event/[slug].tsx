@@ -71,16 +71,18 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                                 {happening.happeningType === 'BEDPRES' &&
                                     happening.companyLink &&
                                     happening.logoUrl && (
-                                        <LinkBox>
-                                            <LinkOverlay as={NextLink} href={happening.companyLink}>
-                                                <Image
-                                                    src={happening.logoUrl}
-                                                    alt="Bedriftslogo"
-                                                    width={300}
-                                                    height={300}
-                                                />
-                                            </LinkOverlay>
-                                        </LinkBox>
+                                        <Center>
+                                            <LinkBox>
+                                                <LinkOverlay as={NextLink} href={happening.companyLink}>
+                                                    <Image
+                                                        src={happening.logoUrl}
+                                                        alt="Bedriftslogo"
+                                                        width={300}
+                                                        height={300}
+                                                    />
+                                                </LinkOverlay>
+                                            </LinkBox>
+                                        </Center>
                                     )}
                                 <HappeningMetaInfo
                                     date={parseISO(happening.date)}
