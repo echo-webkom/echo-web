@@ -3290,7 +3290,7 @@
   dependencies:
     glob "7.1.7"
 
-"@next/font@^13.1.2":
+"@next/font@13.1.2":
   version "13.1.2"
   resolved "https://registry.yarnpkg.com/@next/font/-/font-13.1.2.tgz#ee809ca03113d0e73495ac5d0e2a978885d0d97e"
   integrity sha512-NXGXGFGiOKEnvBIHq9cdFTKbHO2/4B3Zd9K27M7j1DioIQVar7oVRqZMYs0h3XMVEZLwjjkdAtqRPCzzd3RtXg==
@@ -4352,7 +4352,7 @@
     "@uiw/codemirror-extensions-basic-setup" "4.19.4"
     codemirror "^6.0.0"
 
-"@vercel/analytics@^0.1.6":
+"@vercel/analytics@0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-0.1.6.tgz#a1ce184168d8f5ec02e35ec954d84ee68ea01f4b"
   integrity sha512-zNd5pj3iDvq8IMBQHa1YRcIteiw6ZiPB8AsONHd8ieFXlNpLqhXfIYnf4WvTfZ7S1NSJ++mIM14aJnNac/VMXQ==
@@ -6067,7 +6067,7 @@ escodegen@^2.0.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-next@^13.1.2:
+eslint-config-next@13.1.2:
   version "13.1.2"
   resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-13.1.2.tgz#bd15be592546e3543f77f96bc55be830dd76fd41"
   integrity sha512-zdRAQOr8v69ZwJRtBrGqAqm160ONqKxU/pV1FB1KlgfyqveGsLZmlQ7l31otwtw763901J7xdiTVkj2y3YxXZA==
@@ -8430,7 +8430,7 @@ next-pwa@5.6.0:
     workbox-webpack-plugin "^6.5.4"
     workbox-window "^6.5.4"
 
-next@^13.1.2:
+next@13.1.2:
   version "13.1.2"
   resolved "https://registry.yarnpkg.com/next/-/next-13.1.2.tgz#4105b0cf238bb2f58d5e12dbded8cabb9785f2d9"
   integrity sha512-Rdnnb2YH///w78FEOR/IQ6TXga+qpth4OqFSem48ng1PYYKr6XBsIk1XVaRcIGM3o6iiHnun0nJvkJHDf+ICyQ==
@@ -11607,7 +11607,7 @@ zip-stream@^4.1.0:
     compress-commons "^4.1.0"
     readable-stream "^3.6.0"
 
-zod@^3.20.2:
+zod@3.20.2:
   version "3.20.2"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.2.tgz#068606642c8f51b3333981f91c0a8ab37dfc2807"
   integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
