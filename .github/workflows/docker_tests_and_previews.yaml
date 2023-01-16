@@ -268,7 +268,7 @@ jobs:
         if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         run: |
           cd terraform/preview
-          terraform init
+          terraform init -lockfile=readonly
           terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
           terraform apply -auto-approve -lock-timeout=15m
           # Get backend url and output it
