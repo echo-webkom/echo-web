@@ -10,6 +10,7 @@ import {
     Center,
     Box,
     HStack,
+    VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
@@ -46,13 +47,14 @@ const Footer = (): JSX.Element => {
                 mx="auto"
             >
                 <GridItem colSpan={[1, 2, 4]} color={'white'} fontSize={'2xl'}>
-                    <HStack spacing="1em">
+                    <VStack spacing="1em">
                         <LinkBox>
-                            <NextLink href="https://echo.uib.no" passHref>
-                                <LinkOverlay isExternal aria-label="Link til Echo">
-                                    <HStack spacing="1em">
-                                        <Text textDecoration="underline">
-                                            Har du har opplevde noe ubehagelig på lesesal, varsle her{' '}
+                            <LinkOverlay  isExternal href="https://forms.gle/cRLRxpMap5AX1xx1A">
+                                <VStack spacing="1em">
+                                     <HStack spacing="1em">
+                                        <Text textDecoration="underline"> 
+                                            Har du opplevd noe som ikke føltes helt greit på lesesalen eller på et Echo arrangement?
+                                            {' '}
                                         </Text>
                                         <Icon
                                             as={TbAlertOctagon}
@@ -65,10 +67,17 @@ const Footer = (): JSX.Element => {
                                             zIndex="100"
                                         />
                                     </HStack>
-                                </LinkOverlay>
-                            </NextLink>
+                                </VStack>
+                            </LinkOverlay>
                         </LinkBox>
-                    </HStack>
+                        <LinkBox>
+                            <LinkOverlay href="mailto:sandra.lekve@echo.uib.no">
+                                <Text>
+                                        Klikk over for å fylle ut skjemaet, eller klikk her for å sende en mail til lederen i Echo: sandra.lekve@echo.uib.no
+                                </Text>
+                            </LinkOverlay>
+                        </LinkBox>
+                    </VStack>
                 </GridItem>
 
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
