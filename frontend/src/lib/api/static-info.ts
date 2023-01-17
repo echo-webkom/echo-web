@@ -1,17 +1,14 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { array, record, string } from 'typescript-json-decoder';
-import { slugDecoder } from '@utils/decoders';
+import { z } from 'zod';
+import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
 import SanityAPI from '@api/sanity';
 
-const staticInfoDecoder = record({
-    name: string,
-    slug: string,
-    info: string,
+const staticInfoSchema = z.object({
+    name: z.string(),
+    slug: z.string(),
+    info: z.string(),
 });
-
-type StaticInfo = decodeType<typeof staticInfoDecoder>;
+type StaticInfo = z.infer<typeof staticInfoSchema>;
 
 const StaticInfoAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -19,7 +16,10 @@ const StaticInfoAPI = {
             const query = `*[_type == "staticInfo"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+            return slugSchema
+                .array()
+                .parse(result)
+                .map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -42,17 +42,11 @@ const StaticInfoAPI = {
                 };
             }
 
-            return array(staticInfoDecoder)(result)[0];
+            return staticInfoSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStaticInfoBySlug',
+                message: JSON.stringify(error),
             };
         }
     },

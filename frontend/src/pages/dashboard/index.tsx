@@ -5,20 +5,18 @@ import {
     Heading,
     SimpleGrid,
     useColorModeValue,
-    Button,
     Center,
-    Link,
     Spinner,
+    LinkOverlay,
+    LinkBox,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
-import type { ErrorMessage } from '@utils/error';
-import { isErrorMessage } from '@utils/error';
-import type { User } from '@api/user';
-import { UserAPI } from '@api/user';
+import ErrorBox from '@components/error-box';
+import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const adminRoutes = [
     {
@@ -34,32 +32,10 @@ const adminRoutes = [
 ];
 
 const DashboardPage = () => {
-    const [user, setUser] = useState<User | null>();
-    const [error, setError] = useState<ErrorMessage>();
-    const [loading, setLoading] = useState<boolean>(true);
+    const { user, loading, signedIn, error } = useAuth();
     const [isWebkom, setIsWebkom] = useState<boolean>(false);
 
-    const { data } = useSession();
-
     const bg = useColorModeValue('gray.200', 'gray.800');
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            if (!data?.user?.email || !data.user.name || !data.idToken) return;
-
-            const result = await UserAPI.getUser(data.user.email, data.user.name, data.idToken);
-
-            if (!isErrorMessage(result)) {
-                setUser(result);
-            } else {
-                setError(result);
-            }
-
-            setLoading(false);
-        };
-
-        void fetchUser();
-    }, [data]);
 
     useEffect(() => {
         if (user) {
@@ -71,17 +47,15 @@ const DashboardPage = () => {
         <>
             <SEO title="Dashboard" />
             <Section>
-                {error && (
-                    <Center flexDirection="column" gap="5" py="10">
-                        <Heading>En feil har skjedd.</Heading>
-                        <Text>Du har ikke tilgang til denne siden.</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
-                    </Center>
-                )}
+                {!signedIn ||
+                    (!isWebkom && (
+                        <Center flexDirection="column" gap="5" py="10">
+                            <Heading>En feil har skjedd.</Heading>
+                            <Text>Du har ikke tilgang til denne siden.</Text>
+                            <ButtonLink href="/">Tilbake til forsiden</ButtonLink>
+                        </Center>
+                    ))}
+                {error && <ErrorBox error={error.message} />}
                 {loading && (
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>Laster inn...</Heading>
@@ -93,7 +67,7 @@ const DashboardPage = () => {
                         <Heading>Dashboard</Heading>
                         <SimpleGrid columns={[1, null, null, 2]} gap="5">
                             {adminRoutes.map((route) => (
-                                <NextLink href={route.to} key={route.title}>
+                                <LinkBox key={route.title}>
                                     <Box
                                         bg={bg}
                                         borderRadius="md"
@@ -111,13 +85,15 @@ const DashboardPage = () => {
                                             justify="center"
                                             alignItems="center"
                                         >
-                                            <Text fontWeight="bold" fontSize="2xl">
-                                                {route.title}
-                                            </Text>
+                                            <LinkOverlay as={NextLink} href={route.to}>
+                                                <Text fontWeight="bold" fontSize="2xl">
+                                                    {route.title}
+                                                </Text>
+                                            </LinkOverlay>
                                             <Text>{route.desc}</Text>
                                         </Flex>
                                     </Box>
-                                </NextLink>
+                                </LinkBox>
                             ))}
                         </SimpleGrid>
                     </>

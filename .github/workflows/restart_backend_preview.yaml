@@ -1,0 +1,68 @@
+name: Restart backend preview
+on:
+  issue_comment:
+    types: [edited]
+
+env:
+  ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
+  ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
+  ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+
+jobs:
+  restart_preview:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '<!-- BACKEND PREVIEW BOT -->') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Find comment
+        id: fc
+        uses: peter-evans/find-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          issue-number: ${{ github.event.issue.number }}
+          body-includes: '<!-- BACKEND PREVIEW BOT -->'
+
+      - name: Get formatted branch name, to get resource group & container group name & set backend URL from previous comment
+        id: env_vars
+        if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
+        run: |
+          export BRANCH_NAME=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g' | cut -c 1-16)" >> $GITHUB_OUTPUT
+          echo "BACKEND_URL=$(echo "$COMMENT_BODY" | grep -o 'https://.*\.io')" >> $GITHUB_OUTPUT
+        env:
+          PR_NO: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+          COMMENT_BODY: |
+            ${{ steps.fc.outputs.comment_body }}
+
+      - name: Sign in to Azure
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+
+      - name: Restart container
+        if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
+        # Resource group name & container group name are the same.
+        run: az container restart --resource-group $GROUP_NAME --name $GROUP_NAME
+        env:
+          GROUP_NAME: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+
+      - name: Update comment to remove checkbox
+        if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.REPO_PAT }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- BACKEND PREVIEW BOT -->
+
+            **beep boop!**
+
+            I just deployed a backend preview to ${{ steps.env_vars.outputs.BACKEND_URL }} :rocket:
+
+            - [ ] check this box to restart the backend preview, if you are getting errors.

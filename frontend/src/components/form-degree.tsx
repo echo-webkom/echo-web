@@ -1,31 +1,35 @@
-import { useContext } from 'react';
 import type { SelectProps } from '@chakra-ui/react';
 import { Heading, FormControl, FormLabel, Select } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props extends SelectProps {
     isHeading?: boolean;
-    defaultValue?: number | string | ReadonlyArray<string>;
+    hideLabel?: boolean;
+    isRequired?: boolean;
 }
-const FormDegree = ({ isHeading = false, defaultValue, placeholder = 'Velg studieretning', ...props }: Props) => {
+const FormDegree = ({ isHeading = false, hideLabel = false, isRequired = false, ...props }: Props) => {
     const { register } = useFormContext();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const headingText = isNorwegian ? 'Studieretning' : 'Field of study';
-    placeholder = isNorwegian ? 'Velg studieretning' : 'Choose your field of study';
 
     return (
-        <FormControl isRequired>
-            <FormLabel>
-                {isHeading ? (
-                    <Heading size="md" display="inline">
-                        {headingText}
-                    </Heading>
-                ) : (
-                    headingText
-                )}
-            </FormLabel>
-            <Select defaultValue={defaultValue} placeholder={placeholder} {...register('degree')} {...props}>
+        <FormControl isRequired={isRequired}>
+            {!hideLabel && (
+                <FormLabel>
+                    {isHeading ? (
+                        <Heading size="md" display="inline">
+                            {headingText}
+                        </Heading>
+                    ) : (
+                        headingText
+                    )}
+                </FormLabel>
+            )}
+            <Select {...register('degree')} {...props} defaultValue="">
+                <option hidden disabled value="">
+                    {isNorwegian ? 'Velg studieretning' : 'Select field of study'}
+                </option>
                 <option value="DTEK">Datateknologi</option>
                 <option value="DSIK">Datasikkerhet</option>
                 <option value="DVIT">Data Science/Datavitenskap</option>

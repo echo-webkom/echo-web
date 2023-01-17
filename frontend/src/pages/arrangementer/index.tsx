@@ -1,5 +1,4 @@
 import { GridItem, Heading, SimpleGrid } from '@chakra-ui/react';
-import { useContext } from 'react';
 import { type Happening, HappeningAPI } from '@api/happening';
 import { RegistrationAPI, type RegistrationCount } from '@api/registration';
 import SEO from '@components/seo';
@@ -7,7 +6,7 @@ import Section from '@components/section';
 import { isErrorMessage } from '@utils/error';
 import EventOverview from '@components/event-overview';
 import EventCalendar from '@components/event-calendar';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     events: Array<Happening>;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const breakpoints = [1, null, null, null, 2];
     const happenings = [...events, ...bedpresses];
@@ -51,6 +50,9 @@ const HappeningsPage = ({ events, bedpresses, registrationCounts }: Props) => {
 };
 
 export const getStaticProps = async () => {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
+
     const eventsResponse = await HappeningAPI.getHappeningsByType(0, 'EVENT');
     const bedpressesResponse = await HappeningAPI.getHappeningsByType(0, 'BEDPRES');
 
@@ -58,7 +60,7 @@ export const getStaticProps = async () => {
     if (isErrorMessage(bedpressesResponse)) throw new Error(bedpressesResponse.message);
 
     const slugs = [...bedpressesResponse, ...eventsResponse].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
 
     return {
         props: {

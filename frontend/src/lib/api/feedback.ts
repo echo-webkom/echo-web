@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { number, union, record, string, type decodeType, nil, boolean, array } from 'typescript-json-decoder';
+import { z } from 'zod';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 
 interface FormValues {
@@ -26,46 +25,47 @@ const errorResponse: FeedbackResponse = {
     description: 'Det har skjedd en feil, og tilbakemeldingen din ble ikke sendt. Prøv igjen senere.',
 };
 
-const feedbackDecoder = record({
-    id: number,
-    email: union(string, nil),
-    name: union(string, nil),
-    message: string,
-    sentAt: string,
-    isRead: boolean,
+const feedbackSchema = z.object({
+    id: z.number(),
+    email: z.string().nullable(),
+    name: z.string().nullable(),
+    message: z.string(),
+    sentAt: z.string(),
+    isRead: z.boolean(),
 });
-
-type Feedback = decodeType<typeof feedbackDecoder>;
+type Feedback = z.infer<typeof feedbackSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const FeedbackAPI = {
     sendFeedback: async (data: FormValues): Promise<FeedbackResponse> => {
         try {
-            await axios.post(`${BACKEND_URL}/feedback`, data, {
+            const { ok } = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'POST',
+                body: JSON.stringify(data),
                 headers: { 'Content-Type': 'application/json' },
-                validateStatus: (statusCode: number) => statusCode === 200,
             });
 
-            return successResponse;
+            return ok ? successResponse : errorResponse;
         } catch {
             return errorResponse;
         }
     },
     getFeedback: async (idToken: string): Promise<Array<Feedback> | ErrorMessage> => {
         try {
-            const { data } = await axios.get(`${BACKEND_URL}/feedback`, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (status: number) => status < 500,
             });
+
+            const data = await response.json();
 
             if (isErrorMessage(data)) {
                 return data;
             }
 
-            return array(union(feedbackDecoder))(data);
+            return feedbackSchema.array().parse(data);
         } catch {
             return {
                 message: 'Noe gikk galt. Prøv igjen senere.',
@@ -75,12 +75,15 @@ const FeedbackAPI = {
 
     updateFeedback: async (feedback: Feedback, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data } = await axios.put(`${BACKEND_URL}/feedback`, feedback, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'PUT',
+                body: JSON.stringify(feedback),
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-                validateStatus: (status: number) => status < 500,
             });
 
-            return string(data);
+            const data = await response.json();
+
+            return z.string().parse(data);
         } catch {
             return {
                 message: 'Kunne ikke markere tilbakemeldingen som lest/ulest.',
@@ -90,12 +93,15 @@ const FeedbackAPI = {
 
     deleteFeedback: async (id: number, idToken: string): Promise<string | ErrorMessage> => {
         try {
-            const { data, status } = await axios.delete(`${BACKEND_URL}/feedback`, {
+            const response = await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'DELETE',
+                body: JSON.stringify({ id }),
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-                data: { id },
             });
 
-            if (status === 200) return string(data);
+            const data = await response.json();
+
+            if (response.status === 200) return z.string().parse(data);
 
             return { message: data };
         } catch {
@@ -106,4 +112,4 @@ const FeedbackAPI = {
     },
 };
 
-export { FeedbackAPI, type FormValues as FeedbackFormValues, type FeedbackResponse, type Feedback, feedbackDecoder };
+export { FeedbackAPI, type FormValues as FeedbackFormValues, type FeedbackResponse, type Feedback, feedbackSchema };

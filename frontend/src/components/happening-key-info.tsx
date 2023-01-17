@@ -1,11 +1,10 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import { format, isToday, isPast } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
-import { useContext } from 'react';
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     event: Happening;
@@ -13,12 +12,10 @@ interface Props {
 }
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
-    const totalReg = registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
-    const waitListCount =
-        registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.waitListCount ?? 0;
-    const totalRegWithoutWaitList = totalReg - waitListCount;
+    const totalRegs =
+        registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
     return (
@@ -43,13 +40,11 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 <Flex alignItems="center" justifyContent="flex-end">
                     {isPast(new Date(event.registrationDate)) ? (
                         <Text ml="1" fontSize="1rem">
-                            {totalRegWithoutWaitList >= totalSpots && totalSpots !== 0
+                            {totalRegs >= totalSpots && totalSpots !== 0
                                 ? isNorwegian
                                     ? `Fullt`
                                     : `Full`
-                                : `${totalRegWithoutWaitList} ${isNorwegian ? 'av' : 'of'} ${
-                                      totalSpots === 0 ? '∞' : totalSpots
-                                  }`}
+                                : `${totalRegs} ${isNorwegian ? 'av' : 'of'} ${totalSpots === 0 ? '∞' : totalSpots}`}
                         </Text>
                     ) : (
                         <Text ml="1" fontSize="1rem">

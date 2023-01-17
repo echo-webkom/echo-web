@@ -14,9 +14,6 @@ module.exports = withPWA({
     images: {
         domains: ['cdn.sanity.io'],
     },
-    experimental: {
-        esmExternals: false,
-    },
     async redirects() {
         return [
             { source: '/events', destination: '/event', permanent: true },
@@ -26,6 +23,7 @@ module.exports = withPWA({
                 permanent: true,
             },
             { source: '/bedpres/:path', destination: '/event/:path', permanent: true },
+            { source: '/.well-known/security.txt', destination: '/security.txt', permanent: true },
         ];
     },
     reactStrictMode: true,

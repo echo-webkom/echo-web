@@ -9,25 +9,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
 import no.uib.echo.DatabaseHandler
+import no.uib.echo.Environment
 import no.uib.echo.be
 import no.uib.echo.hap1
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Reaction
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
-import no.uib.echo.schema.StudentGroupMembership
-import no.uib.echo.schema.User
 import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.tables
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.AfterClass
 import java.net.URI
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -35,54 +26,25 @@ import kotlin.test.Test
 
 class DeleteHappeningTest {
     companion object {
-        init {
-            DatabaseHandler(
-                dev = true,
-                testMigration = false,
-                dbUrl = URI(System.getenv("DATABASE_URL")),
-                mbMaxPoolSize = "150"
-            ).init(shouldInsertTestData = false)
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun afterClass() {
-            SchemaUtils.dropDatabase("postgres")
-        }
+        val db = DatabaseHandler(
+            env = Environment.PREVIEW,
+            migrateDb = false,
+            dbUrl = URI(System.getenv("DATABASE_URL")),
+            mbMaxPoolSize = null
+        )
     }
 
     @BeforeTest
     fun beforeTest() {
-        for (t in be) {
-            insertTestData(t)
-        }
+        db.init(false)
+        insertTestData()
     }
 
     @AfterTest
     fun afterTest() {
         transaction {
-            SchemaUtils.drop(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
-            SchemaUtils.create(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
+            SchemaUtils.drop(*tables)
+            SchemaUtils.create(*tables)
         }
     }
 
@@ -123,13 +85,14 @@ class DeleteHappeningTest {
         }
 }
 
-private fun insertTestData(t: HAPPENING_TYPE) {
+private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }
     }
-    insertOrUpdateHappening(hap1(t), true)
+
+    for (t in be) {
+        insertOrUpdateHappening(hap1(t))
+    }
 }

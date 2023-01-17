@@ -1,4 +1,4 @@
 Contact: mailto:webkom-styret@echo.uib.no
-Expires: 2022-12-30T23:00:00.000Z
+Expires: 2023-12-30T23:00:00.000Z
 Preferred-Languages: no, en
 

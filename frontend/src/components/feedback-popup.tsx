@@ -19,10 +19,10 @@ import {
 } from '@chakra-ui/react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FeedbackResponse } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 const FeedbackPopup = () => {
     const btnRef = useRef<HTMLInputElement>(null);
@@ -33,7 +33,7 @@ const FeedbackPopup = () => {
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const toast = useToast();
 

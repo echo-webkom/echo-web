@@ -11,7 +11,7 @@ interface Props extends TextProps {
     link?: string;
 }
 
-const IconText = ({ icon, iconColor, text, textColor, link, ...props }: Props): JSX.Element => {
+const IconText = ({ icon, iconColor, text, textColor, link, ...props }: Props) => {
     return (
         <Grid templateColumns="min-content auto" gap="3" wordBreak="break-word" alignItems="center">
             <Icon as={icon} boxSize={10} color={iconColor} />
@@ -21,11 +21,9 @@ const IconText = ({ icon, iconColor, text, textColor, link, ...props }: Props): 
                 </Text>
             )}
             {link && (
-                <NextLink href={link} passHref>
-                    <Link href={link} color={textColor} isExternal>
-                        {text}
-                    </Link>
-                </NextLink>
+                <Link as={NextLink} href={link} color={textColor} isExternal>
+                    {text}
+                </Link>
             )}
         </Grid>
     );

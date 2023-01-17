@@ -8,15 +8,14 @@ val postgres_version: String by project
 val hikari_version: String by project
 val kotest_version: String by project
 val flyway_version: String by project
-val sendgrid_version: String by project
 
 // Needed for Shadow
 project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
 
 plugins {
     application
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("com.adarshr.test-logger") version "3.2.0"
@@ -40,6 +39,9 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-rate-limit:$ktor_version")
+    implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("io.ktor:ktor-server-swagger:$ktor_version")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
@@ -64,7 +66,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
 
     testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
 }
@@ -115,10 +117,4 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "17"
     }
-}
-
-// Heroku Gradle buildpack runs `./gradlew stage`,
-// therefore we make `stage` run `shadowJar`.
-task("stage") {
-    dependsOn("shadowJar")
 }

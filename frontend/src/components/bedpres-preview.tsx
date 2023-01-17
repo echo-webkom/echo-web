@@ -1,9 +1,10 @@
-import { Box, LinkBox, LinkOverlay, Spacer, useColorModeValue, Heading, Flex } from '@chakra-ui/react';
+import { Box, Spacer, useColorModeValue, Text, Flex, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import HappeningKeyInfo from '@components/happening-key-info';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
+import ReactionCount from '@components/reaction-count';
 
 interface Props {
     bedpres: Happening;
@@ -17,27 +18,31 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
 
     return (
         <LinkBox data-testid={bedpres.slug}>
-            <Flex
-                alignItems="center"
-                border="2px"
-                borderColor="transparent"
-                p={[0, null, null, null, 5]}
-                _hover={{ bg: hoverColor }}
-            >
-                <Box>
-                    {/** Parent box is required to prevent child box from scaling inconsistently */}
-                    <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
-                        <Image src={logoUrl} alt={bedpres.title} layout="fill" objectFit="fill" />
+            <Flex alignItems="center" p={[0, null, null, null, 5]} _hover={{ bg: hoverColor }}>
+                <Flex alignItems="center" gap="5">
+                    <Box display={['none', 'block']}>
+                        <Box>
+                            <Image
+                                style={{ borderRadius: '100%' }}
+                                src={logoUrl}
+                                alt={bedpres.title}
+                                width={85}
+                                height={85}
+                            />
+                        </Box>
                     </Box>
-                </Box>
-                <NextLink href={`/event/${bedpres.slug}`} passHref>
-                    <LinkOverlay>
-                        <Heading ml="2" display={['none', 'block']} fontWeight="regular" fontSize="larger">
-                            {bedpres.title}
-                        </Heading>
-                    </LinkOverlay>
-                </NextLink>
+                    <Box>
+                        <Text fontWeight="regular" fontSize="larger">
+                            <LinkOverlay as={NextLink} href={`/event/${bedpres.slug}`}>
+                                {bedpres.title}
+                            </LinkOverlay>
+                        </Text>
+                        <ReactionCount slug={bedpres.slug} />
+                    </Box>
+                </Flex>
+
                 <Spacer />
+
                 <Box minW="fit-content">
                     <HappeningKeyInfo event={bedpres} registrationCounts={registrationCounts} />
                 </Box>

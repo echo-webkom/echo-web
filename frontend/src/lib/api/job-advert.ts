@@ -1,26 +1,23 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { array, string, record, literal, union, number } from 'typescript-json-decoder';
+import { z } from 'zod';
 import SanityAPI from '@api/sanity';
-import { slugDecoder } from '@utils/decoders';
+import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
 
-const jobAdvertDecoder = record({
-    slug: string,
-    body: string,
-    companyName: string,
-    title: string,
-    logoUrl: string,
-    deadline: string,
-    locations: array(string),
-    advertLink: string,
-    jobType: union(literal('fulltime'), literal('parttime'), literal('internship'), literal('summerjob')),
-    degreeYears: array(number),
-    _createdAt: string,
-    weight: number,
+const jobAdvertSchema = z.object({
+    slug: z.string(),
+    body: z.string(),
+    companyName: z.string(),
+    title: z.string(),
+    logoUrl: z.string(),
+    deadline: z.string(),
+    locations: z.array(z.string()),
+    advertLink: z.string(),
+    jobType: z.enum(['fulltime', 'parttime', 'internship', 'summerjob']),
+    degreeYears: z.array(z.number()),
+    _createdAt: z.string(),
+    weight: z.number(),
 });
-
-type JobAdvert = decodeType<typeof jobAdvertDecoder>;
+type JobAdvert = z.infer<typeof jobAdvertSchema>;
 
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -28,7 +25,10 @@ const JobAdvertAPI = {
             const query = `*[_type == "jobAdvert"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+            return slugSchema
+                .array()
+                .parse(result)
+                .map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -55,10 +55,10 @@ const JobAdvertAPI = {
                 }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(jobAdvertDecoder)(result);
+            return jobAdvertSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdverts' };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -81,10 +81,10 @@ const JobAdvertAPI = {
                 }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(jobAdvertDecoder)(result)[0];
+            return jobAdvertSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getJobAdvertBySlug' };
+            return { message: JSON.stringify(error) };
         }
     },
 };

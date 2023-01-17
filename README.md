@@ -16,93 +16,13 @@ Vi jobber hele tiden med å forbedre den,
 og setter stor pris på om du sier ifra om noe er feil,
 eller du har idéer til nye endringer!
 
-Fyll gjerne ut skjemaet [her](https://forms.gle/r9LNMFjanUNP7Gph9),
+Send oss gjerne en tilbakemelding via skjemaet nederst i høyre hjørne på https://echo.uib.no,
 eller send oss en mail på [webkom-styret@echo.uib.no](mailto:webkom-styret@echo.uib.no).
 
-# Oppsett for utviklere
+## Oppsett for utviklere
 
-## Frontend
+For oppsett av applikasjonene, se deres respektive README's:
 
-**1. Klon Git-repoet.**
-
-    git clone git@github.com:echo-webkom/echo-web
-
-**2. Naviger til riktig mappe.**
-
-    cd echo-web
-
-**3. Installer dependencies (du trenger [yarn](https://classic.yarnpkg.com/en/docs/install) for dette).**
-
-    yarn
-
-**4. Naviger til riktig mappe.**
-
-    cd frontend
-
-**5. Kopier innholdet i `.env.example` til en fil med navn `.env` (og evt. fyll inn verdier for feltene).**
-
-    cp .env.example .env
-
-**6. Start en lokal server.**
-
-    yarn dev
-
-Gå til `localhost:3000` i en nettleser for å se nettsiden.
-
-## Backend
-
-**1. Klon Git-repoet.**
-
-    git clone git@github.com:echo-webkom/echo-web
-
-**2. Naviger til riktig mappe.**
-
-    cd echo-web/backend
-
-**3. Kopier innholdet i `.env.example` til en fil med navn `.env` (og evt. fyll inn verdier for feltene).**
-
-    cp .env.example .env
-
-**4. Start en container med serveren og Postgres (du trenger [Docker](https://docs.docker.com/compose/install) for dette).**
-
-    docker compose up --build
-
-Serveren starter på `localhost:8080`, eller `localhost:$PORT` dersom $PORT er definert.
-
-#### Auto-formattering
-
-For å aktivere automatisk kodeformattering som kjører hver gang
-du commiter, kan du kjøre denne kommandoen (mens du er i Git-repoet):
-
-    ./gradlew addKtlintFormatGitPreCommitHook
-
-#### Sette inn test-data
-
-For å sette inn test-data i databasen, kan du kjøre denne kommandoen,
-mens backend og databasen kjører:
-
-    ./scripts/restore
-
-## CMS
-
-**1. Klon Git-repoet.**
-
-    git clone git@github.com:echo-webkom/echo-web
-
-**2. Naviger til riktig mappe.**
-
-    cd echo-web
-
-**3. Installer dependencies (du trenger [yarn](https://classic.yarnpkg.com/en/docs/install) for dette).**
-
-    yarn
-
-**4. Naviger til riktig mappe.**
-
-    cd cms
-
-**5. Start en lokal server.**
-
-    yarn start
-
-Gå til `localhost:3333` i en nettleser, og logg inn med din Sanity-bruker.
+-   [frontend](frontend/README.md)
+-   [backend](backend/README.md)
+-   [CMS](cms/README.md)

@@ -1,28 +1,31 @@
-import { Box, Center, Flex, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
+import { Box, Flex, LinkBox, LinkOverlay, Spacer } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import HappeningKeyInfo from '@components/happening-key-info';
+import ReactionCount from '@components/reaction-count';
 
 interface Props {
     event: Happening;
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const EventPreview = ({ event, registrationCounts }: Props): JSX.Element => {
+const EventPreview = ({ event, registrationCounts }: Props) => {
     return (
         <LinkBox data-testid={event.slug}>
-            <Flex align="center" justifyContent="space-between" _hover={{ cursor: 'pointer' }}>
-                <Box flexBasis="60%">
-                    <NextLink href={`/event/${event.slug}`} passHref>
-                        <LinkOverlay _hover={{ textDecorationLine: 'underline' }}>
-                            <Text ml="3">{event.title}</Text>
-                        </LinkOverlay>
-                    </NextLink>
+            <Flex alignItems="center">
+                <Box>
+                    <LinkOverlay as={NextLink} href={`/event/${event.slug}`} _hover={{ textDecor: 'underline' }}>
+                        {event.title}
+                    </LinkOverlay>
+                    <ReactionCount slug={event.slug} />
                 </Box>
-                <Center>
+
+                <Spacer />
+
+                <Box>
                     <HappeningKeyInfo event={event} registrationCounts={registrationCounts} />
-                </Center>
+                </Box>
             </Flex>
         </LinkBox>
     );

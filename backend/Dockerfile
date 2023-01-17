@@ -1,4 +1,3 @@
-# We use OpenJDK 17 since that is what our Heroku instance uses.
 # Download Gradle wrapper and install dependencies.
 FROM openjdk:17-jdk-slim AS deps
 
@@ -37,12 +36,6 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /opt/app
 
-RUN apt update \
- && apt install -yq --no-install-recommends curl
+COPY --from=build /opt/build/build/libs/echo-web-backend-0.0.1-all.jar /opt/app/build/libs/
 
-COPY --from=build /opt/build/build/libs/*-all.jar /opt/app/build/libs/
-COPY Procfile /opt/app
-COPY scripts scripts
-
-# Use Procfile as single source of truth.
-CMD cat Procfile | sed -e 's/web: //g' | bash
+CMD ["java", "-jar", "/opt/app/build/libs/echo-web-backend-0.0.1-all.jar"]

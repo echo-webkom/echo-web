@@ -17,16 +17,14 @@ import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.validStudentGroups
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.studentGroupRoutes() {
+fun Application.studentGroupRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             studentGroup()
         }
     }
@@ -62,8 +60,6 @@ fun Route.studentGroup() {
 
         if (userEmail in _getGroupMembers(group)) {
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 StudentGroupMembership.deleteWhere {
                     studentGroupName eq group and
                         (StudentGroupMembership.userEmail eq userEmail)
@@ -71,8 +67,6 @@ fun Route.studentGroup() {
             }
         } else {
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 StudentGroupMembership.insert {
                     it[studentGroupName] = group
                     it[StudentGroupMembership.userEmail] = userEmail

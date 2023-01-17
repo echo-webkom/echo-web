@@ -13,3 +13,7 @@ node_modules/
 **/*.tfvars
 **/.terraform
 **/*.tfstate*
+
+cms/.sanity
+
+**/yarn-error.log

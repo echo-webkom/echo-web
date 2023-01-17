@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.29.0"
+      version = "3.39.1"
     }
   }
 
@@ -20,14 +20,10 @@ provider "azurerm" {
   subscription_id = "f16e6916-1e71-42a0-9df3-0246b805f432"
 }
 
-locals {
-  short_rg_name = trim(substr(var.resource_group_name, 0, 25), "_-")
-}
-
 # Resource group
 
-resource "azurerm_resource_group" "echo_web" {
-  name     = local.short_rg_name
+resource "azurerm_resource_group" "rg" {
+  name     = trim(substr(var.rg_name, 0, 25), "_-")
   location = var.location
 
   tags = {
@@ -35,112 +31,13 @@ resource "azurerm_resource_group" "echo_web" {
   }
 }
 
-# Storage for preview Caddy
-
-resource "azurerm_storage_account" "caddy_preview_storage" {
-  name                      = "${substr(replace(var.resource_group_name, "-", ""), 0, 15)}store"
-  resource_group_name       = azurerm_resource_group.echo_web.name
-  location                  = var.location
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  enable_https_traffic_only = true
-
-  tags = {
-    "environment" = "preview"
-  }
-}
-
-resource "azurerm_storage_share" "caddy_preview_share" {
-  name                 = "${substr(replace(var.resource_group_name, "-", ""), 0, 15)}share"
-  storage_account_name = azurerm_storage_account.caddy_preview_storage.name
-  quota                = 1
-}
-
-# Preview containers
-
-resource "azurerm_container_group" "echo_web_preview" {
-  name                = local.short_rg_name
-  location            = var.location
-  resource_group_name = azurerm_resource_group.echo_web.name
-  ip_address_type     = "Public"
-  os_type             = "Linux"
-  dns_name_label      = local.short_rg_name
-
-  container {
-    name  = "${local.short_rg_name}-backend"
-    image = var.backend_image
-
-    cpu    = 0.5
-    memory = 0.5
-
-    environment_variables = {
-      "MAX_POOL_SIZE" = "5"
-      "DEV"           = "jaj"
-    }
-
-    secure_environment_variables = {
-      "DATABASE_URL" = "postgres://postgres:${var.db_password}@${local.short_rg_name}.${var.location}.azurecontainer.io:5432/postgres"
-      "ADMIN_KEY"    = var.admin_key
-    }
-  }
-
-  container {
-    name  = "${local.short_rg_name}-psql"
-    image = "postgres:11.6-alpine"
-
-    cpu    = 0.5
-    memory = 0.5
-
-    environment_variables = {
-      "POSTGRES_DB"   = "postgres"
-      "POSTGRES_USER" = "postgres"
-    }
-
-    secure_environment_variables = {
-      "POSTGRES_PASSWORD" = var.db_password
-    }
-
-    ports {
-      port     = 5432
-      protocol = "TCP"
-    }
-  }
-
-  container {
-    name  = "${local.short_rg_name}-caddy"
-    image = "caddy"
-
-    cpu    = 0.5
-    memory = 0.5
-
-    ports {
-      port     = 443
-      protocol = "TCP"
-    }
-
-    ports {
-      port     = 80
-      protocol = "TCP"
-    }
-
-    commands = ["caddy", "reverse-proxy", "--from", "${local.short_rg_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
-  }
-
-  exposed_port {
-    port     = 443
-    protocol = "TCP"
-  }
-
-  exposed_port {
-    port     = 5432
-    protocol = "TCP"
-  }
-
-  tags = {
-    "environment" = "preview"
-  }
-}
-
-output "preview_backend_url" {
-  value = "https://${azurerm_container_group.echo_web_preview.dns_name_label}.${var.location}.azurecontainer.io"
+module "pcg" {
+  source        = "./modules/preview_container_group"
+  rg_name       = azurerm_resource_group.rg.name
+  location      = var.location
+  db_password   = var.db_password
+  backend_image = var.backend_image
+  admin_key     = var.admin_key
+  auth_secret   = var.auth_secret
+  environment   = "preview"
 }

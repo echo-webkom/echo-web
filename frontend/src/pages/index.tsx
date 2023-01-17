@@ -13,7 +13,6 @@ import {
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import { isBefore } from 'date-fns';
 import type { GetStaticProps } from 'next';
-import { useContext } from 'react';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
 import SEO from '@components/seo';
@@ -30,7 +29,7 @@ import type { JobAdvert } from '@api/job-advert';
 import { JobAdvertAPI } from '@api/job-advert';
 import { isErrorMessage } from '@utils/error';
 import getRssXML from '@utils/generate-rss-feed';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 import FeedbackPopup from '@components/feedback-popup';
 
 const IndexPage = ({
@@ -46,10 +45,10 @@ const IndexPage = ({
     banner: Banner | null;
     registrationCounts: Array<RegistrationCount>;
     jobs: Array<JobAdvert>;
-}): JSX.Element => {
+}) => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
     const enableFeedbackPopup = process.env.NEXT_PUBLIC_ENABLE_FEEDBACK_POPUP?.toLowerCase() === 'true';
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const BannerComponent = ({ banner }: { banner: Banner }) => {
         const headingSize = useBreakpointValue(['md', 'md', 'lg', 'lg']);
@@ -72,7 +71,7 @@ const IndexPage = ({
         <EntryBox
             titles={isNorwegian ? ['Innlegg'] : ['Posts']}
             entries={posts}
-            entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
+            entryLimit={2}
             altText={isNorwegian ? 'Ingen innlegg :(' : 'No posts :('}
             linkTo="/posts"
             type="post"
@@ -85,11 +84,9 @@ const IndexPage = ({
             {banner &&
                 (banner.linkTo ? (
                     <LinkBox transition="0.3s ease" _hover={{ transform: 'scale(105%)' }}>
-                        <NextLink href={banner.linkTo} passHref>
-                            <LinkOverlay isExternal={banner.isExternal}>
-                                <BannerComponent banner={banner} />
-                            </LinkOverlay>
-                        </NextLink>
+                        <LinkOverlay as={NextLink} href={banner.linkTo} isExternal={banner.isExternal}>
+                            <BannerComponent banner={banner} />
+                        </LinkOverlay>
                     </LinkBox>
                 ) : (
                     <BannerComponent banner={banner} />
@@ -160,6 +157,9 @@ const IndexPage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) throw new Error('No ADMIN_KEY defined.');
+
     const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
         HappeningAPI.getHappeningsByType(0, 'BEDPRES'),
         HappeningAPI.getHappeningsByType(0, 'EVENT'),
@@ -194,7 +194,7 @@ export const getStaticProps: GetStaticProps = async () => {
         .slice(0, bedpresLimit);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
-    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs);
+    const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
 
     return {
         props: {

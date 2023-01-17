@@ -10,8 +10,6 @@ import {
     Flex,
     Spacer,
     Icon,
-    LinkOverlay,
-    LinkBox,
     IconButton,
     Text,
     Modal,
@@ -23,7 +21,6 @@ import { format, parseISO } from 'date-fns';
 import { IoMdPerson } from 'react-icons/io';
 import { AiOutlineClose, AiOutlineCheck, AiOutlineDelete, AiOutlineMail } from 'react-icons/ai';
 import { MdOutlineContentCopy } from 'react-icons/md';
-import NextLink from 'next/link';
 import { type Feedback } from '@api/feedback';
 
 interface Props {
@@ -37,7 +34,7 @@ const FeedbackEntry = ({ feedback, handleDelete, handleUpdate }: Props) => {
 
     const formattedDate = format(parseISO(feedback.sentAt), 'yyyy-MM-dd HH:mm');
 
-    const name = feedback.name !== '' ? feedback.name : 'Ukjent';
+    const name = feedback.name === '' ? 'Ukjent' : feedback.name;
 
     const toast = useToast();
 
@@ -76,18 +73,14 @@ const FeedbackEntry = ({ feedback, handleDelete, handleUpdate }: Props) => {
                         onClick={() => void handleUpdate({ ...feedback, isRead: !feedback.isRead })}
                     />
                     {feedback.email && (
-                        <LinkBox>
-                            <NextLink href={`mailto:${feedback.email}`} passHref>
-                                <LinkOverlay isExternal>
-                                    <IconButton
-                                        title="Send epost"
-                                        aria-label="Send epost"
-                                        colorScheme="blue"
-                                        icon={<AiOutlineMail />}
-                                    />
-                                </LinkOverlay>
-                            </NextLink>
-                        </LinkBox>
+                        <a href={`mailto:${feedback.email}`}>
+                            <IconButton
+                                title="Send epost"
+                                aria-label="Send epost"
+                                colorScheme="blue"
+                                icon={<AiOutlineMail />}
+                            />
+                        </a>
                     )}
                     <IconButton
                         title="Slett tilbakemelding"

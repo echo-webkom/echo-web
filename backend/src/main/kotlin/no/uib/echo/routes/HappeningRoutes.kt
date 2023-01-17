@@ -15,10 +15,9 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -42,8 +41,6 @@ fun Route.deleteHappening() {
         }
 
         val hapDeleted = transaction {
-            addLogger(StdOutSqlLogger)
-
             val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
             if (!happeningExists) {
                 return@transaction false
@@ -59,6 +56,10 @@ fun Route.deleteHappening() {
 
             Registration.deleteWhere {
                 Registration.happeningSlug eq slug
+            }
+
+            StudentGroupHappeningRegistration.deleteWhere {
+                StudentGroupHappeningRegistration.happeningSlug eq slug
             }
 
             Happening.deleteWhere {
@@ -92,8 +93,6 @@ fun Route.getHappeningInfo() {
         }
 
         val happening = transaction {
-            addLogger(StdOutSqlLogger)
-
             Happening.select {
                 Happening.slug eq slug
             }.firstOrNull()
@@ -105,25 +104,29 @@ fun Route.getHappeningInfo() {
         }
 
         val registrationCount = transaction {
-            addLogger(StdOutSqlLogger)
-
             SpotRange.select {
                 SpotRange.happeningSlug eq slug
             }.toList().map {
+                val count =
+                    countRegistrationsDegreeYear(
+                        slug,
+                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                        false,
+                    )
+
+                val waitListCount =
+                    countRegistrationsDegreeYear(
+                        slug,
+                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                        true,
+                    )
+
                 SpotRangeWithCountJson(
                     it[SpotRange.spots],
                     it[SpotRange.minDegreeYear],
                     it[SpotRange.maxDegreeYear],
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        false
-                    ),
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        true
-                    )
+                    count,
+                    waitListCount,
                 )
             }
         }
@@ -131,8 +134,7 @@ fun Route.getHappeningInfo() {
         call.respond(
             HttpStatusCode.OK,
             HappeningInfoJson(
-                registrationCount,
-                happening[Happening.regVerifyToken]
+                registrationCount
             )
         )
     }

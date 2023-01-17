@@ -1,18 +1,28 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { array, literal, union } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
 
-const studentGroups: Array<StudentGroup> = ['webkom', 'bedkom', 'gnist', 'tilde', 'hovedstyret'];
+const studentGroups: Array<StudentGroup> = [
+    'webkom',
+    'bedkom',
+    'gnist',
+    'tilde',
+    'hovedstyret',
+    'hyggkom',
+    'esc',
+    'makerspace',
+];
 
-const studentGroupDecoder = union(
-    literal('webkom'),
-    literal('bedkom'),
-    literal('gnist'),
-    literal('tilde'),
-    literal('hovedstyret'),
-);
-type StudentGroup = decodeType<typeof studentGroupDecoder>;
+const studentGroupSchema = z.enum([
+    'webkom',
+    'bedkom',
+    'gnist',
+    'tilde',
+    'hovedstyret',
+    'hyggkom',
+    'esc',
+    'makerspace',
+]);
+type StudentGroup = z.infer<typeof studentGroupSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -23,14 +33,18 @@ const DashboardAPI = {
         idToken: string,
     ): Promise<Array<StudentGroup> | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put(`${BACKEND_URL}/studentgroup`, null, {
-                params: { group, email },
+            const params = new URLSearchParams({ email, group }).toString();
+
+            const response = await fetch(`${BACKEND_URL}/studentgroup?${params}`, {
+                method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
             });
 
-            if (status === 200) return array(studentGroupDecoder)(data);
+            const data = await response.json();
+
+            if (response.status === 200) return studentGroupSchema.array().parse(data);
 
             return { message: data };
         } catch (error) {
