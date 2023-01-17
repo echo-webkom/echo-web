@@ -1,4 +1,4 @@
-import { Box, Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
@@ -86,23 +86,21 @@ const HeaderLogo = () => {
 
     return (
         <LinkBox
-            p="1.05rem"
+            p="1rem"
             bg={bg}
             shadow="lg"
             data-cy="header-logo"
-            borderRadius="0.5rem"
+            borderRadius="lg"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
-            mr="0rem"
-            pos="relative"
         >
             <LinkOverlay as={NextLink} href="/">
-                <Flex display={{ base: 'none', md: 'block' }}>
+                <Box display={{ base: 'none', md: 'block' }}>
                     <Image src={bigLogo} alt="logo" width={260} height={77} />
-                </Flex>
+                </Box>
 
-                <Flex display={{ base: 'block', md: 'none' }}>
+                <Box display={{ base: 'block', md: 'none' }}>
                     <Image src={smallLogo} alt="logo" width={90} height={90} />
-                </Flex>
+                </Box>
             </LinkOverlay>
 
             {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
