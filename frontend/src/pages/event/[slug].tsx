@@ -1,6 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
+import { Center, Divider, Flex, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
@@ -27,7 +27,7 @@ interface Props {
 
 const DynamicRegistrationsList = dynamic(() => import('@components/registrations-list'));
 
-const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element => {
+const HappeningPage = ({ happening, happeningInfo, error }: Props) => {
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
@@ -44,108 +44,98 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element 
                         description={`${happening.body.no.slice(0, 60)} ...`}
                         image={happening.logoUrl ?? undefined}
                     />
-                    <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                        <GridItem colSpan={1} as={Section}>
-                            <>
-                                {happening.happeningType === 'BEDPRES' &&
-                                    happening.companyLink &&
-                                    happening.logoUrl && (
-                                        <Center>
-                                            <LinkBox>
-                                                <LinkOverlay as={NextLink} href={happening.companyLink}>
-                                                    <Image
-                                                        src={happening.logoUrl}
-                                                        alt="Bedriftslogo"
-                                                        width={300}
-                                                        height={300}
-                                                    />
-                                                </LinkOverlay>
-                                            </LinkBox>
+                    <Flex direction={['column', null, null, 'row']} gap="4">
+                        <Flex
+                            direction="column"
+                            gap="5"
+                            as={Section}
+                            flexShrink="0"
+                            h="fit-content"
+                            w={['full', null, null, '300px']}
+                        >
+                            {happening.happeningType === 'BEDPRES' && happening.companyLink && happening.logoUrl && (
+                                <Center>
+                                    <LinkBox>
+                                        <LinkOverlay as={NextLink} href={happening.companyLink}>
+                                            <Image
+                                                src={happening.logoUrl}
+                                                alt="Bedriftslogo"
+                                                width={260}
+                                                height={260}
+                                            />
+                                        </LinkOverlay>
+                                    </LinkBox>
+                                </Center>
+                            )}
+                            <HappeningMetaInfo
+                                date={parseISO(happening.date)}
+                                location={happening.location}
+                                locationLink={happening.locationLink}
+                                title={happening.title}
+                                type={happening.happeningType}
+                                slug={happening.slug}
+                                contactEmail={happening.contactEmail}
+                                companyLink={happening.companyLink}
+                                deductiblePayment={happening.deductiblePayment}
+                                spotRangeCounts={
+                                    happeningInfo?.spotRanges.length === 0 ? null : happeningInfo?.spotRanges ?? null
+                                }
+                                spotRangesFromCms={
+                                    !happeningInfo?.spotRanges || happeningInfo.spotRanges.length === 0
+                                        ? happening.spotRanges
+                                        : null
+                                }
+                            />
+                            {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
+                                <>
+                                    <Divider />
+                                    {isFuture(regDeadline) && (
+                                        <RegistrationForm happening={happening} type={happening.happeningType} />
+                                    )}
+                                    {isBefore(date, parseISO(happening.date)) &&
+                                        isAfter(date, regDate) &&
+                                        isBefore(date, regDeadline) && (
+                                            <>
+                                                {signedIn && (
+                                                    <Center>
+                                                        <Text fontSize="md">
+                                                            {isNorwegian ? 'Påmelding stenger' : 'Registration closes'}{' '}
+                                                            {format(regDeadline, 'dd. MMM HH:mm', {
+                                                                locale: isNorwegian ? nb : enUS,
+                                                            })}
+                                                        </Text>
+                                                    </Center>
+                                                )}
+                                            </>
+                                        )}
+                                    {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
+                                        <Center data-testid="bedpres-has-been">
+                                            <Text>
+                                                {isNorwegian ? 'Påmeldingen er stengt' : 'Registration is closed'}
+                                            </Text>
                                         </Center>
                                     )}
-                                <HappeningMetaInfo
-                                    date={parseISO(happening.date)}
-                                    location={happening.location}
-                                    locationLink={happening.locationLink}
-                                    title={happening.title}
-                                    type={happening.happeningType}
-                                    slug={happening.slug}
-                                    contactEmail={happening.contactEmail}
-                                    companyLink={happening.companyLink}
-                                    deductiblePayment={happening.deductiblePayment}
-                                    spotRangeCounts={
-                                        happeningInfo?.spotRanges.length === 0
-                                            ? null
-                                            : happeningInfo?.spotRanges ?? null
-                                    }
-                                    spotRangesFromCms={
-                                        !happeningInfo?.spotRanges || happeningInfo.spotRanges.length === 0
-                                            ? happening.spotRanges
-                                            : null
-                                    }
-                                />
-                                {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
-                                    <>
-                                        <Divider my="1em" />
-                                        {isFuture(regDeadline) && (
-                                            <RegistrationForm happening={happening} type={happening.happeningType} />
-                                        )}
-                                        {isBefore(date, parseISO(happening.date)) &&
-                                            isAfter(date, regDate) &&
-                                            isBefore(date, regDeadline) && (
-                                                <>
-                                                    {signedIn && (
-                                                        <Center mt="1rem">
-                                                            <Text fontSize="md">
-                                                                {isNorwegian
-                                                                    ? 'Påmelding stenger'
-                                                                    : 'Registration closes'}{' '}
-                                                                {format(regDeadline, 'dd. MMM HH:mm', {
-                                                                    locale: isNorwegian ? nb : enUS,
-                                                                })}
-                                                            </Text>
-                                                        </Center>
-                                                    )}
-                                                </>
-                                            )}
-                                        {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
-                                            <Center my="3" data-testid="bedpres-has-been">
-                                                <Text>
-                                                    {isNorwegian ? 'Påmeldingen er stengt' : 'Registration is closed'}
-                                                </Text>
-                                            </Center>
-                                        )}
-                                    </>
-                                )}
-                                <Divider my="1em" />
-                                <Center>
-                                    <Heading size="lg">@{happening.studentGroupName}</Heading>
-                                </Center>
-                            </>
-                        </GridItem>
-                        <GridItem
-                            colStart={[1, null, null, 2]}
-                            rowStart={[2, null, null, 1]}
-                            colSpan={[1, null, null, 3]}
-                            rowSpan={2}
-                            minW="0"
-                        >
-                            <Section minW="100%">
-                                <Article
-                                    heading={happening.title}
-                                    body={
-                                        isNorwegian
-                                            ? happening.body.no
-                                            : happening.body.en ??
-                                              '(No english version avalible) \n\n' + happening.body.no
-                                    }
-                                />
-                                <Center>
-                                    <ReactionButtons slug={happening.slug} />
-                                </Center>
-                            </Section>
-                        </GridItem>
-                    </Grid>
+                                </>
+                            )}
+                            <Divider />
+                            <Center>
+                                <Heading size="lg">@{happening.studentGroupName}</Heading>
+                            </Center>
+                        </Flex>
+                        <Flex as={Section} direction="column" w="full" h="fit-content">
+                            <Article
+                                heading={happening.title}
+                                body={
+                                    isNorwegian
+                                        ? happening.body.no
+                                        : happening.body.en ?? '(No english version avalible) \n\n' + happening.body.no
+                                }
+                            />
+                            <Center>
+                                <ReactionButtons slug={happening.slug} mt="5" />
+                            </Center>
+                        </Flex>
+                    </Flex>
                     <DynamicRegistrationsList
                         slug={happening.slug}
                         title={happening.title}

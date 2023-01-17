@@ -1,4 +1,4 @@
-import { Divider, Flex, Heading, Spacer } from '@chakra-ui/react';
+import { Divider, Heading } from '@chakra-ui/react';
 import Markdown from 'markdown-to-jsx';
 import MapMarkdownChakra from '@utils/markdown';
 
@@ -7,15 +7,10 @@ interface Props {
     body: string;
 }
 
-const Article = ({ heading, body }: Props): JSX.Element => {
+const Article = ({ heading, body }: Props) => {
     return (
         <>
-            <Flex direction="row" alignItems="center">
-                <Heading mb="0.2em" size="2xl">
-                    {heading}
-                </Heading>
-                <Spacer />
-            </Flex>
+            <Heading size="2xl">{heading}</Heading>
             <Divider my=".5em" />
             <Markdown options={{ overrides: MapMarkdownChakra }}>{body}</Markdown>
         </>
