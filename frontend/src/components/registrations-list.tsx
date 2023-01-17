@@ -37,24 +37,26 @@ import {
     ModalBody,
 } from '@chakra-ui/react';
 import { getTime, parseISO, isBefore, isAfter } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 import ErrorBox from '@components/error-box';
-import type { Registration } from '@api/registration';
+import { RegistrationAPI, type Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
+import useAuth from '@hooks/use-auth';
 import RegistrationPieChart from '@components/registration-pie-chart';
 import RegistrationsOverTime from '@components/registrations-over-time';
 import type { Degree } from '@utils/schemas';
 import type { StudentGroup } from '@api/dashboard';
+import { isErrorMessage, type ErrorMessage } from '@utils/error';
 import capitalize from '@utils/capitalize';
 
 interface Props {
-    registrations: Array<Registration>;
-    registrationDate: Date;
-    error: string | null;
+    slug: string;
     title: string;
+    registrationDate: Date;
 }
+
 const regsFormatter = (regs: Array<Registration>) =>
     regs
         .map((reg, index) => ({
@@ -67,9 +69,14 @@ const regsFormatter = (regs: Array<Registration>) =>
                 : reg,
         );
 
-const RegistrationsList = ({ registrations, registrationDate, title, error }: Props) => {
+const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     type DegreeType = 'all' | Degree;
     type StudentGroupType = 'all' | StudentGroup;
+
+    const { idToken, signedIn } = useAuth();
+
+    const [registrations, setRegistrations] = useState<Array<Registration>>([]);
+    const [error, setError] = useState<ErrorMessage | null>(null);
 
     const [degree, setDegree] = useState<DegreeType>('all');
     const [year, setYear] = useState<number>(0);
@@ -112,11 +119,27 @@ const RegistrationsList = ({ registrations, registrationDate, title, error }: Pr
 
     const hasEarlyRegistrations = registrationsOverTimeBefore.length > 0;
 
+    useEffect(() => {
+        const fetchRegs = async () => {
+            if (!signedIn || !idToken) return;
+            const result = await RegistrationAPI.getRegistrations(slug, idToken);
+
+            if (isErrorMessage(result)) {
+                setError(result);
+            } else {
+                setError(null);
+                setRegistrations(result);
+            }
+        };
+        void fetchRegs();
+    }, [idToken, signedIn, slug]);
+
+    if (registrations.length === 0 && !error) return <></>;
+
     return (
         <>
             <Section mt="1rem" minW="100%">
-                {error && <ErrorBox error={error} />}
-                {registrations.length === 0 && !error && <Heading data-cy="no-regs">Ingen påmeldinger enda</Heading>}
+                {error && <ErrorBox error={error.message} />}
                 {registrations.length > 0 && !error && (
                     <Tabs>
                         <TabList>
