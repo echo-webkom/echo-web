@@ -99,6 +99,10 @@ const RegistrationAPI = {
 
             const data = await response.json();
 
+            if (response.status === 404) {
+                return [];
+            }
+
             if (isErrorMessage(data)) {
                 return data;
             }
