@@ -1,4 +1,4 @@
-import type { ButtonProps } from '@chakra-ui/react';
+import type { ButtonGroupProps, ButtonProps } from '@chakra-ui/react';
 import { useToast, ButtonGroup, Button, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import type { Reaction, ReactionType } from '@api/reaction';
@@ -29,11 +29,11 @@ const reactions = {
     },
 };
 
-interface Props {
+interface Props extends ButtonGroupProps {
     slug: string;
 }
 
-const ReactionButtons = ({ slug }: Props) => {
+const ReactionButtons = ({ slug, ...props }: Props) => {
     const toast = useToast();
     const { signedIn, idToken } = useAuth();
 
@@ -88,7 +88,7 @@ const ReactionButtons = ({ slug }: Props) => {
     }
 
     return (
-        <ButtonGroup w={['full', null, null, 'auto']}>
+        <ButtonGroup w={['full', null, null, 'auto']} {...props}>
             <ReactionButton
                 onClick={() => void handleClick('LIKE')}
                 {...reactions.like}
