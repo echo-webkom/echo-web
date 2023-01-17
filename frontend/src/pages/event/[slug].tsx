@@ -26,17 +26,17 @@ import useLanguage from '@hooks/use-language';
 interface Props {
     happening: Happening | null;
     happeningInfo: HappeningInfo | null;
-    date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
+const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element => {
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
     const { signedIn, idToken } = useAuth();
     const [regsList, setRegsList] = useState<Array<Registration>>([]);
     const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
+    const date = new Date();
 
     useEffect(() => {
         const fetchRegs = async () => {
@@ -185,16 +185,16 @@ interface Params extends ParsedUrlQuery {
     slug: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { slug } = context.params as Params;
+export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
+    res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+
+    const { slug } = params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const happeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug);
-
-    const date = Date.now();
 
     if (isErrorMessage(happening) && happening.message === '404') {
         return {
@@ -205,7 +205,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const props: Props = {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
-        date,
         error: isErrorMessage(happening) ? 'Det har skjedd en feil.' : null,
     };
 
