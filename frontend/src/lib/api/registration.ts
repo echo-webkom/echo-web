@@ -97,11 +97,11 @@ const RegistrationAPI = {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
 
-            const data = await response.json();
-
             if (response.status === 404) {
                 return [];
             }
+
+            const data = await response.json();
 
             if (isErrorMessage(data)) {
                 return data;
