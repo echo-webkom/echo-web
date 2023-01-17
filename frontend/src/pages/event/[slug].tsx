@@ -1,19 +1,15 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
-import type { ErrorMessage } from '@utils/error';
 import useAuth from '@hooks/use-auth';
 import type { Happening, HappeningInfo } from '@api/happening';
 import { HappeningAPI } from '@api/happening';
-import { RegistrationAPI } from '@api/registration';
 import { isErrorMessage } from '@utils/error';
-import type { Registration } from '@api/registration';
 import ErrorBox from '@components/error-box';
 import SEO from '@components/seo';
 import Article from '@components/article';
@@ -35,25 +31,8 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element 
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
-    const { signedIn, idToken } = useAuth();
-    const [regsList, setRegsList] = useState<Array<Registration>>([]);
-    const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
+    const { signedIn } = useAuth();
     const date = new Date();
-
-    useEffect(() => {
-        const fetchRegs = async () => {
-            if (!happening || !signedIn || !idToken) return;
-            const result = await RegistrationAPI.getRegistrations(happening.slug, idToken);
-
-            if (isErrorMessage(result)) {
-                setRegsListError(result);
-            } else {
-                setRegsListError(null);
-                setRegsList(result);
-            }
-        };
-        void fetchRegs();
-    }, [happening, idToken, signedIn]);
 
     return (
         <>
@@ -167,16 +146,13 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element 
                             </Section>
                         </GridItem>
                     </Grid>
-                    {regsList.length > 0 && (
-                        <DynamicRegistrationsList
-                            registrations={regsList}
-                            registrationDate={
-                                happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
-                            }
-                            error={regsListError?.message ?? null}
-                            title={happening.title}
-                        />
-                    )}
+                    <DynamicRegistrationsList
+                        slug={happening.slug}
+                        title={happening.title}
+                        registrationDate={
+                            happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
+                        }
+                    />
                 </>
             )}
         </>
