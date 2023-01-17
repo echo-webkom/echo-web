@@ -6,9 +6,9 @@ import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-f
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import dynamic from 'next/dynamic';
 import type { ErrorMessage } from '@utils/error';
 import useAuth from '@hooks/use-auth';
-import RegistrationsList from '@components/registrations-list';
 import type { Happening, HappeningInfo } from '@api/happening';
 import { HappeningAPI } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
@@ -28,6 +28,8 @@ interface Props {
     happeningInfo: HappeningInfo | null;
     error: string | null;
 }
+
+const DynamicRegistrationsList = dynamic(() => import('@components/registrations-list'));
 
 const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element => {
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
@@ -166,7 +168,7 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props): JSX.Element 
                         </GridItem>
                     </Grid>
                     {regsList.length > 0 && (
-                        <RegistrationsList
+                        <DynamicRegistrationsList
                             registrations={regsList}
                             registrationDate={
                                 happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
