@@ -11,9 +11,9 @@ interface Props {
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => {
+const BedpresPreview = ({ bedpres, registrationCounts }: Props) => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
-    // logoUrl must always be defined in a Happening of type 'BEDPRES'.
+
     const logoUrl = bedpres.logoUrl as string;
 
     return (
@@ -21,14 +21,8 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props): JSX.Element => 
             <Flex alignItems="center" p={[0, null, null, null, 5]} _hover={{ bg: hoverColor }}>
                 <Flex alignItems="center" gap="5">
                     <Box display={['none', 'block']}>
-                        <Box>
-                            <Image
-                                style={{ borderRadius: '100%' }}
-                                src={logoUrl}
-                                alt={bedpres.title}
-                                width={85}
-                                height={85}
-                            />
+                        <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
+                            <Image src={logoUrl} alt={bedpres.title} fill />
                         </Box>
                     </Box>
                     <Box>
