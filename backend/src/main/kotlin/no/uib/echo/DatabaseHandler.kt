@@ -53,6 +53,7 @@ class DatabaseHandler(
     private val dbUrlStr = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
     private val dbUsername = dbUrl.userInfo.split(":")[0]
     private val dbPassword = dbUrl.userInfo.split(":")[1]
+
     // MAX_POOL_SIZE takes precedence if it is not null, else we have defaults for prod and dev/preview defined above.
     private val maxPoolSize =
         mbMaxPoolSize?.toIntOrNull()
@@ -82,7 +83,8 @@ class DatabaseHandler(
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
     private val flyway: Flyway =
-        Flyway.configure().baselineVersion("27").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword).load()
+        Flyway.configure().baselineVersion("27").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
+            .load()
 
     private val conn by lazy {
         Database.connect(dataSource())
@@ -162,7 +164,13 @@ class DatabaseHandler(
             )
         )
 
-        val adminTestUser = UserJson("test.mctest@student.uib.no", "Test McTest", memberships = listOf("webkom"))
+        val adminTestUser = UserJson(
+            "test.mctest@student.uib.no",
+            "Test McTest",
+            memberships = listOf("webkom"),
+            createdAt = DateTime.now().toString(),
+            modifiedAt = DateTime.now().toString()
+        )
 
         try {
             transaction {

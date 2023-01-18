@@ -17,6 +17,8 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import type { StudentGroup } from '@api/dashboard';
 import DashboardAPI, { studentGroups } from '@api/dashboard';
 import type { User } from '@api/user';
@@ -74,6 +76,7 @@ const UserRow = ({ initialUser }: Props) => {
             <Td>{user.name}</Td>
             <Td>{user.email}</Td>
             <Td>{user.memberships.length > 0 && user.memberships.map((m: string) => capitalize(m)).join(', ')}</Td>
+            <Td>{format(user.modifiedAt, 'dd. MMM yyyy', { locale: nb })}</Td>
             <Td>
                 <Button onClick={onOpen}>Rediger</Button>
 

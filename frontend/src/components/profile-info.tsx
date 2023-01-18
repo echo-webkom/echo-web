@@ -94,6 +94,8 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
+            createdAt: new Date(),
+            modifiedAt: new Date(),
         };
 
         const res = await UserAPI.putUser(newUser, idToken);
