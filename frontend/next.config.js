@@ -3,7 +3,8 @@ const withPWA = require('next-pwa')({
     disable: process.env.NODE_ENV === 'development',
 });
 
-module.exports = withPWA({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
     webpack: (config) => {
         config.module.rules.push({
             test: /\.md$/,
@@ -27,4 +28,6 @@ module.exports = withPWA({
         ];
     },
     reactStrictMode: true,
-});
+};
+
+module.exports = withPWA(nextConfig);

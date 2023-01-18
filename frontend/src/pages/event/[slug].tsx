@@ -42,7 +42,11 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props) => {
                     <SEO
                         title={happening.title}
                         description={`${happening.body.no.slice(0, 60)} ...`}
-                        image={happening.logoUrl ?? undefined}
+                        image={
+                            happening.logoUrl
+                                ? `/api/og/bedpres?title=${happening.title}&logoUrl=${happening.logoUrl}`
+                                : undefined
+                        }
                     />
                     <Flex direction={['column', null, null, 'row']} gap="4">
                         <Flex
