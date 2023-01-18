@@ -19,17 +19,15 @@ import no.uib.echo.schema.ReactionType
 import no.uib.echo.schema.ReactionsJson
 import no.uib.echo.schema.User
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.reactionRoutes() {
+fun Application.reactionRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             putReaction()
             getReactions()
         }
@@ -51,7 +49,6 @@ fun Route.getReactions() {
         }
 
         val slugExists = transaction {
-            addLogger(StdOutSqlLogger)
             Happening.select {
                 Happening.slug eq slug
             }.count() > 0
@@ -87,8 +84,6 @@ fun Route.putReaction() {
         }
 
         val user = transaction {
-            addLogger(StdOutSqlLogger)
-
             User.select {
                 User.email eq email
             }.firstOrNull()
@@ -109,8 +104,6 @@ fun Route.putReaction() {
         val reaction = ReactionType.valueOf(reactionQuery.uppercase()).name
 
         val reactionExists = transaction {
-            addLogger(StdOutSqlLogger)
-
             Reaction.select {
                 userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
             }.count() > 0
@@ -118,16 +111,12 @@ fun Route.putReaction() {
 
         if (reactionExists) {
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Reaction.deleteWhere {
                     userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
                 }
             }
         } else {
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Reaction.insert {
                     it[userEmail] = email
                     it[happeningSlug] = slug
@@ -155,8 +144,6 @@ fun Route.putReaction() {
 
 fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
     val reactions: Map<ReactionType, Int> = transaction {
-        addLogger(StdOutSqlLogger)
-
         Reaction.select {
             happeningSlug eq slug
         }.groupBy {
@@ -171,8 +158,6 @@ fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
 
 fun getReactedTo(slug: String, email: String): List<ReactionType> {
     val reactions: List<ReactionType> = transaction {
-        addLogger(StdOutSqlLogger)
-
         Reaction.select {
             userEmail eq email and (happeningSlug eq slug)
         }.map {

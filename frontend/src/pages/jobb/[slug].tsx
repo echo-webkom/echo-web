@@ -1,10 +1,8 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { useContext } from 'react';
 import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Spinner, VStack } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import Markdown from 'markdown-to-jsx';
-import NextLink from 'next/link';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -21,9 +19,9 @@ import MapMarkdownChakra from '@utils/markdown';
 import IconText from '@components/icon-text';
 import translateJobType from '@utils/translate-job-type';
 import ButtonLink from '@components/button-link';
-import LanguageContext from 'language-context';
 import { imgUrlFor } from '@api/sanity';
 import degreeYearText from '@utils/degree-year-text';
+import useLangugage from '@hooks/use-language';
 
 interface Props {
     jobAdvert: JobAdvert | null;
@@ -31,7 +29,7 @@ interface Props {
 
 const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
     const router = useRouter();
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLangugage();
 
     return (
         <>
@@ -50,23 +48,21 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                     <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
                         <GridItem colSpan={1} colStart={1} rowStart={[2, null, null, 1]} as={Section}>
                             <LinkBox mb="1em">
-                                <NextLink href={jobAdvert.advertLink} passHref>
-                                    <LinkOverlay isExternal>
-                                        <Center>
-                                            <Image
-                                                src={imgUrlFor(jobAdvert.logoUrl)
-                                                    .width(300)
-                                                    .height(300)
-                                                    .fit('crop')
-                                                    .auto('format')
-                                                    .url()}
-                                                alt="Bedriftslogo"
-                                                width={300}
-                                                height={300}
-                                            />
-                                        </Center>
-                                    </LinkOverlay>
-                                </NextLink>
+                                <LinkOverlay href={jobAdvert.advertLink} isExternal>
+                                    <Center>
+                                        <Image
+                                            src={imgUrlFor(jobAdvert.logoUrl)
+                                                .width(300)
+                                                .height(300)
+                                                .fit('crop')
+                                                .auto('format')
+                                                .url()}
+                                            alt="Bedriftslogo"
+                                            width={300}
+                                            height={300}
+                                        />
+                                    </Center>
+                                </LinkOverlay>
                             </LinkBox>
                             <VStack alignItems="left" spacing={3}>
                                 <IconText
@@ -96,7 +92,7 @@ const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
                                     )}`}
                                 />
                                 <Divider />
-                                <ButtonLink w="100%" linkTo={jobAdvert.advertLink} isExternal>
+                                <ButtonLink w="100%" href={jobAdvert.advertLink} isExternal>
                                     {isNorwegian ? 'Søk her!' : 'Apply here!'}
                                 </ButtonLink>
                             </VStack>

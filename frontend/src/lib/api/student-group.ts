@@ -1,25 +1,26 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { array, record, string, union, nil } from 'typescript-json-decoder';
-import { profileDecoder } from './profile';
+import { z } from 'zod';
+import { profileSchema } from './profile';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
-import { slugDecoder, emptyArrayOnNilDecoder } from '@utils/decoders';
+import { slugSchema } from '@utils/schemas';
 
-const memberDecoder = record({
-    role: string,
-    profile: profileDecoder,
+const memberSchema = z.object({
+    role: z.string(),
+    profile: profileSchema,
 });
-type Member = decodeType<typeof memberDecoder>;
+type Member = z.infer<typeof memberSchema>;
 
-const studentGroupDecoder = record({
-    name: string,
-    slug: string,
-    info: union(string, nil),
-    imageUrl: union(string, nil),
-    members: (value) => emptyArrayOnNilDecoder(memberDecoder, value),
+const studentGroupSchema = z.object({
+    name: z.string(),
+    slug: z.string(),
+    info: z.string().nullable(),
+    imageUrl: z.string().nullable(),
+    members: z
+        .array(memberSchema)
+        .nullable()
+        .transform((m) => m ?? []),
 });
-type StudentGroup = decodeType<typeof studentGroupDecoder>;
+type StudentGroup = z.infer<typeof studentGroupSchema>;
 
 const StudentGroupAPI = {
     getPaths: async (): Promise<Array<string>> => {
@@ -27,7 +28,10 @@ const StudentGroupAPI = {
             const query = `*[_type == "studentGroup"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+            return slugSchema
+                .array()
+                .parse(result)
+                .map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -41,11 +45,14 @@ const StudentGroupAPI = {
             const query = `*[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+            return slugSchema
+                .array()
+                .parse(result)
+                .map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -71,11 +78,11 @@ const StudentGroupAPI = {
             `;
             const result = await SanityAPI.fetch(query);
 
-            return array(studentGroupDecoder)(result);
+            return studentGroupSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupsByType',
+                message: JSON.stringify(error),
             };
         }
     },
@@ -104,17 +111,11 @@ const StudentGroupAPI = {
                 };
             }
 
-            return array(studentGroupDecoder)(result)[0];
+            return studentGroupSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
             return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getStudentGroupBySlug',
+                message: JSON.stringify(error),
             };
         }
     },

@@ -16,15 +16,16 @@ services:
       - '${PORT:-8080}:${PORT:-8080}'
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
-      # Value of DEV doesn't matter, only that it's defined.
-      DEV: 'yes'
-      # Values from .env file
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      AUTH_SECRET: ${AUTH_SECRET:-very_secret_string_123}
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      # Pass through optional values from .env file.
+      INIT_DB:
+      MIGRATE_DB:
+      USE_JWT_TEST:
+      MAX_POOL_SIZE:
       SENDGRID_API_KEY:
       SEND_EMAIL_REGISTRATION:
-      TEST_MIGRATION:
-      PORT:
-      DISABLE_JWT_AUTH:
 
   database:
     build:

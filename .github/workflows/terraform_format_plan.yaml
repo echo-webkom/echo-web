@@ -1,0 +1,99 @@
+name: Terraform format & plan
+on:
+  pull_request:
+    branches: [master]
+    paths: ['terraform/**']
+
+permissions:
+  pull-requests: write
+
+env:
+  IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
+  TF_VAR_db_password_dev: ${{ secrets.DB_PASSWORD_DEV }}
+  TF_VAR_db_password_prod: ${{ secrets.DB_PASSWORD_PROD }}
+  TF_VAR_admin_key_dev: ${{ secrets.ADMIN_KEY_DEV }}
+  TF_VAR_admin_key_prod: ${{ secrets.ADMIN_KEY_PROD }}
+  TF_VAR_auth_secret: ${{ secrets.AUTH_SECRET }}
+  TF_VAR_sendgrid_api_key: ${{ secrets.SENDGRID_API_KEY }}
+  ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
+  ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+
+jobs:
+  terraform_format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Check format
+        run: |
+          cd terraform
+          terraform fmt -check -recursive
+
+  terraform_plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Plan main configuration
+        id: tf_plan
+        run: |
+          cd terraform/main
+          terraform init -lockfile=readonly
+          terraform plan -lock-timeout=15m -no-color
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.tf_plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.REPO_PAT }}
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const botComment = comments.find(comment =>
+              comment.body.includes('<!-- TERRAFORM PLAN -->')
+            )
+
+            const output = `<!-- TERRAFORM PLAN -->
+
+            #### 📖 Terraform plan: \`${{ steps.tf_plan.outcome }}\`
+
+            <details><summary>Show plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: output
+              })
+            }

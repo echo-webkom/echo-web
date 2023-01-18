@@ -7,6 +7,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import no.uib.echo.Environment
 import no.uib.echo.FeatureToggles
 import no.uib.echo.routes.feedbackRoutes
 import no.uib.echo.routes.happeningRoutes
@@ -18,24 +19,26 @@ import no.uib.echo.routes.userRoutes
 
 fun Application.configureRouting(
     featureToggles: FeatureToggles,
-    dev: Boolean = false,
-    disableJwtAuth: Boolean = false,
-    sendGridApiKey: String? = null
+    env: Environment,
+    sendGridApiKey: String? = null,
+    audience: String,
+    issuer: String,
+    secret: String?,
+    jwtConfig: String,
 ) {
     routing { getStatus() }
 
     registrationRoutes(
-        disableJwtAuth = disableJwtAuth,
         sendEmail = featureToggles.sendEmailReg,
         sendGridApiKey = sendGridApiKey,
-        verifyRegs = featureToggles.sendEmailReg
+        jwtConfig = jwtConfig
     )
     happeningRoutes()
-    feedbackRoutes()
-    userRoutes()
-    reactionRoutes()
-    sanityRoutes(dev)
-    studentGroupRoutes()
+    feedbackRoutes(jwtConfig)
+    userRoutes(env, audience, issuer, secret, jwtConfig)
+    reactionRoutes(jwtConfig)
+    sanityRoutes(env)
+    studentGroupRoutes(jwtConfig)
 }
 
 fun Route.getStatus() {

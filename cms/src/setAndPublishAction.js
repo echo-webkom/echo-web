@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useDocumentOperation } from '@sanity/react-hooks';
+import { useDocumentOperation, useValidationStatus } from '@sanity/react-hooks';
 
 export default function SetAndPublishAction(props) {
     const { patch, publish } = useDocumentOperation(props.id, props.type);
+    const { isValidating, markers } = useValidationStatus(props.id, props.type);
     const [isPublishing, setIsPublishing] = useState(false);
 
     useEffect(() => {
@@ -14,14 +15,18 @@ export default function SetAndPublishAction(props) {
     }, [props.draft]);
 
     return {
-        disabled: publish.disabled,
+        // check that current document is valid
+        disabled: publish.disabled || isValidating || markers.length > 0,
         label: isPublishing ? 'Publishing…' : 'Publish',
         onHandle: () => {
             // This will update the button text
             setIsPublishing(true);
 
             // Set publishedAt to current date and time
-            patch.execute([{ set: { publishedOnce: true } }]);
+            // and set publishedOnce if document has a slug
+            if (props.draft.slug) {
+                patch.execute([{ set: { publishedOnce: true } }]);
+            }
 
             // Perform the publish
             publish.execute();

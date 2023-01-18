@@ -21,17 +21,15 @@ import no.uib.echo.schema.FeedbackResponse
 import no.uib.echo.schema.FeedbackResponseJson
 import no.uib.echo.schema.getGroupMembers
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-fun Application.feedbackRoutes() {
+fun Application.feedbackRoutes(jwtConfig: String) {
     routing {
-        authenticate("auth-jwt") {
+        authenticate(jwtConfig) {
             getFeedback()
             putFeedback()
             deleteFeedback()
@@ -52,8 +50,6 @@ fun Route.postFeedback() {
             }
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Feedback.insert {
                     it[email] = feedback.email
                     it[name] = feedback.name
@@ -84,8 +80,6 @@ fun Route.getFeedback() {
         }
 
         val feedback = transaction {
-            addLogger(StdOutSqlLogger)
-
             Feedback.selectAll().map {
                 FeedbackResponseJson(
                     it[Feedback.id],
@@ -123,8 +117,6 @@ fun Route.deleteFeedback() {
             val req = call.receive<ReqJson>()
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Feedback.deleteWhere {
                     Feedback.id eq req.id
                 }
@@ -151,8 +143,6 @@ fun Route.putFeedback() {
             val feedback = call.receive<FeedbackResponseJson>()
 
             transaction {
-                addLogger(StdOutSqlLogger)
-
                 Feedback.update({ Feedback.id eq feedback.id }) {
                     it[Feedback.email] = feedback.email
                     it[name] = feedback.name

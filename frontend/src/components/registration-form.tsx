@@ -1,10 +1,7 @@
 import {
     Box,
     Button,
-    FormControl,
-    FormLabel,
-    Input,
-    Link,
+    Text,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -12,132 +9,197 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Text,
-    useColorModeValue,
+    Input,
     useDisclosure,
     useToast,
     VStack,
-    Wrap,
+    Spinner,
+    Alert,
+    AlertIcon,
+    Center,
+    LinkBox,
+    LinkOverlay,
 } from '@chakra-ui/react';
-import { useContext, useRef } from 'react';
-import NextLink from 'next/link';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
+import { MdOutlineArrowForward } from 'react-icons/md';
+import NextLink from 'next/link';
+import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import CountdownButton from '@components/countdown-button';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
-import type { User } from '@api/user';
+import { userIsComplete } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
-import FormTerm from '@components/form-term';
 import FormQuestion from '@components/form-question';
-import FormDegree from '@components/form-degree';
-import FormDegreeYear from '@components/form-degree-year';
-import fullNameToSplitName from '@utils/full-name-to-split-name';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
+import hasOverlap from '@utils/has-overlap';
+import capitalize from '@utils/capitalize';
+import useAuth from '@hooks/use-auth';
 
-const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' | 'info' | undefined => {
-    switch (statusCode) {
-        // OK
-        // The registration is submitted.
-        case 200: {
-            return 'success';
-        }
-
-        // ACCEPTED
-        // The bedpres spots are filled up,
-        // and the user is placed on the waitlist.
-        case 202: {
-            return 'warning';
-        }
-
-        // BAD_REQUEST
-        // The form has bad or invalid data.
-        case 400: {
-            return 'warning';
-        }
-
-        // FORBIDDEN
-        // User submits registration before bedpres is open (shouldn't be possible).
-        case 403: {
-            return 'warning';
-        }
-
-        // CONFLICT
-        // The bedpres the user is trying to sign up for does not exist.
-        case 409: {
-            return 'error';
-        }
-
-        // UNPROCESSABLE_ENTITY
-        // The registration already exists.
-        case 422: {
-            return 'warning';
-        }
-
-        // INTERNAL_SERVER_ERROR
-        // Something has gone horribly wrong.
-        default: {
-            return 'error';
-        }
-    }
+const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
+    if (statusCode === 200) return 'success';
+    if (statusCode === 202 || statusCode === 400 || statusCode === 422) return 'warning';
+    return 'error';
 };
 
 interface Props {
     happening: Happening;
-    regVerifyToken: string | null;
     type: HappeningType;
-    user: User | null;
 }
 
-const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX.Element => {
+const chooseDate = (
+    regDate: string | null,
+    studentGroupRegDate: string | null,
+    userIsEligibleForEarlyReg: boolean,
+): Date => {
+    if (!regDate && !studentGroupRegDate) return new Date();
+    if (!regDate && studentGroupRegDate) return userIsEligibleForEarlyReg ? parseISO(studentGroupRegDate) : new Date();
+    if (regDate && !studentGroupRegDate) return parseISO(regDate);
+    if (regDate && studentGroupRegDate) return parseISO(userIsEligibleForEarlyReg ? studentGroupRegDate : regDate);
+    // Shouldn't be possible to reach this point, but TypeScript doesn't know that
+    return new Date();
+};
+
+const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const isNorwegian = useContext(LanguageContext);
-    const linkColor = useColorModeValue('blue', 'blue.400');
+    const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
+    const { user, loading, signedIn, idToken } = useAuth();
+
+    const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
+    const regDate = chooseDate(
+        happening.registrationDate,
+        happening.studentGroupRegistrationDate,
+        userIsEligibleForEarlyReg,
+    );
 
     const toast = useToast();
 
-    const initialRef = useRef<HTMLInputElement | null>(null);
-    const { ref, ...rest } = register('email'); // needed for inital focus ref
-
-    const [firstName, lastName] = user && user.name !== '' ? fullNameToSplitName(user.name) : [undefined, undefined];
-
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
-        await RegistrationAPI.submitRegistration({
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            degree: data.degree,
-            degreeYear: data.degreeYear,
-            slug: happening.slug,
-            terms: data.terms1 && data.terms2 && data.terms3,
-            answers: happening.additionalQuestions.map((q: Question, index: number) => {
-                return { question: q.questionText, answer: data.answers[index] };
-            }),
-            type: type,
-            regVerifyToken,
-        }).then(({ response, statusCode }) => {
-            if (statusCode === 200 || statusCode === 202) {
-                onClose();
-            }
-            toast.closeAll();
+        if (!signedIn || !idToken) {
             toast({
-                title: response.title,
-                description: response.desc,
-                status: codeToStatus(statusCode),
-                duration: 8000,
-                isClosable: true,
+                title: isNorwegian ? 'Du er ikke logget inn.' : 'You are not signed in.',
+                description: isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.',
+                status: 'warning',
             });
+            return;
+        }
+
+        const { response, statusCode } = await RegistrationAPI.submitRegistration(
+            {
+                email: data.email,
+                slug: happening.slug,
+                answers: happening.additionalQuestions.map((q: Question, index: number) => {
+                    return { question: q.questionText, answer: data.answers[index] };
+                }),
+                type: type,
+            },
+            // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
+            idToken,
+        );
+
+        if (statusCode === 200 || statusCode === 202) {
+            onClose();
+        }
+
+        toast.closeAll();
+        toast({
+            title: response.title,
+            description: response.desc,
+            status: codeToStatus(statusCode),
+            duration: 8000,
+            isClosable: true,
         });
     };
 
-    return (
-        <Box data-testid="bedpres-form">
-            <Button data-cy="reg-btn" w="100%" colorScheme="teal" onClick={onOpen}>
-                {isNorwegian ? 'Påmelding' : 'Register'}
-            </Button>
+    if (loading)
+        return (
+            <Box data-testid="registration-form">
+                <Center>
+                    <Spinner />
+                </Center>
+            </Box>
+        );
 
-            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+    if (!signedIn)
+        return (
+            <Box data-testid="registration-form">
+                <Text textAlign="center">{isNorwegian ? 'Logg inn for å melde deg på.' : 'Sign in to register.'}</Text>
+            </Box>
+        );
+
+    if (
+        !userIsEligibleForEarlyReg &&
+        !happening.registrationDate &&
+        happening.studentGroups &&
+        happening.studentGroups.length > 0
+    )
+        return (
+            <Box data-testid="registration-form">
+                <Text textAlign="center">Kun åpen for {happening.studentGroups.map(capitalize).join(', ')}.</Text>
+            </Box>
+        );
+
+    return (
+        <Box data-testid="registration-form">
+            {!userIsComplete(user) && (
+                <>
+                    <Alert status="warning" borderRadius="0.5rem" mb="5">
+                        <AlertIcon />
+                        {isNorwegian
+                            ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
+                            : 'You must fill out all necessary information to be able to register for events!'}
+                    </Alert>
+                    <LinkBox>
+                        <LinkOverlay as={NextLink} href="/profile">
+                            <Button w="100%" rightIcon={<MdOutlineArrowForward />} colorScheme="teal" variant="outline">
+                                Min profil
+                            </Button>
+                        </LinkOverlay>
+                    </LinkBox>
+                </>
+            )}
+            {userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
+                <Alert status="info" borderRadius="0.5rem" mb="5">
+                    <AlertIcon />
+                    Du kan melde deg på dette arrangementet tidligere enn andre.
+                </Alert>
+            )}
+            {happening.onlyForStudentGroups && (
+                <Alert status="info" borderRadius="0.5rem" mb="5">
+                    <AlertIcon />
+                    {isNorwegian ? 'Dette er et internt arrangement.' : 'This is a private event.'}
+                </Alert>
+            )}
+            {isBefore(new Date(), regDate) && differenceInHours(regDate, new Date()) >= 24 && (
+                <Center>
+                    <Text fontSize="xl">
+                        {isNorwegian ? `Påmelding åpner ` : `Registration opens `}
+                        {format(regDate, 'dd. MMM HH:mm', {
+                            locale: isNorwegian ? nb : enUS,
+                        })}
+                    </Text>
+                </Center>
+            )}
+            {userIsComplete(user) && differenceInHours(regDate, new Date()) < 24 && (
+                <CountdownButton
+                    data-cy="reg-btn"
+                    w="100%"
+                    colorScheme="teal"
+                    date={regDate}
+                    onClick={() =>
+                        happening.additionalQuestions.length === 0
+                            ? void submitForm({ email: user.email, answers: [] })
+                            : onOpen()
+                    }
+                >
+                    {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                </CountdownButton>
+            )}
+
+            <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
@@ -146,85 +208,13 @@ const RegistrationForm = ({ happening, regVerifyToken, type, user }: Props): JSX
                             <ModalHeader>{isNorwegian ? 'Påmelding' : 'Registration'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody pb="8px">
+                                <Input type="email" defaultValue={user?.email} {...register('email')} hidden />
                                 <VStack spacing={4}>
-                                    <FormControl id="email" isRequired>
-                                        <FormLabel>{isNorwegian ? 'E-post' : 'Email'}</FormLabel>
-                                        <Input
-                                            type="email"
-                                            defaultValue={user?.alternateEmail ?? user?.email}
-                                            {...rest}
-                                            // using multiple refs
-                                            ref={(e) => {
-                                                ref(e);
-                                                initialRef.current = e;
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormControl id="firstName" isRequired>
-                                        <FormLabel>{isNorwegian ? 'Fornavn' : 'First name'}</FormLabel>
-                                        <Input defaultValue={firstName} {...register('firstName')} />
-                                    </FormControl>
-                                    <FormControl id="lastName" isRequired>
-                                        <FormLabel>{isNorwegian ? 'Etternavn' : 'Last name'}</FormLabel>
-                                        <Input defaultValue={lastName} {...register('lastName')} />
-                                    </FormControl>
-                                    <FormDegree defaultValue={user?.degree?.toString()} />
-                                    <FormDegreeYear defaultValue={user?.degreeYear ?? undefined} />
                                     {happening.additionalQuestions.map((q: Question, index: number) => {
                                         return (
                                             <FormQuestion key={`q.questionText-${q.inputType}`} q={q} index={index} />
                                         );
                                     })}
-                                    <FormTerm id="terms1">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {isNorwegian
-                                                ? 'Jeg bekrefter at jeg har fylt inn riktig informasjon.'
-                                                : 'I confirm that I have filled in the correct information.'}
-                                        </Text>
-                                    </FormTerm>
-                                    <FormTerm id="terms2">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {isNorwegian
-                                                ? `Jeg er klar over at hvis jeg ikke møter opp risikerer jeg å bli
-                                                utestengt fra fremtidige 
-                                                ${type === 'BEDPRES' ? 'bedriftspresentasjoner' : 'arrangementer'}.`
-                                                : `I am aware that if I do not show up I risk being 
-                                                banned from future  
-                                                ${type === 'BEDPRES' ? 'company presentasjoner' : 'events'}.`}
-                                        </Text>
-                                    </FormTerm>
-                                    <FormTerm id="terms3">
-                                        <Text ml="0.5rem" fontWeight="bold">
-                                            {type === 'BEDPRES' ? (
-                                                <Wrap spacing={0}>
-                                                    <Text ml="0.5rem" fontWeight="bold">
-                                                        {isNorwegian
-                                                            ? 'Jeg har lest gjennom og forstått'
-                                                            : 'I have read through and understood'}
-                                                    </Text>
-                                                    <NextLink href="https://bit.ly/bedkom-faq2" passHref>
-                                                        <Link href="https://bit.ly/bedkom-faq2" isExternal>
-                                                            <Text color={linkColor} ml="0.5rem" fontWeight="bold">
-                                                                {isNorwegian
-                                                                    ? 'Bedkom sine retningslinjer'
-                                                                    : "Bedkom's guidelines"}
-                                                            </Text>
-                                                        </Link>
-                                                    </NextLink>
-                                                    <Text ml="0.5rem" fontWeight="bold">
-                                                        .
-                                                    </Text>
-                                                </Wrap>
-                                            ) : (
-                                                <Text ml="0.5rem" fontWeight="bold">
-                                                    {isNorwegian
-                                                        ? `Jeg er klar over at jeg må melde meg av innen 24 timer før
-                                                        arrangementet, dersom jeg ikke kan møte opp.`
-                                                        : `I am aware that I must cancel within 24 hours before the event, if I cannot attend`}
-                                                </Text>
-                                            )}
-                                        </Text>
-                                    </FormTerm>
                                 </VStack>
                             </ModalBody>
                             <ModalFooter>

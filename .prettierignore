@@ -6,3 +6,6 @@ frontend/public/workbox-*.js*
 backend/build/*
 
 cms/dist/*
+cms/.sanity/*
+
+**/.terraform

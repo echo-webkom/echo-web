@@ -1,41 +1,38 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { string, record, union, nil, number, array } from 'typescript-json-decoder';
+import { z } from 'zod';
 import type { ErrorMessage } from '@utils/error';
-import type { Degree } from '@utils/decoders';
-import { degreeDecoder } from '@utils/decoders';
+import type { Degree } from '@utils/schemas';
+import { degreeSchema } from '@utils/schemas';
 
 // Values directly from the form (aka form fields)
 interface FormValues {
-    alternateEmail: string;
-    degree: Degree;
-    degreeYear: number;
+    alternateEmail: string | null;
+    degree: Degree | null;
+    degreeYear: number | null;
 }
 
-const userDecoder = record({
-    email: string,
-    alternateEmail: union(string, nil),
-    name: string,
-    degree: union(degreeDecoder, nil),
-    degreeYear: union(number, nil),
-    memberships: array(string),
+const userSchema = z.object({
+    email: z.string(),
+    alternateEmail: z.string().nullable(),
+    name: z.string(),
+    degree: degreeSchema.nullable(),
+    degreeYear: z.number().nullable(),
+    memberships: z.array(z.string()),
 });
-type User = decodeType<typeof userDecoder>;
+type User = z.infer<typeof userSchema>;
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const UserAPI = {
     getUser: async (email: string, name: string, idToken: string): Promise<User | null | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get(`${BACKEND_URL}/user`, {
+            const response = await fetch(`${BACKEND_URL}/user`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (statusCode: number) => statusCode < 500,
             });
 
             // no user in database
-            if (status === 404) {
+            if (response.status === 404) {
                 return {
                     email: email,
                     name: name,
@@ -46,7 +43,13 @@ const UserAPI = {
                 };
             }
 
-            const user = userDecoder(data);
+            if (response.status === 401) {
+                return { message: '401' };
+            }
+
+            const data = await response.json();
+
+            const user = userSchema.parse(data);
 
             return { ...user, name, email };
         } catch (error) {
@@ -64,20 +67,32 @@ const UserAPI = {
         name: string,
     ): Promise<{ status: number; response: string } | ErrorMessage> => {
         try {
-            const { status, data } = await axios.post(
-                `${BACKEND_URL}/user`,
-                { email, name },
-                {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                    },
-                    validateStatus: (status: number) => status < 500,
+            const response = await fetch(`${BACKEND_URL}/user`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    email,
+                    name,
+                }),
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                    'Content-Type': 'application/json',
                 },
-            );
+            });
+
+            if (response.status === 200) {
+                return {
+                    status: response.status,
+                    response: `User created with email = ${email} and name = ${name}`,
+                };
+            } else if (response.status === 409) {
+                return {
+                    status: response.status,
+                    response: `User with email = ${email} already exists`,
+                };
+            }
 
             return {
-                status,
-                response: data,
+                message: `Error creating user with email = ${email} and name = ${name}`,
             };
         } catch (error) {
             console.log(error); // eslint-disable-line
@@ -88,41 +103,49 @@ const UserAPI = {
         }
     },
 
-    putUser: async (user: User, idToken: string): Promise<{ status: number; response: string } | ErrorMessage> => {
+    putUser: async (user: User, idToken: string): Promise<User | ErrorMessage> => {
         try {
-            const { data, status } = await axios.put(
-                `${BACKEND_URL}/user`,
-                { ...user, memberships: [] },
-                {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                },
-            );
+            const response = await fetch(`${BACKEND_URL}/user`, {
+                method: 'PUT',
 
-            return { status, response: JSON.stringify(data) };
+                body: JSON.stringify({ ...user, memberships: [] }),
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                return userSchema.parse(data);
+            } else {
+                const data = await response.text();
+
+                return {
+                    message: data,
+                };
+            }
         } catch (error) {
             console.log(error); // eslint-disable-line
 
             return {
-                status: 500,
-                message: 'Det har skjedd en feil. Du kan prøve å logge inn og ut, og sende inn skjemaet på nytt.',
+                message: error as string,
             };
         }
     },
 
     getUsers: async (idToken: string): Promise<Array<User> | ErrorMessage> => {
         try {
-            const { data, status } = await axios.get(`${BACKEND_URL}/users`, {
+            const response = await fetch(`${BACKEND_URL}/users`, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
                 },
-                validateStatus: (statusCode: number) => statusCode < 500,
             });
 
-            if (status === 200) {
-                return array(userDecoder)(data);
+            const data = await response.json();
+
+            if (response.status === 200) {
+                return userSchema.array().parse(data);
             }
 
             return {
@@ -134,6 +157,26 @@ const UserAPI = {
             };
         }
     },
+
+    getTestToken: async (email: string): Promise<string | ErrorMessage> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/token/${email}`);
+
+            const token = await response.text();
+
+            return response.status === 200 ? token : { message: response.statusText };
+        } catch (error) {
+            return {
+                message: JSON.stringify(error),
+            };
+        }
+    },
 };
 
-export { UserAPI, userDecoder, type FormValues as ProfileFormValues, type User };
+const userIsComplete = (user: User | null): user is User =>
+    typeof user?.email === 'string' &&
+    typeof user.name === 'string' &&
+    typeof user.degree === 'string' &&
+    typeof user.degreeYear === 'number';
+
+export { UserAPI, userSchema, type FormValues as ProfileFormValues, type User, userIsComplete };

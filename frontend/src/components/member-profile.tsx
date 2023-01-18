@@ -1,11 +1,7 @@
-import { Avatar, Box, Center, chakra, Text, useBreakpointValue } from '@chakra-ui/react';
+import { Avatar, Flex, Box, Center, Text, useBreakpointValue } from '@chakra-ui/react';
 import Image from 'next/image';
 import type { Profile } from '@api/profile';
-
-const MemberImage = chakra(Image, {
-    baseStyle: { maxH: 128, maxW: 128 },
-    shouldForwardProp: (prop) => ['width', 'height', 'src', 'alt', 'quality'].includes(prop),
-});
+import { imgUrlFor } from '@api/sanity';
 
 const getInitials = (name: string) => {
     const words = name.split(' ');
@@ -18,22 +14,20 @@ interface Props {
 }
 
 const MemberProfile = ({ profile, role }: Props): JSX.Element => {
-    const memberImageSize = useBreakpointValue([96, 96, 128]);
+    const imgSize = useBreakpointValue([96, 96, 128]);
 
     return (
         <Box p={['0', null, '.5em']} w={['120px', null, '200px']} overflow="visible" textAlign="center">
             <Center>
                 {profile.imageUrl && (
-                    <MemberImage
-                        width={128}
-                        height={128}
-                        src={profile.imageUrl}
-                        alt={profile.name}
-                        quality={100}
-                        w={memberImageSize}
-                        h={memberImageSize}
-                        borderRadius="100%"
-                    />
+                    <Flex borderRadius="100%" overflow="hidden">
+                        <Image
+                            src={imgUrlFor(profile.imageUrl).width(512).height(512).fit('crop').auto('format').url()}
+                            alt={profile.name}
+                            width={imgSize ?? 128}
+                            height={imgSize ?? 128}
+                        />
+                    </Flex>
                 )}
                 {!profile.imageUrl && (
                     <Avatar getInitials={getInitials} size="2xl" name={profile.name} src={undefined} />

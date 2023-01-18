@@ -10,6 +10,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
+import no.uib.echo.Environment
 import no.uib.echo.SanityClient
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.insertOrUpdateHappening
@@ -20,27 +21,45 @@ data class SanityResponse(
     val result: List<HappeningJson>
 )
 
-fun Application.sanityRoutes(dev: Boolean) {
+fun Application.sanityRoutes(env: Environment) {
     routing {
-        authenticate("auth-admin", optional = dev) {
-            sanitySync(dev)
+        authenticate("auth-admin", optional = env != Environment.PRODUCTION) {
+            sanitySync()
         }
     }
 }
 
-fun Route.sanitySync(dev: Boolean) {
-    get("/sanity") {
+fun Route.sanitySync() {
+    get("/sanity/{dataset?}") {
+        val dataset = call.parameters["dataset"] ?: "production"
+        val validDatasets = listOf("production", "develop", "testing")
+
+        if (dataset !in validDatasets) {
+            call.respond(HttpStatusCode.BadRequest)
+            return@get
+        }
+
         val client = SanityClient(
             projectId = "pgq2pd26",
-            dataset = "production",
+            dataset = dataset,
             apiVersion = "v2021-10-21",
             useCdn = true
         )
 
         val query = """
-            *[_type == 'happening' && defined(registrationDate) && defined(spotRanges) && count(spotRanges) > 0 && defined(studentGroupName) && !(_id in path('drafts.**'))] {
+            *[_type == 'happening' &&
+              (
+                (defined(registrationDate) && defined(spotRanges) && count(spotRanges) > 0) ||
+                (defined(studentGroupRegistrationDate) && defined(studentGroups))
+              ) &&
+              defined(studentGroupName) &&
+              !(_id in path('drafts.**'))] {
                 "slug": slug.current, 
-                title, registrationDate, 
+                title,
+                registrationDate, 
+                studentGroupRegistrationDate,
+                studentGroups,
+                onlyForStudentGroups,
                 "happeningDate": date, spotRanges[] -> { 
                     spots, 
                     minDegreeYear, 
@@ -54,7 +73,7 @@ fun Route.sanitySync(dev: Boolean) {
         val response = client.fetch(query).body<SanityResponse>()
 
         val result = response.result.map {
-            val (code, string) = insertOrUpdateHappening(it, dev)
+            val (code, string) = insertOrUpdateHappening(it)
 
             if (code != HttpStatusCode.OK && code != HttpStatusCode.Accepted) {
                 call.respond(code, string)

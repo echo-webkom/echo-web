@@ -7,16 +7,12 @@ import {
     Th,
     Tbody,
     Text,
-    Button,
     Center,
-    Link,
     Spinner,
     Flex,
     Spacer,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -24,49 +20,49 @@ import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
+import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
 
-    const { data } = useSession();
+    const { signedIn, idToken, error: userError } = useAuth();
 
     useEffect(() => {
         const fetchUsers = async () => {
-            if (!data?.idToken) {
-                setError({ message: 'Du er ikke logget inn.' });
+            setError(null);
+
+            if (!signedIn || !idToken) {
                 setLoading(false);
+                setError({ message: 'Du må være logget inn for å se denne siden.' });
                 return;
             }
 
-            const result = await UserAPI.getUsers(data.idToken);
+            const result = await UserAPI.getUsers(idToken);
 
-            if (!isErrorMessage(result)) {
-                setUsers(result);
-            } else {
+            if (isErrorMessage(result)) {
                 setError(result);
+            } else {
+                setUsers(result);
             }
 
             setLoading(false);
         };
 
         void fetchUsers();
-    }, [data?.idToken]);
+    }, [idToken, signedIn]);
 
     return (
         <>
             <SEO title="Administrer brukere" />
             <Section>
-                {error && (
+                {(error || userError) && (
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
-                        <Text>{error.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
+                        <Text>{error?.message ?? userError?.message}</Text>
+                        <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                     </Center>
                 )}
                 {loading && (
@@ -80,11 +76,7 @@ const AdminUserPage = () => {
                         <Flex>
                             <Heading>Administrer brukere</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                         </Flex>
 
                         <TableContainer>

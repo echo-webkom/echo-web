@@ -1,15 +1,16 @@
 import { VStack, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { useContext } from 'react';
 import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
+import { GiTwoCoins } from 'react-icons/gi';
 import { MdEventSeat, MdLockOutline, MdLogout, MdLockOpen } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
 import CalendarPopup from '@components/calendar-popup';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
+import useAuth from '@hooks/use-auth';
 
 interface Props {
     date: Date;
@@ -22,6 +23,7 @@ interface Props {
     companyLink: string | null;
     spotRangeCounts: Array<SpotRangeCount> | null;
     spotRangesFromCms: Array<SpotRange> | null;
+    deductiblePayment: string | null;
 }
 
 const spotsText = (spots: number) => (spots <= 0 ? '∞' : `${spots}`);
@@ -37,8 +39,9 @@ const HappeningMetaInfo = ({
     companyLink,
     spotRangeCounts,
     spotRangesFromCms,
+    deductiblePayment,
 }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.
     // This means spots from CMS will be displayed if backend does not respond.
@@ -66,8 +69,10 @@ const HappeningMetaInfo = ({
 
     const combinedWaitList = trueSpotRanges.map((sr) => sr.waitListCount).reduce((prev, curr) => prev + curr, 0);
 
+    const { signedIn } = useAuth();
+
     return (
-        <VStack alignItems="left" spacing={3} data-cy="happening-meta-info">
+        <VStack alignItems="left" spacing="3" data-cy="happening-meta-info">
             {companyLink && (
                 <IconText
                     icon={CgOrganisation}
@@ -138,7 +143,9 @@ const HappeningMetaInfo = ({
                     }. ${isNorwegian ? 'trinn' : 'year'}`}
                 />
             ) : (
-                spotsForAll && <IconText icon={MdLockOpen} text={isNorwegian ? 'Åpent for alle!' : 'Open for all!'} />
+                spotsForAll && (
+                    <IconText icon={MdLockOpen} text={isNorwegian ? 'Åpent for alle trinn!' : 'Open for all years!'} />
+                )
             )}
             <CalendarPopup title={title} date={date} type={type} slug={slug} location={location} />
             <IconText icon={RiTimeLine} text={format(date, isNorwegian ? 'HH:mm' : 'h:aaa')} />
@@ -146,6 +153,13 @@ const HappeningMetaInfo = ({
                 <IconText icon={ImLocation} text={location} link={locationLink} />
             ) : (
                 <IconText icon={ImLocation} text={location} />
+            )}
+            {deductiblePayment && signedIn && (
+                <IconText
+                    icon={GiTwoCoins}
+                    text={`${isNorwegian ? 'Egenandel' : 'Deductible'}:
+                    ${deductiblePayment} kr`}
+                />
             )}
             {contactEmail && (
                 <IconText

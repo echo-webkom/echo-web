@@ -1,8 +1,9 @@
-import { Flex, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, LinkBox, LinkOverlay, Text, useColorModeValue } from '@chakra-ui/react';
 import { isFriday, isThursday, getDate, getHours, getMonth, getWeek, isMonday } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 import LogoAccesory from '@components/logo-accesory';
 
 const randomHeaderMessage = () => {
@@ -13,7 +14,6 @@ const randomHeaderMessage = () => {
             'Bottom text',
             '🤙🤙🤙',
             'Lorem ipsum',
-            '98.5507246% stabil! rip pwc :(',
             'Uten sylteagurk!',
             'Spruuutnice',
             'Skambra!',
@@ -60,6 +60,12 @@ const randomHeaderMessage = () => {
 };
 
 const HeaderLogo = () => {
+    const [headerMessage, setHeaderMessage] = useState('');
+
+    useEffect(() => {
+        setHeaderMessage(randomHeaderMessage());
+    }, []);
+
     // Logo without any text
     const smallLogo = '/android-chrome-512x512.png';
 
@@ -80,42 +86,37 @@ const HeaderLogo = () => {
 
     return (
         <LinkBox
-            p="1.05rem"
+            p="1rem"
             bg={bg}
             shadow="lg"
             data-cy="header-logo"
-            borderRadius="0.5rem"
+            borderRadius="lg"
             boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
-            mr="0rem"
         >
-            <Flex display={{ base: 'none', md: 'block' }}>
-                <Image src={bigLogo} alt="logo" width={260} height={77} />
-            </Flex>
-            <Flex display={{ base: 'block', md: 'none' }}>
-                <Image src={smallLogo} alt="logo" width={90} height={90} />
-            </Flex>
+            <LinkOverlay as={NextLink} href="/">
+                <Box display={{ base: 'none', md: 'block' }}>
+                    <Image src={bigLogo} alt="logo" width={260} height={77} />
+                </Box>
+
+                <Box display={{ base: 'block', md: 'none' }}>
+                    <Image src={smallLogo} alt="logo" width={90} height={90} />
+                </Box>
+            </LinkOverlay>
+
             {logoAcc && <LogoAccesory iconSrc={logoAcc} h={40} w={40} />}
-            <NextLink href="/" passHref>
-                <LinkOverlay>
-                    <Flex position="absolute" bottom="-1rem" left="5%" w="20rem">
-                        <Text
-                            bg={textBg}
-                            pb="0.1rem"
-                            pt="0.2rem"
-                            px="1rem"
-                            align="left"
-                            color={textColor}
-                            fontSize="md"
-                            noOfLines={1}
-                            suppressHydrationWarning
-                            borderRadius="0.5rem"
-                            boxShadow="0 10px 20px 0 rgba(0, 0, 0, 0.1)"
-                        >
-                            {randomHeaderMessage()}
-                        </Text>
-                    </Flex>
-                </LinkOverlay>
-            </NextLink>
+
+            <Box
+                pos="absolute"
+                rounded="lg"
+                boxShadow="0 10px 20px rgba(0, 0, 0, 0.1)"
+                px="3"
+                py="1"
+                w="max"
+                bg={textBg}
+                color={textColor}
+            >
+                <Text fontSize="md">{headerMessage}</Text>
+            </Box>
         </LinkBox>
     );
 };

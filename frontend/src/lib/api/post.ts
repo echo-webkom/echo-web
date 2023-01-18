@@ -1,24 +1,26 @@
-import axios from 'axios';
-import type { decodeType } from 'typescript-json-decoder';
-import { nil, union, array, record, string } from 'typescript-json-decoder';
+import { z } from 'zod';
 import SanityAPI from '@api/sanity';
-import { slugDecoder } from '@utils/decoders';
+import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
 
-const postDecoder = record({
-    title: (value) =>
-        typeof value === 'string'
-            ? { no: string(value), en: string(value) }
-            : record({ no: string, en: union(string, nil) })(value),
-    slug: string,
-    body: (value) =>
-        typeof value === 'string'
-            ? { no: string(value), en: string(value) }
-            : record({ no: string, en: union(string, nil) })(value),
-    author: (value) => record({ name: string })(value).name,
-    _createdAt: string,
+const postSchema = z.object({
+    title: z.object({
+        no: z.string(),
+        en: z.string().nullable().optional(),
+    }),
+    slug: z.string(),
+    body: z.object({
+        no: z.string(),
+        en: z.string().nullable().optional(),
+    }),
+    author: z
+        .object({
+            name: z.string(),
+        })
+        .transform((a) => a.name),
+    _createdAt: z.string(),
 });
-type Post = decodeType<typeof postDecoder>;
+type Post = z.infer<typeof postSchema>;
 
 const PostAPI = {
     /**
@@ -30,7 +32,10 @@ const PostAPI = {
             const query = `*[_type == "post"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
-            return array(slugDecoder)(result).map((nestedSlug) => nestedSlug.slug);
+            return slugSchema
+                .array()
+                .parse(result)
+                .map((nestedSlug) => nestedSlug.slug);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return [];
@@ -46,11 +51,7 @@ const PostAPI = {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = `
                 *[_type == "post" && !(_id in path('drafts.**'))] | order(_createdAt desc) {
-                    "title": select(
-                        title.en != null => {"no": title.no, "en": title.en},
-                        title.no != null => {"no": title.no, "en": null},
-                        title
-                    ),
+                    title,
                     "slug": slug.current,
                     "body": select(
                         body.en != null => {"no": body.no, "en": body.en},
@@ -59,15 +60,14 @@ const PostAPI = {
                       ),
                     author -> {name},
                     _createdAt,
-                    thumbnail
                 }${limit}`;
 
             const result = await SanityAPI.fetch(query);
 
-            return array(postDecoder)(result);
+            return postSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { message: axios.isAxiosError(error) ? error.message : 'Fail @ getPosts' };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -79,11 +79,7 @@ const PostAPI = {
         try {
             const query = `
                 *[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
-                    "title": select(
-                        title.en != null => {"no": title.no, "en": title.en},
-                        title.no != null => {"no": title.no, "en": null},
-                        title
-                    ),
+                    title,
                     "slug": slug.current,
                     "body": select(
                         body.en != null => {"no": body.no, "en": body.en},
@@ -92,7 +88,6 @@ const PostAPI = {
                       ),
                     author -> {name},
                     _createdAt,
-                    thumbnail
                 }`;
             const result = await SanityAPI.fetch(query);
 
@@ -100,18 +95,10 @@ const PostAPI = {
                 return { message: '404' };
             }
 
-            return array(postDecoder)(result)[0];
+            return postSchema.parse(result[0]);
         } catch (error) {
             console.log(error); // eslint-disable-line
-            if (axios.isAxiosError(error) && !error.response) {
-                return {
-                    message: '404',
-                };
-            }
-
-            return {
-                message: axios.isAxiosError(error) ? error.message : 'Fail @ getPostBySlug',
-            };
+            return { message: JSON.stringify(error) };
         }
     },
 };

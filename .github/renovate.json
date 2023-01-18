@@ -5,9 +5,10 @@
     "prHourlyLimit": 0,
     "stabilityDays": 3,
     "prCreation": "not-pending",
-    "ignoreDeps": ["openjdk", "node", "postgres", "azurerm"],
+    "ignoreDeps": ["openjdk", "node", "postgres"],
     "updateInternalDeps": true,
-    "additionalBranchPrefix": "{{parentDir}}-",
+    "additionalBranchPrefix": "{{#if (containsString depName 'azurerm')}}{{else}}{{parentDir}}-{{/if}}",
+    "rangeStrategy": "pin",
     "packageRules": [
         {
             "matchPackagePatterns": ["^org.jetbrains.exposed"],
@@ -24,6 +25,10 @@
         {
             "matchPackagePatterns": ["^org.jetbrains.kotlin"],
             "groupName": "Kotlin packages"
+        },
+        {
+            "matchPackagePatterns": ["^azurerm"],
+            "groupName": "Azure terraform provider"
         }
     ]
 }

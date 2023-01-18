@@ -1,10 +1,13 @@
 package no.uib.echo.registration
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -13,28 +16,33 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.testApplication
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import no.uib.echo.DatabaseHandler
-import no.uib.echo.Response
-import no.uib.echo.ResponseJson
+import no.uib.echo.Environment
+import no.uib.echo.RegistrationResponse
+import no.uib.echo.RegistrationResponseJson
+import no.uib.echo.adminUser
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Reaction
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.insertOrUpdateHappening
+import no.uib.echo.schema.nullableDegreeToString
+import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.tables
+import no.uib.echo.user1
+import no.uib.echo.user10
+import no.uib.echo.user2
+import no.uib.echo.user3
+import no.uib.echo.user4
+import no.uib.echo.user5
+import no.uib.echo.user6
+import no.uib.echo.user7
+import no.uib.echo.user8
+import no.uib.echo.user9
+import no.uib.echo.usersWithAdmin
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.URI
@@ -45,8 +53,8 @@ import kotlin.test.Test
 class DeleteRegistrationsTest {
     companion object {
         val db = DatabaseHandler(
-            dev = true,
-            testMigration = false,
+            env = Environment.PREVIEW,
+            migrateDb = false,
             dbUrl = URI(System.getenv("DATABASE_URL")),
             mbMaxPoolSize = null
         )
@@ -55,116 +63,96 @@ class DeleteRegistrationsTest {
     @BeforeTest
     fun beforeTest() {
         db.init(false)
-        for (t in be) {
-            insertTestData(t)
-        }
+        insertTestData()
     }
 
     @AfterTest
     fun afterTest() {
         transaction {
-            SchemaUtils.drop(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
-            SchemaUtils.create(
-                Happening,
-                Registration,
-                Answer,
-                SpotRange,
-                User,
-                Feedback,
-                StudentGroup,
-                StudentGroupMembership,
-                Reaction
-            )
+            SchemaUtils.drop(*tables)
+            SchemaUtils.create(*tables)
         }
     }
 
     @Test
     fun `Should delete registrations properly`() =
         testApplication {
-            DatabaseHandler(
-                dev = true,
-                testMigration = false,
-                dbUrl = URI(System.getenv("DATABASE_URL")),
-                mbMaxPoolSize = null
-            ).init(
-                shouldInsertTestData = false
-            )
             val client = createClient {
                 install(Logging)
                 install(ContentNegotiation) {
                     json()
                 }
             }
-            val waitListAmount = 3
+
+            val usersSublist = listOf(user1, user2, user3, user4, user5)
+            val waitListUsers = listOf(user6, user7, user8, user9, user10)
+
+            val getAdminTokenCall = client.get("/token/${adminUser.email}")
+
+            getAdminTokenCall.status shouldBe HttpStatusCode.OK
+            val adminToken: String = getAdminTokenCall.body()
 
             for (t in be) {
-                for (i in 1..hap9(t).spotRanges[0].spots) {
+                for (u in usersSublist) {
+                    val getTokenCall = client.get("/token/${u.email}")
+
+                    getTokenCall.status shouldBe HttpStatusCode.OK
+                    val token: String = getTokenCall.body()
+
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(t, hap9(t).slug).copy(
-                                    email = "${t}$i@test.com"
-                                )
-                            )
-                        )
+                        bearerAuth(token)
+                        setBody(exReg(hap9(t).slug, u))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.OK
+                    res.code shouldBe RegistrationResponse.OK
                 }
 
-                for (i in 1..waitListAmount) {
+                for (u in waitListUsers) {
+                    val getTokenCall = client.get("/token/${u.email}")
+
+                    getTokenCall.status shouldBe HttpStatusCode.OK
+                    val token: String = getTokenCall.body()
+
                     val submitRegCall = client.post("/registration") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            Json.encodeToString(
-                                exReg(t, hap9(t).slug).copy(
-                                    email = "waitlist${t}$i@test.com"
-                                )
-                            )
-                        )
+                        bearerAuth(token)
+                        setBody(exReg(hap9(t).slug, u))
                     }
 
                     submitRegCall.status shouldBe HttpStatusCode.Accepted
-                    val res: ResponseJson = submitRegCall.body()
+                    val res: RegistrationResponseJson = submitRegCall.body()
 
-                    res.code shouldBe Response.WaitList
+                    res.code shouldBe RegistrationResponse.WaitList
                 }
 
-                // Delete $waitListAmount registrations, such that all the registrations
+                // Delete registrations for u in userSublist, such that all the registrations
                 // previously on the wait list are now moved off the wait list.
-                for (i in 1..waitListAmount) {
-                    val regEmail = "${t}$i@test.com"
-                    val nextRegOnWaitListEmail = "waitlist${t}$i@test.com"
-                    val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail")
+                for (u in usersSublist) {
+                    val regEmail = u.email.lowercase()
+                    val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail") {
+                        bearerAuth(adminToken)
+                    }
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
-                    deleteRegCall.bodyAsText() shouldBe "Registration with email = ${regEmail.lowercase()} and slug = ${
+                    deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
                     hap9(t).slug
-                    } deleted, " + "and registration with email = ${nextRegOnWaitListEmail.lowercase()} moved off wait list."
+                    } deleted, " + "and registration with email ="
                 }
 
                 // Delete the registrations that were moved off the wait list in the previous for-loop.
-                for (i in 1..waitListAmount) {
-                    val waitListRegEmail = "waitlist${t}$i@test.com"
+                for (u in waitListUsers) {
+                    val waitListRegEmail = u.email.lowercase()
                     val deleteWaitListRegCall =
-                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail")
+                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail") {
+                            bearerAuth(adminToken)
+                        }
 
                     deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
-                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = ${waitListRegEmail.lowercase()} and slug = ${
+                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = $waitListRegEmail and slug = ${
                     hap9(
                         t
                     ).slug
@@ -174,13 +162,29 @@ class DeleteRegistrationsTest {
         }
 }
 
-private fun insertTestData(t: HAPPENING_TYPE) {
+private fun insertTestData() {
     transaction {
-        addLogger(StdOutSqlLogger)
-
-        StudentGroup.batchInsert(listOf("bedkom", "tilde"), ignore = true) {
+        StudentGroup.batchInsert(validStudentGroups) {
             this[StudentGroup.name] = it
         }
+
+        User.batchInsert(usersWithAdmin) {
+            this[User.email] = it.email
+            this[User.name] = it.name
+            this[User.alternateEmail] = it.alternateEmail
+            this[User.degree] = nullableDegreeToString(it.degree)
+            this[User.degreeYear] = it.degreeYear
+        }
+
+        for (user in usersWithAdmin) {
+            StudentGroupMembership.batchInsert(user.memberships) {
+                this[StudentGroupMembership.userEmail] = user.email
+                this[StudentGroupMembership.studentGroupName] = it
+            }
+        }
     }
-    insertOrUpdateHappening(hap9(t), dev = true)
+
+    for (t in be) {
+        insertOrUpdateHappening(hap9(t))
+    }
 }

@@ -1,9 +1,9 @@
 import { Text, Stack, StackDivider } from '@chakra-ui/layout';
 import { Select } from '@chakra-ui/select';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import type { JobAdvert } from '@api/job-advert';
 import JobAdvertPreview from '@components/job-advert-preview';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     jobAdverts: Array<JobAdvert>;
@@ -18,7 +18,7 @@ const sortJobs = (list: Array<JobAdvert>, field: SortType) => {
 };
 
 const JobAdvertOverview = ({ jobAdverts }: Props): JSX.Element => {
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
     const [type, setType] = useState<JobType>('all');
     const [location, setLocation] = useState<string>('all');
     const [company, setCompany] = useState<string>('all');

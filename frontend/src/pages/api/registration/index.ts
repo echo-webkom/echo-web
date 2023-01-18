@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
-import axios from 'axios';
-import { array } from 'typescript-json-decoder';
-import { registrationDecoder } from '@api/registration';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getToken({ req });
@@ -19,39 +16,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (req.method === 'GET') {
             try {
-                const type = req.query.type as string;
-
-                if (type === 'download') {
-                    const { data } = await axios.get(`${BACKEND_URL}/registration/${slug}?download=y`, {
-                        headers: {
-                            Authorization: `Bearer ${JWT_TOKEN}`,
-                        },
-                        validateStatus: (statusCode: number) => statusCode < 500,
-                    });
-
-                    res.setHeader('Content-Type', 'text/csv');
-                    res.setHeader(
-                        'Content-Disposition',
-                        `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
-                    );
-
-                    res.status(200).send(data);
-                    return;
-                }
-
-                const { data, status } = await axios.get(`${BACKEND_URL}/registration/${slug}?json=y`, {
+                const params = new URLSearchParams({ download: 'y' }).toString();
+                const response = await fetch(`${BACKEND_URL}/registration/${slug}?${params}`, {
                     headers: {
                         Authorization: `Bearer ${JWT_TOKEN}`,
                     },
-                    validateStatus: (statusCode: number) => statusCode < 500,
+                    redirect: 'follow',
                 });
 
-                if (status === 200) {
-                    res.status(200).json(array(registrationDecoder)(data));
-                    return;
-                }
+                const data = await response.text();
 
-                res.status(401).json({ message: JSON.stringify(data) });
+                res.setHeader('Content-Type', 'text/csv');
+                res.setHeader(
+                    'Content-Disposition',
+                    `attachment; filename=paameldte-${slug.toLowerCase().replace(' ', '-')}.csv`,
+                );
+
+                res.status(200).send(data);
                 return;
             } catch {
                 res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });

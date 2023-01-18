@@ -6,7 +6,6 @@ services:
       target: build
       cache_from:
         - '${IMAGE_NAME:-echo-webkom/echo-web}/backend:${TAG:-latest}'
-    image: '${IMAGE_NAME:-echo-webkom/echo-web}backend:${TAG:-latest}'
     # Don't start backend before database is up.
     depends_on:
       database:
@@ -18,15 +17,14 @@ services:
     command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
-      DISABLE_JWT_AUTH: true
-      SHOULD_INIT_DB: false
-      # Value of DEV doesn't matter, only that it's defined.
-      DEV: 'yes'
-      # Values from .env file
+      ENVIRONMENT: development
+      AUTH_SECRET: ${AUTH_SECRET:-very_secret_string_123}
       ADMIN_KEY: ${ADMIN_KEY:?Must specify ADMIN_KEY in .env file or environment.}
+      INIT_DB: false
+      USE_JWT_TEST: true
 
   database:
-    image: postgres:13.8-alpine
+    image: postgres:14.5-alpine
     restart: always
     ports:
       - '5432:5432'

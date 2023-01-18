@@ -4,23 +4,21 @@ import {
     SimpleGrid,
     GridItem,
     Divider,
-    Button,
     Center,
     Spinner,
     useToast,
-    Link,
     Flex,
     Spacer,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import NextLink from 'next/link';
-import { useSession } from 'next-auth/react';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
 import { FeedbackAPI } from '@api/feedback';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import FeedbackEntry from '@components/feedback-entry';
+import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
@@ -31,13 +29,19 @@ const FeedbackPage = () => {
 
     const gridColumns = [1, null, null, null, 2];
 
-    const { data } = useSession();
+    const { signedIn, idToken } = useAuth();
 
     useEffect(() => {
         const getFeedbacks = async () => {
-            if (!data?.idToken) return;
+            setError(null);
 
-            const result = await FeedbackAPI.getFeedback(data.idToken);
+            if (!signedIn || !idToken) {
+                setLoading(false);
+                setError({ message: 'Du må være logget inn for å se denne siden.' });
+                return;
+            }
+
+            const result = await FeedbackAPI.getFeedback(idToken);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -49,12 +53,20 @@ const FeedbackPage = () => {
         };
 
         void getFeedbacks();
-    }, [data?.idToken]);
+    }, [idToken, signedIn]);
 
     const handleDelete = async (id: number) => {
-        if (!data?.idToken) return;
+        if (!signedIn || !idToken) {
+            toast({
+                title: 'Kunne ikke slette tilbakemelding',
+                description: 'Du må være logget inn for å slette en tilbakemelding.',
+                status: 'error',
+                duration: 5000,
+            });
+            return;
+        }
 
-        await FeedbackAPI.deleteFeedback(id, data.idToken);
+        await FeedbackAPI.deleteFeedback(id, idToken);
 
         toast({
             title: 'Tilbakemeldingen ble slettet!',
@@ -67,8 +79,17 @@ const FeedbackPage = () => {
     };
 
     const handleUpdate = async (feedback: Feedback) => {
-        if (!data?.idToken) return;
-        await FeedbackAPI.updateFeedback(feedback, data.idToken);
+        if (!signedIn || !idToken) {
+            toast({
+                title: 'Kunne ikke markere tilbakemelding som lest',
+                description: 'Du må være logget inn for å markere en tilbakemelding som lest.',
+                status: 'error',
+                duration: 5000,
+            });
+            return;
+        }
+
+        await FeedbackAPI.updateFeedback(feedback, idToken);
 
         toast({
             title: feedback.isRead ? 'Markert som lest' : 'Markert som ulest',
@@ -91,11 +112,7 @@ const FeedbackPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
+                        <ButtonLink href="/">Tilbake til forsiden</ButtonLink>
                     </Center>
                 )}
                 {loading && (
@@ -109,11 +126,7 @@ const FeedbackPage = () => {
                         <Flex>
                             <Heading mb="5">Tilbakemeldinger</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                         </Flex>
 
                         {feedbacks.length > 0 && (

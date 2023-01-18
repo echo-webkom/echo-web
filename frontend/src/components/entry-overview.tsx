@@ -1,9 +1,8 @@
 import { GridItem, SimpleGrid } from '@chakra-ui/react';
-import { useContext } from 'react';
 import { isFuture, isPast } from 'date-fns';
 import type { Happening } from '@api/happening';
 import EntryBox from '@components/entry-box';
-import LanguageContext from 'language-context';
+import useLanguage from '@hooks/use-language';
 
 interface Props {
     entries: Array<Happening>;
@@ -12,7 +11,7 @@ interface Props {
 
 const EntryOverview = ({ entries, type }: Props): JSX.Element => {
     const alt = type === 'event' ? 'arrangementer' : 'bedriftspresentasjoner';
-    const isNorwegian = useContext(LanguageContext);
+    const isNorwegian = useLanguage();
 
     const upcoming = entries.filter((entry: Happening) => {
         return isFuture(new Date(entry.date));
