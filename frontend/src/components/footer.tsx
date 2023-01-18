@@ -39,11 +39,7 @@ const Footer = () => {
                 maxW="1400px"
                 mx="auto"
             >
-<<<<<<< HEAD
-                <GridItem colSpan={[1, 2, 4]} color={'white'} fontSize={'md'}>
-=======
-                <GridItem colSpan={[1, 2, 4]} color="white" fontSize="2xl">
->>>>>>> c1980935d8bd4aece3b99d3ac5dd850fe5db1c28
+                <GridItem colSpan={[1, 2, 4]} color="white" fontSize="md">
                     <VStack spacing="1em">
                         <LinkBox>
                             <LinkOverlay isExternal href="https://forms.gle/cRLRxpMap5AX1xx1A">
@@ -56,13 +52,8 @@ const Footer = () => {
                                         <Icon
                                             as={TbAlertOctagon}
                                             borderRadius="full"
-<<<<<<< HEAD
                                             p="0.5"
-                                            bg={'red.400'}
-=======
-                                            p="1.5"
                                             bg="red.400"
->>>>>>> c1980935d8bd4aece3b99d3ac5dd850fe5db1c28
                                             color={textColor}
                                             _hover={{ bg: 'red.500', transform: 'scale(1)' }}
                                             boxSize={12}
