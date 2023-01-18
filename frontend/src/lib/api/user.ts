@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseISO } from 'date-fns';
 import type { ErrorMessage } from '@utils/error';
 import type { Degree } from '@utils/schemas';
 import { degreeSchema } from '@utils/schemas';
@@ -17,6 +18,8 @@ const userSchema = z.object({
     degree: degreeSchema.nullable(),
     degreeYear: z.number().nullable(),
     memberships: z.array(z.string()),
+    createdAt: z.string().transform((date) => parseISO(date)),
+    modifiedAt: z.string().transform((date) => parseISO(date)),
 });
 type User = z.infer<typeof userSchema>;
 
@@ -40,6 +43,8 @@ const UserAPI = {
                     degreeYear: null,
                     degree: null,
                     memberships: [],
+                    createdAt: new Date(),
+                    modifiedAt: new Date(),
                 };
             }
 
@@ -72,6 +77,8 @@ const UserAPI = {
                 body: JSON.stringify({
                     email,
                     name,
+                    createdAt: new Date(),
+                    modifiedAt: new Date(),
                 }),
                 headers: {
                     Authorization: `Bearer ${idToken}`,
