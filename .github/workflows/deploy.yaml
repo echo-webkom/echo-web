@@ -35,6 +35,7 @@ jobs:
         with:
           files: |
             backend/**
+            .github/workflows/deploy.yaml
           files_ignore: |
             backend/.gitignore
             backend/.env.example
@@ -123,7 +124,7 @@ jobs:
           terraform apply -auto-approve -lock-timeout=15m
 
       - name: Redeploy new containers
-        if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.any_changed == 'true'
+        if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
           cd terraform/main
           terraform init -lockfile=readonly
