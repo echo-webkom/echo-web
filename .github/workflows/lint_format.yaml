@@ -5,6 +5,7 @@ on:
 
 jobs:
   lint_format:
+    name: 'Lint & format'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

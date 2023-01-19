@@ -1,4 +1,4 @@
-name: Lint & format
+name: Lint & format (auto-pass)
 on:
   pull_request:
     branches: [master]
@@ -6,6 +6,7 @@ on:
 
 jobs:
   lint_format:
+    name: 'Lint & format (auto-pass)'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing

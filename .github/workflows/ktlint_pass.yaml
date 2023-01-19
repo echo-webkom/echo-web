@@ -1,4 +1,4 @@
-name: ktlint
+name: ktlint (auto-pass)
 on:
   pull_request:
     branches: [master]
@@ -6,6 +6,7 @@ on:
 
 jobs:
   ktlint_checks:
+    name: 'ktlint checks (auto-pass)'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing

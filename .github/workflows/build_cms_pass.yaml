@@ -1,4 +1,4 @@
-name: Build CMS
+name: Build CMS (auto-pass)
 on:
   pull_request:
     branches: [master]
@@ -6,6 +6,7 @@ on:
 
 jobs:
   build_cms:
+    name: 'Build CMS (auto-pass)'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing

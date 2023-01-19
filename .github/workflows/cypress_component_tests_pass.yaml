@@ -1,4 +1,4 @@
-name: Cypress component tests
+name: Cypress component tests (auto-pass)
 on:
   pull_request:
     branches: [master]
@@ -6,6 +6,7 @@ on:
 
 jobs:
   cypress_component_tests:
+    name: 'Cypress component tests (auto-pass)'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing
