@@ -4,9 +4,9 @@ variable "location" {
   default     = "norwayeast"
 }
 
-variable "cg_name" {
-  type        = string
-  description = "The name of the container group."
+variable "container_count" {
+  type        = number
+  description = "The number of containers to create."
 }
 
 variable "db_password" {
