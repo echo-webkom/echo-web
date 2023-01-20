@@ -61,6 +61,11 @@ interface FormRegistration {
     type: HappeningType;
     answers: Array<Answer>;
 }
+interface FormDeregistration {
+    email: string;
+    slug: string;
+    reason?: string;
+}
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
@@ -116,16 +121,14 @@ const RegistrationAPI = {
     },
 
     deleteRegistration: async (
-        slug: string,
-        email: string,
         idToken: string,
+        deregistration: FormDeregistration,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
-            const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
-
-            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}`, {
+            const response = await fetch(`${BACKEND_URL}/registration`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}` },
+                body: JSON.stringify(deregistration),
             });
 
             const responseText = await response.text();

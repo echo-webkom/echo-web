@@ -41,7 +41,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
     routing {
         authenticate(jwtConfig) {
             getRegistrations()
-            deleteRegistration()
+            deleteRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
             getUserIsRegistered()
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
         }
@@ -330,7 +330,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 }
 
 fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
-    delete("/registration/{slug}/{email}") {
+    delete("/registration") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         if (email == null) {
@@ -338,7 +338,7 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             return@delete
         }
 
-        val toDelete = call.receive<DeleteRegistrationReasonJson>()
+        val toDelete = call.receive<FormDeregistrationJson>()
 
         val slug = toDelete.slug
 

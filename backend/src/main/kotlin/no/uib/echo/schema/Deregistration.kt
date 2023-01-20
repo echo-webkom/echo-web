@@ -14,16 +14,6 @@ import org.joda.time.DateTime
         val email: String,
         val slug: String,
         val reason: String,
-
-    )
-
-    @Serializable
-    data class DeregistrationJson(
-        val email: String,
-        val slug: String,
-        val reason: String,
-        val submitDate: String? = null,
-        val memberships: List<String> = emptyList(),
     )
 
 

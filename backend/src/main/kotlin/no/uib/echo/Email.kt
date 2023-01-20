@@ -15,6 +15,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
 import org.jetbrains.exposed.sql.select
@@ -40,7 +41,7 @@ data class SendGridTemplate(
     val title: String,
     val link: String,
     val waitListSpot: Int? = null,
-    val registration: FormRegistrationJson? = null
+    val registration: FormRegistrationJson? = null,
 )
 
 @Serializable
@@ -62,6 +63,36 @@ fun fromEmail(email: String): String? {
         else -> null
     }
 }
+
+//suspend fun sendDeletionEmail(
+//    sendGridApiKey: String,
+//    registration: FormDeregistrationJson,
+//){
+//    val hap = transaction {
+//        Happening.select {
+//            Happening.slug eq registration.slug
+//        }.firstOrNull()
+//    } ?: throw Exception("Happening is null.")
+//
+//    val fromEmail = "webkom@echo.uib.no"
+//    try {
+//        withContext(Dispatchers.IO) {
+//            sendEmail(
+//                fromEmail,
+//                registration.email,
+//                SendGridTemplate(
+//                    hap[Happening.title],
+//                    "https://echo.uib.no/event/${registration.slug}",
+//                    registration = registration
+//                ),
+//                if (waitListSpot != null) Template.CONFIRM_WAIT else Template.CONFIRM_REG,
+//                sendGridApiKey
+//            )
+//        }
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//    }
+//}
 
 suspend fun sendConfirmationEmail(
     sendGridApiKey: String,

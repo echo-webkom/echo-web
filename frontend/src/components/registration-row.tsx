@@ -53,7 +53,10 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             return;
         }
 
-        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken);
+        const { error } = await RegistrationAPI.deleteRegistration(idToken, {
+            slug: registration.slug,
+            email: registration.email,
+        });
 
         onClose();
 

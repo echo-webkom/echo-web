@@ -16,12 +16,6 @@ data class FormRegistrationJson(
     val slug: String,
     val answers: List<AnswerJson>,
 )
-@Serializable
-data class DeleteRegistrationReasonJson(
-    val email: String,
-    val slug: String,
-    val reason: String? = null,
-)
 
 @Serializable
 data class RegistrationJson(

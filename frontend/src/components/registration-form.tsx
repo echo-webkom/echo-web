@@ -33,9 +33,8 @@ import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
 import CountdownButton from '@components/countdown-button';
 import { Happening, HappeningAPI, HappeningType, Question } from '@api/happening';
-import { RegFormValues, registrationDecoder } from '@api/registration';
+import { RegFormValues } from '@api/registration';
 import { userIsComplete } from '@api/user';
-import { User, UserAPI } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
 import FormQuestion from '@components/form-question';
 import useLanguage from '@hooks/use-language';
@@ -84,13 +83,13 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     );
 
     const toast = useToast();
-    const [registered, setRegistered] = useState(false);
+    const [registered, setRegistered] = useState(true);
+    const [reason, setReason] = useState('');
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
             if (user && idToken) {
                 const isRegistered = await RegistrationAPI.getUserIsRegistered(user.email, happening.slug, idToken);
-                console.log(isRegistered);
 
                 if (isErrorMessage(isRegistered)) {
                     setRegistered(false);
@@ -278,7 +277,16 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                                 <FormLabel>
                                     {isNorwegian ? 'Hvorfor melder du deg av?' : 'Why are you unregistering?'}
                                 </FormLabel>
-                                <Input />
+                                <Input
+                                    placeholder={isNorwegian ? 'Grunn' : 'Reason'}
+                                    onChange={(e) => {
+                                        setReason(reason + e.target.value);
+                                    }}
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        console.log(reason);
+                                    }}
+                                />
                             </FormControl>
 
                             <Text ml="0.5rem" fontWeight="bold">
@@ -296,7 +304,11 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                             onClick={() => {
                                 onUnRegisterClose();
                                 if (user && session?.idToken) {
-                                    RegistrationAPI.deleteRegistration(happening.slug, user.email, session?.idToken);
+                                    RegistrationAPI.deleteRegistration(session?.idToken, {
+                                        slug: happening.slug,
+                                        email: user.email,
+                                        reason: reason,
+                                    });
                                 } else {
                                     toast({
                                         title: 'Error',
