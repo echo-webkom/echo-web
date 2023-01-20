@@ -19,6 +19,8 @@ import {
     Center,
     FormControl,
     FormLabel,
+    LinkBox,
+    LinkOverlay,
 } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -183,11 +185,13 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                             ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
                             : 'You must fill out all necessary information to be able to register for events!'}
                     </Alert>
-                    <NextLink href="/profile" passHref>
-                        <Button w="100%" rightIcon={<MdOutlineArrowForward />} colorScheme="teal" variant="outline">
-                            Min profil
-                        </Button>
-                    </NextLink>
+                    <LinkBox>
+                        <LinkOverlay as={NextLink} href="/profile">
+                            <Button w="100%" rightIcon={<MdOutlineArrowForward />} colorScheme="teal" variant="outline">
+                                Min profil
+                            </Button>
+                        </LinkOverlay>
+                    </LinkBox>
                 </>
             )}
             {userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (

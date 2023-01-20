@@ -32,6 +32,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -79,6 +80,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files
         run: |
@@ -125,6 +127,7 @@ jobs:
             *.test.tsx
             frontend/.gitignore
             frontend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, frontend
         run: |
@@ -142,6 +145,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, backend
         run: |
@@ -193,54 +197,6 @@ jobs:
           name: cypress-screenshots
           path: frontend/cypress/screenshots
 
-  migration_tests:
-    runs-on: ubuntu-latest
-    needs: [build_backend]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v35
-        with:
-          files: |
-            backend/src/main/resources/db/migration/*.sql
-            backend/gradle.properties
-
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "$file was changed"
-          done
-          echo "any_changed = ${{ steps.changed-files.outputs.any_changed }}"
-
-      - name: Pull Docker image
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: docker pull "$IMAGE_NAME/backend:$TAG"
-
-      - name: Download database dump
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: |
-          heroku pg:backups:capture -a $HEROKU_APP_NAME
-          heroku pg:backups:download -a $HEROKU_APP_NAME
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: 'echo-web-backend-prod'
-
-      - name: Run migration tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: |
-          docker compose -f backend/docker-compose.yaml up database --wait
-          docker cp latest.dump backend-database-1:/
-          docker exec -i backend-database-1 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d postgres latest.dump || true
-          docker compose -f backend/docker-compose.yaml up backend & (sleep 15 && docker kill backend-backend-1)
-        env:
-          MIGRATE_DB: true
-          ADMIN_KEY: admin-passord
-
   backend_preview:
     runs-on: ubuntu-latest
     needs: [build_backend]
@@ -267,6 +223,7 @@ jobs:
           files_ignore: |
             backend/.gitignore
             backend/.env.example
+          since_last_remote_commit: true
 
       - name: List all changed files, backend
         run: |
@@ -280,8 +237,9 @@ jobs:
         uses: tj-actions/changed-files@v35
         with:
           files: |
-            terraform/preview/**
+            terraform/**
             .github/workflows/docker_tests_and_previews.yaml
+          since_last_remote_commit: true
 
       - name: List all changed files, Terraform
         run: |
@@ -310,7 +268,7 @@ jobs:
         if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         run: |
           cd terraform/preview
-          terraform init
+          terraform init -lockfile=readonly
           terraform workspace new $WORKSPACE_NAME || terraform workspace select $WORKSPACE_NAME
           terraform apply -auto-approve -lock-timeout=15m
           # Get backend url and output it

@@ -8,11 +8,10 @@ import {
     AccordionButton,
     AccordionPanel,
     AccordionIcon,
-    Link,
-    LinkBox,
-    LinkOverlay,
     UnorderedList,
     ListItem,
+    Flex,
+    Link,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -23,20 +22,20 @@ interface MenuDropdownProps {
     children?: React.ReactNode;
 }
 
-const MenuDropdown = (props: MenuDropdownProps) => {
+const MenuDropdown = ({ title, isOpen, children }: MenuDropdownProps) => {
     return (
-        <Accordion allowToggle defaultIndex={props.isOpen ? 0 : undefined}>
+        <Accordion allowToggle defaultIndex={isOpen ? 0 : undefined}>
             <AccordionItem border="hidden">
                 <h2>
                     <AccordionButton px={0} _hover={{ textDecoration: 'underline' }}>
                         <Box flex="1" textAlign="left" fontSize={20} fontWeight="bold">
-                            {props.title}
+                            {title}
                             <AccordionIcon />
                         </Box>
                     </AccordionButton>
                 </h2>
                 <AccordionPanel py="0.1em" pl={0}>
-                    <UnorderedList>{props.children}</UnorderedList>
+                    <UnorderedList>{children}</UnorderedList>
                 </AccordionPanel>
             </AccordionItem>
         </Accordion>
@@ -54,18 +53,19 @@ interface MenuLinkProps {
 
 const MenuLink = ({ href, isFocused, onClick, focusColor, testid, children }: MenuLinkProps) => {
     return (
-        <LinkBox data-testid={testid} onClick={onClick} data-cy="nav-item" py="0.2em">
-            <NextLink href={href} passHref>
-                <LinkOverlay
-                    as={Link}
-                    textUnderlineOffset="0.1em"
-                    fontSize={20}
-                    textColor={isFocused ? focusColor : undefined}
-                >
-                    {children}
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
+        <Link as={NextLink} href={href}>
+            <Box
+                data-testid={testid}
+                onClick={onClick}
+                data-cy="nav-item"
+                py="0.2em"
+                textUnderlineOffset="0.1em"
+                fontSize={20}
+                textColor={isFocused ? focusColor : undefined}
+            >
+                {children}
+            </Box>
+        </Link>
     );
 };
 
@@ -155,9 +155,11 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
 
             return (
                 <ListItem listStyleType={isFocused ? 'initial' : 'none'} color={isFocused ? textColor : undefined}>
-                    <MenuLink href={item.href} onClick={onClick} isFocused={isFocused} focusColor={textColor}>
-                        {item.name}
-                    </MenuLink>
+                    <Flex>
+                        <MenuLink href={item.href} onClick={onClick} isFocused={isFocused} focusColor={textColor}>
+                            {item.name}
+                        </MenuLink>
+                    </Flex>
                 </ListItem>
             );
         } else {

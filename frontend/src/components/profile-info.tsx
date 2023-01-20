@@ -20,11 +20,13 @@ import {
     useColorModeValue,
     Alert,
     Skeleton,
+    LinkOverlay,
     AlertIcon,
     SimpleGrid,
     GridItem,
     Spinner,
     Icon,
+    LinkBox,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
@@ -92,6 +94,8 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
+            createdAt: new Date(),
+            modifiedAt: new Date(),
         };
 
         const res = await UserAPI.putUser(newUser, idToken);
@@ -224,11 +228,13 @@ const ProfileInfo = () => {
                                 </form>
                             </FormProvider>
                             {user.memberships.includes('webkom') && (
-                                <NextLink href="/dashboard" passHref>
-                                    <Button w="100%" as="a" colorScheme="blue" my="1rem">
-                                        Til dashboard
-                                    </Button>
-                                </NextLink>
+                                <LinkBox>
+                                    <LinkOverlay as={NextLink} href="/dashboard">
+                                        <Button w="100%" as="a" colorScheme="blue" my="1rem">
+                                            Til dashboard
+                                        </Button>
+                                    </LinkOverlay>
+                                </LinkBox>
                             )}
                         </Section>
                     </GridItem>

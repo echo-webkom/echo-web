@@ -24,7 +24,7 @@ interface Props {
     minutes: Array<Minute>;
 }
 
-const MinuteList = ({ minutes }: Props): JSX.Element => {
+const MinuteList = ({ minutes }: Props) => {
     const newMinutes = minutes.map((obj) => ({ ...obj, date: new Date(obj.date) }));
 
     const color = useColorModeValue('blue', 'blue.400');
@@ -52,13 +52,17 @@ const MinuteList = ({ minutes }: Props): JSX.Element => {
                                         .map((minute) => (
                                             <ListItem key={minute.date.toDateString()}>
                                                 <Flex align="center">
-                                                    <NextLink href={minute.document} passHref>
-                                                        <Link href={minute.document} color={color} isExternal mr=".5em">
-                                                            {format(minute.date, 'dd. MMM yyyy', {
-                                                                locale: isNorwegian ? nb : enUS,
-                                                            })}
-                                                        </Link>
-                                                    </NextLink>
+                                                    <Link
+                                                        as={NextLink}
+                                                        href={minute.document}
+                                                        color={color}
+                                                        isExternal
+                                                        mr=".5em"
+                                                    >
+                                                        {format(minute.date, 'dd. MMM yyyy', {
+                                                            locale: isNorwegian ? nb : enUS,
+                                                        })}
+                                                    </Link>
                                                     <Icon as={FaExternalLinkAlt} />
                                                 </Flex>
                                             </ListItem>

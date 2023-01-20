@@ -72,7 +72,7 @@ const HappeningMetaInfo = ({
     const { signedIn } = useAuth();
 
     return (
-        <VStack alignItems="left" spacing={3} data-cy="happening-meta-info">
+        <VStack alignItems="left" spacing="3" data-cy="happening-meta-info">
             {companyLink && (
                 <IconText
                     icon={CgOrganisation}
@@ -157,7 +157,7 @@ const HappeningMetaInfo = ({
             {deductiblePayment && signedIn && (
                 <IconText
                     icon={GiTwoCoins}
-                    text={`${isNorwegian ? 'Egenandel' : 'Deductible'}: 
+                    text={`${isNorwegian ? 'Egenandel' : 'Deductible'}:
                     ${deductiblePayment} kr`}
                 />
             )}

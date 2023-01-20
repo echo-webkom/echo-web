@@ -18,3 +18,8 @@ variable "admin_key" {
   type        = string
   description = "The ADMIN_KEY to use for the backend."
 }
+
+variable "sendgrid_api_key" {
+  type        = string
+  description = "The API key for SendGrid."
+}

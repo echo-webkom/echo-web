@@ -4,16 +4,13 @@ import {
     SimpleGrid,
     GridItem,
     Divider,
-    Button,
     Center,
     Spinner,
     useToast,
-    Link,
     Flex,
     Spacer,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import NextLink from 'next/link';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import type { Feedback } from '@api/feedback';
@@ -21,6 +18,7 @@ import { FeedbackAPI } from '@api/feedback';
 import { type ErrorMessage, isErrorMessage } from '@utils/error';
 import FeedbackEntry from '@components/feedback-entry';
 import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const FeedbackPage = () => {
     const [feedbacks, setFeedbacks] = useState<Array<Feedback>>();
@@ -114,11 +112,7 @@ const FeedbackPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
+                        <ButtonLink href="/">Tilbake til forsiden</ButtonLink>
                     </Center>
                 )}
                 {loading && (
@@ -132,11 +126,7 @@ const FeedbackPage = () => {
                         <Flex>
                             <Heading mb="5">Tilbakemeldinger</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
-                                    Tilbake
-                                </Button>
-                            </NextLink>
+                            <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                         </Flex>
 
                         {feedbacks.length > 0 && (

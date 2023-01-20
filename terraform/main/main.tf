@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.38.0"
+      version = "3.39.1"
     }
   }
 
@@ -27,10 +27,11 @@ locals {
 module "prod" {
   source = "./prod"
 
-  location    = var.location
-  cg_name     = "echo-web-prod"
-  db_password = var.db_password_prod
-  admin_key   = var.admin_key_prod
+  location         = var.location
+  cg_name          = "echo-web-prod"
+  db_password      = var.db_password_prod
+  admin_key        = var.admin_key_prod
+  sendgrid_api_key = var.sendgrid_api_key
 }
 
 module "dev" {

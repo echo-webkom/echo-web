@@ -15,3 +15,5 @@ node_modules/
 **/*.tfstate*
 
 cms/.sanity
+
+**/yarn-error.log

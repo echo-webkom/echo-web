@@ -37,6 +37,7 @@ const NavLinks = (): JSX.Element => {
             fontSize={['3xl', null, null, 'lg', '2xl']}
             justify="flex-end"
             alignItems="center"
+            gap="5"
         >
             <NavLink text={isNorwegian ? 'Hjem' : 'Home'} href="/" data-cy="hjem" />
             {/* <NavLink text="Jobb" href="/job" data-cy="jobb" /> */}
@@ -66,18 +67,17 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
 
     return (
-        <>
-            <Box flex="2 1 auto" data-cy="navbar-standard" pb="1rem" pl={['0.5rem', null, null, null, '3rem', '4rem']}>
-                <Flex
-                    display={['none', null, null, 'flex']}
-                    align="center"
-                    justify="space-between"
-                    w="full"
-                    direction="column"
-                >
-                    <NavLinks />
-                </Flex>
-            </Box>
+        <Box>
+            <Flex
+                display={['none', null, null, 'flex']}
+                align="center"
+                justify="space-between"
+                w="full"
+                direction="column"
+            >
+                <NavLinks />
+            </Flex>
+
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 <DrawerOverlay>
                     <DrawerContent data-cy="navbar-drawer">
@@ -93,7 +93,7 @@ const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
                     </DrawerContent>
                 </DrawerOverlay>
             </Drawer>
-        </>
+        </Box>
     );
 };
 

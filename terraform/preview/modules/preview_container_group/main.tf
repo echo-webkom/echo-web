@@ -49,7 +49,7 @@ resource "azurerm_container_group" "cg" {
 
   container {
     name  = "${var.rg_name}-psql"
-    image = "postgres:11.6-alpine"
+    image = "postgres:14.5-alpine"
 
     cpu    = 0.5
     memory = 0.5

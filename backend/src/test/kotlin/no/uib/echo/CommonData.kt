@@ -7,6 +7,7 @@ import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.HappeningJson
 import no.uib.echo.schema.SpotRangeJson
 import no.uib.echo.schema.UserJson
+import org.joda.time.DateTime
 
 val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
 val oneTwoSpotRange = listOf(SpotRangeJson(50, 1, 2))
@@ -157,7 +158,9 @@ val user1 = UserJson(
     "bachelor.student1@gmail.com",
     2,
     Degree.DSIK,
-    listOf("tilde")
+    listOf("tilde"),
+    DateTime.now().toString(),
+    DateTime.now().toString()
 )
 val user2 = UserJson(
     "bast2@student.uib.no",
@@ -165,7 +168,9 @@ val user2 = UserJson(
     "bachelor.student2@gmail.com",
     3,
     Degree.DTEK,
-    listOf("webkom")
+    listOf("webkom"),
+    DateTime.now().toString(),
+    DateTime.now().toString()
 )
 val user3 = UserJson(
     "bast3@student.uib.no",
@@ -173,19 +178,86 @@ val user3 = UserJson(
     null,
     1,
     Degree.DVIT,
-    listOf("bedkom", "tilde")
+    listOf("bedkom", "tilde"),
+    DateTime.now().toString(),
+    DateTime.now().toString()
 )
-val user4 = UserJson("bast4@student.uib.no", "Bachelor Student #4", "bachelor.student4@gmail.com", 2, Degree.BINF)
-val user5 = UserJson("bast5@student.uib.no", "Bachelor Student #5", "bachelor.student5@gmail.com", 3, Degree.IMO)
+val user4 = UserJson(
+    "bast4@student.uib.no",
+    "Bachelor Student #4",
+    "bachelor.student4@gmail.com",
+    2,
+    Degree.BINF,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
+val user5 = UserJson(
+    "bast5@student.uib.no",
+    "Bachelor Student #5",
+    "bachelor.student5@gmail.com",
+    3,
+    Degree.IMO,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
 
-val user6 = UserJson("mast1@student.uib.no", "Master Student #1", "master.student1@gmail.com", 4, Degree.INF)
-val user7 = UserJson("mast2@student.uib.no", "Master Student #2", null, 5, Degree.PROG)
-val user8 = UserJson("mast3@student.uib.no", "Master Student #3", "master.student3@gmail.com", 5, Degree.INF)
+val user6 = UserJson(
+    "mast1@student.uib.no",
+    "Master Student #1",
+    "master.student1@gmail.com",
+    4,
+    Degree.INF,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
+val user7 = UserJson(
+    "mast2@student.uib.no",
+    "Master Student #2",
+    null,
+    5,
+    Degree.PROG,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
+val user8 = UserJson(
+    "mast3@student.uib.no",
+    "Master Student #3",
+    "master.student3@gmail.com",
+    5,
+    Degree.INF,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
 
-val user9 = UserJson("post@student.uib.no", "Post Student", "post.student@gmail.com", 3, Degree.POST)
-val user10 = UserJson("arinf@student.uib.no", "Årinf Student", "arinf.student@gmail.com", 1, Degree.ARMNINF)
+val user9 = UserJson(
+    "post@student.uib.no",
+    "Post Student",
+    "post.student@gmail.com",
+    3,
+    Degree.POST,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
+val user10 = UserJson(
+    "arinf@student.uib.no",
+    "Årinf Student",
+    "arinf.student@gmail.com",
+    1,
+    Degree.ARMNINF,
+    createdAt = DateTime.now().toString(),
+    modifiedAt = DateTime.now().toString()
+)
 
-val adminUser = UserJson("admin@student.uib.no", "Admin Dude", "admin@gmail.com", 5, Degree.INF, listOf("webkom"))
+val adminUser = UserJson(
+    "admin@student.uib.no",
+    "Admin Dude",
+    "admin@gmail.com",
+    5,
+    Degree.INF,
+    listOf("webkom"),
+    DateTime.now().toString(),
+    DateTime.now().toString()
+)
 
 val users = listOf(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 val usersWithAdmin = users.plus(listOf(adminUser))

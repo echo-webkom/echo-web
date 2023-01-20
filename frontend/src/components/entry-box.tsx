@@ -48,14 +48,9 @@ const EntryBox = ({
                         registrationCounts={registrationCounts}
                     />
                 )}
-                <Spacer />
+                <Spacer my="4" />
                 {linkTo && (
-                    <ButtonLink
-                        linkTo={linkTo}
-                        transition=".1s ease-out"
-                        marginTop="7"
-                        _hover={{ transform: 'scale(1.05)' }}
-                    >
+                    <ButtonLink href={linkTo} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
                         {isNorwegian ? 'Se mer' : 'See more'}
                     </ButtonLink>
                 )}

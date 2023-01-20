@@ -26,7 +26,7 @@ const Layout = ({ children }: Props): JSX.Element => {
             )}
             <Flex direction="column" minH="100vh" data-testid="layout">
                 <Header />
-                <Box maxW="1500" w={['97%', null, null, '90%']} m="auto">
+                <Box maxW="1500" w="full" px={['0.5rem', '1.5rem', null, '3rem']} mx="auto">
                     {children}
                 </Box>
                 <FeedbackButton />

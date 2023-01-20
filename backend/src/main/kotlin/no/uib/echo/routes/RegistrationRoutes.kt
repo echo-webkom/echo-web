@@ -329,7 +329,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
     }
 }
 
-fun Route.deleteRegistration() {
+fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
     delete("/registration/{slug}/{email}") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 

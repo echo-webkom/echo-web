@@ -1,19 +1,15 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
+import { Center, Divider, Flex, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { parseISO, format, formatISO, isBefore, isAfter, isFuture } from 'date-fns';
-import { Center, Divider, Grid, GridItem, Heading, LinkBox, LinkOverlay, Text } from '@chakra-ui/react';
 import { nb, enUS } from 'date-fns/locale';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import type { ErrorMessage } from '@utils/error';
+import dynamic from 'next/dynamic';
 import useAuth from '@hooks/use-auth';
-import RegistrationsList from '@components/registrations-list';
 import type { Happening, HappeningInfo } from '@api/happening';
 import { HappeningAPI } from '@api/happening';
-import { RegistrationAPI } from '@api/registration';
 import { isErrorMessage } from '@utils/error';
-import type { Registration } from '@api/registration';
 import ErrorBox from '@components/error-box';
 import SEO from '@components/seo';
 import Article from '@components/article';
@@ -26,32 +22,17 @@ import useLanguage from '@hooks/use-language';
 interface Props {
     happening: Happening | null;
     happeningInfo: HappeningInfo | null;
-    date: number;
     error: string | null;
 }
 
-const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.Element => {
+const DynamicRegistrationsList = dynamic(() => import('@components/registrations-list'));
+
+const HappeningPage = ({ happening, happeningInfo, error }: Props) => {
     const regDate = parseISO(happening?.registrationDate ?? formatISO(new Date()));
     const regDeadline = parseISO(happening?.registrationDeadline ?? formatISO(new Date()));
     const isNorwegian = useLanguage();
-    const { signedIn, idToken } = useAuth();
-    const [regsList, setRegsList] = useState<Array<Registration>>([]);
-    const [regsListError, setRegsListError] = useState<ErrorMessage | null>(null);
-
-    useEffect(() => {
-        const fetchRegs = async () => {
-            if (!happening || !signedIn || !idToken) return;
-            const result = await RegistrationAPI.getRegistrations(happening.slug, idToken);
-
-            if (isErrorMessage(result)) {
-                setRegsListError(result);
-            } else {
-                setRegsListError(null);
-                setRegsList(result);
-            }
-        };
-        void fetchRegs();
-    }, [happening, idToken, signedIn]);
+    const { signedIn } = useAuth();
+    const date = new Date();
 
     return (
         <>
@@ -61,122 +42,111 @@ const HappeningPage = ({ happening, happeningInfo, date, error }: Props): JSX.El
                     <SEO
                         title={happening.title}
                         description={`${happening.body.no.slice(0, 60)} ...`}
-                        image={happening.logoUrl ?? undefined}
+                        image={
+                            happening.logoUrl
+                                ? `/api/og/bedpres?title=${happening.title}&logoUrl=${happening.logoUrl}`
+                                : undefined
+                        }
                     />
-                    <Grid templateColumns={['repeat(1, 1fr)', null, null, 'repeat(4, 1fr)']} gap="4">
-                        <GridItem colSpan={1} as={Section}>
-                            <>
-                                {happening.happeningType === 'BEDPRES' &&
-                                    happening.companyLink &&
-                                    happening.logoUrl && (
-                                        <LinkBox mb="1em">
-                                            <NextLink href={happening.companyLink} passHref>
-                                                <LinkOverlay href={happening.companyLink} isExternal>
-                                                    <Center>
-                                                        <Image
-                                                            src={happening.logoUrl}
-                                                            alt="Bedriftslogo"
-                                                            width={300}
-                                                            height={300}
-                                                        />
-                                                    </Center>
-                                                </LinkOverlay>
-                                            </NextLink>
-                                        </LinkBox>
-                                    )}
-                                <HappeningMetaInfo
-                                    date={parseISO(happening.date)}
-                                    location={happening.location}
-                                    locationLink={happening.locationLink}
-                                    title={happening.title}
-                                    type={happening.happeningType}
-                                    slug={happening.slug}
-                                    contactEmail={happening.contactEmail}
-                                    companyLink={happening.companyLink}
-                                    deductiblePayment={happening.deductiblePayment}
-                                    spotRangeCounts={
-                                        happeningInfo?.spotRanges.length === 0
-                                            ? null
-                                            : happeningInfo?.spotRanges ?? null
-                                    }
-                                    spotRangesFromCms={
-                                        !happeningInfo?.spotRanges || happeningInfo.spotRanges.length === 0
-                                            ? happening.spotRanges
-                                            : null
-                                    }
-                                />
-                                {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
-                                    <>
-                                        <Divider my="1em" />
-                                        {isFuture(regDeadline) && (
-                                            <RegistrationForm happening={happening} type={happening.happeningType} />
-                                        )}
-                                        {isBefore(date, parseISO(happening.date)) &&
-                                            isAfter(date, regDate) &&
-                                            isBefore(date, regDeadline) && (
-                                                <>
-                                                    {signedIn && (
-                                                        <Center mt="1rem">
-                                                            <Text fontSize="md">
-                                                                {isNorwegian
-                                                                    ? 'Påmelding stenger'
-                                                                    : 'Registration closes'}{' '}
-                                                                {format(regDeadline, 'dd. MMM HH:mm', {
-                                                                    locale: isNorwegian ? nb : enUS,
-                                                                })}
-                                                            </Text>
-                                                        </Center>
-                                                    )}
-                                                </>
-                                            )}
-                                        {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
-                                            <Center my="3" data-testid="bedpres-has-been">
-                                                <Text>
-                                                    {isNorwegian ? 'Påmeldingen er stengt' : 'Registration is closed'}
-                                                </Text>
-                                            </Center>
-                                        )}
-                                    </>
-                                )}
-                                <Divider my="1em" />
-                                <Center>
-                                    <Heading size="lg">@{happening.studentGroupName}</Heading>
-                                </Center>
-                            </>
-                        </GridItem>
-                        <GridItem
-                            colStart={[1, null, null, 2]}
-                            rowStart={[2, null, null, 1]}
-                            colSpan={[1, null, null, 3]}
-                            rowSpan={2}
-                            minW="0"
+                    <Flex direction={['column', null, null, 'row']} gap="4">
+                        <Flex
+                            direction="column"
+                            gap="5"
+                            as={Section}
+                            flexShrink="0"
+                            h="fit-content"
+                            w={['full', null, null, '300px']}
                         >
-                            <Section minW="100%">
-                                <Article
-                                    heading={happening.title}
-                                    body={
-                                        isNorwegian
-                                            ? happening.body.no
-                                            : happening.body.en ??
-                                              '(No english version avalible) \n\n' + happening.body.no
-                                    }
-                                />
+                            {happening.happeningType === 'BEDPRES' && happening.companyLink && happening.logoUrl && (
                                 <Center>
-                                    <ReactionButtons slug={happening.slug} />
+                                    <LinkBox>
+                                        <LinkOverlay as={NextLink} href={happening.companyLink}>
+                                            <Image
+                                                src={happening.logoUrl}
+                                                alt="Bedriftslogo"
+                                                width={260}
+                                                height={260}
+                                            />
+                                        </LinkOverlay>
+                                    </LinkBox>
                                 </Center>
-                            </Section>
-                        </GridItem>
-                    </Grid>
-                    {regsList.length > 0 && (
-                        <RegistrationsList
-                            registrations={regsList}
-                            registrationDate={
-                                happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
-                            }
-                            error={regsListError?.message ?? null}
-                            title={happening.title}
-                        />
-                    )}
+                            )}
+                            <HappeningMetaInfo
+                                date={parseISO(happening.date)}
+                                location={happening.location}
+                                locationLink={happening.locationLink}
+                                title={happening.title}
+                                type={happening.happeningType}
+                                slug={happening.slug}
+                                contactEmail={happening.contactEmail}
+                                companyLink={happening.companyLink}
+                                deductiblePayment={happening.deductiblePayment}
+                                spotRangeCounts={
+                                    happeningInfo?.spotRanges.length === 0 ? null : happeningInfo?.spotRanges ?? null
+                                }
+                                spotRangesFromCms={
+                                    !happeningInfo?.spotRanges || happeningInfo.spotRanges.length === 0
+                                        ? happening.spotRanges
+                                        : null
+                                }
+                            />
+                            {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
+                                <>
+                                    <Divider />
+                                    {isFuture(regDeadline) && (
+                                        <RegistrationForm happening={happening} type={happening.happeningType} />
+                                    )}
+                                    {isBefore(date, parseISO(happening.date)) &&
+                                        isAfter(date, regDate) &&
+                                        isBefore(date, regDeadline) && (
+                                            <>
+                                                {signedIn && (
+                                                    <Center>
+                                                        <Text fontSize="md">
+                                                            {isNorwegian ? 'Påmelding stenger' : 'Registration closes'}{' '}
+                                                            {format(regDeadline, 'dd. MMM HH:mm', {
+                                                                locale: isNorwegian ? nb : enUS,
+                                                            })}
+                                                        </Text>
+                                                    </Center>
+                                                )}
+                                            </>
+                                        )}
+                                    {(isAfter(date, parseISO(happening.date)) || isAfter(date, regDeadline)) && (
+                                        <Center data-testid="bedpres-has-been">
+                                            <Text>
+                                                {isNorwegian ? 'Påmeldingen er stengt' : 'Registration is closed'}
+                                            </Text>
+                                        </Center>
+                                    )}
+                                </>
+                            )}
+                            <Divider />
+                            <Center>
+                                <Heading size="lg">@{happening.studentGroupName}</Heading>
+                            </Center>
+                        </Flex>
+                        <Flex as={Section} direction="column" w="full" h="fit-content">
+                            <Article
+                                heading={happening.title}
+                                body={
+                                    isNorwegian
+                                        ? happening.body.no
+                                        : happening.body.en ?? '(No english version avalible) \n\n' + happening.body.no
+                                }
+                            />
+                            <Center>
+                                <ReactionButtons slug={happening.slug} mt="5" />
+                            </Center>
+                        </Flex>
+                    </Flex>
+                    <DynamicRegistrationsList
+                        slug={happening.slug}
+                        title={happening.title}
+                        registrationDate={
+                            happening.registrationDate ? parseISO(happening.registrationDate) : new Date()
+                        }
+                    />
                 </>
             )}
         </>
@@ -187,16 +157,16 @@ interface Params extends ParsedUrlQuery {
     slug: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { slug } = context.params as Params;
+export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
+    res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+
+    const { slug } = params as Params;
     const happening = await HappeningAPI.getHappeningBySlug(slug);
 
     const adminKey = process.env.ADMIN_KEY;
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const happeningInfo = await HappeningAPI.getHappeningInfo(adminKey, slug);
-
-    const date = Date.now();
 
     if (isErrorMessage(happening) && happening.message === '404') {
         return {
@@ -207,7 +177,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const props: Props = {
         happening: isErrorMessage(happening) ? null : happening,
         happeningInfo: isErrorMessage(happeningInfo) ? null : happeningInfo,
-        date,
         error: isErrorMessage(happening) ? 'Det har skjedd en feil.' : null,
     };
 

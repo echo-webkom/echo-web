@@ -1,4 +1,4 @@
-name: Push backend image & deploy backend
+name: Deploy backend
 on:
   push:
     branches: [master]
@@ -14,6 +14,7 @@ env:
   TF_VAR_admin_key_dev: ${{ secrets.ADMIN_KEY_DEV }}
   TF_VAR_admin_key_prod: ${{ secrets.ADMIN_KEY_PROD }}
   TF_VAR_auth_secret: ${{ secrets.AUTH_SECRET }}
+  TF_VAR_sendgrid_api_key: ${{ secrets.SENDGRID_API_KEY }}
   ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
@@ -34,6 +35,7 @@ jobs:
         with:
           files: |
             backend/**
+            .github/workflows/deploy.yaml
           files_ignore: |
             backend/.gitignore
             backend/.env.example
@@ -118,14 +120,14 @@ jobs:
         if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
           cd terraform/main
-          terraform init
+          terraform init -lockfile=readonly
           terraform apply -auto-approve -lock-timeout=15m
 
       - name: Redeploy new containers
-        if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.any_changed == 'true'
+        if: steps.changed-files-tf.outputs.any_changed != 'true' && steps.changed-files-backend.outputs.any_changed == 'true'
         run: |
           cd terraform/main
-          terraform init
+          terraform init -lockfile=readonly
           # Dev container group
           terraform destroy -auto-approve \
             -target=module.dev.module.cg.azurerm_container_group.cg \

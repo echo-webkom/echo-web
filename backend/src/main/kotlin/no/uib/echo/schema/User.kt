@@ -16,7 +16,9 @@ data class UserJson(
     val alternateEmail: String? = null,
     val degreeYear: Int? = null,
     val degree: Degree? = null,
-    val memberships: List<String> = emptyList()
+    val memberships: List<String> = emptyList(),
+    val createdAt: String,
+    val modifiedAt: String,
 )
 
 object User : Table() {

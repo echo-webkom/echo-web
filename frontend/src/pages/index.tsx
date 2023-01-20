@@ -36,7 +36,7 @@ const IndexPage = ({
     banner: Banner | null;
     registrationCounts: Array<RegistrationCount>;
     jobs: Array<JobAdvert>;
-}): JSX.Element => {
+}) => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
     const enableFeedbackPopup = process.env.NEXT_PUBLIC_ENABLE_FEEDBACK_POPUP?.toLowerCase() === 'true';
     const isNorwegian = useLanguage();
@@ -62,7 +62,7 @@ const IndexPage = ({
         <EntryBox
             titles={isNorwegian ? ['Innlegg'] : ['Posts']}
             entries={posts}
-            entryLimit={useBreakpointValue([3, 3, 3, 2, 2, 3, 4])}
+            entryLimit={2}
             altText={isNorwegian ? 'Ingen innlegg :(' : 'No posts :('}
             linkTo="/posts"
             type="post"
@@ -75,11 +75,9 @@ const IndexPage = ({
             {banner &&
                 (banner.linkTo ? (
                     <LinkBox transition="0.3s ease" _hover={{ transform: 'scale(105%)' }}>
-                        <NextLink href={banner.linkTo} passHref>
-                            <LinkOverlay isExternal={banner.isExternal}>
-                                <BannerComponent banner={banner} />
-                            </LinkOverlay>
-                        </NextLink>
+                        <LinkOverlay as={NextLink} href={banner.linkTo} isExternal={banner.isExternal}>
+                            <BannerComponent banner={banner} />
+                        </LinkOverlay>
                     </LinkBox>
                 ) : (
                     <BannerComponent banner={banner} />

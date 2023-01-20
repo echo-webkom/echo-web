@@ -34,11 +34,6 @@ variable "environment" {
   }
 }
 
-variable "db_name" {
-  type        = string
-  description = "The name of the database."
-}
-
 variable "db_user" {
   type        = string
   description = "The name of the admin database user."
@@ -62,5 +57,11 @@ variable "admin_key" {
 variable "auth_secret" {
   type        = string
   description = "The AUTH_SECRET for the development and preview backend."
+  nullable    = true
+}
+
+variable "sendgrid_api_key" {
+  type        = string
+  description = "The API key for SendGrid."
   nullable    = true
 }

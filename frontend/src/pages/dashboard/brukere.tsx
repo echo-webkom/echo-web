@@ -1,4 +1,5 @@
 import {
+    Stack,
     Heading,
     TableContainer,
     Table,
@@ -7,15 +8,15 @@ import {
     Th,
     Tbody,
     Text,
-    Button,
     Center,
-    Link,
     Spinner,
     Flex,
     Spacer,
+    useBoolean,
+    Checkbox,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
+import { startOfYear, isAfter } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -24,6 +25,7 @@ import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
 import useAuth from '@hooks/use-auth';
+import ButtonLink from '@components/button-link';
 
 const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
@@ -31,6 +33,12 @@ const AdminUserPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const { signedIn, idToken, error: userError } = useAuth();
+
+    const [hideOld, setHideOld] = useBoolean();
+
+    const filteredUsers = users
+        ? users.filter((user) => !(hideOld && isAfter(startOfYear(new Date()), user.modifiedAt)))
+        : [];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -64,11 +72,7 @@ const AdminUserPage = () => {
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error?.message ?? userError?.message}</Text>
-                        <Button>
-                            <NextLink href="/" passHref>
-                                <Link>Tilbake til forsiden</Link>
-                            </NextLink>
-                        </Button>
+                        <ButtonLink href="/dashboard">Tilbake</ButtonLink>
                     </Center>
                 )}
                 {loading && (
@@ -80,13 +84,16 @@ const AdminUserPage = () => {
                 {users && (
                     <>
                         <Flex>
-                            <Heading>Administrer brukere</Heading>
+                            <Heading size={['md', 'lg', 'xl']}>Administrer brukere</Heading>
                             <Spacer />
-                            <NextLink href="/dashboard" passHref>
-                                <Button as="a" colorScheme="blue" my="1rem">
+                            <Stack direction={['column', null, null, 'row']}>
+                                <Checkbox mx="1rem" onInput={setHideOld.toggle} ml="5">
+                                    Skjul gamle
+                                </Checkbox>
+                                <ButtonLink size={['sm', null, 'md']} href="/dashboard">
                                     Tilbake
-                                </Button>
-                            </NextLink>
+                                </ButtonLink>
+                            </Stack>
                         </Flex>
 
                         <TableContainer>
@@ -96,11 +103,12 @@ const AdminUserPage = () => {
                                         <Th>Navn:</Th>
                                         <Th>Email:</Th>
                                         <Th>Medlemskap:</Th>
+                                        <Th>Sist endret:</Th>
                                         <Th>Rediger:</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {users.map((user) => (
+                                    {filteredUsers.map((user) => (
                                         <UserRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>
