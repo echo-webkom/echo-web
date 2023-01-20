@@ -83,14 +83,13 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     );
 
     const toast = useToast();
-    const [registered, setRegistered] = useState(true);
+    const [registered, setRegistered] = useState(false);
     const [reason, setReason] = useState('');
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
             if (user && idToken) {
                 const isRegistered = await RegistrationAPI.getUserIsRegistered(user.email, happening.slug, idToken);
-
                 if (isErrorMessage(isRegistered)) {
                     setRegistered(false);
                     return;
@@ -265,7 +264,14 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                     </FormProvider>
                 </ModalContent>
             </Modal>
-            <Modal initialFocusRef={initialRef} isOpen={isUnRegisterOpen} onClose={onUnRegisterClose}>
+            <Modal
+                initialFocusRef={initialRef}
+                isOpen={isUnRegisterOpen}
+                onClose={() => {
+                    onUnRegisterClose();
+                    setReason('');
+                }}
+            >
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <ModalHeader>{isNorwegian ? 'Meld deg av' : 'Unregister'}</ModalHeader>
@@ -280,11 +286,10 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                                 <Input
                                     placeholder={isNorwegian ? 'Grunn' : 'Reason'}
                                     onChange={(e) => {
-                                        setReason(reason + e.target.value);
+                                        setReason(e.target.value);
                                     }}
                                     onSubmit={(e) => {
                                         e.preventDefault();
-                                        console.log(reason);
                                     }}
                                 />
                             </FormControl>
