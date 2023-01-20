@@ -1,7 +1,14 @@
-# Storage for Caddy
+locals {
+  cg_fqdns          = [for n in range(var.container_count) : "https://${var.rg_name}-${n}.${var.location}.azurecontainer.io"]
+  formatted_rg_name = substr(replace(var.rg_name, "-", ""), 0, 16)
+}
 
-resource "azurerm_storage_account" "cstore" {
-  name                      = "${substr(replace(var.cg_name, "-", ""), 0, 19)}store"
+# Storage for Caddy load balancer
+
+resource "azurerm_storage_account" "load_balancer" {
+  count = var.container_count > 1 ? 1 : 0
+
+  name                      = "${substr(replace(var.rg_name, "-", ""), 0, 17)}lb"
   resource_group_name       = var.rg_name
   location                  = var.location
   account_tier              = "Standard"
@@ -13,24 +20,141 @@ resource "azurerm_storage_account" "cstore" {
   }
 }
 
-resource "azurerm_storage_share" "cshare" {
-  name                 = "${substr(replace(var.cg_name, "-", ""), 0, 19)}share"
-  storage_account_name = azurerm_storage_account.cstore.name
+resource "azurerm_storage_share" "load_balancer" {
+  count = var.container_count > 1 ? 1 : 0
+
+  name                 = "${local.formatted_rg_name}lb"
+  storage_account_name = azurerm_storage_account.load_balancer[0].name
   quota                = 1
 }
 
-# Containers
+# Caddy for load balancing
 
-resource "azurerm_container_group" "cg" {
-  name                = var.cg_name
+resource "azurerm_container_group" "load_balancer" {
+  count = var.container_count > 1 ? 1 : 0
+
+  name                = var.rg_name
   location            = var.location
   resource_group_name = var.rg_name
   ip_address_type     = "Public"
   os_type             = "Linux"
-  dns_name_label      = var.cg_name
+  dns_name_label      = var.rg_name
 
   container {
-    name  = "echo-web-backend"
+    name  = "load-balancer"
+    image = "caddy"
+
+    cpu    = 0.5
+    memory = 0.5
+
+    ports {
+      port     = 443
+      protocol = "TCP"
+    }
+
+    ports {
+      port     = 80
+      protocol = "TCP"
+    }
+
+    volume {
+      name       = "config"
+      read_only  = true
+      mount_path = "/etc/caddy"
+      secret = {
+        "Caddyfile" = base64encode(<<-EOF
+          ${var.rg_name}.${var.location}.azurecontainer.io
+
+          reverse_proxy {
+            ${join("\n  ", formatlist("to %s", local.cg_fqdns))}
+
+            health_uri /status
+            health_interval 15s
+            health_timeout 8s
+
+            lb_policy round_robin
+
+            fail_duration 15s
+            unhealthy_status 5xx
+
+            header_up Host {upstream_hostport}
+            header_down Access-Control-Allow-Origin *
+            header_down Access-Control-Allow-Methods *
+            header_down Access-Control-Allow-Headers *
+            header_down Access-Control-Allow-Credentials true
+          }
+
+          EOF
+        ),
+      }
+    }
+
+    volume {
+      name                 = "caddy-data"
+      mount_path           = "/data"
+      storage_account_name = azurerm_storage_account.load_balancer[0].name
+      storage_account_key  = azurerm_storage_account.load_balancer[0].primary_access_key
+      share_name           = azurerm_storage_share.load_balancer[0].name
+    }
+  }
+
+  exposed_port {
+    port     = 443
+    protocol = "TCP"
+  }
+
+  diagnostics {
+    log_analytics {
+      workspace_id  = var.law_wid
+      workspace_key = var.law_key
+    }
+  }
+
+  tags = {
+    "environment" = var.environment
+  }
+}
+
+
+# Storage for backend Caddy
+
+resource "azurerm_storage_account" "backend" {
+  count = var.container_count
+
+  name                      = var.container_count > 1 ? "${local.formatted_rg_name}rp${count.index}" : "${local.formatted_rg_name}rp"
+  resource_group_name       = var.rg_name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  enable_https_traffic_only = true
+
+  tags = {
+    "environment" = var.environment
+  }
+}
+
+resource "azurerm_storage_share" "backend" {
+  count = var.container_count
+
+  name                 = var.container_count > 1 ? "${local.formatted_rg_name}rp${count.index}" : "${local.formatted_rg_name}rp"
+  storage_account_name = azurerm_storage_account.backend[count.index].name
+  quota                = 1
+}
+
+# Main containers
+
+resource "azurerm_container_group" "backend" {
+  count = var.container_count
+
+  name                = var.container_count > 1 ? "${var.rg_name}-${count.index}" : var.rg_name
+  location            = var.location
+  resource_group_name = var.rg_name
+  ip_address_type     = "Public"
+  os_type             = "Linux"
+  dns_name_label      = var.container_count > 1 ? "${var.rg_name}-${count.index}" : var.rg_name
+
+  container {
+    name  = "backend"
     image = "ghcr.io/echo-webkom/echo-web/backend:latest"
 
     cpu    = 0.5
@@ -51,7 +175,7 @@ resource "azurerm_container_group" "cg" {
   }
 
   container {
-    name  = "echo-web-caddy"
+    name  = "reverse-proxy"
     image = "caddy"
 
     cpu    = 0.5
@@ -68,14 +192,27 @@ resource "azurerm_container_group" "cg" {
     }
 
     volume {
-      name                 = "caddy-data"
-      mount_path           = "/data"
-      storage_account_name = azurerm_storage_account.cstore.name
-      storage_account_key  = azurerm_storage_account.cstore.primary_access_key
-      share_name           = azurerm_storage_share.cshare.name
+      name       = "config"
+      read_only  = true
+      mount_path = "/etc/caddy"
+      secret = {
+        "Caddyfile" = base64encode(<<-EOF
+          ${var.container_count > 1 ? "${var.rg_name}-${count.index}.${var.location}.azurecontainer.io" : "${var.rg_name}.${var.location}.azurecontainer.io"}
+
+          reverse_proxy localhost:8080
+
+          EOF
+        ),
+      }
     }
 
-    commands = ["caddy", "reverse-proxy", "--from", "${var.cg_name}.${var.location}.azurecontainer.io", "--to", "localhost:8080"]
+    volume {
+      name                 = "caddy-data"
+      mount_path           = "/data"
+      storage_account_name = azurerm_storage_account.backend[count.index].name
+      storage_account_key  = azurerm_storage_account.backend[count.index].primary_access_key
+      share_name           = azurerm_storage_share.backend[count.index].name
+    }
   }
 
   exposed_port {
