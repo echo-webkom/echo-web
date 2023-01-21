@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
         maxAge: 8 * 60 * 60,
     },
     callbacks: {
-        async signIn({ account, profile }) {
+        signIn: async ({ account, profile }) => {
             if (!isProd) {
                 const testToken = await UserAPI.getTestToken(testEmail);
 
@@ -102,7 +102,7 @@ export const authOptions: NextAuthOptions = {
             console.log('Failed to create user:', response);
             return '/500';
         },
-        async jwt({ token, account }) {
+        jwt: async ({ token, account }) => {
             if (!isProd) {
                 const testToken = await UserAPI.getTestToken(testEmail);
 
@@ -148,7 +148,7 @@ export const authOptions: NextAuthOptions = {
                   clientId: process.env.FEIDE_CLIENT_ID,
                   clientSecret: process.env.FEIDE_CLIENT_SECRET,
                   idToken: true,
-                  profile(profile) {
+                  profile: (profile) => {
                       return {
                           id: profile.sub,
                           name: profile.name,
@@ -168,7 +168,7 @@ export const authOptions: NextAuthOptions = {
                       password: { label: 'Password', type: 'password' },
                   },
                   // eslint-disable-next-line @typescript-eslint/require-await
-                  async authorize() {
+                  authorize: async () => {
                       return {
                           id: '1',
                           name: 'Test McTest',
