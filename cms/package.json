@@ -46,7 +46,7 @@
         "sanity": "3.2.4",
         "sanity-plugin-color-picker": "1.0.3",
         "sanity-plugin-markdown": "4.0.0",
-        "sanity-plugin-media": "2.0.2",
+        "sanity-plugin-media": "2.0.3",
         "slugify": "1.6.5",
         "styled-components": "5.3.6"
     },
