@@ -8,7 +8,6 @@ import { FeedbackAPI } from '@api/feedback';
 import { allValidFeideGroups } from '@utils/degree';
 
 const isProd = (process.env.VERCEL_ENV ?? 'production') === 'production';
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 const testEmail = 'test.mctest@student.uib.no';
 const testName = 'Test McTest';
 
@@ -125,21 +124,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             const { idToken, accessToken } = token;
 
-            if (!isProd) {
-                try {
-                    const response = await fetch(`${BACKEND_URL}/token/${testEmail}`, {
-                        method: 'GET',
-                    });
-
-                    const testToken = await response.text();
-
-                    session.idToken = testToken;
-                    session.accessToken = 'bruh';
-                } catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                }
-            } else if (typeof idToken === 'string' && typeof accessToken === 'string') {
+            if (typeof idToken === 'string' && typeof accessToken === 'string') {
                 session.idToken = idToken;
                 session.accessToken = accessToken;
             }
