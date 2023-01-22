@@ -115,7 +115,7 @@
         "@emotion/styled": "11.10.5",
         "@next/font": "13.1.2",
         "@sanity/client": "4.0.1",
-        "@sanity/image-url": "1.0.1",
+        "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "0.1.8",
         "@vercel/og": "0.0.27",
         "calendar-link": "2.2.0",
