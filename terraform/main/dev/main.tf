@@ -1,7 +1,6 @@
 # Dev-specific variables
 
 locals {
-  cg_name     = "echo-web-containers-dev"
   db_name     = "echo-web-db-dev"
   db_user     = "echoadmindev"
   environment = "development"
@@ -42,7 +41,6 @@ module "cg" {
   source = "../modules/container_group"
 
   rg_name          = azurerm_resource_group.rg.name
-  cg_name          = var.cg_name
   law_wid          = azurerm_log_analytics_workspace.law.workspace_id
   law_key          = azurerm_log_analytics_workspace.law.primary_shared_key
   location         = azurerm_resource_group.rg.location
