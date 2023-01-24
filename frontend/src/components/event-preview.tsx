@@ -3,7 +3,6 @@ import NextLink from 'next/link';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import HappeningKeyInfo from '@components/happening-key-info';
-import ReactionCount from '@components/reaction-count';
 
 interface Props {
     event: Happening;
@@ -18,7 +17,6 @@ const EventPreview = ({ event, registrationCounts }: Props) => {
                     <LinkOverlay as={NextLink} href={`/event/${event.slug}`} _hover={{ textDecor: 'underline' }}>
                         {event.title}
                     </LinkOverlay>
-                    <ReactionCount slug={event.slug} />
                 </Box>
 
                 <Spacer />
