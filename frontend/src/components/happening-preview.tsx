@@ -4,7 +4,6 @@ import NextLink from 'next/link';
 import HappeningKeyInfo from '@components/happening-key-info';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
-import ReactionCount from '@components/reaction-count';
 
 interface Props {
     happening: Happening;
@@ -35,7 +34,6 @@ const HappeningPreview = ({ happening, registrationCounts }: Props): JSX.Element
                         <LinkOverlay as={NextLink} href={`/event/${happening.slug}`}>
                             <Text fontWeight="regular">{happening.title}</Text>
                         </LinkOverlay>
-                        <ReactionCount slug={happening.slug} />
                     </Box>
                 </Flex>
 
