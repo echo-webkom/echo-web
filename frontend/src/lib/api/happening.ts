@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import SanityAPI from '@api/sanity';
@@ -77,7 +78,7 @@ const HappeningAPI = {
     getHappeningsByType: async (n: number, type: HappeningType): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
-            const query = `
+            const query = groq`
                 *[_type == "happening" && happeningType == "${type}" && !(_id in path('drafts.**'))] | order(date asc) {
                     title,
                     "slug": slug.current,
@@ -126,7 +127,7 @@ const HappeningAPI = {
      */
     getHappeningBySlug: async (slug: string): Promise<Happening | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "happening" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,

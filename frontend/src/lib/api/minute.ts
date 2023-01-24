@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
@@ -22,7 +23,7 @@ const MinuteAPI = {
      */
     getMinutes: async (): Promise<Array<Minute> | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "meetingMinute" && !(_id in path('drafts.**'))] | order(date desc) {
                     allmote,
                     date,
