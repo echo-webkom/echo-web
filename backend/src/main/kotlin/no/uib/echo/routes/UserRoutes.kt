@@ -21,6 +21,7 @@ import no.uib.echo.schema.Degree
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.Whitelist
 import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
@@ -48,6 +49,8 @@ fun Application.userRoutes(
             postUser()
             putUser()
             getAllUsers()
+            getWhitelist()
+            putWhitelist()
         }
     }
 }
@@ -313,5 +316,64 @@ fun Route.getToken(env: Environment, audience: String, issuer: String, secret: S
                 .withExpiresAt(Date(System.currentTimeMillis() + (1000 * 60 * 60)))
                 .sign(Algorithm.HMAC256(secret))
         call.respond(token)
+    }
+}
+
+fun Route.getWhitelist() {
+    get("/user/whitelist") {
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        val whitelist = transaction {
+            Whitelist.select {
+                Whitelist.email eq email
+            }.firstOrNull()
+        }
+
+        if (whitelist == null) {
+            call.respond(HttpStatusCode.NotFound)
+            return@get
+        }
+
+        if (whitelist[Whitelist.expiresAt].isBeforeNow) {
+            call.respond(HttpStatusCode.Gone)
+            return@get
+        }
+
+        call.respond(HttpStatusCode.OK)
+    }
+}
+
+fun Route.putWhitelist() {
+    put("/user/whitelist/{email}") {
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email !in getGroupMembers("webkom")) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@put
+        }
+
+        val userEmail = call.parameters["email"]
+        val days = call.request.queryParameters["days"]
+
+        if (userEmail == null || days == null) {
+            call.respond(HttpStatusCode.BadRequest)
+            return@put
+        }
+
+        transaction {
+            Whitelist.insert {
+                it[Whitelist.email] = userEmail
+                it[expiresAt] = DateTime.now().plusDays(days.toInt())
+            }
+        }
+
+        call.respond(HttpStatusCode.OK)
     }
 }

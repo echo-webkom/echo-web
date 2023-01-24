@@ -67,8 +67,9 @@ export const authOptions: NextAuthOptions = {
             }
 
             const isMember = groups.map((group) => group.id).some((id) => allValidFeideGroups.includes(id));
+            const isWhitelisted = await UserAPI.getWhitelist(account.id_token).then((res) => res);
 
-            if (!isMember) {
+            if (!isMember && !isWhitelisted) {
                 if (signInOnlyCollectData) {
                     // eslint-disable-next-line no-console
                     console.log('User is not a member of any valid group, but only collecting data');
