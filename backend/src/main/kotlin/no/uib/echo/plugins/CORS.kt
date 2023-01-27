@@ -9,10 +9,12 @@ import no.uib.echo.Environment
 
 fun Application.configureCORS(env: Environment) {
     install(CORS) {
-        if (env === Environment.PRODUCTION)
+        if (env === Environment.PRODUCTION) {
             allowHost("echo.uib.no", schemes = listOf("https"))
-        else
-            anyHost()
+        } else {
+            allowHost("localhost:3000", schemes = listOf("http"))
+            allowHost("*.vercel.app", schemes = listOf("https"))
+        }
 
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Put)
