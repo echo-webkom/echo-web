@@ -58,7 +58,9 @@ const happeningSchema = z.object({
     spotRanges: z
         .array(spotRangeSchema)
         .nullable()
-        .transform((sr) => sr ?? []),
+        .transform((sr) => sr ?? [])
+        // eslint-disable-next-line unicorn/prefer-top-level-await
+        .catch([]),
     happeningType: happeningTypeSchema,
 });
 type Happening = z.infer<typeof happeningSchema>;
@@ -74,6 +76,8 @@ const HappeningAPI = {
     /**
      * Get the n last happeninges.
      * @param n how many happeninges to retrieve
+     * @param type the type of happening to retrieve
+     * @returns the n last happeninges
      */
     getHappeningsByType: async (n: number, type: HappeningType): Promise<Array<Happening> | ErrorMessage> => {
         try {
@@ -124,6 +128,7 @@ const HappeningAPI = {
     /**
      * Get a happening by its slug.
      * @param slug the slug of the desired happening.
+     * @returns the happening for the given slug.
      */
     getHappeningBySlug: async (slug: string): Promise<Happening | ErrorMessage> => {
         try {
@@ -177,6 +182,12 @@ const HappeningAPI = {
         }
     },
 
+    /**
+     * Get the registration status of a happening.
+     * @param auth the admin auth token
+     * @param slug the slug of the happening'
+     * @returns registration status of the happening
+     */
     getHappeningInfo: async (auth: string, slug: string): Promise<HappeningInfo | ErrorMessage> => {
         try {
             const response = await fetch(`${BACKEND_URL}/happening/${slug}`, {
