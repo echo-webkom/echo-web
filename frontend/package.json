@@ -113,7 +113,7 @@
         "@chakra-ui/react": "2.4.9",
         "@emotion/react": "11.10.5",
         "@emotion/styled": "11.10.5",
-        "@next/font": "13.1.5",
+        "@next/font": "13.1.6",
         "@sanity/client": "4.0.1",
         "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "0.1.8",
@@ -123,7 +123,7 @@
         "date-fns": "2.29.3",
         "framer-motion": "8.5.4",
         "markdown-to-jsx": "7.1.8",
-        "next": "13.1.5",
+        "next": "13.1.6",
         "next-auth": "4.18.10",
         "next-pwa": "5.6.0",
         "next-sanity": "4.1.2",
@@ -148,7 +148,7 @@
         "@typescript-eslint/eslint-plugin": "5.49.0",
         "@typescript-eslint/parser": "5.49.0",
         "cypress": "12.4.1",
-        "eslint-config-next": "13.1.5",
+        "eslint-config-next": "13.1.6",
         "eslint-plugin-unicorn": "45.0.2",
         "typescript": "4.9.4"
     }
