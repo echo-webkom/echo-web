@@ -32,7 +32,7 @@ type SpotRange = z.infer<typeof spotRangeSchema>;
 
 const happeningSchema = z.object({
     _createdAt: z.string(),
-    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde']),
+    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde', 'makerspace']),
     title: z.string(),
     slug: z.string(),
     date: z.string(),
