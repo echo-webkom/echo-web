@@ -97,7 +97,8 @@ export default defineType({
             type: 'boolean',
             initialValue: false,
             hidden: ({ document, value }) => !value && !document?.happeningType,
-            readOnly: ({ value, document }) => value && (document?.registrationDate || document?.registrationDeadline),
+            readOnly: ({ value, document }) =>
+                !!(value && (document?.registrationDate || document?.registrationDeadline)),
         }),
         defineField({
             name: 'registrationDate',
@@ -157,7 +158,7 @@ export default defineType({
             initialValue: false,
             hidden: ({ document, value }) => !value && (!document?.registrationDate || !document?.registrationDeadline),
             readOnly: ({ value, document }) =>
-                value && (document?.studentGroupRegistrationDate || document?.studentGroups),
+                !!(value && (document?.studentGroupRegistrationDate || document?.studentGroups)),
         }),
         defineField({
             name: 'studentGroupRegistrationDate',
