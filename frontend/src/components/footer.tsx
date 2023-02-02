@@ -1,5 +1,19 @@
-import { Icon, LinkBox, SimpleGrid, Text, useColorModeValue, Image, Center, Box, LinkOverlay } from '@chakra-ui/react';
+import {
+    Icon,
+    LinkBox,
+    SimpleGrid,
+    Text,
+    useColorModeValue,
+    Image,
+    Center,
+    Box,
+    LinkOverlay,
+    GridItem,
+    VStack,
+    HStack,
+} from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
+import { TbAlertOctagon } from 'react-icons/tb';
 import LanguageMenu from '@components/language-menu';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
@@ -9,10 +23,12 @@ const bekkLogo = '/bekk.png';
 
 const Footer = () => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
     return (
         <Box bg="bg.dark.secondary" data-testid="footer">
             <SimpleGrid
+                row={2}
                 columns={[1, 2, 4]}
                 justifyItems="center"
                 alignItems="center"
@@ -23,6 +39,43 @@ const Footer = () => {
                 maxW="1400px"
                 mx="auto"
             >
+                <GridItem colSpan={[1, 2, 4]} color="white" fontSize="md">
+                    <VStack spacing="1em">
+                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                            <LinkOverlay isExternal href="https://forms.gle/cRLRxpMap5AX1xx1A">
+                                <VStack spacing="1em">
+                                    <HStack spacing="1em">
+                                        <Text>
+                                            Har du opplevd noe som ikke føltes helt greit på lesesalen eller på et echo
+                                            arrangement?{' '}
+                                        </Text>
+                                        <Icon
+                                            as={TbAlertOctagon}
+                                            borderRadius="full"
+                                            p="0.5"
+                                            bg="red.400"
+                                            color={textColor}
+                                            _hover={{ bg: 'red.500', transform: 'scale(1)' }}
+                                            boxSize={12}
+                                            zIndex="100"
+                                            height={6}
+                                            width={6}
+                                        />
+                                    </HStack>
+                                </VStack>
+                            </LinkOverlay>
+                        </LinkBox>
+                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                            <LinkOverlay href="mailto:sandra.lekve@echo.uib.no">
+                                <Text>
+                                    Klikk over for å fylle ut skjemaet, eller klikk her for å sende en mail til lederen
+                                    i echo: sandra.lekve@echo.uib.no
+                                </Text>
+                            </LinkOverlay>
+                        </LinkBox>
+                    </VStack>
+                </GridItem>
+
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
                     <Center>
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
