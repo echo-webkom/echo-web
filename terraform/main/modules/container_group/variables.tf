@@ -3,11 +3,6 @@ variable "rg_name" {
   description = "The name of the resource group in which to create the resources."
 }
 
-variable "cg_name" {
-  type        = string
-  description = "The name of the container group."
-}
-
 variable "law_wid" {
   type        = string
   description = "The workspace ID of the Log Analytics workspace."
@@ -64,4 +59,10 @@ variable "sendgrid_api_key" {
   type        = string
   description = "The API key for SendGrid."
   nullable    = true
+}
+
+variable "container_count" {
+  type        = number
+  description = "The number of containers to create."
+  default     = 1
 }

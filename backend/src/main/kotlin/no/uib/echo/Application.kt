@@ -55,7 +55,7 @@ fun Application.module() {
         ).init()
     }
 
-    configureCORS()
+    configureCORS(env)
     configureAuthentication(adminKey, audience, issuer, secret, realm)
     configureContentNegotiation()
     configureRouting(

@@ -1,4 +1,5 @@
 import {
+    Stack,
     Heading,
     TableContainer,
     Table,
@@ -11,8 +12,11 @@ import {
     Spinner,
     Flex,
     Spacer,
+    useBoolean,
+    Checkbox,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { getTime, startOfYear, isAfter } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -29,6 +33,14 @@ const AdminUserPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const { signedIn, idToken, error: userError } = useAuth();
+
+    const [hideOld, setHideOld] = useBoolean();
+
+    const filteredUsers = users
+        ? users
+              .filter((user) => !(hideOld && isAfter(startOfYear(new Date()), user.modifiedAt)))
+              .sort((a, b) => getTime(b.modifiedAt) - getTime(a.modifiedAt))
+        : [];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -73,24 +85,32 @@ const AdminUserPage = () => {
                 )}
                 {users && (
                     <>
-                        <Flex>
-                            <Heading>Administrer brukere</Heading>
+                        <Flex mb="1.5rem">
+                            <Heading size={['md', 'lg', 'xl']}>Administrer brukere</Heading>
                             <Spacer />
-                            <ButtonLink href="/dashboard">Tilbake</ButtonLink>
+                            <Stack direction={['column', null, null, 'row']}>
+                                <Checkbox mx="1rem" onInput={setHideOld.toggle} ml="5">
+                                    Skjul gamle
+                                </Checkbox>
+                                <ButtonLink size={['sm', null, 'md']} href="/dashboard">
+                                    Tilbake
+                                </ButtonLink>
+                            </Stack>
                         </Flex>
 
                         <TableContainer>
-                            <Table variant="simple">
+                            <Table variant="simple" size="sm">
                                 <Thead>
                                     <Tr>
-                                        <Th>Navn:</Th>
-                                        <Th>Email:</Th>
-                                        <Th>Medlemskap:</Th>
-                                        <Th>Rediger:</Th>
+                                        <Th>Navn</Th>
+                                        <Th>Email</Th>
+                                        <Th>Medlemskap</Th>
+                                        <Th>Sist endret</Th>
+                                        <Th>Rediger</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {users.map((user) => (
+                                    {filteredUsers.map((user) => (
                                         <UserRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>

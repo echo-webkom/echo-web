@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.39.1"
+      version = "3.41.0"
     }
   }
 
@@ -28,7 +28,7 @@ module "prod" {
   source = "./prod"
 
   location         = var.location
-  cg_name          = "echo-web-prod"
+  container_count  = var.container_count_prod
   db_password      = var.db_password_prod
   admin_key        = var.admin_key_prod
   sendgrid_api_key = var.sendgrid_api_key
@@ -38,7 +38,6 @@ module "dev" {
   source = "./dev"
 
   location    = var.location
-  cg_name     = "echo-web-dev"
   db_password = var.db_password_dev
   admin_key   = var.admin_key_dev
   auth_secret = var.auth_secret

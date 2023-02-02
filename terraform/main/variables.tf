@@ -4,6 +4,11 @@ variable "location" {
   default     = "norwayeast"
 }
 
+variable "container_count_prod" {
+  type        = number
+  description = "The number of containers to create in the production environment."
+}
+
 variable "db_password_prod" {
   type        = string
   description = "The password for the admin user on the production database."

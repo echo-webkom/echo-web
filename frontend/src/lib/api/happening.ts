@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import SanityAPI from '@api/sanity';
@@ -31,7 +32,7 @@ type SpotRange = z.infer<typeof spotRangeSchema>;
 
 const happeningSchema = z.object({
     _createdAt: z.string(),
-    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde']),
+    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde', 'makerspace']),
     title: z.string(),
     slug: z.string(),
     date: z.string(),
@@ -57,7 +58,9 @@ const happeningSchema = z.object({
     spotRanges: z
         .array(spotRangeSchema)
         .nullable()
-        .transform((sr) => sr ?? []),
+        .transform((sr) => sr ?? [])
+        // eslint-disable-next-line unicorn/prefer-top-level-await
+        .catch([]),
     happeningType: happeningTypeSchema,
 });
 type Happening = z.infer<typeof happeningSchema>;
@@ -73,11 +76,13 @@ const HappeningAPI = {
     /**
      * Get the n last happeninges.
      * @param n how many happeninges to retrieve
+     * @param type the type of happening to retrieve
+     * @returns the n last happeninges
      */
     getHappeningsByType: async (n: number, type: HappeningType): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
-            const query = `
+            const query = groq`
                 *[_type == "happening" && happeningType == "${type}" && !(_id in path('drafts.**'))] | order(date asc) {
                     title,
                     "slug": slug.current,
@@ -123,10 +128,11 @@ const HappeningAPI = {
     /**
      * Get a happening by its slug.
      * @param slug the slug of the desired happening.
+     * @returns the happening for the given slug.
      */
     getHappeningBySlug: async (slug: string): Promise<Happening | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "happening" && slug.current == "${slug}" && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,
@@ -176,6 +182,12 @@ const HappeningAPI = {
         }
     },
 
+    /**
+     * Get the registration status of a happening.
+     * @param auth the admin auth token
+     * @param slug the slug of the happening'
+     * @returns registration status of the happening
+     */
     getHappeningInfo: async (auth: string, slug: string): Promise<HappeningInfo | ErrorMessage> => {
         try {
             const response = await fetch(`${BACKEND_URL}/happening/${slug}`, {

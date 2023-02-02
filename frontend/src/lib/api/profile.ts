@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
@@ -11,7 +12,7 @@ type Profile = z.infer<typeof profileSchema>;
 const ProfileAPI = {
     getProfileByName: async (name: string): Promise<Profile | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "profile" && name == ${name}] {
                     name,
                     "imageUrl": picture.asset -> url
@@ -30,7 +31,7 @@ const ProfileAPI = {
 
     getProfilesByName: async (names: Array<string>): Promise<Array<Profile> | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "profile" && name in $names] | order(name asc) {
                     name,
                     "imageUrl": picture.asset -> url

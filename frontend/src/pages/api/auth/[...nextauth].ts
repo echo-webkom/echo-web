@@ -8,7 +8,6 @@ import { FeedbackAPI } from '@api/feedback';
 import { allValidFeideGroups } from '@utils/degree';
 
 const isProd = (process.env.VERCEL_ENV ?? 'production') === 'production';
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 const testEmail = 'test.mctest@student.uib.no';
 const testName = 'Test McTest';
 
@@ -17,7 +16,7 @@ export const authOptions: NextAuthOptions = {
         maxAge: 8 * 60 * 60,
     },
     callbacks: {
-        async signIn({ account, profile }) {
+        signIn: async ({ account, profile }) => {
             if (!isProd) {
                 const testToken = await UserAPI.getTestToken(testEmail);
 
@@ -68,8 +67,9 @@ export const authOptions: NextAuthOptions = {
             }
 
             const isMember = groups.map((group) => group.id).some((id) => allValidFeideGroups.includes(id));
+            const isWhitelisted = await UserAPI.getWhitelist(account.id_token).then((res) => res);
 
-            if (!isMember) {
+            if (!isMember && !isWhitelisted) {
                 if (signInOnlyCollectData) {
                     // eslint-disable-next-line no-console
                     console.log('User is not a member of any valid group, but only collecting data');
@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
             console.log('Failed to create user:', response);
             return '/500';
         },
-        async jwt({ token, account }) {
+        jwt: async ({ token, account }) => {
             if (!isProd) {
                 const testToken = await UserAPI.getTestToken(testEmail);
 
@@ -125,21 +125,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             const { idToken, accessToken } = token;
 
-            if (!isProd) {
-                try {
-                    const response = await fetch(`${BACKEND_URL}/token/${testEmail}`, {
-                        method: 'GET',
-                    });
-
-                    const testToken = await response.text();
-
-                    session.idToken = testToken;
-                    session.accessToken = 'bruh';
-                } catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
-                }
-            } else if (typeof idToken === 'string' && typeof accessToken === 'string') {
+            if (typeof idToken === 'string' && typeof accessToken === 'string') {
                 session.idToken = idToken;
                 session.accessToken = accessToken;
             }
@@ -163,7 +149,7 @@ export const authOptions: NextAuthOptions = {
                   clientId: process.env.FEIDE_CLIENT_ID,
                   clientSecret: process.env.FEIDE_CLIENT_SECRET,
                   idToken: true,
-                  profile(profile) {
+                  profile: (profile) => {
                       return {
                           id: profile.sub,
                           name: profile.name,
@@ -183,7 +169,7 @@ export const authOptions: NextAuthOptions = {
                       password: { label: 'Password', type: 'password' },
                   },
                   // eslint-disable-next-line @typescript-eslint/require-await
-                  async authorize() {
+                  authorize: async () => {
                       return {
                           id: '1',
                           name: 'Test McTest',

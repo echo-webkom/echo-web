@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseISO } from 'date-fns';
 import type { ErrorMessage } from '@utils/error';
 import type { Degree } from '@utils/schemas';
 import { degreeSchema } from '@utils/schemas';
@@ -17,6 +18,8 @@ const userSchema = z.object({
     degree: degreeSchema.nullable(),
     degreeYear: z.number().nullable(),
     memberships: z.array(z.string()),
+    createdAt: z.string().transform((date) => parseISO(date)),
+    modifiedAt: z.string().transform((date) => parseISO(date)),
 });
 type User = z.infer<typeof userSchema>;
 
@@ -40,6 +43,8 @@ const UserAPI = {
                     degreeYear: null,
                     degree: null,
                     memberships: [],
+                    createdAt: new Date(),
+                    modifiedAt: new Date(),
                 };
             }
 
@@ -72,6 +77,8 @@ const UserAPI = {
                 body: JSON.stringify({
                     email,
                     name,
+                    createdAt: new Date(),
+                    modifiedAt: new Date(),
                 }),
                 headers: {
                     Authorization: `Bearer ${idToken}`,
@@ -169,6 +176,50 @@ const UserAPI = {
             return {
                 message: JSON.stringify(error),
             };
+        }
+    },
+
+    getWhitelist: async (idToken: string): Promise<boolean> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/whitelist`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            return response.status === 200;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            return false;
+        }
+    },
+
+    putWhitelist: async ({
+        idToken,
+        email,
+        days,
+    }: {
+        idToken: string;
+        email: string;
+        days: number;
+    }): Promise<boolean | null> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/whitelist/${email}?days=${days}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (response.status === 200) return true;
+            if (response.status === 401) return false;
+
+            return null;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            return null;
         }
     },
 };

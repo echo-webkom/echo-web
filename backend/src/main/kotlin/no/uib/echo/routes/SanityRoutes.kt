@@ -43,7 +43,7 @@ fun Route.sanitySync() {
             projectId = "pgq2pd26",
             dataset = dataset,
             apiVersion = "v2021-10-21",
-            useCdn = true
+            useCdn = false
         )
 
         val query = """

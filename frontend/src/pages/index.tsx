@@ -184,14 +184,13 @@ export const getStaticProps: GetStaticProps = async () => {
         .filter((event: Happening) => {
             return isBefore(new Date().setHours(0, 0, 0, 0), new Date(event.date));
         })
-        .slice(0, 8);
-    const [bedpresLimit, eventLimit] = events.length > 3 ? [4, 8] : [2, 4];
+        .slice(0, 3);
 
     const bedpreses = bedpresesResponse
         .filter((bedpres: Happening) => {
             return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
         })
-        .slice(0, bedpresLimit);
+        .slice(0, 2);
 
     const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
     const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
@@ -200,7 +199,7 @@ export const getStaticProps: GetStaticProps = async () => {
         props: {
             bedpreses,
             posts: postsResponse.slice(0, process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' ? 2 : 3),
-            events: events.slice(0, eventLimit),
+            events,
             jobs: jobsResponse,
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,
