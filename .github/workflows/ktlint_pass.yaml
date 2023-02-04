@@ -6,7 +6,7 @@ on:
 
 jobs:
   ktlint_checks:
-    name: 'ktlint checks (auto-pass)'
+    name: 'ktlint checks'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing

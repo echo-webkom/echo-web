@@ -6,7 +6,7 @@ on:
 
 jobs:
   cypress_component_tests:
-    name: 'Cypress component tests (auto-pass)'
+    name: 'Cypress component tests'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing

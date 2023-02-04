@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_cms:
-    name: 'Build CMS (auto-pass)'
+    name: 'Build CMS'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing
