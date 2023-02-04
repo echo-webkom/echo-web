@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint_format:
-    name: 'Lint & format (auto-pass)'
+    name: 'Lint & format'
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing
