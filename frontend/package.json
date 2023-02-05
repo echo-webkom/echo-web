@@ -122,7 +122,7 @@
         "canvas-confetti": "1.6.0",
         "date-fns": "2.29.3",
         "framer-motion": "8.5.5",
-        "markdown-to-jsx": "7.1.8",
+        "markdown-to-jsx": "7.1.9",
         "next": "13.1.6",
         "next-auth": "4.19.2",
         "next-pwa": "5.6.0",
