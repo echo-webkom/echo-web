@@ -1,4 +1,4 @@
-name: Cypress component tests (auto-pass)
+name: Cypress component tests
 on:
   pull_request:
     branches: [master]

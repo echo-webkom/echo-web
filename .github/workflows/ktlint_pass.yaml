@@ -1,4 +1,4 @@
-name: ktlint (auto-pass)
+name: ktlint
 on:
   pull_request:
     branches: [master]

@@ -1,4 +1,4 @@
-name: Build CMS (auto-pass)
+name: Build CMS
 on:
   pull_request:
     branches: [master]

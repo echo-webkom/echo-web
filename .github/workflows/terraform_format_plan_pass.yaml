@@ -1,4 +1,4 @@
-name: Terraform format & plan (auto-pass)
+name: Terraform format & plan
 on:
   pull_request:
     branches: [master]
