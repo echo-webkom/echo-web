@@ -1,4 +1,4 @@
-name: Lint & format (auto-pass)
+name: Lint & format
 on:
   pull_request:
     branches: [master]
