@@ -109,7 +109,11 @@ export default defineType({
              */
             validation: (Rule) =>
                 Rule.custom((registrationDate, context) => {
-                    if ((context.document?.spotRanges as any[]).length > 0 && !registrationDate) {
+                    if (
+                        context.document?.spotRanges &&
+                        (context.document?.spotRanges as any[]).length > 0 &&
+                        !registrationDate
+                    ) {
                         return 'Må ha dato for påmelding om det er definert arrangementsplasser.';
                     }
 
