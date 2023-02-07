@@ -485,3 +485,34 @@ fun Route.postRegistrationCount() {
         }
     }
 }
+
+fun Route.getUserRegistrations() {
+    get("/user/registrations/{email?}") {
+
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        println(email)
+        println(call.principal<JWTPrincipal>()?.payload)
+
+        val userEmail = withContext(Dispatchers.IO) {
+            URLDecoder.decode(call.parameters["email"], "UTF-8")
+        };
+        if (email == null || userEmail == null){
+            call.respond(HttpStatusCode.BadRequest, "NO EMAIL")
+            return@get
+        }
+
+        if (email != userEmail) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val userRegistrations = transaction {
+            Registration.join(Happening, joinType = JoinType.LEFT, additionalConstraint = { Registration.happeningSlug eq Happening.slug})
+                .select( Registration.userEmail eq email).toList()
+        }.map {
+            it[Registration.happeningSlug]
+        }
+        println(userRegistrations)
+        call.respond(userRegistrations)
+    }
+}
