@@ -192,7 +192,7 @@ const HappeningAPI = {
     getHappeningsBySlugs: async (slugs: Array<string>): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const query = groq`
-                *[_type == "happening" && slug.current in "${JSON.stringify(slugs)}" && !(_id in path('drafts.**'))]{
+                *[_type == "happening" && slug.current in ${JSON.stringify(slugs)} && !(_id in path('drafts.**'))]{
                     title,
                     "slug": slug.current,
                     date,
