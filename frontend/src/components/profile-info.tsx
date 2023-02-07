@@ -29,6 +29,7 @@ import {
     Spinner,
     Icon,
     LinkBox,
+    VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
@@ -47,6 +48,9 @@ import useAuth from '@hooks/use-auth';
 import hasOverlap from '@utils/has-overlap';
 import { Happening, HappeningAPI } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
+import { isFuture } from 'date-fns';
+import BedpresPreview from './bedpres-preview';
+import EventPreview from './event-preview';
 
 const ProfileInfo = () => {
     const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
@@ -282,8 +286,8 @@ const ProfileInfo = () => {
                                                     ? 'Endringer lagret!'
                                                     : 'Changes saved!'
                                                 : isNorwegian
-                                                ? 'Lagre endringer'
-                                                : 'Save changes'}
+                                                    ? 'Lagre endringer'
+                                                    : 'Save changes'}
                                         </Button>
                                         <Button
                                             data-cy="sign-out-btn"
@@ -305,6 +309,50 @@ const ProfileInfo = () => {
                                     </LinkOverlay>
                                 </LinkBox>
                             )}
+                        </Section>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                        <Section>
+                            <Center mb="1rem">
+                                <Heading size={['m', null, 'l']}>
+                                    {isNorwegian ? 'Kommende arrangamenter' : 'Upcoming events'}
+                                </Heading>
+                            </Center>
+                            {happenings.map((event) => {
+                                if (event.happeningType === 'EVENT' && isFuture(new Date(event.date))) {
+                                    return (
+                                        <VStack>
+                                            <EventPreview
+                                                key={event.slug}
+                                                event={event}
+                                                data-testid={event.slug}
+                                            />
+                                        </VStack>
+                                    );
+                                }
+                            })}
+                        </Section>
+                    </GridItem>
+                    <GridItem colSpan={1}>
+                        <Section>
+                            <Center mb="1rem">
+                                <Heading size={['m', null, 'l']}>
+                                    {isNorwegian ? 'Kommende bedriftspresentasjoner' : 'Upcoming bedpres'}
+                                </Heading>
+                            </Center>
+                            {happenings.map((event) => {
+                                if (event.happeningType === 'BEDPRES' && isFuture(new Date(event.date))) {
+                                    return (
+                                        <VStack justifyContent="space-around">
+                                            <BedpresPreview
+                                                key={event.slug}
+                                                bedpres={event}
+                                                data-testid={event.slug}
+                                            />
+                                        </VStack>
+                                    );
+                                }
+                            })}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
