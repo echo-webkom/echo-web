@@ -10105,10 +10105,10 @@ sanity-plugin-markdown@4.0.0:
     "@sanity/ui" "^1.0.0"
     react-simplemde-editor "^5.2.0"
 
-sanity-plugin-media@2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.0.4.tgz#e6220945c3f66051b4644e3e8150fa4b9b22267d"
-  integrity sha512-cLJOa1LZKHWCCJJdjf3j/STiiNj6WtYNQCwF52FTV1zI/PQBhVClRsBBEw5FJM6ru9c+MHlv09PPh+HRpGxQVw==
+sanity-plugin-media@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.0.5.tgz#4db536317ac9cba062d648f98836e8f2c64f639c"
+  integrity sha512-v1SyBezXoiLh2g3olX08cjFpytRF3NkCxCOkFzHz3RVbQQwpYSeazKmGq52XONi/Ci6DpyKmgLWRJCyT/xZc1g==
   dependencies:
     "@hookform/resolvers" "2.0.0-beta.3"
     "@reduxjs/toolkit" "^1.9.0"
