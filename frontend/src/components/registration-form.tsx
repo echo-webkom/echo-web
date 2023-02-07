@@ -23,6 +23,7 @@ import {
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
+import { useState } from 'react';
 import NextLink from 'next/link';
 import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
@@ -66,7 +67,8 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
-    const { user, loading, signedIn, idToken } = useAuth();
+    const { user, loading: userLoading, signedIn, idToken } = useAuth();
+    const [loading, setLoading] = useState(false);
 
     const userIsEligibleForEarlyReg = hasOverlap(happening.studentGroups, user?.memberships);
     const regDate = chooseDate(
@@ -87,6 +89,8 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
             return;
         }
 
+        setLoading(true);
+
         const { response, statusCode } = await RegistrationAPI.submitRegistration(
             {
                 email: data.email,
@@ -99,6 +103,8 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
             // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
             idToken,
         );
+
+        setLoading(false);
 
         if (statusCode === 200 || statusCode === 202) {
             onClose();
@@ -114,7 +120,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
         });
     };
 
-    if (loading)
+    if (userLoading || loading)
         return (
             <Box data-testid="registration-form">
                 <Center>
