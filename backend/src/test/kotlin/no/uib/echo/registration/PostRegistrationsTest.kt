@@ -29,6 +29,7 @@ import no.uib.echo.hap5
 import no.uib.echo.hap7
 import no.uib.echo.hap8
 import no.uib.echo.haps
+import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
@@ -468,6 +469,42 @@ class PostRegistrationsTest {
                     val res: RegistrationResponseJson = submitRegCall.body()
 
                     res.code shouldBe RegistrationResponse.OK
+                }
+            }
+        }
+
+    @Test
+    fun `Should skip degreeYear check if user is in Bedkom and happeningType is BEDPRES`() =
+        testApplication {
+            val client = createClient {
+                install(Logging)
+                install(ContentNegotiation) {
+                    json()
+                }
+            }
+
+            val getTokenCall = client.get("/token/${user3.email}")
+
+            getTokenCall.status shouldBe HttpStatusCode.OK
+            val token: String = getTokenCall.body()
+
+            for (t in be) {
+                val submitRegCall = client.post("/registration") {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(token)
+                    setBody(exReg(hap5(t).slug, user3))
+                }
+
+                if (t == HAPPENING_TYPE.BEDPRES) {
+                    submitRegCall.status shouldBe HttpStatusCode.OK
+                    val res: RegistrationResponseJson = submitRegCall.body()
+
+                    res.code shouldBe RegistrationResponse.OK
+                } else {
+                    submitRegCall.status shouldBe HttpStatusCode.Forbidden
+                    val res: RegistrationResponseJson = submitRegCall.body()
+
+                    res.code shouldBe RegistrationResponse.NotInRange
                 }
             }
         }
