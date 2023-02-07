@@ -491,8 +491,6 @@ fun Route.postRegistrationCount() {
 fun Route.getUserRegistrations() {
     get("/user/registrations/{email?}") {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
-        println(email)
-        println(call.principal<JWTPrincipal>()?.payload)
 
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")
