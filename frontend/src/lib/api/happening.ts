@@ -230,7 +230,7 @@ const HappeningAPI = {
                     message: '404',
                 };
             }
-            console.log('result: ', result);
+
             return happeningSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line

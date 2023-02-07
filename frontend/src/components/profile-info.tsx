@@ -286,8 +286,8 @@ const ProfileInfo = () => {
                                                     ? 'Endringer lagret!'
                                                     : 'Changes saved!'
                                                 : isNorwegian
-                                                    ? 'Lagre endringer'
-                                                    : 'Save changes'}
+                                                ? 'Lagre endringer'
+                                                : 'Save changes'}
                                         </Button>
                                         <Button
                                             data-cy="sign-out-btn"
@@ -322,11 +322,7 @@ const ProfileInfo = () => {
                                 if (event.happeningType === 'EVENT' && isFuture(new Date(event.date))) {
                                     return (
                                         <VStack>
-                                            <EventPreview
-                                                key={event.slug}
-                                                event={event}
-                                                data-testid={event.slug}
-                                            />
+                                            <EventPreview key={event.slug} event={event} data-testid={event.slug} />
                                         </VStack>
                                     );
                                 }
@@ -344,11 +340,7 @@ const ProfileInfo = () => {
                                 if (event.happeningType === 'BEDPRES' && isFuture(new Date(event.date))) {
                                     return (
                                         <VStack justifyContent="space-around">
-                                            <BedpresPreview
-                                                key={event.slug}
-                                                bedpres={event}
-                                                data-testid={event.slug}
-                                            />
+                                            <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />
                                         </VStack>
                                     );
                                 }
