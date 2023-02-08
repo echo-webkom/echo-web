@@ -15,7 +15,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
 import org.jetbrains.exposed.sql.select
