@@ -80,7 +80,7 @@ export default defineType({
             title: 'Sted(er)',
             validation: (Rule) => Rule.required().unique(),
             type: 'array',
-            of: [defineArrayMember({ type: 'string' })],
+            of: [defineArrayMember({ type: 'string', validation: (Rule) => Rule.required() })],
         }),
         defineField({
             name: 'jobType',
@@ -109,7 +109,7 @@ export default defineType({
                     .unique(),
             ],
             type: 'array',
-            of: [defineArrayMember({ type: 'number' })],
+            of: [defineArrayMember({ type: 'number', validation: (Rule) => Rule.required() })],
         }),
         defineField({
             name: 'weight',
