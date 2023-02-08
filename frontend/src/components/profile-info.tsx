@@ -29,7 +29,6 @@ import {
     Spinner,
     Icon,
     LinkBox,
-    VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
@@ -311,7 +310,7 @@ const ProfileInfo = () => {
                             )}
                         </Section>
                     </GridItem>
-                    <GridItem colSpan={1}>
+                    <GridItem colSpan={2}>
                         <Section>
                             <Center mb="1rem">
                                 <Heading size={['m', null, 'l']}>
@@ -320,16 +319,12 @@ const ProfileInfo = () => {
                             </Center>
                             {happenings.map((event) => {
                                 if (event.happeningType === 'EVENT' && isFuture(new Date(event.date))) {
-                                    return (
-                                        <VStack>
-                                            <EventPreview key={event.slug} event={event} data-testid={event.slug} />
-                                        </VStack>
-                                    );
+                                    return <EventPreview key={event.slug} event={event} data-testid={event.slug} />;
                                 }
                             })}
                         </Section>
                     </GridItem>
-                    <GridItem colSpan={1}>
+                    <GridItem colSpan={2}>
                         <Section>
                             <Center mb="1rem">
                                 <Heading size={['m', null, 'l']}>
@@ -338,11 +333,7 @@ const ProfileInfo = () => {
                             </Center>
                             {happenings.map((event) => {
                                 if (event.happeningType === 'BEDPRES' && isFuture(new Date(event.date))) {
-                                    return (
-                                        <VStack justifyContent="space-around">
-                                            <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />
-                                        </VStack>
-                                    );
+                                    return <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />;
                                 }
                             })}
                         </Section>
