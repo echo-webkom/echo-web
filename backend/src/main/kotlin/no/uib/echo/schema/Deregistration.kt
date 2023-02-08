@@ -20,7 +20,7 @@ import org.joda.time.DateTime
     object Deregistration : Table() {
         val userEmail: Column<String> = text("user_email") references User.email
         val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
-        val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
+        val submitTime: Column<DateTime> = datetime("submit_time").defaultExpression(CurrentDateTime)
         val reason: Column<String> = text("reason")
 
 

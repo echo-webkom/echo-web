@@ -24,6 +24,7 @@ import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     registration: Registration;
@@ -41,7 +42,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
 
     const router = useRouter();
 
-    const { idToken, signedIn } = useAuth();
+    const { idToken, signedIn, user } = useAuth();
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -53,14 +54,16 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             return;
         }
 
-        const { error } = await RegistrationAPI.deleteRegistration(idToken, {
-            slug: registration.slug,
-            email: registration.email,
-        });
+        const resp = await RegistrationAPI.deleteRegistration(
+            idToken,
+            `Slettet av ${user?.email ?? 'arrangør'}`,
+            registration.slug,
+            registration.email,
+        );
 
         onClose();
 
-        if (error === null) {
+        if (!isErrorMessage(resp)) {
             setDeleted(true);
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
@@ -72,7 +75,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
         } else {
             toast({
                 title: 'Det har skjedd en feil!',
-                description: error,
+                description: resp.message,
                 status: 'error',
                 isClosable: true,
             });

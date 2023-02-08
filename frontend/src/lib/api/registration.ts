@@ -54,17 +54,17 @@ interface FormValues {
     answers: Array<string>;
 }
 
+interface DeregisterFormValues {
+    reason: string;
+    confirm: boolean;
+}
+
 // The data from the form + slug and type
 interface FormRegistration {
     email: string;
     slug: string;
     type: HappeningType;
     answers: Array<Answer>;
-}
-interface FormDeregistration {
-    email: string;
-    slug: string;
-    reason?: string;
 }
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
@@ -122,23 +122,29 @@ const RegistrationAPI = {
 
     deleteRegistration: async (
         idToken: string,
-        deregistration: FormDeregistration,
-    ): Promise<{ response: string | null; error: string | null }> => {
+        reason: DeregisterFormValues['reason'],
+        slug: string,
+        email: string,
+    ): Promise<string | ErrorMessage> => {
         try {
             const response = await fetch(`${BACKEND_URL}/registration`, {
                 method: 'DELETE',
-                headers: { Authorization: `Bearer ${idToken}` },
-                body: JSON.stringify(deregistration),
+                headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    slug,
+                    reason,
+                    email,
+                }),
             });
 
             const responseText = await response.text();
 
-            if (response.status === 200) return { response: responseText, error: null };
+            if (response.status === 200) return responseText;
 
-            return { response: null, error: responseText };
+            return { message: responseText };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { response: null, error: JSON.stringify(error) };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -188,4 +194,5 @@ export {
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,
+    type DeregisterFormValues,
 };

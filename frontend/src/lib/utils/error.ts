@@ -21,7 +21,7 @@ const handleError = (code: number): string => {
             return 'Webkom har ødelagt API-nøkkelen.';
         }
         case 402: {
-            return 'Du har ikke echo premuim.';
+            return 'Du har ikke echo premium.';
         }
         case 408: {
             return 'Webkom skriver kode med O(n!) kompleksitet. (Eller så er APIen nede)';

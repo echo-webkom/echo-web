@@ -1,7 +1,12 @@
 import {
+    Alert,
+    AlertIcon,
     Box,
     Button,
-    Text,
+    Center,
+    Input,
+    LinkBox,
+    LinkOverlay,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -9,40 +14,31 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Input,
+    Spinner,
+    Text,
     useDisclosure,
     useToast,
     VStack,
-    Spinner,
-    Alert,
-    AlertIcon,
-    Center,
-    FormControl,
-    FormLabel,
-    LinkBox,
-    LinkOverlay,
 } from '@chakra-ui/react';
-import { useSession } from 'next-auth/react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { Happening, HappeningType, Question } from '@api/happening';
+import { RegFormValues, RegistrationAPI } from '@api/registration';
+import { userIsComplete } from '@api/user';
+import CountdownButton from '@components/countdown-button';
+import FormQuestion from '@components/form-question';
+import useAuth from '@hooks/use-auth';
+import useLanguage from '@hooks/use-language';
+import capitalize from '@utils/capitalize';
+import { isErrorMessage } from '@utils/error';
+import hasOverlap from '@utils/has-overlap';
+import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import NextLink from 'next/link';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
-import { useState } from 'react';
-import NextLink from 'next/link';
-import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
-import { enUS, nb } from 'date-fns/locale';
-import CountdownButton from '@components/countdown-button';
-import { Happening, HappeningAPI, HappeningType, Question } from '@api/happening';
-import { RegFormValues } from '@api/registration';
-import { userIsComplete } from '@api/user';
-import { RegistrationAPI } from '@api/registration';
-import FormQuestion from '@components/form-question';
-import useLanguage from '@hooks/use-language';
-import hasOverlap from '@utils/has-overlap';
-import capitalize from '@utils/capitalize';
-import { isErrorMessage } from '@utils/error';
-import useAuth from '@hooks/use-auth';
+import DeregistrationButton from './deregistration-button';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -69,8 +65,7 @@ const chooseDate = (
 };
 
 const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
-    const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
-    const { isOpen: isUnRegisterOpen, onOpen: onUnRegisterOpen, onClose: onUnRegisterClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
     const { register, handleSubmit } = methods;
@@ -86,7 +81,6 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
 
     const toast = useToast();
     const [registered, setRegistered] = useState(false);
-    const [reason, setReason] = useState('');
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
@@ -107,8 +101,6 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
 
     const initialRef = useRef<HTMLInputElement | null>(null);
     const { ref, ...rest } = register('email'); // needed for inital focus ref
-
-    const { data: session, status } = useSession();
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!signedIn || !idToken) {
@@ -138,7 +130,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
         setLoading(false);
 
         if (statusCode === 200 || statusCode === 202) {
-            onRegisterClose();
+            onClose();
         }
 
         toast.closeAll();
@@ -220,29 +212,28 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                     </Text>
                 </Center>
             )}
-            {userIsComplete(user) &&
-                differenceInHours(regDate, new Date()) < 24 &&
-                (registered ? (
-                    <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onUnRegisterOpen}>
-                        {isNorwegian ? 'Meld deg av' : 'Unregister'}
-                    </Button>
-                ) : (
-                    <CountdownButton
-                        data-cy="reg-btn"
-                        w="100%"
-                        colorScheme="teal"
-                        date={regDate}
-                        onClick={() =>
-                            happening.additionalQuestions.length === 0
-                                ? void submitForm({ email: user.email, answers: [] })
-                                : onRegisterOpen()
-                        }
-                    >
-                        {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
-                    </CountdownButton>
-                ))}
+            {userIsComplete(user) && differenceInHours(regDate, new Date()) < 24 && (
+                <>
+                    {registered && <DeregistrationButton happening={happening} />}
+                    {!registered && (
+                        <CountdownButton
+                            data-cy="reg-btn"
+                            w="100%"
+                            colorScheme="teal"
+                            date={regDate}
+                            onClick={() =>
+                                happening.additionalQuestions.length === 0
+                                    ? void submitForm({ email: user.email, answers: [] })
+                                    : onOpen()
+                            }
+                        >
+                            {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                        </CountdownButton>
+                    )}
+                </>
+            )}
 
-            <Modal initialFocusRef={initialRef} isOpen={isRegisterOpen} onClose={onRegisterClose}>
+            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
@@ -264,77 +255,10 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                                 <Button type="submit" mr={3} colorScheme="teal">
                                     {isNorwegian ? 'Send inn' : 'Send in'}
                                 </Button>
-                                <Button onClick={onRegisterClose}>{isNorwegian ? 'Lukk' : 'Close'}</Button>
+                                <Button onClick={onClose}>{isNorwegian ? 'Lukk' : 'Close'}</Button>
                             </ModalFooter>
                         </form>
                     </FormProvider>
-                </ModalContent>
-            </Modal>
-            <Modal
-                initialFocusRef={initialRef}
-                isOpen={isUnRegisterOpen}
-                onClose={() => {
-                    onUnRegisterClose();
-                    setReason('');
-                }}
-            >
-                <ModalOverlay />
-                <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
-                    <ModalHeader>{isNorwegian ? 'Meld deg av' : 'Unregister'}</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody pb="8px">
-                        {/* add input text for reasoning */}
-                        <VStack spacing={4}>
-                            <FormControl id="reason" isRequired>
-                                <FormLabel>
-                                    {isNorwegian ? 'Hvorfor melder du deg av?' : 'Why are you unregistering?'}
-                                </FormLabel>
-                                <Input
-                                    placeholder={isNorwegian ? 'Grunn' : 'Reason'}
-                                    onChange={(e) => {
-                                        setReason(e.target.value);
-                                    }}
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                    }}
-                                />
-                            </FormControl>
-
-                            <Text ml="0.5rem" fontWeight="bold">
-                                {isNorwegian
-                                    ? 'Jeg bekrefter at jeg har fylt inn riktig informasjon.'
-                                    : 'I confirm that I have filled in the correct information.'}
-                            </Text>
-                        </VStack>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            type="submit"
-                            mr={3}
-                            colorScheme="red"
-                            onClick={() => {
-                                onUnRegisterClose();
-                                if (user && session?.idToken) {
-                                    RegistrationAPI.deleteRegistration(session?.idToken, {
-                                        slug: happening.slug,
-                                        email: user.email,
-                                        reason: reason,
-                                    });
-                                } else {
-                                    toast({
-                                        title: 'Error',
-                                        description: 'You are not logged in',
-                                        status: 'error',
-                                        duration: 5000,
-                                        isClosable: true,
-                                    });
-                                }
-                            }}
-                        >
-                            {isNorwegian ? 'Ja' : 'Yes'}
-                        </Button>
-                        <Button onClick={onUnRegisterClose}>{isNorwegian ? 'Nei' : 'No'}</Button>
-                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </Box>
