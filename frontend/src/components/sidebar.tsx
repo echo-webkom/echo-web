@@ -133,6 +133,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                 { name: 'Økonomisk støtte', href: '/om-echo/oekonomisk-stoette' },
                 { name: 'Tilbakemeldinger', href: '/om-echo/anonyme-tilbakemeldinger' },
                 { name: 'Utlegg', href: '/om-echo/utlegg' },
+                { name: 'Si ifra', href: '/om-echo/si-ifra' },
             ],
         },
         {

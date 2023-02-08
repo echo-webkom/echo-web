@@ -8,9 +8,6 @@ import {
     Center,
     Box,
     LinkOverlay,
-    GridItem,
-    VStack,
-    HStack,
     Flex,
 } from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
@@ -137,9 +134,9 @@ const Footer = () => {
                         </LinkOverlay>
                     </LinkBox>
                     <LinkBox mt={2} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                        <LinkOverlay href="/om-echo/si-fra" aria-label="echo si ifra" isExternal>
+                        <LinkOverlay href="/om-echo/si-ifra">
                             <Flex gap={2}>
-                                <Text fontSize="md" color={'#f0f0f0'}>
+                                <Text fontSize="md" color="#f0f0f0">
                                     Opplevd noe ugreit?
                                 </Text>
                                 <Icon
