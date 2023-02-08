@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { groq } from 'next-sanity';
+import { studentGroupSchema } from '@api/dashboard';
 import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import SanityAPI from '@api/sanity';
@@ -32,7 +33,7 @@ type SpotRange = z.infer<typeof spotRangeSchema>;
 
 const happeningSchema = z.object({
     _createdAt: z.string(),
-    studentGroupName: z.enum(['hovedstyret', 'bedkom', 'webkom', 'gnist', 'tilde', 'makerspace']),
+    studentGroupName: studentGroupSchema,
     title: z.string(),
     slug: z.string(),
     date: z.string(),
