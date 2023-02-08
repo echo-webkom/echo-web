@@ -11,6 +11,7 @@ import {
     GridItem,
     VStack,
     HStack,
+    Flex,
 } from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { TbAlertOctagon } from 'react-icons/tb';
@@ -39,43 +40,6 @@ const Footer = () => {
                 maxW="1400px"
                 mx="auto"
             >
-                <GridItem colSpan={[1, 2, 4]} color="white" fontSize="md">
-                    <VStack spacing="1em">
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                            <LinkOverlay isExternal href="https://forms.gle/cRLRxpMap5AX1xx1A">
-                                <VStack spacing="1em">
-                                    <HStack spacing="1em">
-                                        <Text>
-                                            Har du opplevd noe som ikke føltes helt greit på lesesalen eller på et echo
-                                            arrangement?{' '}
-                                        </Text>
-                                        <Icon
-                                            as={TbAlertOctagon}
-                                            borderRadius="full"
-                                            p="0.5"
-                                            bg="red.400"
-                                            color={textColor}
-                                            _hover={{ bg: 'red.500', transform: 'scale(1)' }}
-                                            boxSize={12}
-                                            zIndex="100"
-                                            height={6}
-                                            width={6}
-                                        />
-                                    </HStack>
-                                </VStack>
-                            </LinkOverlay>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                            <LinkOverlay href="mailto:sandra.lekve@echo.uib.no">
-                                <Text>
-                                    Klikk over for å fylle ut skjemaet, eller klikk her for å sende en mail til lederen
-                                    i echo: sandra.lekve@echo.uib.no
-                                </Text>
-                            </LinkOverlay>
-                        </LinkBox>
-                    </VStack>
-                </GridItem>
-
                 <SimpleGrid columns={1} alignItems="center" rowGap="15px">
                     <Center>
                         <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
@@ -170,6 +134,27 @@ const Footer = () => {
                             <Text fontSize="md" color={color}>
                                 Org nr: 998 995 035
                             </Text>
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox mt={2} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay href="/om-echo/si-fra" aria-label="echo si ifra" isExternal>
+                            <Flex gap={2}>
+                                <Text fontSize="md" color={'#f0f0f0'}>
+                                    Opplevd noe ugreit?
+                                </Text>
+                                <Icon
+                                    as={TbAlertOctagon}
+                                    borderRadius="full"
+                                    p="0.5"
+                                    bg="red.400"
+                                    color={textColor}
+                                    _hover={{ bg: 'red.500', transform: 'scale(1)' }}
+                                    boxSize={12}
+                                    zIndex="100"
+                                    height={6}
+                                    width={6}
+                                />
+                            </Flex>
                         </LinkOverlay>
                     </LinkBox>
                 </SimpleGrid>
