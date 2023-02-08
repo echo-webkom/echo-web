@@ -23,6 +23,7 @@ env:
 
 jobs:
   docker_push_backend:
+    name: 'Push backend image to Docker registry'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -71,6 +72,7 @@ jobs:
           TAG: latest
 
   terraform_deploy:
+    name: 'Deploy backend with Terraform'
     runs-on: ubuntu-latest
     needs: [docker_push_backend]
     steps:

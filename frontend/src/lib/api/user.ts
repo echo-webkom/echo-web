@@ -178,6 +178,50 @@ const UserAPI = {
             };
         }
     },
+
+    getWhitelist: async (idToken: string): Promise<boolean> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/whitelist`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            return response.status === 200;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            return false;
+        }
+    },
+
+    putWhitelist: async ({
+        idToken,
+        email,
+        days,
+    }: {
+        idToken: string;
+        email: string;
+        days: number;
+    }): Promise<boolean | null> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/whitelist/${email}?days=${days}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            if (response.status === 200) return true;
+            if (response.status === 401) return false;
+
+            return null;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            return null;
+        }
+    },
 };
 
 const userIsComplete = (user: User | null): user is User =>

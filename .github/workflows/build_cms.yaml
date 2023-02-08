@@ -6,6 +6,7 @@ on:
 
 jobs:
   build_cms:
+    name: 'Build CMS'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

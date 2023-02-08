@@ -88,12 +88,14 @@ export default defineType({
                             name: 'role',
                             title: 'Rolle',
                             type: 'string',
+                            validation: (Rule) => Rule.required(),
                         }),
                         defineField({
                             name: 'profile',
                             title: 'Profil',
                             type: 'reference',
                             to: [{ type: 'profile' }],
+                            validation: (Rule) => Rule.required(),
                         }),
                     ],
                     preview: {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import SanityAPI from '@api/sanity';
 import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
@@ -49,7 +50,7 @@ const PostAPI = {
     getPosts: async (n: number): Promise<Array<Post> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
-            const query = `
+            const query = groq`
                 *[_type == "post" && !(_id in path('drafts.**'))] | order(_createdAt desc) {
                     title,
                     "slug": slug.current,
@@ -77,7 +78,7 @@ const PostAPI = {
      */
     getPostBySlug: async (slug: string): Promise<Post | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "post" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
                     title,
                     "slug": slug.current,

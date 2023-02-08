@@ -29,6 +29,11 @@ const adminRoutes = [
         desc: 'Se og svar på tilbakemeldinger fra brukere',
         to: '/dashboard/tilbakemeldinger',
     },
+    {
+        title: 'Whitelist',
+        desc: 'Legg til brukere på whitelist',
+        to: '/dashboard/whitelist',
+    },
 ];
 
 const DashboardPage = () => {

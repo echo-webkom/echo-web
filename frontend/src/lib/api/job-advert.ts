@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import SanityAPI from '@api/sanity';
 import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
@@ -37,7 +38,7 @@ const JobAdvertAPI = {
 
     getJobAdverts: async (n: number): Promise<Array<JobAdvert> | ErrorMessage> => {
         try {
-            const query = `*[_type == "jobAdvert" && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${
+            const query = groq`*[_type == "jobAdvert" && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${
                 n - 1
             }] {
                     "slug": slug.current,
@@ -64,7 +65,7 @@ const JobAdvertAPI = {
 
     getJobAdvertBySlug: async (slug: string): Promise<JobAdvert | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "jobAdvert" && slug.current == "${slug}" && !(_id in path('drafts.**'))] {
                     "slug": slug.current,
                     body,

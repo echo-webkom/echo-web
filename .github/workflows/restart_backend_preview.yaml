@@ -10,6 +10,7 @@ env:
 
 jobs:
   restart_preview:
+    name: 'Restart backend preview'
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '<!-- BACKEND PREVIEW BOT -->') }}
     steps:

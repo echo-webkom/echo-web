@@ -16,7 +16,7 @@ import {
     Checkbox,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { startOfYear, isAfter } from 'date-fns';
+import { getTime, startOfYear, isAfter } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -37,7 +37,9 @@ const AdminUserPage = () => {
     const [hideOld, setHideOld] = useBoolean();
 
     const filteredUsers = users
-        ? users.filter((user) => !(hideOld && isAfter(startOfYear(new Date()), user.modifiedAt)))
+        ? users
+              .filter((user) => !(hideOld && isAfter(startOfYear(new Date()), user.modifiedAt)))
+              .sort((a, b) => getTime(b.modifiedAt) - getTime(a.modifiedAt))
         : [];
 
     useEffect(() => {
@@ -83,7 +85,7 @@ const AdminUserPage = () => {
                 )}
                 {users && (
                     <>
-                        <Flex>
+                        <Flex mb="1.5rem">
                             <Heading size={['md', 'lg', 'xl']}>Administrer brukere</Heading>
                             <Spacer />
                             <Stack direction={['column', null, null, 'row']}>
@@ -97,14 +99,14 @@ const AdminUserPage = () => {
                         </Flex>
 
                         <TableContainer>
-                            <Table variant="simple">
+                            <Table variant="simple" size="sm">
                                 <Thead>
                                     <Tr>
-                                        <Th>Navn:</Th>
-                                        <Th>Email:</Th>
-                                        <Th>Medlemskap:</Th>
-                                        <Th>Sist endret:</Th>
-                                        <Th>Rediger:</Th>
+                                        <Th>Navn</Th>
+                                        <Th>Email</Th>
+                                        <Th>Medlemskap</Th>
+                                        <Th>Sist endret</Th>
+                                        <Th>Rediger</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>

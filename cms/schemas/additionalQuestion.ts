@@ -36,6 +36,7 @@ export default defineType({
             of: [
                 defineArrayMember({
                     type: 'string',
+                    validation: (Rule) => Rule.required(),
                 }),
             ],
         }),

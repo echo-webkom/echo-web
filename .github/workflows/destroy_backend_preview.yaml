@@ -9,6 +9,7 @@ env:
 
 jobs:
   destroy_backend_preview:
+    name: 'Destroy backend preview'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,7 +36,7 @@ jobs:
           terraform workspace select $WORKSPACE_NAME && \
             terraform destroy -auto-approve -lock-timeout=15m && \
             terraform workspace select default && \
-            terraform workspace delete $WORKSPACE_NAME
+            terraform workspace delete $WORKSPACE_NAME || true
         env:
           TF_VAR_rg_name: 'echo-web-${{ steps.env_vars.outputs.BRANCH_NAME_FORMATTED }}'
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD_DEV }}

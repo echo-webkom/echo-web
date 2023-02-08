@@ -97,7 +97,8 @@ export default defineType({
             type: 'boolean',
             initialValue: false,
             hidden: ({ document, value }) => !value && !document?.happeningType,
-            readOnly: ({ value, document }) => value && (document?.registrationDate || document?.registrationDeadline),
+            readOnly: ({ value, document }) =>
+                !!(value && (document?.registrationDate || document?.registrationDeadline)),
         }),
         defineField({
             name: 'registrationDate',
@@ -108,7 +109,11 @@ export default defineType({
              */
             validation: (Rule) =>
                 Rule.custom((registrationDate, context) => {
-                    if ((context.document?.spotRanges as any[]).length > 0 && !registrationDate) {
+                    if (
+                        context.document?.spotRanges &&
+                        (context.document?.spotRanges as any[]).length > 0 &&
+                        !registrationDate
+                    ) {
                         return 'Må ha dato for påmelding om det er definert arrangementsplasser.';
                     }
 
@@ -157,7 +162,7 @@ export default defineType({
             initialValue: false,
             hidden: ({ document, value }) => !value && (!document?.registrationDate || !document?.registrationDeadline),
             readOnly: ({ value, document }) =>
-                value && (document?.studentGroupRegistrationDate || document?.studentGroups),
+                !!(value && (document?.studentGroupRegistrationDate || document?.studentGroups)),
         }),
         defineField({
             name: 'studentGroupRegistrationDate',
@@ -193,7 +198,7 @@ export default defineType({
             name: 'studentGroups',
             title: 'Hvilke studentgrupper har tidlig påmelding?',
             type: 'array',
-            of: [defineArrayMember({ type: 'string' })],
+            of: [defineArrayMember({ type: 'string', validation: (Rule) => Rule.required() })],
             /**
              * Må være satt dersom det er definert tidlig påmelding for studentgrupper.
              */
@@ -310,6 +315,7 @@ export default defineType({
                             type: 'additionalQuestion',
                         },
                     ],
+                    validation: (Rule) => Rule.required(),
                 }),
             ],
             hidden: ({ document, value }) => !value && !document?.isRegistration,
@@ -334,6 +340,7 @@ export default defineType({
                             type: 'spotRange',
                         },
                     ],
+                    validation: (Rule) => Rule.required(),
                 }),
             ],
             hidden: ({ document, value }) => !value && !document?.isRegistration,

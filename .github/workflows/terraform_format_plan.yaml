@@ -23,6 +23,7 @@ env:
 
 jobs:
   terraform_format:
+    name: 'Terraform format'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -37,6 +38,7 @@ jobs:
           terraform fmt -check -recursive
 
   terraform_plan:
+    name: 'Terraform plan'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

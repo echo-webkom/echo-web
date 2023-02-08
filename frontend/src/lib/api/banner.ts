@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
@@ -18,7 +19,7 @@ type Banner = z.infer<typeof bannerSchema>;
 const BannerAPI = {
     getBanner: async (): Promise<Banner | null | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                     *[_type == "banner" && !(_id in path('drafts.**'))] {
                         color,
                         textColor,

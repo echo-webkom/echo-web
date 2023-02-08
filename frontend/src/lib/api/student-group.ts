@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { groq } from 'next-sanity';
 import { profileSchema } from './profile';
 import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
@@ -25,7 +26,7 @@ type StudentGroup = z.infer<typeof studentGroupSchema>;
 const StudentGroupAPI = {
     getPaths: async (): Promise<Array<string>> => {
         try {
-            const query = `*[_type == "studentGroup"]{ "slug": slug.current }`;
+            const query = groq`*[_type == "studentGroup"]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
             return slugSchema
@@ -42,7 +43,7 @@ const StudentGroupAPI = {
         type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
     ): Promise<Array<string> | ErrorMessage> => {
         try {
-            const query = `*[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))]{ "slug": slug.current }`;
+            const query = groq`*[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))]{ "slug": slug.current }`;
             const result = await SanityAPI.fetch(query);
 
             return slugSchema
@@ -61,7 +62,7 @@ const StudentGroupAPI = {
         type: 'board' | 'suborg' | 'subgroup' | 'intgroup',
     ): Promise<Array<StudentGroup> | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "studentGroup" && groupType == "${type}" && !(_id in path('drafts.**'))] | order(name) {
                     name,
                     "slug": slug.current,
@@ -89,7 +90,7 @@ const StudentGroupAPI = {
 
     getStudentGroupBySlug: async (slug: string): Promise<StudentGroup | ErrorMessage> => {
         try {
-            const query = `
+            const query = groq`
                 *[_type == "studentGroup" && slug.current == "${slug}" && !(_id in path('drafts.**'))] | order(name) {
                     name,
                     "slug": slug.current,
