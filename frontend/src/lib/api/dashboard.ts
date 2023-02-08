@@ -54,4 +54,4 @@ const DashboardAPI = {
 };
 
 export default DashboardAPI;
-export { studentGroups, type StudentGroup };
+export { studentGroups, studentGroupSchema, type StudentGroup };
