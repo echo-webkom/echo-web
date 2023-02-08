@@ -21,9 +21,16 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-
-import { Happening, HappeningType, Question } from '@api/happening';
-import { RegFormValues, RegistrationAPI } from '@api/registration';
+import { FormProvider, useForm } from 'react-hook-form';
+import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import NextLink from 'next/link';
+import type { SubmitHandler } from 'react-hook-form';
+import { MdOutlineArrowForward } from 'react-icons/md';
+import DeregistrationButton from './deregistration-button';
+import type { Happening, HappeningType, Question } from '@api/happening';
+import type { RegFormValues } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
 import { userIsComplete } from '@api/user';
 import CountdownButton from '@components/countdown-button';
 import FormQuestion from '@components/form-question';
@@ -32,13 +39,6 @@ import useLanguage from '@hooks/use-language';
 import capitalize from '@utils/capitalize';
 import { isErrorMessage } from '@utils/error';
 import hasOverlap from '@utils/has-overlap';
-import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
-import { enUS, nb } from 'date-fns/locale';
-import NextLink from 'next/link';
-import type { SubmitHandler } from 'react-hook-form';
-import { FormProvider, useForm } from 'react-hook-form';
-import { MdOutlineArrowForward } from 'react-icons/md';
-import DeregistrationButton from './deregistration-button';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -97,10 +97,9 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
             setRegistered(false);
         };
         void fetchIsRegistered();
-    }, [user, registered]);
+    }, [user, registered, idToken, happening.slug]);
 
     const initialRef = useRef<HTMLInputElement | null>(null);
-    const { ref, ...rest } = register('email'); // needed for inital focus ref
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!signedIn || !idToken) {

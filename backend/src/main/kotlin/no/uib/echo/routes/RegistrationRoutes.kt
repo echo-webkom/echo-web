@@ -22,9 +22,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.resToJson
-import no.uib.echo.schema.*
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.Deregistration
+import no.uib.echo.schema.FormDeregistrationJson
+import no.uib.echo.schema.FormRegistrationJson
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.StudentGroupHappeningRegistration
+import no.uib.echo.schema.User
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
+import no.uib.echo.schema.nullableStringToDegree
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
@@ -33,9 +51,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
-import java.time.LocalDateTime
 
 fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, jwtConfig: String) {
     routing {
@@ -102,7 +120,8 @@ fun Route.getRegistrations() {
                     }.toList()
                 }.map {
                     AnswerJson(
-                        it[Answer.question], it[Answer.answer]
+                        it[Answer.question],
+                        it[Answer.answer]
                     )
                 }
 
@@ -116,7 +135,7 @@ fun Route.getRegistrations() {
                     reg[Registration.submitDate].toString(),
                     reg[Registration.waitList],
                     answers,
-                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList(),
+                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList()
                 )
             }
         }
@@ -127,7 +146,8 @@ fun Route.getRegistrations() {
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
-                    ContentDisposition.Parameters.FileName, fileName
+                    ContentDisposition.Parameters.FileName,
+                    fileName
                 ).toString()
             )
             call.respondBytes(
@@ -180,7 +200,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (userDegreeYear == null || userDegreeYear !in 1..5) {
                 call.respond(
-                    HttpStatusCode.NonAuthoritativeInformation, resToJson(RegistrationResponse.InvalidDegreeYear)
+                    HttpStatusCode.NonAuthoritativeInformation,
+                    resToJson(RegistrationResponse.InvalidDegreeYear)
                 )
                 return@post
             }
@@ -193,7 +214,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (happening == null) {
                 call.respond(
-                    HttpStatusCode.Conflict, resToJson(RegistrationResponse.HappeningDoesntExist)
+                    HttpStatusCode.Conflict,
+                    resToJson(RegistrationResponse.HappeningDoesntExist)
                 )
                 return@post
             }
@@ -206,7 +228,10 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             if (happening[Happening.onlyForStudentGroups] && !userStudentGroups.any { happeningStudentGroups.contains(it) }) {
-                call.respond(HttpStatusCode.Forbidden, resToJson(RegistrationResponse.OnlyOpenForStudentGroups, studentGroups = happeningStudentGroups))
+                call.respond(
+                    HttpStatusCode.Forbidden,
+                    resToJson(RegistrationResponse.OnlyOpenForStudentGroups, studentGroups = happeningStudentGroups)
+                )
                 return@post
             }
 
@@ -215,7 +240,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
-                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                            RegistrationResponse.TooEarly,
+                            regDate = happening[Happening.registrationDate].toString()
                         )
                     )
                     return@post
@@ -225,7 +251,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
-                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                            RegistrationResponse.TooEarly,
+                            regDate = happening[Happening.registrationDate].toString()
                         )
                     )
                     return@post
@@ -234,7 +261,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
                 call.respond(
-                    HttpStatusCode.Forbidden, resToJson(RegistrationResponse.TooLate)
+                    HttpStatusCode.Forbidden,
+                    resToJson(RegistrationResponse.TooLate)
                 )
                 return@post
             }
@@ -247,7 +275,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (correctRange == null) {
                 call.respond(
-                    HttpStatusCode.Forbidden, resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges)
+                    HttpStatusCode.Forbidden,
+                    resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges)
                 )
                 return@post
             }
@@ -255,12 +284,12 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val countRegsInSpotRange = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                false,
+                false
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                true,
+                true
             )
 
             val waitList = correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0
@@ -278,7 +307,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     false -> RegistrationResponse.AlreadySubmitted
                 }
                 call.respond(
-                    HttpStatusCode.UnprocessableEntity, resToJson(responseCode)
+                    HttpStatusCode.UnprocessableEntity,
+                    resToJson(responseCode)
                 )
                 return@post
             }
@@ -342,17 +372,7 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
         val slug = toDelete.slug
 
-        if (slug == null) {
-            call.respond(HttpStatusCode.BadRequest, "slug is null")
-            return@delete
-        }
-
         val paramEmail = toDelete.email
-
-        if (paramEmail == null) {
-            call.respond(HttpStatusCode.BadRequest, "email is null")
-            return@delete
-        }
 
         val decodedParamEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(paramEmail, "utf-8")
@@ -371,7 +391,6 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             call.respond(HttpStatusCode.Forbidden)
             return@delete
         }
-
 
         try {
             val reg = transaction {
@@ -399,7 +418,6 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     it[happeningSlug] = hap[Happening.slug]
                     it[reason] = toDelete.reason.orEmpty()
                 }
-
             }
 
             if (reg[Registration.waitList]) {
@@ -432,7 +450,6 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted, " + "and registration with email = ${highestOnWaitList[Registration.userEmail].lowercase()} moved off wait list."
                 )
             }
-
         } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
             e.printStackTrace()
@@ -441,34 +458,31 @@ fun Route.deleteRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 }
 
 fun Route.getUserIsRegistered() {
-
-
     get("/user/registrations/{email}/{slug}") {
-
         val authEmail = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
-        if (authEmail == null){
+        if (authEmail == null) {
             call.respond(HttpStatusCode.Unauthorized)
             return@get
         }
 
         val email = call.parameters["email"]?.lowercase()
         val slug = call.parameters["slug"]
-        if (email == null || slug == null){
+        if (email == null || slug == null) {
             call.respond(HttpStatusCode.BadRequest, "email or slug missing")
             return@get
         }
 
-        if (authEmail != email){
+        if (authEmail != email) {
             call.respond(HttpStatusCode.Forbidden)
             return@get
         }
 
-
         val userRegistered = transaction {
-            Registration.select {Registration.userEmail eq email and(Registration.happeningSlug eq slug)}.firstOrNull()
+            Registration.select { Registration.userEmail eq email and (Registration.happeningSlug eq slug) }
+                .firstOrNull()
         }
-        if (userRegistered == null){
+        if (userRegistered == null) {
             call.respond(HttpStatusCode.NotFound)
             return@get
         }
@@ -476,7 +490,6 @@ fun Route.getUserIsRegistered() {
         call.respond(HttpStatusCode.OK)
     }
 }
-
 
 fun Route.postRegistrationCount() {
     post("/registration/count") {
@@ -493,7 +506,8 @@ fun Route.postRegistrationCount() {
             }
 
             call.respond(
-                HttpStatusCode.OK, registrationCounts
+                HttpStatusCode.OK,
+                registrationCounts
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")

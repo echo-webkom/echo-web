@@ -64,36 +64,6 @@ fun fromEmail(email: String): String? {
     }
 }
 
-//suspend fun sendDeletionEmail(
-//    sendGridApiKey: String,
-//    registration: FormDeregistrationJson,
-//){
-//    val hap = transaction {
-//        Happening.select {
-//            Happening.slug eq registration.slug
-//        }.firstOrNull()
-//    } ?: throw Exception("Happening is null.")
-//
-//    val fromEmail = "webkom@echo.uib.no"
-//    try {
-//        withContext(Dispatchers.IO) {
-//            sendEmail(
-//                fromEmail,
-//                registration.email,
-//                SendGridTemplate(
-//                    hap[Happening.title],
-//                    "https://echo.uib.no/event/${registration.slug}",
-//                    registration = registration
-//                ),
-//                if (waitListSpot != null) Template.CONFIRM_WAIT else Template.CONFIRM_REG,
-//                sendGridApiKey
-//            )
-//        }
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//    }
-//}
-
 suspend fun sendConfirmationEmail(
     sendGridApiKey: String,
     registration: FormRegistrationJson,

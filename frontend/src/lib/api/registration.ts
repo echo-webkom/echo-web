@@ -179,11 +179,10 @@ const RegistrationAPI = {
                     Authorization: `Bearer ${idToken}`,
                 },
             });
-            console.log(status);
 
             return status === 200;
-        } catch (error) {
-            return { message: 'Error in getUserIsRegistered' };
+        } catch {
+            return { message: 'Error @ getUserIsRegistered' };
         }
     },
 };

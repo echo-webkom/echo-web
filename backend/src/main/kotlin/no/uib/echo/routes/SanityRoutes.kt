@@ -41,9 +41,7 @@ fun Route.sanitySync() {
 
         val client = SanityClient(
             projectId = "pgq2pd26",
-
-            dataset = "develop",
-
+            dataset = dataset,
             apiVersion = "v2021-10-21",
             useCdn = false
         )

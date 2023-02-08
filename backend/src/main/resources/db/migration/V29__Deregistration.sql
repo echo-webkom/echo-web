@@ -13,5 +13,4 @@ CREATE TABLE IF NOT EXISTS deregistration
     CONSTRAINT fk_deregistration_happening_slug__slug FOREIGN KEY (happening_slug) REFERENCES happening (slug)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT
-    );
-
+);

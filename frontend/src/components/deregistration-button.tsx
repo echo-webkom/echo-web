@@ -15,11 +15,12 @@ import {
     VStack,
     useToast,
 } from '@chakra-ui/react';
-
-import { type Happening } from '@api/happening';
-import { DeregisterFormValues, RegistrationAPI } from '@api/registration';
-import useLanguage from '@hooks/use-language';
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useRef } from 'react';
+import { type Happening } from '@api/happening';
+import type { DeregisterFormValues } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
+import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
 import { isErrorMessage } from '@utils/error';
 
@@ -29,14 +30,11 @@ interface Props {
 
 const DeregistrationButton = ({ happening }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const { register, handleSubmit, reset } = useForm<DeregisterFormValues>();
-
-    const { idToken, user } = useAuth();
-
     const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { register, handleSubmit, reset } = useForm<DeregisterFormValues>();
+    const { idToken, user } = useAuth();
+    const initialRef = useRef<HTMLInputElement | null>(null);
 
     const submitForm: SubmitHandler<DeregisterFormValues> = async (data) => {
         if (!idToken || !user?.email) {
@@ -84,6 +82,7 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
 
             <Modal
                 isOpen={isOpen}
+                initialFocusRef={initialRef}
                 onClose={() => {
                     onClose();
                     reset();

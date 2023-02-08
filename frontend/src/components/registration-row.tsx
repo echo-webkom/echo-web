@@ -63,20 +63,20 @@ const RegistrationRow = ({ registration, questions }: Props) => {
 
         onClose();
 
-        if (!isErrorMessage(resp)) {
+        if (isErrorMessage(resp)) {
+            toast({
+                title: 'Det har skjedd en feil!',
+                description: resp.message,
+                status: 'error',
+                isClosable: true,
+            });
+        } else {
             setDeleted(true);
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
                 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 description: `Slettet påmeding med email '${registration.alternateEmail || registration.email}'.`,
-                isClosable: true,
-            });
-        } else {
-            toast({
-                title: 'Det har skjedd en feil!',
-                description: resp.message,
-                status: 'error',
                 isClosable: true,
             });
         }
