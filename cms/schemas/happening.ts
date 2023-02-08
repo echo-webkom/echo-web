@@ -198,7 +198,7 @@ export default defineType({
             name: 'studentGroups',
             title: 'Hvilke studentgrupper har tidlig påmelding?',
             type: 'array',
-            of: [defineArrayMember({ type: 'string' })],
+            of: [defineArrayMember({ type: 'string', validation: (Rule) => Rule.required() })],
             /**
              * Må være satt dersom det er definert tidlig påmelding for studentgrupper.
              */
@@ -315,6 +315,7 @@ export default defineType({
                             type: 'additionalQuestion',
                         },
                     ],
+                    validation: (Rule) => Rule.required(),
                 }),
             ],
             hidden: ({ document, value }) => !value && !document?.isRegistration,
@@ -339,6 +340,7 @@ export default defineType({
                             type: 'spotRange',
                         },
                     ],
+                    validation: (Rule) => Rule.required(),
                 }),
             ],
             hidden: ({ document, value }) => !value && !document?.isRegistration,
