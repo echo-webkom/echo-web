@@ -28,6 +28,7 @@ import no.uib.echo.schema.Degree
 import no.uib.echo.schema.Deregistration
 import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.FormRegistrationJson
+import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.RegistrationCountJson
@@ -269,8 +270,11 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             val spotRanges = selectSpotRanges(registration.slug)
 
+            val canSkipDegreeYearCheck =
+                "bedkom" in userStudentGroups && HAPPENING_TYPE.valueOf(happening[Happening.happeningType]) == HAPPENING_TYPE.BEDPRES
+
             val correctRange = spotRanges.firstOrNull {
-                user[User.degreeYear] in it.minDegreeYear..it.maxDegreeYear
+                (user[User.degreeYear] in it.minDegreeYear..it.maxDegreeYear) || canSkipDegreeYearCheck
             }
 
             if (correctRange == null) {
