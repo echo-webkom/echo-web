@@ -117,7 +117,7 @@
         "@sanity/client": "4.0.1",
         "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "0.1.8",
-        "@vercel/og": "0.0.27",
+        "@vercel/og": "0.1.0",
         "calendar-link": "2.2.0",
         "canvas-confetti": "1.6.0",
         "date-fns": "2.29.3",
@@ -140,7 +140,7 @@
     },
     "devDependencies": {
         "@types/canvas-confetti": "1.6.0",
-        "@types/node": "16.18.11",
+        "@types/node": "16.18.12",
         "@types/randomcolor": "0.5.7",
         "@types/react": "18.0.27",
         "@types/react-dom": "18.0.10",

@@ -4,7 +4,6 @@ import NextLink from 'next/link';
 import HappeningKeyInfo from '@components/happening-key-info';
 import type { Happening } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
-import ReactionCount from '@components/reaction-count';
 
 interface Props {
     bedpres: Happening;
@@ -31,7 +30,6 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props) => {
                                 {bedpres.title}
                             </LinkOverlay>
                         </Text>
-                        <ReactionCount slug={bedpres.slug} />
                     </Box>
                 </Flex>
 
