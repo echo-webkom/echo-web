@@ -85,7 +85,6 @@ const PromoteButton = ({ registration }: Props) => {
                 },
             },
         );
-        console.log(responseEmail);
 
         if (responseEmail.ok) {
             onClosePromote();
@@ -127,10 +126,10 @@ const PromoteButton = ({ registration }: Props) => {
                     </ModalBody>
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
-                            <Button colorScheme="green" onClick={handleEmail}>
+                            <Button colorScheme="green" onClick={void handleEmail}>
                                 Send epost
                             </Button>
-                            <Button onClick={handlePromote}>Promoter uten å spørre</Button>
+                            <Button onClick={void handlePromote}>Promoter uten å spørre</Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>

@@ -47,7 +47,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
     const { idToken, signedIn } = useAuth();
 
     useEffect(() => {
-        CheckIfCanPromote();
+        void CheckIfCanPromote();
     }, []);
 
     const CheckIfCanPromote = async () => {
@@ -67,7 +67,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 Authorization: `Bearer ${idToken}`,
             },
         });
-        if (response.status == 200) {
+        if (response.status === 200) {
             setCanPromote(true);
         } else {
             setCanPromote(false);
