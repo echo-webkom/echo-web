@@ -70,8 +70,8 @@ fun fromEmail(email: String): String? {
 suspend fun sendWaitingListEmail(
     sendGridApiKey: String,
     registration: EmailRegistrationJson,
-    stringId: String,
-) {
+    uuid: String,
+): Boolean {
     val hap = transaction {
         Happening.select {
             Happening.slug eq registration.slug
@@ -94,15 +94,17 @@ suspend fun sendWaitingListEmail(
                         registration.slug,
                         listOf(AnswerJson("", "")),
                     ),
-                    "https://echo.uib.no/WaitingList/$stringId",
+                    "https://echo.uib.no/WaitingList/$uuid",
 
                 ),
                 Template.WAITINGLIST_NOTIFY,
                 sendGridApiKey
             )
         }
+        return true
     } catch (e: IOException) {
         e.printStackTrace()
+        return false
     }
 }
 

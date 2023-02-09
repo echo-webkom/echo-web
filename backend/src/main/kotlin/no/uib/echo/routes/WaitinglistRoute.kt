@@ -146,7 +146,11 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                 return@post
             }
 
-            notifyWaitinglistPerson(happeningSlug, email, sendGridApiKey)
+            val notifiedSuccess = notifyWaitinglistPerson(happeningSlug, email, sendGridApiKey)
+            if (!notifiedSuccess) {
+                call.respond(HttpStatusCode.InternalServerError, "could not send email")
+                return@post
+            }
             call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)

@@ -13,7 +13,7 @@ import org.joda.time.DateTime
 
 @Serializable
 data class WaitinglistUUIDJson(
-    val stringId: String,
+    val uuid: String,
     val userEmail: String,
     val happeningSlug: String,
     val lastNotified: String,
@@ -32,11 +32,11 @@ object WaitingListUUID : Table("waiting_list_uuid") {
     override val primaryKey: PrimaryKey = PrimaryKey(uuid)
 }
 
-suspend fun notifyWaitinglistPerson(slug: String, email: String, sendGridApiKey: String) {
+suspend fun notifyWaitinglistPerson(slug: String, email: String, sendGridApiKey: String): Boolean {
     if (!isPromotionLegal(slug)) {
-        return
+        return false
     }
-    val person = getPersonToNotify(slug, email) ?: return
+    val person = getPersonToNotify(slug, email) ?: return false
 
     val registrationPerson = transaction {
         Registration.select {
@@ -54,10 +54,20 @@ suspend fun notifyWaitinglistPerson(slug: String, email: String, sendGridApiKey:
             user?.get(User.alternateEmail),
             it[Registration.happeningSlug],
         )
-    } ?: return
+    } ?: return false
 
     if (!isPersonLegalToNotify(slug, registrationPerson.email)) {
-        return
+        return false
+    }
+
+    val emailSendt = sendWaitingListEmail(
+        sendGridApiKey,
+        registrationPerson,
+        person.uuid
+    )
+
+    if (!emailSendt) {
+        return false
     }
 
     transaction {
@@ -68,12 +78,7 @@ suspend fun notifyWaitinglistPerson(slug: String, email: String, sendGridApiKey:
             it[lastNotified] = DateTime.now()
         }
     }
-
-    sendWaitingListEmail(
-        sendGridApiKey,
-        registrationPerson,
-        person.stringId
-    )
+    return true
 }
 
 fun getPersonToNotify(slug: String, email: String): WaitinglistUUIDJson? {
