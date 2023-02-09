@@ -5,6 +5,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
 import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
+import { IoIosAlert } from 'react-icons/io';
 import {
     useToast,
     Center,
@@ -94,6 +95,7 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
+            dots: user.dots,
             createdAt: new Date(),
             modifiedAt: new Date(),
         };
@@ -149,6 +151,14 @@ const ProfileInfo = () => {
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
                             )}
+                            <IconText
+                                iconColor={IoIosAlert}
+                                data-cy="profile-email"
+                                icon={MdOutlineEmail}
+                                text={
+                                    isNorwegian ? 'Antall prikker (bedpres)' : 'Number of dots (bedpres)\n{user.dots}'
+                                }
+                            />
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
