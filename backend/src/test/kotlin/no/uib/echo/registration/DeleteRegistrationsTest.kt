@@ -24,6 +24,7 @@ import no.uib.echo.adminUser
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
+import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
@@ -133,8 +134,16 @@ class DeleteRegistrationsTest {
                 // previously on the wait list are now moved off the wait list.
                 for (u in usersSublist) {
                     val regEmail = u.email.lowercase()
-                    val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail") {
+                    val deleteRegCall = client.delete("/registration") {
                         bearerAuth(adminToken)
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            FormDeregistrationJson(
+                                reason = "Test",
+                                slug = hap9(t).slug,
+                                email = regEmail
+                            )
+                        )
                     }
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
@@ -147,8 +156,16 @@ class DeleteRegistrationsTest {
                 for (u in waitListUsers) {
                     val waitListRegEmail = u.email.lowercase()
                     val deleteWaitListRegCall =
-                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail") {
+                        client.delete("/registration") {
                             bearerAuth(adminToken)
+                            contentType(ContentType.Application.Json)
+                            setBody(
+                                FormDeregistrationJson(
+                                    reason = "Test",
+                                    slug = hap9(t).slug,
+                                    email = waitListRegEmail
+                                )
+                            )
                         }
 
                     deleteWaitListRegCall.status shouldBe HttpStatusCode.OK

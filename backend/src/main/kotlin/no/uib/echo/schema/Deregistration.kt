@@ -12,7 +12,7 @@ import org.joda.time.DateTime
 data class FormDeregistrationJson(
     val email: String,
     val slug: String,
-    val reason: String,
+    val reason: String
 )
 
 object Deregistration : Table() {
