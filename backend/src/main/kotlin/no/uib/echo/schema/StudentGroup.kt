@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-val validStudentGroups = listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret", "hyggkom", "esc", "makerspace")
+val validStudentGroups = listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret", "hyggkom", "esc", "makerspace", "programmerbar")
 
 object StudentGroup : Table("student_group") {
     val name: Column<String> = text("group_name").check("valid_student_group") {
