@@ -1,10 +1,11 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
-import { format, isToday, isPast } from 'date-fns';
+import { format, isToday, isPast, parseISO } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import useLanguage from '@hooks/use-language';
+import parseISOOrNull from '@utils/parse-iso-or-null';
 
 interface Props {
     event: Happening;
@@ -18,6 +19,8 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
         registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
+    const registrationDate = parseISOOrNull(event.studentGroupRegistrationDate ?? event.registrationDate);
+
     return (
         <Stack textAlign="right">
             <Flex alignItems="center" justifyContent="flex-end">
@@ -28,7 +31,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                             {isNorwegian ? `I dag ` : `Today `}
                         </Text>
                         <Text ml="1" fontSize="1rem">
-                            {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
+                            {format(parseISO(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
                         </Text>
                     </>
                 ) : (
@@ -36,9 +39,9 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 )}
             </Flex>
 
-            {event.registrationDate && (
+            {registrationDate && (
                 <Flex alignItems="center" justifyContent="flex-end">
-                    {isPast(new Date(event.registrationDate)) ? (
+                    {isPast(registrationDate) ? (
                         <Text ml="1" fontSize="1rem">
                             {totalRegs >= totalSpots && totalSpots !== 0
                                 ? isNorwegian
@@ -48,7 +51,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                         </Text>
                     ) : (
                         <Text ml="1" fontSize="1rem">
-                            {isToday(new Date(event.registrationDate)) ? (
+                            {isToday(registrationDate) ? (
                                 isNorwegian ? (
                                     `Påmelding i dag`
                                 ) : (
@@ -57,7 +60,7 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                             ) : (
                                 <span style={{ whiteSpace: 'nowrap' }}>
                                     {isNorwegian ? `Påmelding ` : ` Registration `}
-                                    {format(new Date(event.registrationDate), 'dd. MMM yyyy', {
+                                    {format(registrationDate, 'dd. MMM yyyy', {
                                         locale: isNorwegian ? nb : enUS,
                                     })}
                                 </span>
