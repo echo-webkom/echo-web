@@ -64,6 +64,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
             deleteRegistration()
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
             getUserRegistrations()
+            getUserRegistrationStatus()
         }
 
         authenticate("auth-admin") {
@@ -518,8 +519,13 @@ fun Route.getUserRegistrations() {
 fun Route.getUserRegistrationStatus() {
     get("/user/registrations/{slug}/{email}") {
 
-        val email = call.parameters["email"]
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
         val slug = call.parameters["slug"]
+
+
+        call.respond(HttpStatusCode.OK, "slug: $email")
+
+
 
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")
@@ -535,7 +541,16 @@ fun Route.getUserRegistrationStatus() {
         }
 
         if (email != userEmail) {
-            call.respond(HttpStatusCode.Forbidden)
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        val hap = transaction {
+            Happening.select { Happening.slug eq slug }.firstOrNull()
+        }
+
+        if (hap == null) {
+            call.respond(HttpStatusCode.NotFound)
             return@get
         }
 
@@ -546,7 +561,6 @@ fun Route.getUserRegistrationStatus() {
                         )
             }.firstOrNull()
         }
-
 
         call.respond(status != null)
     }

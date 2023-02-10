@@ -190,6 +190,37 @@ const RegistrationAPI = {
             };
         }
     },
+
+    getUserRegistrationStatus: async (
+        email: string,
+        idToken: string,
+        slug: string,
+    ): Promise<Boolean | ErrorMessage> => {
+        try {
+            const encodedEmail = encodeURIComponent(email);
+            const response = await fetch(`${BACKEND_URL}/user/registrations/${slug}/${encodedEmail}`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
+
+            if (response.status === 404 || response.status === 403) {
+                return false;
+            }
+
+            const data = await response.json();
+            console.log(data);
+
+            if (isErrorMessage(data)) {
+                return data;
+            }
+
+            // return registrationSchema.array().parse(data);
+            return data;
+        } catch {
+            return {
+                message: 'Fail @ getRegistrations',
+            };
+        }
+    },
 };
 
 export {

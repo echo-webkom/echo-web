@@ -85,6 +85,11 @@ const ProfileInfo = () => {
     }, [user, signedIn, setValue]);
 
     useEffect(() => {
+        console.log('token: ', idToken);
+        console.log(user?.email);
+    }, []);
+
+    useEffect(() => {
         const fetchUserRegistrationSlugs = async () => {
             if (!user?.email || !idToken) return;
 
@@ -335,7 +340,7 @@ const ProfileInfo = () => {
                                 })
                             ) : (
                                 <Center>
-                                    <>{isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}</>
+                                    {isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}
                                 </Center>
                             )}
                         </Section>
@@ -357,11 +362,9 @@ const ProfileInfo = () => {
                                 })
                             ) : (
                                 <Center>
-                                    <>
-                                        {isNorwegian
-                                            ? 'Ingen kommende bedriftspresentasjoner :('
-                                            : 'No upcoming bedpres :('}
-                                    </>
+                                    {isNorwegian
+                                        ? 'Ingen kommende bedriftspresentasjoner :('
+                                        : 'No upcoming bedpres :('}
                                 </Center>
                             )}
                         </Section>
