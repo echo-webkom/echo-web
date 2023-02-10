@@ -522,11 +522,6 @@ fun Route.getUserRegistrationStatus() {
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
         val slug = call.parameters["slug"]
 
-
-        call.respond(HttpStatusCode.OK, "slug: $email")
-
-
-
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")
         };
@@ -562,6 +557,11 @@ fun Route.getUserRegistrationStatus() {
             }.firstOrNull()
         }
 
-        call.respond(status != null)
+        if (status == null) {
+            call.respond(HttpStatusCode.NotFound)
+            return@get
+        }
+
+        call.respond(HttpStatusCode.OK, status[Registration.waitList])
     }
 }
