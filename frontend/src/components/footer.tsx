@@ -1,5 +1,17 @@
-import { Icon, LinkBox, SimpleGrid, Text, useColorModeValue, Image, Center, Box, LinkOverlay } from '@chakra-ui/react';
+import {
+    Icon,
+    LinkBox,
+    SimpleGrid,
+    Text,
+    useColorModeValue,
+    Image,
+    Center,
+    Box,
+    LinkOverlay,
+    Flex,
+} from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
+import { TbAlertOctagon } from 'react-icons/tb';
 import LanguageMenu from '@components/language-menu';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
@@ -9,10 +21,12 @@ const bekkLogo = '/bekk.png';
 
 const Footer = () => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
     return (
         <Box bg="bg.dark.secondary" data-testid="footer">
             <SimpleGrid
+                row={2}
                 columns={[1, 2, 4]}
                 justifyItems="center"
                 alignItems="center"
@@ -117,6 +131,27 @@ const Footer = () => {
                             <Text fontSize="md" color={color}>
                                 Org nr: 998 995 035
                             </Text>
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox mt={2} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay href="/om-echo/si-ifra">
+                            <Flex gap={2}>
+                                <Text fontSize="md" color="#f0f0f0">
+                                    Opplevd noe ugreit?
+                                </Text>
+                                <Icon
+                                    as={TbAlertOctagon}
+                                    borderRadius="full"
+                                    p="0.5"
+                                    bg="red.400"
+                                    color={textColor}
+                                    _hover={{ bg: 'red.500', transform: 'scale(1)' }}
+                                    boxSize={12}
+                                    zIndex="100"
+                                    height={6}
+                                    width={6}
+                                />
+                            </Flex>
                         </LinkOverlay>
                     </LinkBox>
                 </SimpleGrid>

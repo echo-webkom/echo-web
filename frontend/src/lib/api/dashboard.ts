@@ -10,6 +10,7 @@ const studentGroups: Array<StudentGroup> = [
     'hyggkom',
     'esc',
     'makerspace',
+    'programmerbar',
 ];
 
 const studentGroupSchema = z.enum([
@@ -21,6 +22,7 @@ const studentGroupSchema = z.enum([
     'hyggkom',
     'esc',
     'makerspace',
+    'programmerbar',
 ]);
 type StudentGroup = z.infer<typeof studentGroupSchema>;
 

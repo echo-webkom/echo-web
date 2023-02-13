@@ -11,6 +11,7 @@ const STUDENT_GROUPS = [
     { title: 'Hyggkom', value: 'hyggkom' },
     { title: 'ESC', value: 'esc' },
     { title: 'Makerspace', value: 'makerspace' },
+    { title: 'Programmerbar', value: 'programmerbar' },
 ];
 
 export default defineType({

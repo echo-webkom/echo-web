@@ -22,6 +22,7 @@ import {
     Center,
     Select,
     Stack,
+    VStack,
     Td,
     Input,
     InputRightElement,
@@ -119,6 +120,8 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
 
     const hasEarlyRegistrations = registrationsOverTimeBefore.length > 0;
 
+    const [randomRegistration, setRandomRegistration] = useState<Registration | null>(null);
+
     useEffect(() => {
         const fetchRegs = async () => {
             if (!signedIn || !idToken) return;
@@ -145,6 +148,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                         <TabList>
                             <Tab>Påmeldinger</Tab>
                             <Tab>Statistikk</Tab>
+                            <Tab>Velg tilfeldig person</Tab>
                         </TabList>
 
                         <TabPanels>
@@ -365,6 +369,26 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                         <RegistrationsOverTime data={registrationsOverTimeAfter} />
                                     </GridItem>
                                 </SimpleGrid>
+                            </TabPanel>
+                            <TabPanel>
+                                <VStack>
+                                    <Heading size="md" py="3rem">
+                                        {randomRegistration?.name ?? '...'}
+                                    </Heading>
+                                    <Button
+                                        onClick={() =>
+                                            setRandomRegistration(
+                                                registrations.filter((r) => !r.waitList)[
+                                                    Math.floor(
+                                                        Math.random() * registrations.filter((r) => !r.waitList).length,
+                                                    )
+                                                ],
+                                            )
+                                        }
+                                    >
+                                        Velg tilfeldig person
+                                    </Button>
+                                </VStack>
                             </TabPanel>
                         </TabPanels>
                     </Tabs>

@@ -42,7 +42,7 @@ val tables: Array<Table> = arrayOf(
     StudentGroup,
     StudentGroupMembership,
     Reaction,
-    Whitelist,
+    Whitelist
 )
 
 class DatabaseHandler(
@@ -59,10 +59,11 @@ class DatabaseHandler(
     // MAX_POOL_SIZE takes precedence if it is not null, else we have defaults for prod and dev/preview defined above.
     private val maxPoolSize =
         mbMaxPoolSize?.toIntOrNull()
-            ?: if (env == Environment.PRODUCTION)
+            ?: if (env == Environment.PRODUCTION) {
                 DEFAULT_PROD_POOL_SIZE
-            else
+            } else {
                 DEFAULT_DEV_POOL_SIZE
+            }
 
     private fun dataSource(): HikariDataSource {
         return HikariDataSource(
