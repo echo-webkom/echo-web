@@ -22,26 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.resToJson
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.AnswerJson
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.Deregistration
-import no.uib.echo.schema.FormDeregistrationJson
-import no.uib.echo.schema.FormRegistrationJson
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.RegistrationCountJson
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.SlugJson
-import no.uib.echo.schema.StudentGroupHappeningRegistration
-import no.uib.echo.schema.User
-import no.uib.echo.schema.countRegistrationsDegreeYear
-import no.uib.echo.schema.getGroupMembers
-import no.uib.echo.schema.getUserStudentGroups
-import no.uib.echo.schema.nullableStringToDegree
-import no.uib.echo.schema.selectSpotRanges
-import no.uib.echo.schema.toCsv
+import no.uib.echo.schema.*
 import no.uib.echo.sendConfirmationEmail
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -134,7 +115,9 @@ fun Route.getRegistrations() {
                     reg[Registration.degreeYear],
                     reg[Registration.happeningSlug],
                     reg[Registration.submitDate].toString(),
-                    reg[Registration.waitList],
+                    reg[Registration.registrationStatus],
+                    reg[Registration.reason],
+                    reg[Registration.deregistrationDate].toString(),
                     answers,
                     if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList()
                 )
@@ -288,12 +271,12 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val countRegsInSpotRange = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                false
+                Status.REGISTERED
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                true
+                Status.WAITLIST
             )
 
             val waitList = correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0
@@ -306,9 +289,9 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             }
 
             if (oldReg != null) {
-                val responseCode = when (oldReg[Registration.waitList]) {
-                    true -> RegistrationResponse.AlreadySubmittedWaitList
-                    false -> RegistrationResponse.AlreadySubmitted
+                val responseCode = when (oldReg[Registration.registrationStatus]) {
+                    Status.WAITLIST -> RegistrationResponse.AlreadySubmittedWaitList
+                    else -> RegistrationResponse.AlreadySubmitted
                 }
                 call.respond(
                     HttpStatusCode.UnprocessableEntity,
@@ -323,7 +306,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     it[happeningSlug] = registration.slug
                     it[degree] = userDegree.toString()
                     it[degreeYear] = userDegreeYear
-                    it[Registration.waitList] = waitList
+                    it[registrationStatus] = if (waitList) Status.WAITLIST else Status.REGISTERED
                 }
 
                 if (registration.answers.isNotEmpty()) {
@@ -409,32 +392,25 @@ fun Route.deleteRegistration() {
             }
 
             transaction {
-                Answer.deleteWhere {
-                    Answer.happeningSlug eq hap[Happening.slug] and (Answer.registrationEmail.lowerCase() eq decodedParamEmail)
+                Registration.update ({Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)}) {
+                    it[registrationStatus] = Status.DEREGISTERED
+                    it[reason] = toDelete.reason
+                    it[deregistrationDate] = DateTime.now()
                 }
 
-                Registration.deleteWhere {
-                    Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
-                }
-
-                Deregistration.insert {
-                    it[userEmail] = decodedParamEmail
-                    it[happeningSlug] = hap[Happening.slug]
-                    it[reason] = toDelete.reason.orEmpty()
-                }
             }
 
-            if (reg[Registration.waitList]) {
+            if (reg[Registration.registrationStatus] == Status.WAITLIST ) {
                 call.respond(
                     HttpStatusCode.OK,
-                    "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
+                    "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} was deregistered."
                 )
                 return@delete
             }
 
             val highestOnWaitList = transaction {
                 Registration.select {
-                    Registration.waitList eq true and (Registration.happeningSlug eq hap[Happening.slug])
+                    Registration.registrationStatus eq Status.WAITLIST and (Registration.happeningSlug eq hap[Happening.slug])
                 }.orderBy(Registration.submitDate).firstOrNull()
             }
 
@@ -446,7 +422,7 @@ fun Route.deleteRegistration() {
             } else {
                 transaction {
                     Registration.update({ Registration.userEmail eq highestOnWaitList[Registration.userEmail].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
-                        it[waitList] = false
+                        it[registrationStatus] = Status.REGISTERED
                     }
                 }
                 call.respond(
@@ -483,7 +459,7 @@ fun Route.getUserIsRegistered() {
         }
 
         val userRegistered = transaction {
-            Registration.select { Registration.userEmail eq email and (Registration.happeningSlug eq slug) }
+            Registration.select { Registration.userEmail eq email and (Registration.happeningSlug eq slug) and (Registration.registrationStatus neq Status.DEREGISTERED) }
                 .firstOrNull()
         }
         if (userRegistered == null) {
@@ -502,8 +478,8 @@ fun Route.postRegistrationCount() {
 
             val registrationCounts = transaction {
                 slugs.map {
-                    val count = countRegistrationsDegreeYear(it, 1..5, false)
-                    val waitListCount = countRegistrationsDegreeYear(it, 1..5, true)
+                    val count = countRegistrationsDegreeYear(it, 1..5, Status.REGISTERED)
+                    val waitListCount = countRegistrationsDegreeYear(it, 1..5, Status.WAITLIST)
 
                     RegistrationCountJson(it, count, waitListCount)
                 }

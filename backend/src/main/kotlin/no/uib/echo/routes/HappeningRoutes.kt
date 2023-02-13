@@ -9,14 +9,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.HappeningInfoJson
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
-import no.uib.echo.schema.SpotRangeWithCountJson
-import no.uib.echo.schema.StudentGroupHappeningRegistration
-import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
@@ -111,14 +104,14 @@ fun Route.getHappeningInfo() {
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        false,
+                        Status.REGISTERED,
                     )
 
                 val waitListCount =
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        true,
+                        Status.WAITLIST,
                     )
 
                 SpotRangeWithCountJson(

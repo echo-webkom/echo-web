@@ -26,7 +26,9 @@ const registrationSchema = z.object({
     degreeYear: z.number(),
     slug: z.string(),
     submitDate: z.string(),
-    waitList: z.boolean(),
+    registrationStatus: z.string(),
+    reason: z.string(),
+    deregistrationDate: z.string(),
     answers: z.array(answerSchema),
     memberships: z
         .array(z.string())

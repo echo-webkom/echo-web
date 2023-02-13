@@ -23,16 +23,7 @@ import no.uib.echo.adminUser
 import no.uib.echo.be
 import no.uib.echo.exReg
 import no.uib.echo.hap9
-import no.uib.echo.schema.Degree
-import no.uib.echo.schema.HappeningInfoJson
-import no.uib.echo.schema.RegistrationJson
-import no.uib.echo.schema.StudentGroup
-import no.uib.echo.schema.StudentGroupMembership
-import no.uib.echo.schema.User
-import no.uib.echo.schema.insertOrUpdateHappening
-import no.uib.echo.schema.nullableDegreeToString
-import no.uib.echo.schema.toCsv
-import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.schema.*
 import no.uib.echo.tables
 import no.uib.echo.user1
 import no.uib.echo.user10
@@ -109,7 +100,9 @@ class GetRegistrationsTest {
                             u.degreeYear ?: 3,
                             newReg.slug,
                             null,
-                            u !in usersSublist,
+                            if (u in usersSublist) Status.REGISTERED else Status.WAITLIST,
+                            null,
+                            null,
                             newReg.answers,
                             u.memberships,
                         )

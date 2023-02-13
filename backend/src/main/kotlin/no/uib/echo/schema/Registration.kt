@@ -16,7 +16,12 @@ data class FormRegistrationJson(
     val slug: String,
     val answers: List<AnswerJson>,
 )
-
+@Serializable
+data class FormDeregistrationJson(
+    val email: String,
+    val slug: String,
+    val reason: String
+)
 @Serializable
 data class RegistrationJson(
     val email: String,
@@ -26,10 +31,16 @@ data class RegistrationJson(
     val degreeYear: Int,
     val slug: String,
     val submitDate: String? = null,
-    val waitList: Boolean? = null,
+    val registrationStatus: Status = Status.REGISTERED,
+    val reason: String? = null,
+    val deregistrationDate: String? = null,
     val answers: List<AnswerJson> = emptyList(),
     val memberships: List<String> = emptyList(),
 )
+enum class Status{
+    REGISTERED, DEREGISTERED, WAITLIST
+}
+
 
 object Registration : Table() {
     val userEmail: Column<String> = text("user_email") references User.email
@@ -37,7 +48,10 @@ object Registration : Table() {
     val degree: Column<String> = text("degree")
     val degreeYear: Column<Int> = integer("degree_year")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
-    val waitList: Column<Boolean> = bool("wait_list")
+    val registrationStatus: Column<Status> = enumeration("registration_status")
+    val reason: Column<String?> = text("deregistration_reason").nullable()
+    val deregistrationDate: Column<DateTime?> = datetime("deregistration_date").nullable()
+
 
     override val primaryKey: PrimaryKey = PrimaryKey(userEmail, happeningSlug)
 }
@@ -45,13 +59,14 @@ object Registration : Table() {
 fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
-    waitList: Boolean,
+    status: Status,
 ): Int {
+
     return transaction {
         Registration.select {
             Registration.happeningSlug eq slug and
                 (Registration.degreeYear inList range) and
-                (Registration.waitList eq waitList)
+                (Registration.registrationStatus eq status)
         }.count()
     }.toInt()
 }
@@ -75,7 +90,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
         if (p) "" else s
     }
 
-    return "email,name,degree,degreeYear${predOrEmpty(testing, ",submitDate")},waitList$answersHeading,memberships" +
+    return "email,name,degree,degreeYear${predOrEmpty(testing, ",submitDate")},registrationStatus$answersHeading,memberships" +
         regs.joinToString("") { reg ->
             "\n" +
                 (reg.alternateEmail?.lowercase() ?: reg.email.lowercase()) + "," +
@@ -83,7 +98,7 @@ fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
                 reg.degree.toString() + "," +
                 reg.degreeYear.toString() + "," +
                 predOrEmpty(testing, reg.submitDate.toString() + ",") +
-                reg.waitList.toString() +
+                reg.registrationStatus.toString() +
                 predOrEmpty(reg.answers.isEmpty(), reg.answers.joinToString("") { "," + it.answer }) +
                 predOrEmpty(reg.memberships.isEmpty(), reg.memberships.joinToString(";", prefix = ","))
         }

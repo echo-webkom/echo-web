@@ -22,7 +22,7 @@ data class SpotRangeWithCountJson(
     val minDegreeYear: Int,
     val maxDegreeYear: Int,
     val regCount: Int,
-    val waitListCount: Int
+    val waitListCount: Int,
 )
 
 object SpotRange : Table() {
