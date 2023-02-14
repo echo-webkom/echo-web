@@ -88,7 +88,7 @@ class DatabaseHandler(
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
     private val flyway: Flyway =
-        Flyway.configure().baselineVersion("29").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
+        Flyway.configure().baselineVersion("30").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
             .load()
 
     private val conn by lazy {
