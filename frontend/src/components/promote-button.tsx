@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import useAuth from '@hooks/use-auth';
 import type { Registration } from '@api/registration';
+import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
     registration: Registration;
@@ -28,8 +29,6 @@ const PromoteButton = ({ registration }: Props) => {
 
     const toast = useToast();
 
-    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-
     const handlePromote = async () => {
         if (!signedIn || !idToken) {
             toast({
@@ -39,18 +38,9 @@ const PromoteButton = ({ registration }: Props) => {
             });
             return;
         }
+        const { statusCode } = await WaitinglistAPI.promoteDirectly(registration, idToken);
 
-        const responsePromote = await fetch(
-            `${BACKEND_URL}/registration/promote/noemail/${registration.slug}/${registration.email}`,
-            {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-            },
-        );
-
-        if (responsePromote.ok) {
+        if (statusCode === 200) {
             onClosePromote();
             toast({
                 title: 'Bruker ble promotert.',
@@ -75,18 +65,9 @@ const PromoteButton = ({ registration }: Props) => {
             });
             return;
         }
+        const { statusCode } = await WaitinglistAPI.promoteSendEmail(registration, idToken);
 
-        const responseEmail = await fetch(
-            `${BACKEND_URL}/registration/promote/email/${registration.slug}/${registration.email}`,
-            {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-            },
-        );
-
-        if (responseEmail.ok) {
+        if (statusCode === 200) {
             onClosePromote();
             toast({
                 title: 'Email er sendt.',
@@ -103,7 +84,7 @@ const PromoteButton = ({ registration }: Props) => {
     };
 
     return (
-        <div>
+        <>
             <Button onClick={onOpenPromote} colorScheme="pink">
                 Ja
             </Button>
@@ -126,15 +107,15 @@ const PromoteButton = ({ registration }: Props) => {
                     </ModalBody>
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
-                            <Button colorScheme="green" onClick={void handleEmail}>
+                            <Button colorScheme="green" onClick={() => void handleEmail()}>
                                 Send epost
                             </Button>
-                            <Button onClick={void handlePromote}>Promoter uten å spørre</Button>
+                            <Button onClick={() => void handlePromote()}>Promoter uten å spørre</Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </>
     );
 };
 

@@ -62,7 +62,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
             val email = waitingListResult[userEmail]
 
             if (!isPromotionLegal(happeningSlug) || !isPersonLegalToPromote(happeningSlug, email)) {
-                call.respond(HttpStatusCode.OK, "denied")
+                call.respond(HttpStatusCode.Accepted, "denied")
                 return@post
             }
 
@@ -76,7 +76,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
 
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
             }
-            call.respond(HttpStatusCode.Accepted, "approved")
+            call.respond(HttpStatusCode.OK, "approved")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()
@@ -116,7 +116,6 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
         try {
 
             val adminEmail = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
-            println(adminEmail)
             val happeningSlug = call.parameters["slug"]
             val email = call.parameters["email"]
 
