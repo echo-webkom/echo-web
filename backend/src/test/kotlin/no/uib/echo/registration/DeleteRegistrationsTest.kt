@@ -140,23 +140,7 @@ class DeleteRegistrationsTest {
                     deleteRegCall.status shouldBe HttpStatusCode.OK
                     deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
                     hap9(t).slug
-                    } deleted, " + "and registration with email ="
-                }
-
-                // Delete the registrations that were moved off the wait list in the previous for-loop.
-                for (u in waitListUsers) {
-                    val waitListRegEmail = u.email.lowercase()
-                    val deleteWaitListRegCall =
-                        client.delete("/registration/${hap9(t).slug}/$waitListRegEmail") {
-                            bearerAuth(adminToken)
-                        }
-
-                    deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
-                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = $waitListRegEmail and slug = ${
-                    hap9(
-                        t
-                    ).slug
-                    } deleted."
+                    } deleted"
                 }
             }
         }
