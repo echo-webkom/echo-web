@@ -1,4 +1,3 @@
-import type { TableRowProps } from '@chakra-ui/react';
 import {
     Heading,
     Text,
@@ -15,6 +14,12 @@ import {
     ModalBody,
     ModalFooter,
     SimpleGrid,
+    TableRowProps,
+    NumberInput,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInputField,
+    NumberInputStepper,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -39,6 +44,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const [deleted, setDeleted] = useState(false);
 
+    const [dots, setDots] = useState(0);
+
     const toast = useToast();
 
     const router = useRouter();
@@ -55,7 +62,12 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             return;
         }
 
-        const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken);
+        const { error } = await RegistrationAPI.deleteRegistration(
+            registration.slug,
+            registration.email,
+            dots.toString(),
+            idToken,
+        );
 
         onCloseDelete();
 
@@ -136,12 +148,65 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
+                        <Text py="0.5rem" lineHeight="1.5">
+                            Dersom det er noen på venteliste, vil denne handlingen automatisk rykke første person på
+                            venteliste opp, uten at de får beskjed om dette.
+                        </Text>
+                        <Text fontWeight="bold"> Antall prikker </Text>
+                        <NumberInput
+                            name="numDots"
+                            size="md"
+                            maxW={100}
+                            min={0}
+                            max={5}
+                            onChange={(value) => setDots(value)}
+                        >
+                            <NumberInputField />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper>
+                        </NumberInput>
                     </ModalBody>
 
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                            <Button data-cy="confirm-delete-button" bg="green.400" onClick={handleDelete}>
+                            <Button
+                                data-cy="confirm-delete-button"
+                                bg="green.400"
+                                onClick={async () => {
+                                    if (!idToken) {
+                                        handleDelete();
+                                        return;
+                                    }
+                                    const { error } = await RegistrationAPI.deleteRegistration(
+                                        registration.slug,
+                                        registration.email,
+                                        dots.toString(),
+                                        idToken,
+                                    );
+
+                                    onClose();
+
+                                    if (error === null) {
+                                        setDeleted(true);
+                                        void router.replace(router.asPath, undefined, { scroll: false });
+                                        toast({
+                                            title: 'Påmelding slettet!',
+                                            description: `Slettet påmeding med email '${registration.email}'.`,
+                                            isClosable: true,
+                                        });
+                                    } else {
+                                        toast({
+                                            title: 'Det har skjedd en feil!',
+                                            description: error,
+                                            status: 'error',
+                                            isClosable: true,
+                                        });
+                                    }
+                                }}
+                            >
                                 Ja, slett
                             </Button>
                             <Button onClick={onCloseDelete}>Nei</Button>
