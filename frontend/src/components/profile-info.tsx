@@ -20,6 +20,7 @@ import {
     Button,
     useColorModeValue,
     Alert,
+    Text,
     Skeleton,
     LinkOverlay,
     AlertIcon,
@@ -151,14 +152,15 @@ const ProfileInfo = () => {
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
                             )}
-                            <IconText
-                                iconColor={IoIosAlert}
-                                data-cy="profile-email"
-                                icon={MdOutlineEmail}
-                                text={
-                                    isNorwegian ? 'Antall prikker (bedpres)' : 'Number of dots (bedpres)\n{user.dots}'
-                                }
-                            />
+                            {/* {user.dots &&  */}
+                            <HStack>
+                                <IconText
+                                    data-cy="profile-dots"
+                                    icon={IoIosAlert}
+                                    text={isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of dots (bedpres): '}
+                                />
+                                <Text>{user.dots}</Text>
+                            </HStack>
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
