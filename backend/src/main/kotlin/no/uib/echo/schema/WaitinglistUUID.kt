@@ -24,7 +24,7 @@ object WaitingListUUID : Table("waiting_list_uuid") {
     val uuid: Column<String> = text("uuid").uniqueIndex()
     val userEmail: Column<String> = text("user_email") references User.email
     val happeningSlug: Column<String> = text("happening_slug") references Happening.slug
-    val lastNotified: Column<DateTime> = datetime("last_Notified").default(DateTime(0)) // default value is January 1st, 1970 (1970-01-01T01:00:00.000+01:00)
+    val lastNotified: Column<DateTime> = datetime("last_notified").default(DateTime(0)) // default value is January 1st, 1970 (1970-01-01T01:00:00.000+01:00)
 
     init {
         uniqueIndex(userEmail, happeningSlug)
