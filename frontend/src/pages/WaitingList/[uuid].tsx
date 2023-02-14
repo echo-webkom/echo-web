@@ -2,6 +2,7 @@ import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import { Center, Spinner } from '@chakra-ui/react';
+import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
     uuid: string;
@@ -14,15 +15,11 @@ const WaitingListPage = ({ uuid }: Props) => {
 
     useEffect(() => {
         const acceptSpot = async () => {
-            const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
-
             setLoading(true);
-            const responsePromote = await fetch(`${BACKEND_URL}/registration/promote/${uuid}`, {
-                method: 'POST',
-            });
-            if (responsePromote.status === 202) {
+            const { statusCode } = await WaitinglistAPI.promoteUUID(uuid);
+            if (statusCode === 200) {
                 setApproved(true);
-            } else if (responsePromote.ok) {
+            } else if (statusCode === 202) {
                 setApproved(false);
             } else {
                 setError(true);

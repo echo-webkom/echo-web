@@ -25,6 +25,7 @@ import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
+import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
     registration: Registration;
@@ -47,12 +48,10 @@ const RegistrationRow = ({ registration, questions }: Props) => {
     const { idToken, signedIn } = useAuth();
 
     useEffect(() => {
-        void CheckIfCanPromote();
+        void checkIfCanPromote();
     }, []);
 
-    const CheckIfCanPromote = async () => {
-        //TODO dont check if there are no people on waitinglist maybe???
-        const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+    const checkIfCanPromote = async () => {
         if (!signedIn || !idToken) {
             toast({
                 title: 'Du er ikke logget inn.',
@@ -61,17 +60,8 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             });
             return;
         }
-        const response = await fetch(`${BACKEND_URL}/registration/promote/can_promote/${registration.slug}`, {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-        });
-        if (response.status === 200) {
-            setCanPromote(true);
-        } else {
-            setCanPromote(false);
-        }
+        const { bool } = await WaitinglistAPI.checkIfCanPromote(registration.slug, idToken);
+        setCanPromote(bool);
     };
 
     const handleDelete = async () => {
