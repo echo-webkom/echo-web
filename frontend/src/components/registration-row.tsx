@@ -66,7 +66,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             registration.slug,
             registration.email,
             idToken,
-            dots.toString(),
+            dots,
         );
 
         onCloseDelete();
@@ -184,7 +184,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                                         registration.slug,
                                         registration.email,
                                         idToken,
-                                        dots.toString(),
+                                        dots,
                                     );
 
                                     onClose();

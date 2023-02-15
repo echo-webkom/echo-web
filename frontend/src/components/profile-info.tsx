@@ -152,7 +152,7 @@ const ProfileInfo = () => {
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
                             )}
-                            {user.dots !== 'null' && user.dots !== '0' && (
+                            {user.dots !== 0 && (
                                 <HStack>
                                     <IconText
                                         data-cy="profile-dots"

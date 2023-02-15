@@ -407,7 +407,7 @@ fun Route.deleteRegistration() {
                 return@delete
             }
 
-            val dots = call.request.queryParameters["dots"] ?: 0
+            val dots = call.request.queryParameters["dots"]
 
             transaction {
                 Answer.deleteWhere {
@@ -418,9 +418,9 @@ fun Route.deleteRegistration() {
                     Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
                 }
 
-                User.update({ User.email.lowerCase() eq decodedParamEmail }) {
-                    with(SqlExpressionBuilder) {
-                        it.update(User.dots, User.dots + 1)
+                if (dots != null) {
+                    User.update({ User.email.lowerCase() eq decodedParamEmail }) {
+                        it[User.dots] = dots.toInt()
                     }
                 }
             }
