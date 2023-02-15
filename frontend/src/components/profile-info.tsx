@@ -152,15 +152,16 @@ const ProfileInfo = () => {
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
                             )}
-                            {/* {user.dots &&  */}
-                            <HStack>
-                                <IconText
-                                    data-cy="profile-dots"
-                                    icon={IoIosAlert}
-                                    text={isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of dots (bedpres): '}
-                                />
-                                <Text>{user.dots}</Text>
-                            </HStack>
+                            {user.dots !== 'null' && user.dots !== '0' && (
+                                <HStack>
+                                    <IconText
+                                        data-cy="profile-dots"
+                                        icon={IoIosAlert}
+                                        text={isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of dots (bedpres): '}
+                                    />
+                                    <Text>{user.dots}</Text>
+                                </HStack>
+                            )}
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>

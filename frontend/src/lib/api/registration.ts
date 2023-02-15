@@ -119,11 +119,12 @@ const RegistrationAPI = {
         slug: string,
         email: string,
         idToken: string,
+        dots: string,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
             const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
 
-            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}`, {
+            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}?dots=${dots}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}` },
             });

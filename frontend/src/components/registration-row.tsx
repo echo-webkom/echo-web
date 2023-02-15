@@ -65,8 +65,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
         const { error } = await RegistrationAPI.deleteRegistration(
             registration.slug,
             registration.email,
-            dots.toString(),
             idToken,
+            dots.toString(),
         );
 
         onCloseDelete();
@@ -183,8 +183,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                                     const { error } = await RegistrationAPI.deleteRegistration(
                                         registration.slug,
                                         registration.email,
-                                        dots.toString(),
                                         idToken,
+                                        dots.toString(),
                                     );
 
                                     onClose();
