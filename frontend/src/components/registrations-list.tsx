@@ -51,6 +51,7 @@ import type { Degree } from '@utils/schemas';
 import type { StudentGroup } from '@api/dashboard';
 import { isErrorMessage, type ErrorMessage } from '@utils/error';
 import capitalize from '@utils/capitalize';
+import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
     slug: string;
@@ -85,6 +86,8 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     const [waitlist, setWaitlist] = useState<number>(-1);
     const [search, setSearch] = useState<string>('');
     const [studentGroup, setStudentGroup] = useState<StudentGroupType>('all');
+
+    const [canPromote, setCanPromote] = useState(false);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -135,6 +138,15 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
             }
         };
         void fetchRegs();
+
+        const checkIfCanPromote = async () => {
+            if (!signedIn || !idToken) {
+                return;
+            }
+            const bool = await WaitinglistAPI.checkIfCanPromote(slug, idToken);
+            setCanPromote(bool);
+        };
+        void checkIfCanPromote();
     }, [idToken, signedIn, slug]);
 
     if (registrations.length === 0 && !error) return <></>;
@@ -318,6 +330,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                                             key={reg.email}
                                                             registration={reg}
                                                             questions={questions}
+                                                            canPromote={canPromote}
                                                         />
                                                     );
                                                 })}
