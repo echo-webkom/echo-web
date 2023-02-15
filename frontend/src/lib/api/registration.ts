@@ -119,7 +119,7 @@ const RegistrationAPI = {
         slug: string,
         email: string,
         idToken: string,
-        dots: string,
+        dots: number,
     ): Promise<{ response: string | null; error: string | null }> => {
         try {
             const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];

@@ -18,7 +18,7 @@ const userSchema = z.object({
     degree: degreeSchema.nullable(),
     degreeYear: z.number().nullable(),
     memberships: z.array(z.string()),
-    dots: z.string().nullable(),
+    dots: z.number(),
     createdAt: z.string().transform((date) => parseISO(date)),
     modifiedAt: z.string().transform((date) => parseISO(date)),
 });
@@ -44,7 +44,7 @@ const UserAPI = {
                     degreeYear: null,
                     degree: null,
                     memberships: [],
-                    dots: null,
+                    dots: 0,
                     createdAt: new Date(),
                     modifiedAt: new Date(),
                 };

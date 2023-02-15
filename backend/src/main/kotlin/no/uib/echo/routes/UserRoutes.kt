@@ -86,6 +86,7 @@ fun Route.getUser() {
                 user[User.degreeYear],
                 nullableStringToDegree(user[User.degree]),
                 memberships,
+                user[User.dots],
                 user[User.createdAt].toString(),
                 user[User.modifiedAt].toString(),
             )
@@ -212,6 +213,7 @@ fun Route.putUser() {
                         newUser[User.degreeYear],
                         nullableStringToDegree(newUser[User.degree]),
                         emptyList(),
+                        newUser[User.dots],
                         newUser[User.createdAt].toString(),
                         newUser[User.modifiedAt].toString(),
                     )
@@ -242,6 +244,7 @@ fun Route.putUser() {
                     updatedUser[User.degreeYear],
                     nullableStringToDegree(updatedUser[User.degree]),
                     memberships,
+                    updatedUser[User.dots],
                     updatedUser[User.createdAt].toString(),
                     updatedUser[User.modifiedAt].toString(),
                 )
@@ -284,6 +287,7 @@ fun Route.getAllUsers() {
                             .toList()
                             .map { it[StudentGroupMembership.studentGroupName] }
                             .ifEmpty { emptyList() },
+                        it[User.dots],
                         it[User.createdAt].toString(),
                         it[User.modifiedAt].toString(),
                     )
