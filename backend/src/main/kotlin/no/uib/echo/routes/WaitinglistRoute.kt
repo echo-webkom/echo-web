@@ -62,7 +62,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
             val email = waitingListResult[userEmail]
 
             if (!isPromotionLegal(happeningSlug) || !isPersonLegalToPromote(happeningSlug, email)) {
-                call.respond(HttpStatusCode.Accepted, "denied")
+                call.respond(HttpStatusCode.Accepted, "user ($email) was denied promotion from the waiting list, person or promotion was illegal")
                 return@post
             }
 
@@ -76,7 +76,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
 
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
             }
-            call.respond(HttpStatusCode.OK, "approved")
+            call.respond(HttpStatusCode.OK, "user ($email) was promoted from the waiting list")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
             e.printStackTrace()

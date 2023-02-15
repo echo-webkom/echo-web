@@ -3,7 +3,7 @@ import type { Registration } from './registration';
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const WaitinglistAPI = {
-    checkIfCanPromote: async (slug: string, idToken: string): Promise<{ bool: boolean }> => {
+    checkIfCanPromote: async (slug: string, idToken: string): Promise<boolean> => {
         try {
             const res = await fetch(`${BACKEND_URL}/registration/promote/can_promote/${slug}`, {
                 method: 'GET',
@@ -11,20 +11,14 @@ const WaitinglistAPI = {
                     Authorization: `Bearer ${idToken}`,
                 },
             });
-            return {
-                bool: res.status === 200,
-            };
+            return res.status === 200;
         } catch {
-            return {
-                bool: false,
-            };
+            return false;
         }
     },
 
     promoteDirectly: async (registration: Registration, idToken: string): Promise<{ statusCode: number }> => {
         try {
-            // eslint-disable-next-line no-console
-            console.log('promoteDirectly');
             const res = await fetch(
                 `${BACKEND_URL}/registration/promote/noemail/${registration.slug}/${registration.email}`,
                 {

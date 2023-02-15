@@ -60,7 +60,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             });
             return;
         }
-        const { bool } = await WaitinglistAPI.checkIfCanPromote(registration.slug, idToken);
+        const bool = await WaitinglistAPI.checkIfCanPromote(registration.slug, idToken);
         setCanPromote(bool);
     };
 
@@ -124,7 +124,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 )}
                 {registration.waitList ? (
                     <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
-                        {canPromote ? <PromoteButton registration={registration} /> : 'ja'}
+                        {canPromote ? <PromoteButton registration={registration} /> : 'Ja'}
                     </Td>
                 ) : (
                     <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
