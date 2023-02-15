@@ -12,14 +12,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Create temporary requirements.txt
+        run: echo "pgsanity" > requirements.txt
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
 
-      - name: Install PgSanity
-        run: pip install pgsanity
+      - name: Install PgSanity & dependencies
+        run: |
+          pip install -r requirements.txt
+          sudo apt-get -y install libecpg-dev
 
       - name: Run PgSanity
         run: |
