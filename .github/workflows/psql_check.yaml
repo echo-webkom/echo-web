@@ -1,0 +1,27 @@
+name: Check SQL migration syntax
+on:
+  pull_request:
+    branches: [master]
+    paths: ['backend/src/main/resources/db/migration/**']
+
+jobs:
+  psql_check:
+    name: 'Check SQL migration syntax'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install PgSanity
+        run: pip install pgsanity
+
+      - name: Run PgSanity
+        run: |
+          cd backend/src/main/resources/db/migration
+          find -name '*.sql' | xargs pgsanity

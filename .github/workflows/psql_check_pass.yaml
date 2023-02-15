@@ -1,0 +1,13 @@
+name: Check SQL migration syntax
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore: ['backend/src/main/resources/db/migration/**']
+
+jobs:
+  psql_check:
+    name: 'Check SQL migration syntax'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: echo 'Nothing to be done, passing checks.'
