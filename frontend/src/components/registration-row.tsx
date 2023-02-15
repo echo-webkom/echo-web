@@ -16,7 +16,7 @@ import {
     ModalFooter,
     SimpleGrid,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import PromoteButton from './promote-button';
@@ -25,44 +25,25 @@ import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
-import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
     registration: Registration;
     questions: Array<string> | null;
+    canPromote: boolean;
 }
 
 const MotionTr = motion<TableRowProps>(Tr);
 
-const RegistrationRow = ({ registration, questions }: Props) => {
+const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
     const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
-
-    const [canPromote, setCanPromote] = useState(false);
 
     const toast = useToast();
 
     const router = useRouter();
 
     const { idToken, signedIn } = useAuth();
-
-    useEffect(() => {
-        void checkIfCanPromote();
-    }, []);
-
-    const checkIfCanPromote = async () => {
-        if (!signedIn || !idToken) {
-            toast({
-                title: 'Du er ikke logget inn.',
-                status: 'error',
-                isClosable: true,
-            });
-            return;
-        }
-        const bool = await WaitinglistAPI.checkIfCanPromote(registration.slug, idToken);
-        setCanPromote(bool);
-    };
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
