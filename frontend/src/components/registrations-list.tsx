@@ -41,7 +41,7 @@ import { getTime, parseISO, isBefore, isAfter } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 import ErrorBox from '@components/error-box';
-import { RegistrationAPI, type Registration } from '@api/registration';
+import { RegistrationAPI, type Status, type Registration } from '@api/registration';
 import Section from '@components/section';
 import RegistrationRow from '@components/registration-row';
 import useAuth from '@hooks/use-auth';
@@ -73,6 +73,7 @@ const regsFormatter = (regs: Array<Registration>) =>
 const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     type DegreeType = 'all' | Degree;
     type StudentGroupType = 'all' | StudentGroup;
+    type StatusOrAllType = 'all' | Status;
 
     const { idToken, signedIn } = useAuth();
 
@@ -81,8 +82,9 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
 
     const [degree, setDegree] = useState<DegreeType>('all');
     const [year, setYear] = useState<number>(0);
-    // -1: ALL, 0: Only waitlist, 1: Only accepted
-    const [waitlist, setWaitlist] = useState<number>(-1);
+
+    const [status, setStatus] = useState<StatusOrAllType>('all');
+
     const [search, setSearch] = useState<string>('');
     const [studentGroup, setStudentGroup] = useState<StudentGroupType>('all');
 
@@ -91,7 +93,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     const filteredRegistrations = registrations
         .filter((reg) => reg.degree === degree || degree === 'all')
         .filter((reg) => reg.degreeYear === year || year === 0)
-        .filter((reg) => (waitlist === -1 ? true : waitlist ? reg.waitList : !reg.waitList))
+        .filter((reg) => status === 'all' || reg.registrationStatus === status)
         .filter(
             (reg) =>
                 reg.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -111,11 +113,15 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     const justifyHeading = useBreakpointValue({ base: 'center', lg: 'left' });
 
     const registrationsOverTimeBefore = regsFormatter(
-        registrations.filter((reg) => !reg.waitList && isBefore(parseISO(reg.submitDate), registrationDate)),
+        registrations.filter(
+            (reg) => reg.registrationStatus === 'REGISTERED' && isBefore(parseISO(reg.submitDate), registrationDate),
+        ),
     );
 
     const registrationsOverTimeAfter = regsFormatter(
-        registrations.filter((reg) => !reg.waitList && isAfter(parseISO(reg.submitDate), registrationDate)),
+        registrations.filter(
+            (reg) => reg.registrationStatus === 'REGISTERED' && isAfter(parseISO(reg.submitDate), registrationDate),
+        ),
     );
 
     const hasEarlyRegistrations = registrationsOverTimeBefore.length > 0;
@@ -239,16 +245,16 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                         </Flex>
                                         <Flex direction="column" w="full">
                                             <Text px="0.8rem" fontSize="md">
-                                                Venteliste:
+                                                Status:
                                             </Text>
                                             <Select
-                                                title="Venteliste"
-                                                value={waitlist}
-                                                onChange={(evt) => setWaitlist(Number.parseInt(evt.target.value))}
+                                                title="Status"
+                                                onChange={(evt) => setStatus(evt.target.value as StatusOrAllType)}
                                             >
-                                                <option value={-1}>Alle</option>
-                                                <option value={1}>Bare venteliste</option>
-                                                <option value={0}>Uten venteliste</option>
+                                                <option value="all">Alle</option>
+                                                <option value="WAITLIST">Bare venteliste</option>
+                                                <option value="REGISTERED">Bare påmeldt</option>
+                                                <option value="DEREGISTERED">Bare avmeldt</option>
                                             </Select>
                                         </Flex>
                                         <Flex direction="column" w="full">
@@ -276,7 +282,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                                 onClick={() => {
                                                     setDegree('all');
                                                     setYear(0);
-                                                    setWaitlist(-1);
+                                                    setStatus('all');
                                                     setSearch('');
                                                     setStudentGroup('all');
                                                 }}
@@ -300,7 +306,8 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                                 {questions.map((q, index) => (
                                                     <Th key={index}>{q}</Th>
                                                 ))}
-                                                <Th>På venteliste?</Th>
+                                                <Th>Påmeldingsstatus</Th>
+                                                <Th>Grunn for avmelding</Th>
                                                 <Th>Medlem av</Th>
                                                 <Th>Slett påmelding</Th>
                                             </Tr>
@@ -308,9 +315,15 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                         <Tbody>
                                             {filteredRegistrations
                                                 .sort((a, b) => {
-                                                    if (a.waitList && !b.waitList) return 1;
-                                                    else if (!a.waitList && b.waitList) return -1;
-                                                    else return 0;
+                                                    const statusOrder = {
+                                                        REGISTERED: 1,
+                                                        WAITLIST: 2,
+                                                        DEREGISTERED: 3,
+                                                    };
+                                                    return (
+                                                        statusOrder[a.registrationStatus] -
+                                                        statusOrder[b.registrationStatus]
+                                                    );
                                                 })
                                                 .map((reg) => {
                                                     return (
@@ -378,9 +391,12 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                     <Button
                                         onClick={() =>
                                             setRandomRegistration(
-                                                registrations.filter((r) => !r.waitList)[
+                                                registrations.filter((r) => r.registrationStatus === 'REGISTERED')[
                                                     Math.floor(
-                                                        Math.random() * registrations.filter((r) => !r.waitList).length,
+                                                        Math.random() *
+                                                            registrations.filter(
+                                                                (r) => r.registrationStatus === 'REGISTERED',
+                                                            ).length,
                                                     )
                                                 ],
                                             )

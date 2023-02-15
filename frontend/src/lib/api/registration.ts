@@ -18,6 +18,10 @@ const answerSchema = z.object({
 });
 type Answer = z.infer<typeof answerSchema>;
 
+const statusSchema = z.enum(['REGISTERED', 'WAITLIST', 'DEREGISTERED']);
+
+type Status = z.infer<typeof statusSchema>;
+
 const registrationSchema = z.object({
     email: z.string(),
     alternateEmail: z.string().nullable(),
@@ -26,9 +30,9 @@ const registrationSchema = z.object({
     degreeYear: z.number(),
     slug: z.string(),
     submitDate: z.string(),
-    registrationStatus: z.string(),
-    reason: z.string(),
-    deregistrationDate: z.string(),
+    registrationStatus: statusSchema,
+    reason: z.string().nullable(),
+    deregistrationDate: z.string().nullable(),
     answers: z.array(answerSchema),
     memberships: z
         .array(z.string())
@@ -109,6 +113,7 @@ const RegistrationAPI = {
             }
 
             const data = await response.json();
+            console.log(data);
 
             if (isErrorMessage(data)) {
                 return data;
@@ -163,9 +168,7 @@ const RegistrationAPI = {
                     Authorization: `Basic ${Buffer.from(`admin:${auth}`).toString('base64')}`,
                 },
             });
-
             const data = await response.json();
-
             return registrationCountSchema.array().parse(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
@@ -196,4 +199,5 @@ export {
     type RegistrationCount,
     type Registration,
     type DeregisterFormValues,
+    type Status,
 };

@@ -288,36 +288,52 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                 }.firstOrNull()
             }
 
+
             if (oldReg != null) {
-                val responseCode = when (oldReg[Registration.registrationStatus]) {
-                    Status.WAITLIST -> RegistrationResponse.AlreadySubmittedWaitList
-                    else -> RegistrationResponse.AlreadySubmitted
-                }
-                call.respond(
-                    HttpStatusCode.UnprocessableEntity,
-                    resToJson(responseCode)
-                )
-                return@post
-            }
+                if (oldReg[Registration.registrationStatus] != Status.DEREGISTERED) {
 
-            transaction {
-                Registration.insert {
-                    it[userEmail] = registration.email.lowercase()
-                    it[happeningSlug] = registration.slug
-                    it[degree] = userDegree.toString()
-                    it[degreeYear] = userDegreeYear
-                    it[registrationStatus] = if (waitList) Status.WAITLIST else Status.REGISTERED
+                    val responseCode = when (oldReg[Registration.registrationStatus]) {
+                        Status.WAITLIST -> RegistrationResponse.AlreadySubmittedWaitList
+                        else -> RegistrationResponse.AlreadySubmitted
+                    }
+                    call.respond(
+                        HttpStatusCode.UnprocessableEntity,
+                        resToJson(responseCode)
+                    )
+                    return@post
+                }
+                transaction {
+                    Registration.update ({Registration.userEmail eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug)}) {
+                        it[degree] = userDegree.toString()
+                        it[degreeYear] = userDegreeYear
+                        it[registrationStatus] = if (waitList) Status.WAITLIST else Status.REGISTERED
+                    }
                 }
 
-                if (registration.answers.isNotEmpty()) {
-                    Answer.batchInsert(registration.answers) { a ->
-                        this[Answer.registrationEmail] = registration.email.lowercase()
-                        this[Answer.happeningSlug] = registration.slug
-                        this[Answer.question] = a.question
-                        this[Answer.answer] = a.answer
+            } else {
+
+                transaction {
+                    Registration.insert {
+                        it[userEmail] = registration.email.lowercase()
+                        it[happeningSlug] = registration.slug
+                        it[degree] = userDegree.toString()
+                        it[degreeYear] = userDegreeYear
+                        it[registrationStatus] = if (waitList) Status.WAITLIST else Status.REGISTERED
                     }
                 }
             }
+
+            transaction {
+                Answer.deleteWhere { registrationEmail eq registration.email and (happeningSlug eq registration.slug) }
+
+                Answer.batchInsert(registration.answers) { a ->
+                    this[Answer.registrationEmail] = registration.email.lowercase()
+                    this[Answer.happeningSlug] = registration.slug
+                    this[Answer.question] = a.question
+                    this[Answer.answer] = a.answer
+                }
+            }
+
 
             if (waitList) {
                 call.respond(
