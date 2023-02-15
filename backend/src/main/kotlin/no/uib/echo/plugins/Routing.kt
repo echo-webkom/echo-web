@@ -16,6 +16,7 @@ import no.uib.echo.routes.registrationRoutes
 import no.uib.echo.routes.sanityRoutes
 import no.uib.echo.routes.studentGroupRoutes
 import no.uib.echo.routes.userRoutes
+import no.uib.echo.routes.waitinglistRoutes
 
 fun Application.configureRouting(
     featureToggles: FeatureToggles,
@@ -39,6 +40,7 @@ fun Application.configureRouting(
     reactionRoutes(jwtConfig)
     sanityRoutes(env)
     studentGroupRoutes(jwtConfig)
+    waitinglistRoutes(jwtConfig, sendGridApiKey)
 }
 
 fun Route.getStatus() {

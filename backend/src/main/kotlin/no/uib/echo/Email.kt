@@ -15,6 +15,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.EmailRegistrationJson
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
 import org.jetbrains.exposed.sql.select
@@ -40,7 +42,8 @@ data class SendGridTemplate(
     val title: String,
     val link: String,
     val waitListSpot: Int? = null,
-    val registration: FormRegistrationJson? = null
+    val registration: FormRegistrationJson? = null,
+    val waitingListUUID: String? = null
 )
 
 @Serializable
@@ -49,6 +52,7 @@ data class SendGridEmail(val email: String, val name: String? = null)
 enum class Template {
     CONFIRM_REG,
     CONFIRM_WAIT,
+    WAITINGLIST_NOTIFY
 }
 
 private const val SENDGRID_ENDPOINT = "https://api.sendgrid.com/v3/mail/send"
@@ -60,6 +64,45 @@ fun fromEmail(email: String): String? {
         "webkom@echo.uib.no" -> "Webkom"
         "gnist@echo.uib.no" -> "Gnist"
         else -> null
+    }
+}
+
+suspend fun sendWaitingListEmail(
+    sendGridApiKey: String,
+    registration: EmailRegistrationJson,
+    stringId: String,
+) {
+    val hap = transaction {
+        Happening.select {
+            Happening.slug eq registration.slug
+        }.firstOrNull()
+    } ?: throw Exception("Happening is null.")
+
+    val fromEmail = "webkom@echo.uib.no"
+    val toEmail = registration.alternateEmail ?: registration.email
+    try {
+        withContext(Dispatchers.IO) {
+            sendEmail(
+                fromEmail,
+                toEmail,
+                SendGridTemplate(
+                    hap[Happening.title],
+                    "https://echo.uib.no/event/${registration.slug}",
+                    null,
+                    registration = FormRegistrationJson(
+                        registration.alternateEmail ?: registration.email,
+                        registration.slug,
+                        listOf(AnswerJson("", "")),
+                    ),
+                    "https://echo.uib.no/WaitingList/$stringId",
+
+                ),
+                Template.WAITINGLIST_NOTIFY,
+                sendGridApiKey
+            )
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }
 
@@ -122,6 +165,7 @@ suspend fun sendEmail(
     val templateId = when (template) {
         Template.CONFIRM_REG -> "d-1fff3960b2184def9cf8bac082aeac21"
         Template.CONFIRM_WAIT -> "d-1965cd803e6940c1a6724e3c53b70275"
+        Template.WAITINGLIST_NOTIFY -> "d-4206b11b75c441b8ba5f792281b0f5e2"
     }
 
     val response: HttpResponse = HttpClient {

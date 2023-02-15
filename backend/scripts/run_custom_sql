@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -v localhost:8080/sanity/develop
+docker exec -i backend-database-1 env PGPASSWORD=password psql -h localhost -U postgres -d postgres < ./src/main/resources/db/custom_sql.sql

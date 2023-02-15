@@ -16,9 +16,10 @@ import {
     ModalFooter,
     SimpleGrid,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import PromoteButton from './promote-button';
 import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
@@ -33,15 +34,45 @@ interface Props {
 const MotionTr = motion<TableRowProps>(Tr);
 
 const RegistrationRow = ({ registration, questions }: Props) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
+
+    const [canPromote, setCanPromote] = useState(false);
 
     const toast = useToast();
 
     const router = useRouter();
 
     const { idToken, signedIn } = useAuth();
+
+    useEffect(() => {
+        CheckIfCanPromote();
+    }, []);
+
+    const CheckIfCanPromote = async () => {
+        //TODO dont check if there are no people on waitinglist maybe???
+        const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+        if (!signedIn || !idToken) {
+            toast({
+                title: 'Du er ikke logget inn.',
+                status: 'error',
+                isClosable: true,
+            });
+            return;
+        }
+        const response = await fetch(`${BACKEND_URL}/registration/promote/can_promote/${registration.slug}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+        });
+        if (response.status == 200) {
+            setCanPromote(true);
+        } else {
+            setCanPromote(false);
+        }
+    };
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -55,7 +86,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
 
         const { error } = await RegistrationAPI.deleteRegistration(registration.slug, registration.email, idToken);
 
-        onClose();
+        onCloseDelete();
 
         if (error === null) {
             setDeleted(true);
@@ -103,7 +134,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 )}
                 {registration.waitList ? (
                     <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
-                        Ja
+                        {canPromote ? <PromoteButton registration={registration} /> : 'ja'}
                     </Td>
                 ) : (
                     <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
@@ -112,13 +143,13 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                 )}
                 <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
-                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} colorScheme="red">
+                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpenDelete} colorScheme="red">
                         Slett
                     </Button>
                 </Td>
             </MotionTr>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
@@ -150,7 +181,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                             <Button data-cy="confirm-delete-button" bg="green.400" onClick={handleDelete}>
                                 Ja, slett
                             </Button>
-                            <Button onClick={onClose}>Nei</Button>
+                            <Button onClick={onCloseDelete}>Nei</Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>
