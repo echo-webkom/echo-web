@@ -286,7 +286,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val totalRegCount = countRegistrationsDegreeYear(registration.slug, 1..5, false)
             val totalSpotsCount = spotRanges.sumOf { it.spots }
 
-            val waitList = correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0 || totalRegCount >= totalSpotsCount
+            val waitList =
+                correctRange.spots in 1..countRegsInSpotRange || countRegsInSpotRangeWaitList > 0 || (totalRegCount >= totalSpotsCount && correctRange.spots != 0)
             val waitListSpot = countRegsInSpotRangeWaitList + 1
 
             val oldReg = transaction {
