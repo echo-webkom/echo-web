@@ -159,10 +159,6 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
-                        <Text py="0.5rem" lineHeight="1.5">
-                            Dersom det er noen på venteliste, vil denne handlingen automatisk rykke første person på
-                            venteliste opp, uten at de får beskjed om dette.
-                        </Text>
                     </ModalBody>
 
                     <ModalFooter>

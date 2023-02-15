@@ -404,13 +404,17 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                         <Text>
                             Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt om å bekrefte at du vil
                             slette påmeldingen. Dersom du godtar dette, vil påmeldingen bli slettet for alltid. Hvis
-                            denne påmeldingen ikke var på venteliste, vil neste person på ventelisten automatisk bli
-                            rykket opp i listen. Denne personen får ikke automatisk beskjed om at de ikke lenger er på
-                            venteliste; arrangør er ansvarlig for å gjøre dette.
+                            denne påmeldingen ikke var på venteliste, vil det komme en knapp under &quot;på
+                            venteliste?&quot; for de som er på venteliste hvor du kan promotere dem. Der kan du velge
+                            mellom å promotere dem direkte eller å sende dem en promoterings epost. Hvis du promoterer
+                            dem direkte så blir denne personen ikke automatisk gitt beskjed om dette, og arrangøren blir
+                            ansvarlig for å gi dem beskjed. Hvis du velger å sende dem en epost, vil de få en link der
+                            de kan velge å ta plassen selv. Det er ikke garentert at personen vil få eposten, spesielt
+                            hvis de kun har studenteposten registrert hos oss.
                         </Text>
                         <Text fontWeight="bold">
                             Det beste er å forhøre seg om neste person på venteliste har mulighet til å delta på
-                            arrangementet før du sletter en som har meldt seg av.
+                            arrangementet og så promotere dem direkte.
                         </Text>
                         <Text>
                             Påmeldinger som er slettet blir slettet for alltid, og det er ikke mulig å finne denne
