@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS waiting_list_uuid (
     CONSTRAINT fk_waiting_list_uuid_happening_slug__slug FOREIGN KEY (happening_slug) REFERENCES happening(slug) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-ALTER TABLE waiting_list_uuid ADD CONSTRAINT waiting_list_uuid_uuid_unique UNIQUE (uuid)
-ALTER TABLE waiting_list_uuid ADD CONSTRAINT waiting_list_uuid_user_email_happening_slug_unique UNIQUE (user_email, happening_slug)
+ALTER TABLE waiting_list_uuid ADD CONSTRAINT waiting_list_uuid_uuid_unique UNIQUE (uuid);
+ALTER TABLE waiting_list_uuid ADD CONSTRAINT waiting_list_uuid_user_email_happening_slug_unique UNIQUE (user_email, happening_slug);
