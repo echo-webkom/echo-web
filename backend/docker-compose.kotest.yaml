@@ -14,7 +14,7 @@ services:
       - database
     ports:
       - '8080:8080'
-    command: ./gradlew test --build-cache --no-daemon
+    command: ./gradlew test --build-cache --no-rebuild --no-daemon
     environment:
       DATABASE_URL: postgres://postgres:password@database/postgres
       ENVIRONMENT: development
