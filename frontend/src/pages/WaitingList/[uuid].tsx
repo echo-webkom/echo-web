@@ -1,7 +1,7 @@
 import type { ParsedUrlQuery } from 'querystring';
 import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
-import { Center, Spinner } from '@chakra-ui/react';
+import { Center, Spinner, Text } from '@chakra-ui/react';
 import WaitinglistAPI from '@api/waitinglist';
 
 interface Props {
@@ -16,6 +16,7 @@ const WaitingListPage = ({ uuid }: Props) => {
     useEffect(() => {
         const acceptSpot = async () => {
             setLoading(true);
+            setError(false);
             const { statusCode } = await WaitinglistAPI.promoteUUID(uuid);
             if (statusCode === 200) {
                 setApproved(true);
@@ -32,9 +33,9 @@ const WaitingListPage = ({ uuid }: Props) => {
     return (
         <Center mt="5em" alignItems="center">
             {loading && <Spinner size="xl" />}
-            {error && !loading && <div>det har skjedd en fail, snakke med webkom</div>}
-            {approved && !loading && !error && <div>du fikk en plass</div>}
-            {!approved && !loading && !error && <div>du fikk dessverre ikke plassen</div>}
+            {error && !loading && <Text>Det har skjedd en feil, ta kontakt med Webkom.</Text>}
+            {approved && !loading && !error && <Text>Du fikk plass på arrangementet!</Text>}
+            {!approved && !loading && !error && <Text>Du fikk dessverre ikke plass på arrangementet.</Text>}
         </Center>
     );
 };

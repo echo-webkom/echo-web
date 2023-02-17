@@ -17,7 +17,6 @@ data class WaitinglistUUIDJson(
     val userEmail: String,
     val happeningSlug: String,
     val lastNotified: String,
-
 )
 
 object WaitingListUUID : Table("waiting_list_uuid") {
@@ -38,46 +37,36 @@ suspend fun notifyWaitinglistPerson(slug: String, email: String, sendGridApiKey:
     }
     val person = getPersonToNotify(slug, email) ?: return false
 
-    val registrationPerson = transaction {
-        Registration.select {
-            Registration.waitList eq true and
-                (Registration.userEmail eq person.userEmail)
+    val user = transaction {
+        User.select {
+            User.email eq person.userEmail
         }.firstOrNull()
-    }?.let {
-        val user = transaction {
-            User.select {
-                User.email eq person.userEmail
-            }.firstOrNull()
-        }
-        EmailRegistrationJson(
-            it[Registration.userEmail],
-            user?.get(User.alternateEmail),
-            it[Registration.happeningSlug],
-        )
     } ?: return false
 
-    if (!isPersonLegalToNotify(slug, registrationPerson.email)) {
+    if (!isPersonLegalToNotify(slug, user[User.email])) {
         return false
     }
 
-    val emailSendt = sendWaitingListEmail(
-        sendGridApiKey,
-        registrationPerson,
-        person.uuid
+    val emailSent = sendWaitingListEmail(
+        sendGridApiKey = sendGridApiKey,
+        email = user[User.alternateEmail] ?: user[User.email],
+        slug = slug,
+        uuid = person.uuid
     )
 
-    if (!emailSendt) {
+    if (!emailSent) {
         return false
     }
 
     transaction {
         WaitingListUUID.update({
             WaitingListUUID.happeningSlug eq slug and
-                (WaitingListUUID.userEmail eq registrationPerson.email)
+                (WaitingListUUID.userEmail eq user[User.email])
         }) {
             it[lastNotified] = DateTime.now()
         }
     }
+
     return true
 }
 
