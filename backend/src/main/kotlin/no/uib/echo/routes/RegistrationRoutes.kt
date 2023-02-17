@@ -343,7 +343,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     return@post
                 }
 
-                sendConfirmationEmail(sendGridApiKey, registration, waitListSpot.toLong())
+                sendConfirmationEmail(sendGridApiKey, registration.copy(email = user[User.alternateEmail] ?: user[User.email]), waitListSpot.toLong())
             } else {
                 call.respond(HttpStatusCode.OK, resToJson(RegistrationResponse.OK))
 
@@ -351,7 +351,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     return@post
                 }
 
-                sendConfirmationEmail(sendGridApiKey, registration, null)
+                sendConfirmationEmail(sendGridApiKey, registration.copy(email = user[User.alternateEmail] ?: user[User.email]), null)
             }
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)

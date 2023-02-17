@@ -15,8 +15,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import no.uib.echo.schema.AnswerJson
-import no.uib.echo.schema.EmailRegistrationJson
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.Happening
 import org.jetbrains.exposed.sql.select
@@ -69,30 +67,30 @@ fun fromEmail(email: String): String? {
 
 suspend fun sendWaitingListEmail(
     sendGridApiKey: String,
-    registration: EmailRegistrationJson,
+    email: String,
+    slug: String,
     uuid: String,
 ): Boolean {
     val hap = transaction {
         Happening.select {
-            Happening.slug eq registration.slug
+            Happening.slug eq slug
         }.firstOrNull()
     } ?: throw Exception("Happening is null.")
 
     val fromEmail = "webkom@echo.uib.no"
-    val toEmail = registration.alternateEmail ?: registration.email
     try {
         withContext(Dispatchers.IO) {
             sendEmail(
                 fromEmail,
-                toEmail,
+                email,
                 SendGridTemplate(
                     hap[Happening.title],
-                    "https://echo.uib.no/event/${registration.slug}",
+                    "https://echo.uib.no/event/$slug",
                     null,
                     registration = FormRegistrationJson(
-                        registration.alternateEmail ?: registration.email,
-                        registration.slug,
-                        listOf(AnswerJson("", "")),
+                        email,
+                        slug,
+                        emptyList(),
                     ),
                     "https://echo.uib.no/WaitingList/$uuid",
 
