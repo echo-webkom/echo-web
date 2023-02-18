@@ -3546,7 +3546,7 @@
     get-it "^8.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@5.2.1", "@sanity/client@^5.2.0":
+"@sanity/client@5.2.1", "@sanity/client@^5", "@sanity/client@^5.2.0":
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-5.2.1.tgz#35a0832f8af9a3ae6eecd133bfdacd441a87d35a"
   integrity sha512-fkpVdywu23gPWjNGC+Z2uAM+CFlQuEoDQMc9aVWJQqQwPthD6jCkmTgbwZDscFjTjn6eu6+6s5PHdNM6fPPoDA==
@@ -3555,7 +3555,7 @@
     get-it "^8"
     rxjs "^7"
 
-"@sanity/client@^4", "@sanity/client@^4.0.1":
+"@sanity/client@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-4.0.1.tgz#21da3d625f76ca80e86d8f1a177b70a89514b86e"
   integrity sha512-Sd/oGzDsZulodtjq54wOFoMSvUrNnXkvevAGmuLmO90givXHzEyMMUFSj/BmG6TV1mKigS0m6gmFDP/dalUHjg==
@@ -8540,12 +8540,12 @@ next-pwa@5.6.0:
     workbox-webpack-plugin "^6.5.4"
     workbox-window "^6.5.4"
 
-next-sanity@4.1.3:
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-4.1.3.tgz#91171d6f5aedbe45667cd27a1974d9305cefc6b5"
-  integrity sha512-UqR8js/N1BDgiJe6DBgAZWvBuzifg03RPJ0KOLqzU2FYeNFvEa1wUwUGVkuUuSyI3M1Am3iSFPuPoTXELJJYrg==
+next-sanity@4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-4.1.5.tgz#3e99ce2846102ba083108d6962eeb389e22c982a"
+  integrity sha512-zas+jhDbnSY5V+tG0PLGGgUCzQFmKMInRALiXykfYzDHPjm6xAFO49WTy1ZGkGc7AzKbNdwp8LEXOKEnDbp15w==
   dependencies:
-    "@sanity/client" "^4"
+    "@sanity/client" "^5"
     "@sanity/preview-kit" "^1.3"
     "@sanity/webhook" "^2"
     groq "^3"
