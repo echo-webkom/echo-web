@@ -267,7 +267,7 @@ jobs:
         id: env_vars
         if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         run: |
-          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\///g' -e 's/frontend/f/g' -e 's/backend/b/g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}
