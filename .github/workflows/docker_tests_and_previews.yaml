@@ -113,6 +113,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Get changed files, frontend
         id: changed-files-frontend
         uses: tj-actions/changed-files@v35
