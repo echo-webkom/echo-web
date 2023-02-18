@@ -114,7 +114,7 @@
         "@emotion/react": "11.10.5",
         "@emotion/styled": "11.10.5",
         "@next/font": "13.1.6",
-        "@sanity/client": "5.2.0",
+        "@sanity/client": "5.2.1",
         "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "0.1.8",
         "@vercel/og": "0.1.0",
