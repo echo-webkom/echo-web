@@ -23,7 +23,7 @@ jobs:
       - name: Set environment variables
         id: env_vars
         run: |
-          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\///g' -e 's/frontend/f/g' -e 's/backend/b/g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}

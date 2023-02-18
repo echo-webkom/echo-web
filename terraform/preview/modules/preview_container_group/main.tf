@@ -1,7 +1,7 @@
 # Storage for Caddy
 
 resource "azurerm_storage_account" "cstore" {
-  name                      = "${substr(replace(var.rg_name, "-", ""), 0, 15)}store"
+  name                      = substr(replace(var.rg_name, "-", ""), 0, 20)
   resource_group_name       = var.rg_name
   location                  = var.location
   account_tier              = "Standard"
@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "cstore" {
 }
 
 resource "azurerm_storage_share" "cshare" {
-  name                 = "${substr(replace(var.rg_name, "-", ""), 0, 15)}share"
+  name                 = substr(replace(var.rg_name, "-", ""), 0, 20)
   storage_account_name = azurerm_storage_account.cstore.name
   quota                = 1
 }
