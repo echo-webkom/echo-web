@@ -4,11 +4,6 @@ variable "location" {
   default     = "norwayeast"
 }
 
-variable "container_count_prod" {
-  type        = number
-  description = "The number of containers to create in the production environment."
-}
-
 variable "db_password_prod" {
   type        = string
   description = "The password for the admin user on the production database."
@@ -37,4 +32,9 @@ variable "auth_secret" {
 variable "sendgrid_api_key" {
   type        = string
   description = "The API key for SendGrid."
+}
+
+variable "revision_suffix" {
+  type        = string
+  description = "The revision suffix to use for the new revision of the Container App."
 }
