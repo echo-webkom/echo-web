@@ -116,7 +116,7 @@
         "@next/font": "13.1.6",
         "@sanity/client": "5.2.1",
         "@sanity/image-url": "1.0.2",
-        "@vercel/analytics": "0.1.9",
+        "@vercel/analytics": "0.1.10",
         "@vercel/og": "0.1.0",
         "calendar-link": "2.2.0",
         "canvas-confetti": "1.6.0",
