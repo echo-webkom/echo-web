@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
-import { isBefore } from 'date-fns';
+import { isBefore, isFuture, parseISO } from 'date-fns';
 import type { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
@@ -123,7 +123,7 @@ const IndexPage = ({
                                         ? ['Jobb', 'Annonser', 'Jobbannonser', 'Stillingsannonser']
                                         : ['Job', 'Advertisements', 'Job advertisements']
                                 }
-                                entries={jobs}
+                                entries={jobs.filter((job) => isFuture(parseISO(job.deadline)))}
                                 altText={isNorwegian ? 'Ingen stillingsannonser :(' : 'No job advertisements :('}
                                 linkTo="/jobb"
                                 type="job-advert"

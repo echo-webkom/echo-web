@@ -113,6 +113,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Get changed files, frontend
         id: changed-files-frontend
         uses: tj-actions/changed-files@v35
@@ -176,7 +181,7 @@ jobs:
 
       - name: Run Cypress end-to-end tests
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        uses: cypress-io/github-action@v5.0.8
+        uses: cypress-io/github-action@v5.0.9
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
@@ -262,7 +267,7 @@ jobs:
         id: env_vars
         if: steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true'
         run: |
-          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\///g' -e 's/frontend/f/g' -e 's/backend/b/g' -e 's/[\/_\.]/-/g')" >> $GITHUB_OUTPUT
           echo "BACKEND_TAG=$BACKEND_TAG" >> $GITHUB_OUTPUT
         env:
           BACKEND_TAG: ${{ steps.changed-files-backend.outputs.any_changed == 'true' && github.sha || 'latest' }}

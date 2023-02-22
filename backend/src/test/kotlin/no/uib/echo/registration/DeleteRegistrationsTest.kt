@@ -149,6 +149,7 @@ class DeleteRegistrationsTest {
                     deleteRegCall.status shouldBe HttpStatusCode.OK
                     deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
                     hap9(t).slug
+
                     } deleted, " + "and registration with email ="
                 }
 

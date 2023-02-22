@@ -30,7 +30,7 @@ jobs:
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
         run: |
           export BRANCH_NAME=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')
-          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\/backend-//g' -e 's/[\/_\.]/-/g' | cut -c 1-16 | sed -e 's/[-_]$//g')" >> $GITHUB_OUTPUT
+          echo "BRANCH_NAME_FORMATTED=$(echo "$BRANCH_NAME" | sed -e 's/-*login-*//g' -e 's/renovate\///g' -e 's/frontend/f/g' -e 's/backend/b/g' -e 's/[\/_\.]/-/g' | cut -c 1-16 | sed -e s'/[-_]$//g')" >> $GITHUB_OUTPUT
           echo "BACKEND_URL=$(echo "${{ steps.fc.outputs.comment_body }}" | grep -o 'https://.*\.io')" >> $GITHUB_OUTPUT
         env:
           PR_NO: ${{ github.event.issue.number }}

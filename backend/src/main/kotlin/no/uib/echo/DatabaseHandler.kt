@@ -16,6 +16,7 @@ import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
+import no.uib.echo.schema.WaitingListUUID
 import no.uib.echo.schema.Whitelist
 import no.uib.echo.schema.validStudentGroups
 import org.flywaydb.core.Flyway
@@ -42,7 +43,8 @@ val tables: Array<Table> = arrayOf(
     StudentGroup,
     StudentGroupMembership,
     Reaction,
-    Whitelist
+    WaitingListUUID,
+    Whitelist,
 )
 
 class DatabaseHandler(
@@ -86,7 +88,7 @@ class DatabaseHandler(
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
     private val flyway: Flyway =
-        Flyway.configure().baselineVersion("29").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
+        Flyway.configure().baselineVersion("30").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
             .load()
 
     private val conn by lazy {

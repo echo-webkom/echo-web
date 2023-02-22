@@ -124,6 +124,17 @@ fun Route.getHappeningInfo() {
             }
         }
 
+        val totalCount = countRegistrationsDegreeYear(slug, 1..5, false)
+
+        val totalCountDiff = totalCount - registrationCount.sumOf { it.regCount }
+        if (totalCountDiff > 0) {
+            val newRegistrationCount = listOf(
+                registrationCount.first().copy(regCount = registrationCount.first().regCount + totalCountDiff)
+            ) + registrationCount.drop(1)
+
+            call.respond(HttpStatusCode.OK, HappeningInfoJson(newRegistrationCount))
+        }
+
         call.respond(
             HttpStatusCode.OK,
             HappeningInfoJson(

@@ -41,6 +41,8 @@ data class SendGridTemplate(
     val link: String,
     val waitListSpot: Int? = null,
     val registration: FormRegistrationJson? = null,
+
+    val waitingListUUID: String? = null
 )
 
 @Serializable
@@ -49,6 +51,7 @@ data class SendGridEmail(val email: String, val name: String? = null)
 enum class Template {
     CONFIRM_REG,
     CONFIRM_WAIT,
+    WAITINGLIST_NOTIFY
 }
 
 private const val SENDGRID_ENDPOINT = "https://api.sendgrid.com/v3/mail/send"
@@ -60,6 +63,47 @@ fun fromEmail(email: String): String? {
         "webkom@echo.uib.no" -> "Webkom"
         "gnist@echo.uib.no" -> "Gnist"
         else -> null
+    }
+}
+
+suspend fun sendWaitingListEmail(
+    sendGridApiKey: String,
+    email: String,
+    slug: String,
+    uuid: String,
+): Boolean {
+    val hap = transaction {
+        Happening.select {
+            Happening.slug eq slug
+        }.firstOrNull()
+    } ?: throw Exception("Happening is null.")
+
+    val fromEmail = "webkom@echo.uib.no"
+    try {
+        withContext(Dispatchers.IO) {
+            sendEmail(
+                fromEmail,
+                email,
+                SendGridTemplate(
+                    hap[Happening.title],
+                    "https://echo.uib.no/event/$slug",
+                    null,
+                    registration = FormRegistrationJson(
+                        email,
+                        slug,
+                        emptyList(),
+                    ),
+                    "https://echo.uib.no/WaitingList/$uuid",
+
+                ),
+                Template.WAITINGLIST_NOTIFY,
+                sendGridApiKey
+            )
+        }
+        return true
+    } catch (e: IOException) {
+        e.printStackTrace()
+        return false
     }
 }
 
@@ -122,6 +166,7 @@ suspend fun sendEmail(
     val templateId = when (template) {
         Template.CONFIRM_REG -> "d-1fff3960b2184def9cf8bac082aeac21"
         Template.CONFIRM_WAIT -> "d-1965cd803e6940c1a6724e3c53b70275"
+        Template.WAITINGLIST_NOTIFY -> "d-4206b11b75c441b8ba5f792281b0f5e2"
     }
 
     val response: HttpResponse = HttpClient {

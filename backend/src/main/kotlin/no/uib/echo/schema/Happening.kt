@@ -115,7 +115,7 @@ fun insertOrUpdateHappening(
                 newHappening.happeningDate
             ) && spotRanges == newHappening.spotRanges && happening[Happening.studentGroupName]?.lowercase() == newHappening.studentGroupName.lowercase() && happening[Happening.studentGroupRegistrationDate] == DateTime(
                 newHappening.studentGroupRegistrationDate
-            ) && studentGroups == newHappening.studentGroups
+            ) && studentGroups == newHappening.studentGroups && happening[Happening.onlyForStudentGroups] == newHappening.onlyForStudentGroups
 
     ) {
         val message = """
@@ -126,7 +126,8 @@ fun insertOrUpdateHappening(
             happeningDate = ${newHappening.happeningDate},
             spotRanges = ${spotRangesToString(newHappening.spotRanges)},
             studentGroupRegistrationDate = ${newHappening.studentGroupRegistrationDate},
-            studentGroups = ${newHappening.studentGroups.joinToString(",", prefix = "[", postfix = "[")}
+            studentGroups = ${newHappening.studentGroups.joinToString(",", prefix = "[", postfix = "[")},
+            onlyForStudentGroups = ${newHappening.onlyForStudentGroups}
             and studentGroupName = ${newHappening.studentGroupName} has already been submitted."
         """.trimIndent()
 

@@ -19,6 +19,7 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import PromoteButton from './promote-button';
 import type { Registration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
@@ -29,12 +30,13 @@ import { isErrorMessage } from '@utils/error';
 interface Props {
     registration: Registration;
     questions: Array<string> | null;
+    canPromote: boolean;
 }
 
 const MotionTr = motion<TableRowProps>(Tr);
 
-const RegistrationRow = ({ registration, questions }: Props) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
+    const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
 
@@ -61,7 +63,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
             registration.email,
         );
 
-        onClose();
+        onCloseDelete();
 
         if (isErrorMessage(resp)) {
             toast({
@@ -107,35 +109,25 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                         ikke besvart
                     </Td>
                 )}
-                {
-                    {
-                        REGISTERED: (
-                            <Td fontSize="md" fontWeight="bold" color="green.400">
-                                Påmeldt
-                            </Td>
-                        ),
-                        WAITLIST: (
-                            <Td fontSize="md" fontWeight="bold" color="yellow.400">
-                                Venteliste
-                            </Td>
-                        ),
-                        DEREGISTERED: (
-                            <Td fontSize="md" fontWeight="bold" color="red.400">
-                                Avmeldt
-                            </Td>
-                        ),
-                    }[registration.registrationStatus]
-                }
-                <Td fontSize="md">{registration.reason}</Td>
+                {registration.registrationStatus === 'WAITLIST' ? (
+                    <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
+                        {canPromote ? <PromoteButton registration={registration} /> : 'Ja'}
+                    </Td>
+                ) : (
+                    <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
+                        Nei
+                    </Td>
+                )}
+
                 <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
-                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpen} colorScheme="red">
+                    <Button fontSize="sm" data-cy="delete-button" onClick={onOpenDelete} colorScheme="red">
                         Slett
                     </Button>
                 </Td>
             </MotionTr>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>
@@ -155,10 +147,6 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
-                        <Text py="0.5rem" lineHeight="1.5">
-                            Dersom det er noen på venteliste, vil denne handlingen automatisk rykke første person på
-                            venteliste opp, uten at de får beskjed om dette.
-                        </Text>
                     </ModalBody>
 
                     <ModalFooter>
@@ -167,7 +155,7 @@ const RegistrationRow = ({ registration, questions }: Props) => {
                             <Button data-cy="confirm-delete-button" bg="green.400" onClick={handleDelete}>
                                 Ja, slett
                             </Button>
-                            <Button onClick={onClose}>Nei</Button>
+                            <Button onClick={onCloseDelete}>Nei</Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>

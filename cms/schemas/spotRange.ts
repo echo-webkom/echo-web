@@ -29,10 +29,7 @@ export default defineType({
             name: 'maxDegreeYear',
             title: 'Største trinn',
             type: 'number',
-            validation: (Rule) =>
-                Rule.required()
-                    .min(Number(Rule.valueOfField('minDegreeYear')))
-                    .max(5),
+            validation: (Rule) => Rule.required().min(Rule.valueOfField('minDegreeYear')).max(5),
         }),
         defineField({
             name: 'spots',
