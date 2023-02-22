@@ -159,6 +159,7 @@ val user1 = UserJson(
     2,
     Degree.DSIK,
     listOf("tilde"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -169,6 +170,7 @@ val user2 = UserJson(
     3,
     Degree.DTEK,
     listOf("webkom"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -179,6 +181,7 @@ val user3 = UserJson(
     1,
     Degree.DVIT,
     listOf("bedkom", "tilde"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -188,6 +191,7 @@ val user4 = UserJson(
     "bachelor.student4@gmail.com",
     2,
     Degree.BINF,
+    dots = 4,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -197,6 +201,7 @@ val user5 = UserJson(
     "bachelor.student5@gmail.com",
     3,
     Degree.IMO,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -207,6 +212,7 @@ val user6 = UserJson(
     "master.student1@gmail.com",
     4,
     Degree.INF,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -216,6 +222,7 @@ val user7 = UserJson(
     null,
     5,
     Degree.PROG,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -225,6 +232,7 @@ val user8 = UserJson(
     "master.student3@gmail.com",
     5,
     Degree.INF,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -235,6 +243,7 @@ val user9 = UserJson(
     "post.student@gmail.com",
     3,
     Degree.POST,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -244,6 +253,7 @@ val user10 = UserJson(
     "arinf.student@gmail.com",
     1,
     Degree.ARMNINF,
+    dots = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -255,6 +265,7 @@ val adminUser = UserJson(
     5,
     Degree.INF,
     listOf("webkom"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
