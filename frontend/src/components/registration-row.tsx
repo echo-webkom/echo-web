@@ -109,15 +109,26 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                         ikke besvart
                     </Td>
                 )}
-                {registration.registrationStatus === 'WAITLIST' ? (
-                    <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
-                        {canPromote ? <PromoteButton registration={registration} /> : 'Ja'}
-                    </Td>
-                ) : (
-                    <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
-                        Nei
-                    </Td>
-                )}
+                {
+                    {
+                        WAITLIST: (
+                            <Td fontSize="md" fontWeight="bold" color="yellow.400">
+                                {canPromote ? <PromoteButton registration={registration} /> : 'Venteliste'}
+                            </Td>
+                        ),
+                        REGISTERED: (
+                            <Td fontSize="md" fontWeight="bold" color="green.400">
+                                Påmeldt
+                            </Td>
+                        ),
+                        DEREGISTERED: (
+                            <Td fontSize="md" fontWeight="bold" color="red.400">
+                                Avmeldt
+                            </Td>
+                        ),
+                    }[registration.registrationStatus]
+                }
+                <Td fontSize="md">{registration.reason}</Td>
 
                 <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>

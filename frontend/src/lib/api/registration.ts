@@ -113,7 +113,6 @@ const RegistrationAPI = {
             }
 
             const data = await response.json();
-            console.log(data);
 
             if (isErrorMessage(data)) {
                 return data;

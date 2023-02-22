@@ -124,7 +124,7 @@ fun Route.getHappeningInfo() {
             }
         }
 
-        val totalCount = countRegistrationsDegreeYear(slug, 1..5, false)
+        val totalCount = countRegistrationsDegreeYear(slug, 1..5, Status.WAITLIST)
 
         val totalCountDiff = totalCount - registrationCount.sumOf { it.regCount }
         if (totalCountDiff > 0) {

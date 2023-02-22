@@ -438,28 +438,12 @@ fun Route.deleteRegistration() {
 
             }
 
-            val highestOnWaitList = transaction {
-                Registration.select {
-                    Registration.registrationStatus eq Status.WAITLIST and (Registration.happeningSlug eq hap[Happening.slug])
-                }.orderBy(Registration.submitDate).firstOrNull()
-            }
 
-            if (highestOnWaitList == null) {
-                call.respond(
-                    HttpStatusCode.OK,
-                    "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
-                )
-            } else {
-                transaction {
-                    Registration.update({ Registration.userEmail eq highestOnWaitList[Registration.userEmail].lowercase() and (Registration.happeningSlug eq hap[Happening.slug]) }) {
-                        it[registrationStatus] = Status.REGISTERED
-                    }
-                }
-            }
+
 
             call.respond(
                 HttpStatusCode.OK,
-                "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted"
+                "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
             )
             return@delete
 

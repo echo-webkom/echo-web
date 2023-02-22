@@ -11,15 +11,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.WaitingListUUID
+import no.uib.echo.schema.*
 import no.uib.echo.schema.WaitingListUUID.happeningSlug
 import no.uib.echo.schema.WaitingListUUID.userEmail
-import no.uib.echo.schema.getGroupMembers
-import no.uib.echo.schema.isPersonLegalToPromote
-import no.uib.echo.schema.isPromotionLegal
-import no.uib.echo.schema.notifyWaitinglistPerson
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -71,7 +65,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
                     Registration.happeningSlug eq waitingListResult[WaitingListUUID.happeningSlug] and
                         (Registration.userEmail eq waitingListResult[WaitingListUUID.userEmail])
                 }) {
-                    it[waitList] = false
+                    it[registrationStatus] = Status.REGISTERED
                 }
 
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
@@ -91,6 +85,7 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
             call.respond(HttpStatusCode.NotFound, "Slug was null")
             return@get
         }
+
 
         val slug = transaction {
             Happening.select {
@@ -209,7 +204,7 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                     Registration.happeningSlug eq happeningSlug and
                         (Registration.userEmail eq email)
                 }) {
-                    it[waitList] = false
+                    it[registrationStatus] = Status.REGISTERED
                 }
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
             }
