@@ -5,7 +5,9 @@ import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import useLanguage from '@hooks/use-language';
-import parseISOOrNull from '@utils/parse-iso-or-null';
+import hasOverlap from '@utils/has-overlap';
+import useAuth from '@hooks/use-auth';
+import chooseDate from '@utils/choose-date';
 
 interface Props {
     event: Happening;
@@ -14,12 +16,18 @@ interface Props {
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
+    const { user } = useAuth();
 
     const totalRegs =
         registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
-    const registrationDate = parseISOOrNull(event.studentGroupRegistrationDate ?? event.registrationDate);
+    const userIsEligibleForEarlyReg = hasOverlap(event.studentGroups, user?.memberships);
+    const registrationDate = chooseDate(
+        event.registrationDate,
+        event.studentGroupRegistrationDate,
+        userIsEligibleForEarlyReg,
+    );
 
     return (
         <Stack textAlign="right">
@@ -39,36 +47,34 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 )}
             </Flex>
 
-            {registrationDate && (
-                <Flex alignItems="center" justifyContent="flex-end">
-                    {isPast(registrationDate) ? (
-                        <Text ml="1" fontSize="1rem">
-                            {totalRegs >= totalSpots && totalSpots !== 0
-                                ? isNorwegian
-                                    ? `Fullt`
-                                    : `Full`
-                                : `${totalRegs} ${isNorwegian ? 'av' : 'of'} ${totalSpots === 0 ? '∞' : totalSpots}`}
-                        </Text>
-                    ) : (
-                        <Text ml="1" fontSize="1rem">
-                            {isToday(registrationDate) ? (
-                                isNorwegian ? (
-                                    `Påmelding i dag`
-                                ) : (
-                                    `Registration today`
-                                )
+            <Flex alignItems="center" justifyContent="flex-end">
+                {isPast(registrationDate) ? (
+                    <Text ml="1" fontSize="1rem">
+                        {totalRegs >= totalSpots && totalSpots !== 0
+                            ? isNorwegian
+                                ? `Fullt`
+                                : `Full`
+                            : `${totalRegs} ${isNorwegian ? 'av' : 'of'} ${totalSpots === 0 ? '∞' : totalSpots}`}
+                    </Text>
+                ) : (
+                    <Text ml="1" fontSize="1rem">
+                        {isToday(registrationDate) ? (
+                            isNorwegian ? (
+                                `Påmelding i dag`
                             ) : (
-                                <span style={{ whiteSpace: 'nowrap' }}>
-                                    {isNorwegian ? `Påmelding ` : ` Registration `}
-                                    {format(registrationDate, 'dd. MMM yyyy', {
-                                        locale: isNorwegian ? nb : enUS,
-                                    })}
-                                </span>
-                            )}
-                        </Text>
-                    )}
-                </Flex>
-            )}
+                                `Registration today`
+                            )
+                        ) : (
+                            <span style={{ whiteSpace: 'nowrap' }}>
+                                {isNorwegian ? `Påmelding ` : ` Registration `}
+                                {format(registrationDate, 'dd. MMM yyyy', {
+                                    locale: isNorwegian ? nb : enUS,
+                                })}
+                            </span>
+                        )}
+                    </Text>
+                )}
+            </Flex>
         </Stack>
     );
 };
