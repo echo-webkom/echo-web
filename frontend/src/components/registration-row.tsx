@@ -44,6 +44,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const [deleted, setDeleted] = useState(false);
 
+    const [dotPermission, setDotPermission] = useState(false);
+
     const [dots, setDots] = useState(0);
 
     const toast = useToast();
@@ -153,20 +155,22 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                             venteliste opp, uten at de får beskjed om dette.
                         </Text>
                         <Text fontWeight="bold"> Antall prikker </Text>
-                        <NumberInput
-                            name="numDots"
-                            size="md"
-                            maxW={100}
-                            min={0}
-                            max={5}
-                            onChange={(value) => setDots(value)}
-                        >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
-                            </NumberInputStepper>
-                        </NumberInput>
+                        {dotPermission && (
+                            <NumberInput
+                                name="numDots"
+                                size="md"
+                                maxW={100}
+                                min={0}
+                                max={5}
+                                onChange={(value) => setDots(value)}
+                            >
+                                <NumberInputField />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                        )}
                     </ModalBody>
 
                     <ModalFooter>
