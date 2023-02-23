@@ -52,9 +52,9 @@ const HappeningCalendarBox = ({ happening }: Props) => {
                         </PopoverHeader>
                         <PopoverBody fontSize="lg">
                             <Text mb="2">@ {happening.location}</Text>
-                            <Text noOfLines={5}>
+                            <Box noOfLines={5}>
                                 <Markdown>{happening.body.no}</Markdown>
-                            </Text>
+                            </Box>
                             <Text as="em" fontSize="sm">
                                 {capitalize(happening.studentGroupName)}
                             </Text>
