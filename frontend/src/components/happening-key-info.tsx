@@ -7,7 +7,7 @@ import type { RegistrationCount } from '@api/registration';
 import useLanguage from '@hooks/use-language';
 import hasOverlap from '@utils/has-overlap';
 import useAuth from '@hooks/use-auth';
-import chooseDate from '@utils/choose-date';
+import parseISOOrNull from '@utils/parse-iso-or-null';
 
 interface Props {
     event: Happening;
@@ -23,10 +23,8 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
     const userIsEligibleForEarlyReg = hasOverlap(event.studentGroups, user?.memberships);
-    const registrationDate = chooseDate(
-        event.registrationDate,
-        event.studentGroupRegistrationDate,
-        userIsEligibleForEarlyReg,
+    const registrationDate = parseISOOrNull(
+        userIsEligibleForEarlyReg ? event.studentGroupRegistrationDate : event.registrationDate,
     );
 
     return (
@@ -47,34 +45,36 @@ const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Elemen
                 )}
             </Flex>
 
-            <Flex alignItems="center" justifyContent="flex-end">
-                {isPast(registrationDate) ? (
-                    <Text ml="1" fontSize="1rem">
-                        {totalRegs >= totalSpots && totalSpots !== 0
-                            ? isNorwegian
-                                ? `Fullt`
-                                : `Full`
-                            : `${totalRegs} ${isNorwegian ? 'av' : 'of'} ${totalSpots === 0 ? '∞' : totalSpots}`}
-                    </Text>
-                ) : (
-                    <Text ml="1" fontSize="1rem">
-                        {isToday(registrationDate) ? (
-                            isNorwegian ? (
-                                `Påmelding i dag`
+            {registrationDate && (
+                <Flex alignItems="center" justifyContent="flex-end">
+                    {isPast(registrationDate) ? (
+                        <Text ml="1" fontSize="1rem">
+                            {totalRegs >= totalSpots && totalSpots !== 0
+                                ? isNorwegian
+                                    ? `Fullt`
+                                    : `Full`
+                                : `${totalRegs} ${isNorwegian ? 'av' : 'of'} ${totalSpots === 0 ? '∞' : totalSpots}`}
+                        </Text>
+                    ) : (
+                        <Text ml="1" fontSize="1rem">
+                            {isToday(registrationDate) ? (
+                                isNorwegian ? (
+                                    `Påmelding i dag`
+                                ) : (
+                                    `Registration today`
+                                )
                             ) : (
-                                `Registration today`
-                            )
-                        ) : (
-                            <span style={{ whiteSpace: 'nowrap' }}>
-                                {isNorwegian ? `Påmelding ` : ` Registration `}
-                                {format(registrationDate, 'dd. MMM yyyy', {
-                                    locale: isNorwegian ? nb : enUS,
-                                })}
-                            </span>
-                        )}
-                    </Text>
-                )}
-            </Flex>
+                                <span style={{ whiteSpace: 'nowrap' }}>
+                                    {isNorwegian ? `Påmelding ` : ` Registration `}
+                                    {format(registrationDate, 'dd. MMM yyyy', {
+                                        locale: isNorwegian ? nb : enUS,
+                                    })}
+                                </span>
+                            )}
+                        </Text>
+                    )}
+                </Flex>
+            )}
         </Stack>
     );
 };
