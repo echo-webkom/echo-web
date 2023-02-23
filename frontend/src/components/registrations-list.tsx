@@ -128,6 +128,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     );
 
     const hasEarlyRegistrations = registrationsOverTimeBefore.length > 0;
+    const hasNormalRegistrations = registrationsOverTimeAfter.length > 0;
 
     const [randomRegistration, setRandomRegistration] = useState<Registration | null>(null);
 
@@ -381,19 +382,23 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                     {hasEarlyRegistrations && (
                                         <GridItem colSpan={[1, 1, null, 2]}>
                                             <Heading size="md" my="2rem">
-                                                Antall påmeldinger over tid (tidlig påmelding)
+                                                {`Antall påmeldinger over tid${
+                                                    hasNormalRegistrations ? ' (tidlig påmelding)' : ''
+                                                }`}
                                             </Heading>
                                             <RegistrationsOverTime data={registrationsOverTimeBefore} />
                                         </GridItem>
                                     )}
-                                    <GridItem colSpan={[1, 1, null, 2]}>
-                                        <Heading size="md" my="2rem">
-                                            {`Antall påmeldinger over tid${
-                                                hasEarlyRegistrations ? ' (vanlig påmelding)' : ''
-                                            }`}
-                                        </Heading>
-                                        <RegistrationsOverTime data={registrationsOverTimeAfter} />
-                                    </GridItem>
+                                    {hasNormalRegistrations && (
+                                        <GridItem colSpan={[1, 1, null, 2]}>
+                                            <Heading size="md" my="2rem">
+                                                {`Antall påmeldinger over tid${
+                                                    hasEarlyRegistrations ? ' (vanlig påmelding)' : ''
+                                                }`}
+                                            </Heading>
+                                            <RegistrationsOverTime data={registrationsOverTimeAfter} />
+                                        </GridItem>
+                                    )}
                                 </SimpleGrid>
                             </TabPanel>
                             <TabPanel>

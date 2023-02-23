@@ -80,11 +80,17 @@ const HappeningAPI = {
      * @param type the type of happening to retrieve
      * @returns the n last happeninges
      */
-    getHappeningsByType: async (n: number, type: HappeningType): Promise<Array<Happening> | ErrorMessage> => {
+    getHappeningsByType: async (
+        n: number,
+        type: HappeningType,
+        onlyFuture: boolean = false,
+    ): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = groq`
-                *[_type == "happening" && happeningType == "${type}" && !(_id in path('drafts.**'))] | order(date asc) {
+                *[_type == "happening" && happeningType == "${type}" && ${
+                onlyFuture ? 'dateTime(date) > dateTime(now()) &&' : ''
+            } !(_id in path('drafts.**'))] | order(date asc) {
                     title,
                     "slug": slug.current,
                     date,

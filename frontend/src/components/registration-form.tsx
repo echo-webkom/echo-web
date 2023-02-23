@@ -1,9 +1,14 @@
+import type { Happening, HappeningType, Question } from '@api/happening';
+import type { RegFormValues } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
+import { userIsComplete } from '@api/user';
 import {
     Alert,
     AlertIcon,
     Box,
     Button,
     Center,
+    Flex,
     Input,
     LinkBox,
     LinkOverlay,
@@ -20,25 +25,22 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { differenceInHours, format, isBefore, parseISO } from 'date-fns';
-import { enUS, nb } from 'date-fns/locale';
-import NextLink from 'next/link';
-import type { SubmitHandler } from 'react-hook-form';
-import { MdOutlineArrowForward } from 'react-icons/md';
-import DeregistrationButton from './deregistration-button';
-import type { Happening, HappeningType, Question } from '@api/happening';
-import type { RegFormValues } from '@api/registration';
-import { RegistrationAPI } from '@api/registration';
-import { userIsComplete } from '@api/user';
 import CountdownButton from '@components/countdown-button';
 import FormQuestion from '@components/form-question';
 import useAuth from '@hooks/use-auth';
 import useLanguage from '@hooks/use-language';
 import capitalize from '@utils/capitalize';
+import chooseDate from '@utils/choose-date';
 import { isErrorMessage } from '@utils/error';
 import hasOverlap from '@utils/has-overlap';
+import { differenceInHours, format, isBefore } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import NextLink from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
+import { MdOutlineArrowForward } from 'react-icons/md';
+import DeregistrationButton from './deregistration-button';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -50,19 +52,6 @@ interface Props {
     happening: Happening;
     type: HappeningType;
 }
-
-const chooseDate = (
-    regDate: string | null,
-    studentGroupRegDate: string | null,
-    userIsEligibleForEarlyReg: boolean,
-): Date => {
-    if (!regDate && !studentGroupRegDate) return new Date();
-    if (!regDate && studentGroupRegDate) return userIsEligibleForEarlyReg ? parseISO(studentGroupRegDate) : new Date();
-    if (regDate && !studentGroupRegDate) return parseISO(regDate);
-    if (regDate && studentGroupRegDate) return parseISO(userIsEligibleForEarlyReg ? studentGroupRegDate : regDate);
-    // Shouldn't be possible to reach this point, but TypeScript doesn't know that
-    return new Date();
-};
 
 const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -171,10 +160,10 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
         );
 
     return (
-        <Box data-testid="registration-form">
+        <Flex direction="column" gap="5" data-testid="registration-form">
             {!userIsComplete(user) && (
                 <>
-                    <Alert status="warning" borderRadius="0.5rem" mb="5">
+                    <Alert status="warning" borderRadius="0.5rem">
                         <AlertIcon />
                         {isNorwegian
                             ? 'Du må fylle ut all nødvendig informasjon for å kunne melde deg på arrangementer!'
@@ -190,13 +179,13 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 </>
             )}
             {userIsEligibleForEarlyReg && !happening.onlyForStudentGroups && (
-                <Alert status="info" borderRadius="0.5rem" mb="5">
+                <Alert status="info" borderRadius="0.5rem">
                     <AlertIcon />
                     Du kan melde deg på dette arrangementet tidligere enn andre.
                 </Alert>
             )}
             {happening.onlyForStudentGroups && (
-                <Alert status="info" borderRadius="0.5rem" mb="5">
+                <Alert status="info" borderRadius="0.5rem">
                     <AlertIcon />
                     {isNorwegian ? 'Dette er et internt arrangement.' : 'This is a private event.'}
                 </Alert>
@@ -260,7 +249,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                     </FormProvider>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Flex>
     );
 };
 

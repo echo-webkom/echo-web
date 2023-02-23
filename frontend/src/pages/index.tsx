@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Grid, GridItem, Heading, LinkBox, LinkOverlay, useBreakpointValue, VStack } from '@chakra-ui/react';
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
-import { isBefore, isFuture, parseISO } from 'date-fns';
+import { isFuture, parseISO } from 'date-fns';
 import type { GetStaticProps } from 'next';
 import NextLink from 'next/link';
 import EntryBox from '@components/entry-box';
@@ -146,8 +146,8 @@ export const getStaticProps: GetStaticProps = async () => {
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
-        HappeningAPI.getHappeningsByType(0, 'BEDPRES'),
-        HappeningAPI.getHappeningsByType(0, 'EVENT'),
+        HappeningAPI.getHappeningsByType(2, 'BEDPRES', true),
+        HappeningAPI.getHappeningsByType(3, 'EVENT', true),
         PostAPI.getPosts(0),
         JobAdvertAPI.getJobAdverts(3),
         BannerAPI.getBanner(),
@@ -165,28 +165,16 @@ export const getStaticProps: GetStaticProps = async () => {
         fs.writeFileSync('./public/rss.xml', rss);
     }
 
-    const events = eventsResponse
-        .filter((event: Happening) => {
-            return isBefore(new Date().setHours(0, 0, 0, 0), new Date(event.date));
-        })
-        .slice(0, 3);
-
-    const bedpreses = bedpresesResponse
-        .filter((bedpres: Happening) => {
-            return isBefore(new Date().setHours(0, 0, 0, 0), new Date(bedpres.date));
-        })
-        .slice(0, 2);
-
-    const slugs = [...bedpreses, ...events].map((happening: Happening) => happening.slug);
+    const slugs = [...bedpresesResponse, ...eventsResponse].map((happening: Happening) => happening.slug);
     const registrationCountsResponse = await RegistrationAPI.getRegistrationCountForSlugs(slugs, adminKey);
 
     if (isErrorMessage(registrationCountsResponse)) throw new Error(registrationCountsResponse.message);
 
     return {
         props: {
-            bedpreses,
+            bedpreses: bedpresesResponse,
             posts: postsResponse.slice(0, process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true' ? 2 : 3),
-            events,
+            events: eventsResponse,
             jobs: jobsResponse,
             banner: bannerResponse ?? null,
             registrationCounts: isErrorMessage(registrationCountsResponse) ? [] : registrationCountsResponse,

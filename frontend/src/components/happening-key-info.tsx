@@ -5,6 +5,8 @@ import { BiCalendar } from 'react-icons/bi';
 import type { Happening, SpotRange } from '@api/happening';
 import type { RegistrationCount } from '@api/registration';
 import useLanguage from '@hooks/use-language';
+import hasOverlap from '@utils/has-overlap';
+import useAuth from '@hooks/use-auth';
 import parseISOOrNull from '@utils/parse-iso-or-null';
 
 interface Props {
@@ -14,12 +16,16 @@ interface Props {
 
 const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
+    const { user } = useAuth();
 
     const totalRegs =
         registrationCounts.find((regCount: RegistrationCount) => regCount.slug === event.slug)?.count ?? 0;
     const totalSpots = event.spotRanges.map((spotRange: SpotRange) => spotRange.spots).reduce((a, b) => a + b, 0);
 
-    const registrationDate = parseISOOrNull(event.studentGroupRegistrationDate ?? event.registrationDate);
+    const userIsEligibleForEarlyReg = hasOverlap(event.studentGroups, user?.memberships);
+    const registrationDate = parseISOOrNull(
+        userIsEligibleForEarlyReg ? event.studentGroupRegistrationDate : event.registrationDate,
+    );
 
     return (
         <Stack textAlign="right">
