@@ -22,12 +22,38 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uib.echo.RegistrationResponse
 import no.uib.echo.resToJson
-import no.uib.echo.schema.*
-
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.AnswerJson
+import no.uib.echo.schema.Degree
+import no.uib.echo.schema.FormDeregistrationJson
+import no.uib.echo.schema.FormRegistrationJson
+import no.uib.echo.schema.HAPPENING_TYPE
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.RegistrationCountJson
+import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.SlugJson
+import no.uib.echo.schema.Status
+import no.uib.echo.schema.StudentGroupHappeningRegistration
+import no.uib.echo.schema.User
+import no.uib.echo.schema.WaitingListUUID
+import no.uib.echo.schema.countRegistrationsDegreeYear
+import no.uib.echo.schema.getGroupMembers
+import no.uib.echo.schema.getUserStudentGroups
+import no.uib.echo.schema.nullableStringToDegree
+import no.uib.echo.schema.selectSpotRanges
+import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import java.net.URLDecoder
 import java.util.UUID
@@ -287,7 +313,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                 }.firstOrNull()
             }
 
-
             if (oldReg != null) {
                 if (oldReg[Registration.registrationStatus] != Status.DEREGISTERED) {
 
@@ -302,13 +327,12 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     return@post
                 }
                 transaction {
-                    Registration.update ({Registration.userEmail eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug)}) {
+                    Registration.update({ Registration.userEmail eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug) }) {
                         it[degree] = userDegree.toString()
                         it[degreeYear] = userDegreeYear
                         it[registrationStatus] = if (waitList) Status.WAITLIST else Status.REGISTERED
                     }
                 }
-
             } else {
 
                 transaction {
@@ -332,7 +356,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     this[Answer.answer] = a.answer
                 }
             }
-
 
             if (waitList) {
                 transaction {
@@ -414,15 +437,14 @@ fun Route.deleteRegistration() {
             }
 
             transaction {
-                Registration.update ({Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)}) {
+                Registration.update({ Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail) }) {
                     it[registrationStatus] = Status.DEREGISTERED
                     it[reason] = toDelete.reason
                     it[deregistrationDate] = DateTime.now()
                 }
-
             }
 
-            if (reg[Registration.registrationStatus] == Status.WAITLIST ) {
+            if (reg[Registration.registrationStatus] == Status.WAITLIST) {
                 call.respond(
                     HttpStatusCode.OK,
                     "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} was deregistered."
@@ -430,23 +452,18 @@ fun Route.deleteRegistration() {
                 transaction {
                     WaitingListUUID.deleteWhere {
                         WaitingListUUID.happeningSlug eq hap[Happening.slug] and
-                                (WaitingListUUID.userEmail.lowerCase() eq decodedParamEmail)
+                            (WaitingListUUID.userEmail.lowerCase() eq decodedParamEmail)
                     }
                 }
 
                 return@delete
-
             }
-
-
-
 
             call.respond(
                 HttpStatusCode.OK,
                 "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted."
             )
             return@delete
-
         } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
             e.printStackTrace()

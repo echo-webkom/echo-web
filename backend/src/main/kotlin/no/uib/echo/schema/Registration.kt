@@ -37,10 +37,9 @@ data class RegistrationJson(
     val answers: List<AnswerJson> = emptyList(),
     val memberships: List<String> = emptyList(),
 )
-enum class Status{
+enum class Status {
     REGISTERED, DEREGISTERED, WAITLIST
 }
-
 
 object Registration : Table() {
     val userEmail: Column<String> = text("user_email") references User.email
@@ -51,7 +50,6 @@ object Registration : Table() {
     val registrationStatus: Column<Status> = enumeration("registration_status")
     val reason: Column<String?> = text("deregistration_reason").nullable()
     val deregistrationDate: Column<DateTime?> = datetime("deregistration_date").nullable()
-
 
     override val primaryKey: PrimaryKey = PrimaryKey(userEmail, happeningSlug)
 }
