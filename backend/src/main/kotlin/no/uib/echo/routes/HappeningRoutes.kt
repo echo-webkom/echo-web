@@ -9,7 +9,15 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import no.uib.echo.schema.*
+import no.uib.echo.schema.Answer
+import no.uib.echo.schema.Happening
+import no.uib.echo.schema.HappeningInfoJson
+import no.uib.echo.schema.Registration
+import no.uib.echo.schema.SpotRange
+import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.Status
+import no.uib.echo.schema.StudentGroupHappeningRegistration
+import no.uib.echo.schema.countRegistrationsDegreeYear
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
