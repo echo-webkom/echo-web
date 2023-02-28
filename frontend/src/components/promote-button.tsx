@@ -94,15 +94,15 @@ const PromoteButton = ({ registration }: Props) => {
                 <ModalContent>
                     <ModalHeader>
                         <Heading fontSize="md">
-                            <Text>Vil du gi en ledig plass til '{registration.name}'?</Text>
+                            <Text>Vil du gi en ledig plass til &apos;{registration.name}&apos;?</Text>
                         </Heading>
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <p>
                             <Text>
-                                E-post med tilbud om plass blir sendt til: '
-                                {registration.alternateEmail ?? registration.email}'.
+                                E-post med tilbud om plass blir sendt til &apos;
+                                {registration.alternateEmail ?? registration.email}&apos;.
                             </Text>
                         </p>
                     </ModalBody>
