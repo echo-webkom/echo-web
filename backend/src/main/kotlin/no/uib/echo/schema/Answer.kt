@@ -12,7 +12,7 @@ data class AnswerJson(
 )
 
 object Answer : Table() {
-    private val id: Column<Int> = integer("id").uniqueIndex().autoIncrement()
+    val id: Column<Int> = integer("id").uniqueIndex().autoIncrement()
     val registrationEmail: Column<String> = text("registration_email")
     val question: Column<String> = text("question")
     val answer: Column<String> = text("answer")
