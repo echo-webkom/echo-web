@@ -439,16 +439,14 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                             Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt om å bekrefte at du vil
                             slette påmeldingen. Dersom du godtar dette, vil påmeldingen bli slettet for alltid. Hvis
                             denne påmeldingen ikke var på venteliste, vil det komme en knapp under &quot;på
-                            venteliste?&quot; for de som er på venteliste hvor du kan promotere dem. Der kan du velge
-                            mellom å promotere dem direkte eller å sende dem en promoterings epost. Hvis du promoterer
-                            dem direkte så blir denne personen ikke automatisk gitt beskjed om dette, og arrangøren blir
-                            ansvarlig for å gi dem beskjed. Hvis du velger å sende dem en epost, vil de få en link der
-                            de kan velge å ta plassen selv. Det er ikke garentert at personen vil få eposten, spesielt
-                            hvis de kun har studenteposten registrert hos oss.
-                        </Text>
-                        <Text fontWeight="bold">
-                            Det beste er å forhøre seg om neste person på venteliste har mulighet til å delta på
-                            arrangementet og så promotere dem direkte.
+                            venteliste?&quot; for de som er på venteliste. Om du trykker på denne, så kan du velge
+                            mellom å gi dem plassen direkte (med en gang), eller å sende dem en e-post med tilbud om
+                            plass. Hvis du gir personen plassen direkte så blir denne personen ikke automatisk gitt
+                            beskjed om dette, og arrangøren vil selv være ansvarlig for å gi dem beskjed. Hvis du velger
+                            å sende dem en e-post, vil de få en link der de kan velge å ta plassen selv. Det er ikke
+                            garantert at personen vil få e-posten, spesielt hvis de kun har studentmailen sin registrert
+                            hos oss. De vil fortsatt være på venteliste helt til de trykker på knappen for å ta i mot
+                            plassen.
                         </Text>
                         <Text>
                             Påmeldinger som er slettet blir slettet for alltid, og det er ikke mulig å finne denne

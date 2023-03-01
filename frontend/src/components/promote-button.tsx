@@ -43,13 +43,13 @@ const PromoteButton = ({ registration }: Props) => {
         if (statusCode === 200) {
             onClosePromote();
             toast({
-                title: 'Bruker ble promotert.',
+                title: 'Bruker ble tildelt plass!',
                 status: 'success',
                 isClosable: true,
             });
         } else {
             toast({
-                title: 'Kunne ikke promotere.',
+                title: 'Kunne ikke tildele plass.',
                 status: 'error',
                 isClosable: true,
             });
@@ -70,13 +70,13 @@ const PromoteButton = ({ registration }: Props) => {
         if (statusCode === 200) {
             onClosePromote();
             toast({
-                title: 'Email er sendt.',
+                title: 'E-post er sendt.',
                 status: 'success',
                 isClosable: true,
             });
         } else {
             toast({
-                title: 'Kunne ikke sende email.',
+                title: 'Kunne ikke sende e-post.',
                 status: 'error',
                 isClosable: true,
             });
@@ -86,7 +86,7 @@ const PromoteButton = ({ registration }: Props) => {
     return (
         <>
             <Button onClick={onOpenPromote} colorScheme="pink">
-                Ja
+                Gi ledig plass
             </Button>
 
             <Modal isOpen={isOpenPromote} onClose={onClosePromote}>
@@ -94,23 +94,24 @@ const PromoteButton = ({ registration }: Props) => {
                 <ModalContent>
                     <ModalHeader>
                         <Heading fontSize="md">
-                            <Text>Promoter {registration.name} fra ventelisten?</Text>
+                            <Text>Vil du gi en ledig plass til &apos;{registration.name}&apos;?</Text>
                         </Heading>
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <p>
                             <Text>
-                                Promoterings eposten blir sendt til: {registration.alternateEmail ?? registration.email}
+                                E-post med tilbud om plass blir sendt til &apos;
+                                {registration.alternateEmail ?? registration.email}&apos;.
                             </Text>
                         </p>
                     </ModalBody>
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
                             <Button colorScheme="green" onClick={() => void handleEmail()}>
-                                Send epost
+                                Send e-post
                             </Button>
-                            <Button onClick={() => void handlePromote()}>Promoter uten å spørre</Button>
+                            <Button onClick={() => void handlePromote()}>Gi ledig plass uten å spørre</Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>

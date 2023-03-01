@@ -37,12 +37,11 @@ module "db" {
   db_password = var.db_password
 }
 
-module "cg" {
-  source = "../modules/container_group"
+module "ca" {
+  source = "../modules/container_app"
 
   rg_name          = azurerm_resource_group.rg.name
-  law_wid          = azurerm_log_analytics_workspace.law.workspace_id
-  law_key          = azurerm_log_analytics_workspace.law.primary_shared_key
+  law_id           = azurerm_log_analytics_workspace.law.id
   location         = azurerm_resource_group.rg.location
   environment      = local.environment
   db_user          = local.db_user
@@ -50,5 +49,6 @@ module "cg" {
   db_fqdn          = module.db.fqdn
   admin_key        = var.admin_key
   auth_secret      = var.auth_secret
-  sendgrid_api_key = null
+  sendgrid_api_key = var.sendgrid_api_key
+  revision_suffix  = var.revision_suffix
 }
