@@ -91,9 +91,9 @@ const PromoteButton = ({ registration }: Props) => {
 
             <Modal isOpen={isOpenPromote} onClose={onClosePromote}>
                 <ModalOverlay />
-                <ModalContent>
+                <ModalContent minW="30%">
                     <ModalHeader>
-                        <Heading fontSize="md">
+                        <Heading size="md">
                             <Text>Vil du gi en ledig plass til &apos;{registration.name}&apos;?</Text>
                         </Heading>
                     </ModalHeader>
