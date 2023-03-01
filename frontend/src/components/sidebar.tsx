@@ -112,10 +112,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                 },
                 {
                     name: 'Underorganisasjoner',
-                    items: [
-                        { name: 'programmerbar 🍸', href: '/om-echo/studentgrupper/programmerbar' },
-                        { name: 'echo karriere 🤝', href: '/om-echo/studentgrupper/echo-karriere' },
-                    ],
+                    items: [{ name: 'programmerbar 🍸', href: '/om-echo/studentgrupper/programmerbar' }],
                 },
                 {
                     name: 'Interessegrupper',
