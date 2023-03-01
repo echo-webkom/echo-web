@@ -44,7 +44,7 @@ import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
-import { Happening, HappeningAPI, HappeningType } from '@api/happening';
+import { Happening, HappeningAPI } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
 import { isFuture } from 'date-fns';
 import ProfileHappeningPreview from './profile-happening-preview';
@@ -59,7 +59,6 @@ const ProfileInfo = () => {
 
     const [happenings, setHappenings] = useState<Array<Happening>>([]);
     const [registrations, setRegistrations] = useState<Array<string>>();
-    const [onWaitList, setOnWaitList] = useState<boolean>();
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -83,30 +82,6 @@ const ProfileInfo = () => {
             setLoading(false);
         }
     }, [user, signedIn, setValue]);
-
-    useEffect(() => {
-        const fetchUserRegistrationStatus = async () => {
-            if (!user?.email || !idToken) return;
-
-            const email = user.email;
-            const res = await RegistrationAPI.getUserRegistrationStatus(email, idToken, 'mnemonic-2');
-            if (isErrorMessage(res)) {
-                toast({
-                    title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
-                    description: res.message,
-                    status: 'error',
-                    duration: 8000,
-                    isClosable: true,
-                });
-                setLoading(false);
-                return;
-            } else {
-                setOnWaitList(res.valueOf());
-            }
-        };
-
-        void fetchUserRegistrationStatus();
-    }, [user]);
 
     useEffect(() => {
         const fetchUserRegistrationSlugs = async () => {
@@ -209,13 +184,21 @@ const ProfileInfo = () => {
         .filter((event: Happening) => {
             return event.happeningType === 'BEDPRES';
         })
-        .sort((event: Happening) => parseInt(event.date));
+        .sort((a: Happening, b: Happening) => {
+            if (new Date(a.date) > new Date(b.date)) return 1;
+            else if (new Date(a.date) < new Date(b.date)) return -1;
+            else return 0;
+        });
 
     const events = happenings
         .filter((event: Happening) => {
             return event.happeningType === 'EVENT';
         })
-        .sort((event: Happening) => parseInt(event.date));
+        .sort((a: Happening, b: Happening) => {
+            if (new Date(a.date) > new Date(b.date)) return 1;
+            else if (new Date(a.date) < new Date(b.date)) return -1;
+            else return 0;
+        });
 
     return (
         <Skeleton isLoaded={!userLoading}>
@@ -357,7 +340,6 @@ const ProfileInfo = () => {
                                         return (
                                             <ProfileHappeningPreview
                                                 key={event.slug}
-                                                onWaitlist={onWaitList}
                                                 isBedpres={false}
                                                 event={event}
                                                 data-testid={event.slug}
@@ -385,7 +367,6 @@ const ProfileInfo = () => {
                                         return (
                                             <ProfileHappeningPreview
                                                 key={event.slug}
-                                                onWaitlist={onWaitList}
                                                 isBedpres={true}
                                                 event={event}
                                                 data-testid={event.slug}

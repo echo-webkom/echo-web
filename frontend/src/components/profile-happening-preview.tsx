@@ -2,18 +2,17 @@ import { Box, Flex, LinkBox, LinkOverlay, Spacer, Stack, Text, useColorModeValue
 import NextLink from 'next/link';
 import Image from 'next/image';
 import type { Happening } from '@api/happening';
-import { format, isToday, isPast } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { BiCalendar } from 'react-icons/bi';
 import useLanguage from '@hooks/use-language';
 
 interface Props {
     isBedpres: boolean;
-    onWaitlist?: boolean;
     event: Happening;
 }
 
-const ProfileHappeningPreview = ({ isBedpres, event, onWaitlist }: Props) => {
+const ProfileHappeningPreview = ({ isBedpres, event }: Props) => {
     const isNorwegian = useLanguage();
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
     const logoUrl = event.logoUrl as string;
@@ -56,11 +55,6 @@ const ProfileHappeningPreview = ({ isBedpres, event, onWaitlist }: Props) => {
                                         format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
                                     )}
                                 </Flex>
-                                <Text fontSize={14}>
-                                    {isNorwegian
-                                        ? onWaitlist && <Text color={'red.200'}>På venteliste</Text>
-                                        : onWaitlist && <Text color={'red.200'}>On the waiting list</Text>}
-                                </Text>
                             </Stack>
                         </Box>
                     </Flex>
@@ -97,11 +91,6 @@ const ProfileHappeningPreview = ({ isBedpres, event, onWaitlist }: Props) => {
                                         format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
                                     )}
                                 </Flex>
-                                <Text fontSize={14}>
-                                    {isNorwegian
-                                        ? onWaitlist && <Text color={'red.200'}>På venteliste</Text>
-                                        : onWaitlist && <Text color={'red.200'}>On the waiting list</Text>}
-                                </Text>
                             </Stack>
                         </Box>
                     </Flex>
