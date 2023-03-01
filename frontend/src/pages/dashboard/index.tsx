@@ -34,6 +34,11 @@ const adminRoutes = [
         desc: 'Legg til brukere på whitelist',
         to: '/dashboard/whitelist',
     },
+    {
+        title: 'Prikkesystem',
+        desc: 'Brukere med prikker (bedpres)',
+        to: '/dashboard/prikkesystem',
+    },
 ];
 
 const DashboardPage = () => {
