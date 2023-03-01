@@ -79,6 +79,7 @@ const UserAPI = {
                 body: JSON.stringify({
                     email,
                     name,
+                    dots: 0,
                     createdAt: new Date(),
                     modifiedAt: new Date(),
                 }),

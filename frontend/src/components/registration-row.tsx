@@ -44,15 +44,15 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const [deleted, setDeleted] = useState(false);
 
-    const [dotPermission, setDotPermission] = useState(false);
-
     const [dots, setDots] = useState(0);
 
     const toast = useToast();
 
     const router = useRouter();
 
-    const { idToken, signedIn } = useAuth();
+    const { user, idToken, signedIn } = useAuth();
+
+    const dotPermission = user?.memberships.includes('webkom' || 'bedkom');
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -154,25 +154,30 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                             Dersom det er noen på venteliste, vil denne handlingen automatisk rykke første person på
                             venteliste opp, uten at de får beskjed om dette.
                         </Text>
-                        <Text fontWeight="bold"> Antall prikker </Text>
                         {dotPermission && (
-                            <NumberInput
-                                name="numDots"
-                                size="md"
-                                maxW={100}
-                                min={0}
-                                max={5}
-                                onChange={(value) => setDots(value)}
-                            >
-                                <NumberInputField />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
+                            <>
+                                <Text fontWeight="bold"> Antall prikker </Text>
+                                <Text py="0.5rem" lineHeight="1.5">
+                                    Tallet som står er antall prikker en bruker har fra før av.
+                                </Text>
+                                <NumberInput
+                                    defaultValue={user?.dots}
+                                    name="numDots"
+                                    size="md"
+                                    maxW={100}
+                                    min={0}
+                                    max={5}
+                                    onChange={(value) => setDots(value)}
+                                >
+                                    <NumberInputField />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                            </>
                         )}
                     </ModalBody>
-
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}

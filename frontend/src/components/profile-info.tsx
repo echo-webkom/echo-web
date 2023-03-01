@@ -249,6 +249,15 @@ const ProfileInfo = () => {
                                     </LinkOverlay>
                                 </LinkBox>
                             )}
+                            {user.memberships.includes('bedkom') && (
+                                <LinkBox>
+                                    <LinkOverlay as={NextLink} href="/dashboard/prikkesystem">
+                                        <Button w="100%" as="a" colorScheme="blue" my="1rem">
+                                            Til prikkesystem
+                                        </Button>
+                                    </LinkOverlay>
+                                </LinkBox>
+                            )}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
