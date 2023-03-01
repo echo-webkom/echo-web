@@ -1,7 +1,3 @@
-import type { Happening, HappeningType, Question } from '@api/happening';
-import type { RegFormValues } from '@api/registration';
-import { RegistrationAPI } from '@api/registration';
-import { userIsComplete } from '@api/user';
 import {
     Alert,
     AlertIcon,
@@ -25,14 +21,6 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import CountdownButton from '@components/countdown-button';
-import FormQuestion from '@components/form-question';
-import useAuth from '@hooks/use-auth';
-import useLanguage from '@hooks/use-language';
-import capitalize from '@utils/capitalize';
-import chooseDate from '@utils/choose-date';
-import { isErrorMessage } from '@utils/error';
-import hasOverlap from '@utils/has-overlap';
 import { differenceInHours, format, isBefore } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
 import NextLink from 'next/link';
@@ -41,6 +29,18 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import DeregistrationButton from './deregistration-button';
+import type { Happening, HappeningType, Question } from '@api/happening';
+import type { RegFormValues } from '@api/registration';
+import { RegistrationAPI } from '@api/registration';
+import { userIsComplete } from '@api/user';
+import CountdownButton from '@components/countdown-button';
+import FormQuestion from '@components/form-question';
+import useAuth from '@hooks/use-auth';
+import useLanguage from '@hooks/use-language';
+import capitalize from '@utils/capitalize';
+import chooseDate from '@utils/choose-date';
+import { isErrorMessage } from '@utils/error';
+import hasOverlap from '@utils/has-overlap';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';

@@ -12,7 +12,7 @@ const WaitinglistAPI = {
                 },
             });
             return res.status === 200;
-        } catch (err) {
+        } catch {
             return false;
         }
     },

@@ -2,6 +2,7 @@ package no.uib.echo
 
 import no.uib.echo.schema.AnswerJson
 import no.uib.echo.schema.Degree
+import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.FormRegistrationJson
 import no.uib.echo.schema.HAPPENING_TYPE
 import no.uib.echo.schema.HappeningJson
@@ -149,6 +150,14 @@ val exReg: (slug: String, user: UserJson) -> FormRegistrationJson = { slug, user
         listOf(
             AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
         ),
+    )
+}
+
+val deReg: (slug: String, user: UserJson) -> FormDeregistrationJson = { slug, user ->
+    FormDeregistrationJson(
+        user.email,
+        slug,
+        ""
     )
 }
 

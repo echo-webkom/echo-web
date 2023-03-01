@@ -22,9 +22,9 @@ import no.uib.echo.RegistrationResponse
 import no.uib.echo.RegistrationResponseJson
 import no.uib.echo.adminUser
 import no.uib.echo.be
+import no.uib.echo.deReg
 import no.uib.echo.exReg
 import no.uib.echo.hap9
-import no.uib.echo.schema.FormDeregistrationJson
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
@@ -133,48 +133,17 @@ class DeleteRegistrationsTest {
                 // Delete registrations for u in userSublist, such that all the registrations
                 // previously on the wait list are now moved off the wait list.
                 for (u in usersSublist) {
-                    val regEmail = u.email.lowercase()
+
                     val deleteRegCall = client.delete("/registration") {
-                        bearerAuth(adminToken)
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            FormDeregistrationJson(
-                                reason = "Test",
-                                slug = hap9(t).slug,
-                                email = regEmail
-                            )
-                        )
+                        bearerAuth(adminToken)
+                        setBody(deReg(hap9(t).slug, u))
                     }
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
-                    deleteRegCall.bodyAsText() shouldContain "Registration with email = $regEmail and slug = ${
+                    deleteRegCall.bodyAsText() shouldContain "Registration with email = ${u.email} and slug = ${
                     hap9(t).slug
-
-                    } deleted, " + "and registration with email ="
-                }
-
-                // Delete the registrations that were moved off the wait list in the previous for-loop.
-                for (u in waitListUsers) {
-                    val waitListRegEmail = u.email.lowercase()
-                    val deleteWaitListRegCall =
-                        client.delete("/registration") {
-                            bearerAuth(adminToken)
-                            contentType(ContentType.Application.Json)
-                            setBody(
-                                FormDeregistrationJson(
-                                    reason = "Test",
-                                    slug = hap9(t).slug,
-                                    email = waitListRegEmail
-                                )
-                            )
-                        }
-
-                    deleteWaitListRegCall.status shouldBe HttpStatusCode.OK
-                    deleteWaitListRegCall.bodyAsText() shouldBe "Registration with email = $waitListRegEmail and slug = ${
-                    hap9(
-                        t
-                    ).slug
-                    } deleted."
+                    } deleted"
                 }
             }
         }

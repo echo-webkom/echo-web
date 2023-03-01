@@ -167,7 +167,7 @@ class GetRegistrationsTest {
                 val registrationsList: List<RegistrationJson> = getRegistrationsListJsonCall.body()
 
                 registrationsList.map {
-                    it.copy(submitDate = null)
+                    it.copy(submitDate = null, deregistrationDate = null, reason = null)
                 } shouldBe regsList
             }
         }
