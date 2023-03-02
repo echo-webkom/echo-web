@@ -176,13 +176,13 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                     </ModalBody>
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
-                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                            {/* eslint-disable @typescript-eslint/no-misused-promises */}
                             <Button
                                 data-cy="confirm-delete-button"
                                 bg="green.400"
                                 onClick={async () => {
                                     if (!idToken) {
-                                        handleDelete();
+                                        await handleDelete();
                                         return;
                                     }
                                     const { error } = await RegistrationAPI.deleteRegistration(
@@ -210,6 +210,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                                     }
                                 }}
                             >
+                                {/* eslint-enable @typescript-eslint/no-misused-promises */}
                                 Ja, slett
                             </Button>
                             <Button onClick={onCloseDelete}>Nei</Button>
