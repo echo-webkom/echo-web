@@ -13,9 +13,9 @@ INSERT INTO "student_group_membership" VALUES
     ('nikolaus.engh@student.uib.no', 'webkom');
 
 INSERT INTO "registration" ("user_email", "happening_slug", "degree", "degree_year", "registration_status") VALUES
-                                                                                                      ('a@student.uib.no','felixs-amazing-party','DTEK',2,0),
-                                                                                                      ('b@student.uib.no','felixs-amazing-party','DTEK',2,0),
-                                                                                                      ('c@student.uib.no','felixs-amazing-party','DTEK',2,0);
+                                                                                                      ('a@student.uib.no','felixs-amazing-party','DTEK',2,'REGISTERED'),
+                                                                                                      ('b@student.uib.no','felixs-amazing-party','DTEK',2,'REGISTERED'),
+                                                                                                      ('c@student.uib.no','felixs-amazing-party','DTEK',2,'REGISTERED');
 
 SELECT * FROM "user";
 SELECT * FROM "student_group_membership";

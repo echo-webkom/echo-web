@@ -120,7 +120,7 @@ fun Route.getRegistrations() {
                 val answers = transaction {
                     Answer.select {
                         Answer.registrationEmail.lowerCase() eq reg[Registration.userEmail].lowercase() and (Answer.happeningSlug eq hap[Happening.slug])
-                    }.toList()
+                    }.orderBy(Answer.id to SortOrder.ASC).toList()
                 }.map {
                     AnswerJson(
                         it[Answer.question],

@@ -47,7 +47,7 @@ object Registration : Table() {
     val degree: Column<String> = text("degree")
     val degreeYear: Column<Int> = integer("degree_year")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
-    val registrationStatus: Column<Status> = enumeration("registration_status")
+    val registrationStatus: Column<Status> = enumerationByName("registration_status", 16)
     val reason: Column<String?> = text("deregistration_reason").nullable()
     val deregistrationDate: Column<DateTime?> = datetime("deregistration_date").nullable()
 
