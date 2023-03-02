@@ -31,9 +31,9 @@ import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
 import useAuth from '@hooks/use-auth';
 import ButtonLink from '@components/button-link';
-import UserDotsRow from '@components/user-dots-row';
+import UserStrikesRow from '@components/user-strikes-row';
 
-const AdminDotsPage = () => {
+const AdminStrikesPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -42,7 +42,7 @@ const AdminDotsPage = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const filteredUsers = users ? users.filter((user) => user.dots > 0).sort((user) => user.dots) : [];
+    const filteredUsers = users ? users.filter((user) => user.strikes > 0).sort((user) => user.strikes) : [];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -112,7 +112,7 @@ const AdminDotsPage = () => {
                                 </Thead>
                                 <Tbody>
                                     {filteredUsers.map((user) => (
-                                        <UserDotsRow key={user.email} initialUser={user} />
+                                        <UserStrikesRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>
                             </Table>
@@ -136,10 +136,11 @@ const AdminDotsPage = () => {
                     <ModalFooter>
                         <Button onClick={onClose}>Ok, jeg forstår</Button>
                     </ModalFooter>
+                    <Text as="b">For å endre prikker må du slette en påmelding på en bedpress.</Text>
                 </ModalContent>
             </Modal>
         </>
     );
 };
 
-export default AdminDotsPage;
+export default AdminStrikesPage;
