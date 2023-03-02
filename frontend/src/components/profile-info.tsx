@@ -96,7 +96,7 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
-            dots: user.dots,
+            strikes: user.strikes,
             createdAt: new Date(),
             modifiedAt: new Date(),
         };
@@ -152,14 +152,16 @@ const ProfileInfo = () => {
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
                             )}
-                            {user.dots !== 0 && (
+                            {user.strikes !== 0 && (
                                 <HStack>
                                     <IconText
-                                        data-cy="profile-dots"
+                                        data-cy="profile-strikes"
                                         icon={IoIosAlert}
-                                        text={isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of dots (bedpres): '}
+                                        text={
+                                            isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of strikes (bedpres): '
+                                        }
                                     />
-                                    <Text>{user.dots}</Text>
+                                    <Text>{user.strikes}</Text>
                                 </HStack>
                             )}
                         </Section>

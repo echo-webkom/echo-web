@@ -43,12 +43,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (req.method === 'DELETE') {
             try {
                 const email = session.email;
-                const dots = req.query.dots as string;
+                const strikes = req.query.strikes as string;
 
-                const endpoint =
-                    dots !== '0'
-                        ? `${BACKEND_URL}/registration/${slug}/${email}?dots=${dots}`
-                        : `${BACKEND_URL}/registration/${slug}/${email}`;
+                const endpoint = `${BACKEND_URL}/registration/${slug}/${email}?strikes=${strikes}`;
 
                 const response = await fetch(endpoint, {
                     method: 'DELETE',

@@ -17,7 +17,7 @@ data class UserJson(
     val degreeYear: Int? = null,
     val degree: Degree? = null,
     val memberships: List<String> = emptyList(),
-    val dots: Int,
+    val strikes: Int,
     val createdAt: String,
     val modifiedAt: String,
 )
@@ -28,7 +28,7 @@ object User : Table() {
     val alternateEmail: Column<String?> = text("alternate_email").nullable()
     val degreeYear: Column<Int?> = integer("degree_year").nullable()
     val degree: Column<String?> = text("degree").nullable()
-    val dots: Column<Int> = integer("dots").default(0)
+    val strikes: Column<Int> = integer("strikes").default(0)
     val createdAt: Column<DateTime> = datetime("created_at").defaultExpression(CurrentDateTime)
     val modifiedAt: Column<DateTime> = datetime("modified_at").defaultExpression(CurrentDateTime)
 

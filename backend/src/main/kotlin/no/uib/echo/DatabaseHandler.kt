@@ -173,7 +173,7 @@ class DatabaseHandler(
             "test.mctest@student.uib.no",
             "Test McTest",
             memberships = listOf("webkom"),
-            dots = 0,
+            strikes = 0,
             createdAt = DateTime.now().toString(),
             modifiedAt = DateTime.now().toString()
         )

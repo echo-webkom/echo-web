@@ -1,3 +1,4 @@
+import type { TableRowProps } from '@chakra-ui/react';
 import {
     Heading,
     Text,
@@ -14,7 +15,6 @@ import {
     ModalBody,
     ModalFooter,
     SimpleGrid,
-    TableRowProps,
     NumberInput,
     NumberDecrementStepper,
     NumberIncrementStepper,
@@ -44,7 +44,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const [deleted, setDeleted] = useState(false);
 
-    const [dots, setDots] = useState(0);
+    const [strikes, setStrikes] = useState(0);
 
     const toast = useToast();
 
@@ -52,7 +52,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const { user, idToken, signedIn } = useAuth();
 
-    const dotPermission = user?.memberships.includes('webkom' || 'bedkom');
+    const strikesPermission = user?.memberships.includes('bedkom');
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -68,7 +68,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             registration.slug,
             registration.email,
             idToken,
-            dots,
+            strikes,
         );
 
         onCloseDelete();
@@ -150,24 +150,20 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
-                        <Text py="0.5rem" lineHeight="1.5">
-                            Dersom det er noen på venteliste, vil denne handlingen automatisk rykke første person på
-                            venteliste opp, uten at de får beskjed om dette.
-                        </Text>
-                        {dotPermission && (
+                        {strikesPermission && (
                             <>
                                 <Text fontWeight="bold"> Antall prikker </Text>
                                 <Text py="0.5rem" lineHeight="1.5">
                                     Tallet som står er antall prikker en bruker har fra før av.
                                 </Text>
                                 <NumberInput
-                                    defaultValue={user?.dots}
-                                    name="numDots"
+                                    defaultValue={user?.strikes}
+                                    name="numstrikes"
                                     size="md"
                                     maxW={100}
                                     min={0}
                                     max={5}
-                                    onChange={(value) => setDots(value)}
+                                    onChange={(value) => setStrikes(value)}
                                 >
                                     <NumberInputField />
                                     <NumberInputStepper>
@@ -193,10 +189,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                                         registration.slug,
                                         registration.email,
                                         idToken,
-                                        dots,
+                                        strikes,
                                     );
-
-                                    onClose();
 
                                     if (error === null) {
                                         setDeleted(true);
