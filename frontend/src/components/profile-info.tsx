@@ -341,7 +341,6 @@ const ProfileInfo = () => {
                                         return (
                                             <ProfileHappeningPreview
                                                 key={event.slug}
-                                                isBedpres={false}
                                                 event={event}
                                                 data-testid={event.slug}
                                             />
@@ -350,7 +349,9 @@ const ProfileInfo = () => {
                                 })
                             ) : (
                                 <Center>
-                                    {isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}
+                                    {isNorwegian
+                                        ? 'Du er ikke påmeldt noen kommende arrangementer'
+                                        : 'You are not registered for any upcoming events'}
                                 </Center>
                             )}
                         </Section>
@@ -368,7 +369,6 @@ const ProfileInfo = () => {
                                         return (
                                             <ProfileHappeningPreview
                                                 key={event.slug}
-                                                isBedpres={true}
                                                 event={event}
                                                 data-testid={event.slug}
                                             />
@@ -378,8 +378,8 @@ const ProfileInfo = () => {
                             ) : (
                                 <Center>
                                     {isNorwegian
-                                        ? 'Ingen kommende bedriftspresentasjoner :('
-                                        : 'No upcoming bedpres :('}
+                                        ? 'Du er ikke påmeldt noen kommende bedpreser'
+                                        : 'You are not registered for any upcoming bedpres'}
                                 </Center>
                             )}
                         </Section>

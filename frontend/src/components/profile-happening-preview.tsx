@@ -1,4 +1,4 @@
-import { Box, Flex, LinkBox, LinkOverlay, Spacer, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, LinkBox, LinkOverlay, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { format, isToday } from 'date-fns';
@@ -7,20 +7,20 @@ import { BiCalendar } from 'react-icons/bi';
 import type { Happening } from '@api/happening';
 import useLanguage from '@hooks/use-language';
 
-interface Props {
-    isBedpres: boolean;
-    event: Happening;
-}
-
-const ProfileHappeningPreview = ({ isBedpres, event }: Props) => {
-    const isNorwegian = useLanguage();
+const ProfileHappeningPreview = ({ event }: { event: Happening }) => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
     const logoUrl = event.logoUrl as string;
+
     return (
-        <>
-            {isBedpres ? (
-                <LinkBox data-testid={event.slug}>
-                    <Flex alignItems="center" p={[0, null, null, null, 5]} _hover={{ bg: hoverColor }}>
+        <LinkBox data-testid={event.slug} py="1rem">
+            <>
+                {event.happeningType === 'BEDPRES' ? (
+                    <Flex
+                        alignItems="center"
+                        justifyContent="space-between"
+                        p={[0, null, null, null, 5]}
+                        _hover={{ bg: hoverColor }}
+                    >
                         <Flex alignItems="center" gap="5">
                             <Box display={['none', 'block']}>
                                 <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
@@ -35,33 +35,10 @@ const ProfileHappeningPreview = ({ isBedpres, event }: Props) => {
                                 </Text>
                             </Box>
                         </Flex>
-
-                        <Spacer />
-
-                        <Box>
-                            <Stack textAlign="right">
-                                <Flex alignItems="center" justifyContent="flex-end">
-                                    <BiCalendar />
-                                    {isToday(new Date(event.date)) ? (
-                                        <>
-                                            <Text ml="1" fontWeight="bold">
-                                                {isNorwegian ? `I dag ` : `Today `}
-                                            </Text>
-                                            <Text ml="1" fontSize="1rem">
-                                                {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
-                                            </Text>
-                                        </>
-                                    ) : (
-                                        format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
-                                    )}
-                                </Flex>
-                            </Stack>
-                        </Box>
+                        <HappeningPreviewDate event={event} />
                     </Flex>
-                </LinkBox>
-            ) : (
-                <LinkBox data-testid={event.slug}>
-                    <Flex alignItems="center">
+                ) : (
+                    <Flex alignItems="center" justifyContent="space-between">
                         <Box>
                             <LinkOverlay
                                 as={NextLink}
@@ -71,32 +48,34 @@ const ProfileHappeningPreview = ({ isBedpres, event }: Props) => {
                                 {event.title}
                             </LinkOverlay>
                         </Box>
-
-                        <Spacer />
-
-                        <Box>
-                            <Stack textAlign="right">
-                                <Flex alignItems="center" justifyContent="flex-end">
-                                    <BiCalendar />
-                                    {isToday(new Date(event.date)) ? (
-                                        <>
-                                            <Text ml="1" fontWeight="bold">
-                                                {isNorwegian ? `I dag ` : `Today `}
-                                            </Text>
-                                            <Text ml="1" fontSize="1rem">
-                                                {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
-                                            </Text>
-                                        </>
-                                    ) : (
-                                        format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
-                                    )}
-                                </Flex>
-                            </Stack>
-                        </Box>
+                        <HappeningPreviewDate event={event} />
                     </Flex>
-                </LinkBox>
-            )}
-        </>
+                )}
+            </>
+        </LinkBox>
+    );
+};
+
+const HappeningPreviewDate = ({ event }: { event: Happening }) => {
+    const isNorwegian = useLanguage();
+    return (
+        <Stack textAlign="right">
+            <Flex alignItems="center" justifyContent="flex-end">
+                <BiCalendar />
+                {isToday(new Date(event.date)) ? (
+                    <>
+                        <Text ml="1" fontWeight="bold">
+                            {isNorwegian ? `I dag ` : `Today `}
+                        </Text>
+                        <Text ml="1" fontSize="1rem">
+                            {format(new Date(event.date), isNorwegian ? 'HH:mm' : 'h:aaa')}
+                        </Text>
+                    </>
+                ) : (
+                    format(new Date(event.date), 'dd. MMM', { locale: isNorwegian ? nb : enUS })
+                )}
+            </Flex>
+        </Stack>
     );
 };
 
