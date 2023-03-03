@@ -1,21 +1,6 @@
 {
+    "extends": "../tsconfig.json",
     "compilerOptions": {
-        "target": "es2018",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "strictNullChecks": true,
-        "alwaysStrict": true,
-        "incremental": true,
         "baseUrl": "./src",
         "paths": {
             "@components/*": ["./components/*"],
@@ -29,11 +14,12 @@
     },
     "include": [
         "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx",
         "src/components/__tests__/testing-utils.js",
         "jest.setup.js",
-        "next.config.js"
+        "next.config.js",
+        "**/*.ts",
+        "**/*.tsx",
+        ".lintstagedrc.js"
     ],
     "exclude": ["node_modules"]
 }
