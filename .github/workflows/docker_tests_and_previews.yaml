@@ -340,19 +340,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy to Vercel Action
-        uses: BetaHuhn/deploy-to-vercel-action@v1
+      - name: Deploy to Vercel
+        uses: snaplet/vercel-action@v2
         with:
-          PR_LABELS: false
-          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_BalajEhvjfBqbkouJFI9761w
-          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
-          BUILD_ENV: |
+          await-for-deployment: true
+          env: |
             SANITY_DATASET=production
             ADMIN_KEY=${{ secrets.ADMIN_KEY_DEV }}
             NEXT_PUBLIC_BACKEND_URL=${{ needs.backend_preview.outputs.preview_backend_url }}
             NEXTAUTH_SECRET=secret123AsDef£123
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+          VERCEL_ACCESS_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
+          VERCEL_TEAM_ID: team_BalajEhvjfBqbkouJFI9761w
 
       - name: Seed backend with Sanity data
         run: curl -v ${{ needs.backend_preview.outputs.preview_backend_url }}/sanity -u admin:$TF_VAR_admin_key --basic || true
