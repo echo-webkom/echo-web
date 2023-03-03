@@ -491,7 +491,7 @@ fun Route.postRegistrationCount() {
 }
 
 fun Route.getUserRegistrations() {
-    get("/user/registrations/{email}") {
+    get("/user/{email}/registrations") {
 
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 

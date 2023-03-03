@@ -60,6 +60,8 @@ const ProfileInfo = () => {
 
     const [happenings, setHappenings] = useState<Array<Happening>>([]);
     const [registrations, setRegistrations] = useState<Array<string>>();
+    const [eventErrorMessage, setEventErrorMessage] = useState<string | undefined>();
+    const [bedpressErrorMessage, setBedpressErrorMessage] = useState<string | undefined>();
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -91,13 +93,7 @@ const ProfileInfo = () => {
             const email = user.email;
             const res = await RegistrationAPI.getUserRegistrations(email, idToken);
             if (isErrorMessage(res)) {
-                toast({
-                    title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
-                    description: res.message,
-                    status: 'error',
-                    duration: 8000,
-                    isClosable: true,
-                });
+                setEventErrorMessage(res.message);
                 setLoading(false);
                 return;
             } else {
@@ -113,13 +109,7 @@ const ProfileInfo = () => {
             const fetchHappeningInfo = async () => {
                 const res = await HappeningAPI.getHappeningsBySlugs(registrations);
                 if (isErrorMessage(res)) {
-                    toast({
-                        title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
-                        description: res.message,
-                        status: 'error',
-                        duration: 8000,
-                        isClosable: true,
-                    });
+                    setBedpressErrorMessage(res.message);
                     setLoading(false);
                     return;
                 } else {
@@ -354,6 +344,7 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming events'}
                                 </Center>
                             )}
+                            {eventErrorMessage && <Center textColor="red.300">{eventErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
@@ -382,6 +373,7 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming bedpres'}
                                 </Center>
                             )}
+                            {bedpressErrorMessage && <Center textColor="red.300">{bedpressErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
