@@ -42,7 +42,6 @@ import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
-import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -492,7 +491,7 @@ fun Route.postRegistrationCount() {
 }
 
 fun Route.getUserRegistrations() {
-    get("/user/registrations/{email?}") {
+    get("/user/registrations/{email}") {
 
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
@@ -505,15 +504,14 @@ fun Route.getUserRegistrations() {
         }
 
         if (email != userEmail) {
-            call.respond(HttpStatusCode.Unauthorized)
+            call.respond(HttpStatusCode.Forbidden)
             return@get
         }
 
         val userRegistrations = transaction {
-            Registration.join(Happening, joinType = JoinType.LEFT, additionalConstraint = { Registration.happeningSlug eq Happening.slug })
-                .select(Registration.userEmail eq email).toList()
-        }.map {
-            it[Registration.happeningSlug]
+            Registration.select { Registration.userEmail eq email }
+                .map { it[Registration.happeningSlug] }
+                .toList()
         }
         call.respond(userRegistrations)
     }
