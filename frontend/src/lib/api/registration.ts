@@ -168,7 +168,7 @@ const RegistrationAPI = {
     getUserRegistrations: async (email: string, idToken: string): Promise<Array<string> | ErrorMessage> => {
         try {
             const encodedEmail = encodeURIComponent(email);
-            const response = await fetch(`${BACKEND_URL}/user/registrations/${encodedEmail}`, {
+            const response = await fetch(`${BACKEND_URL}/user/${encodedEmail}/registrations`, {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
 
