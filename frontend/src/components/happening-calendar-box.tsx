@@ -34,9 +34,11 @@ const HappeningCalendarBox = ({ happening }: Props) => {
             >
                 <Popover trigger="hover">
                     <PopoverTrigger>
-                        <Text noOfLines={1} fontSize="lg" px="1" color="black">
-                            {happening.title}
-                        </Text>
+                        <LinkOverlay as={NextLink} href={`/event/${happening.slug}`}>
+                            <Text noOfLines={1} fontSize="lg" px="1" color="black">
+                                {happening.title}
+                            </Text>
+                        </LinkOverlay>
                     </PopoverTrigger>
                     <PopoverContent m="2">
                         <PopoverArrow />
