@@ -114,7 +114,7 @@ const HappeningAPI = {
                     "logoUrl": logo.asset -> url,
                     studentGroupName,
                     _createdAt,
-                    spotRanges[] -> {
+                    spotRanges[] {
                         minDegreeYear,
                         maxDegreeYear,
                         spots
@@ -164,7 +164,7 @@ const HappeningAPI = {
                     "logoUrl": logo.asset -> url,
                     studentGroupName,
                     _createdAt,
-                    spotRanges[] -> {
+                    spotRanges[] {
                         minDegreeYear,
                         maxDegreeYear,
                         spots
