@@ -163,7 +163,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                                     maxW={100}
                                     min={0}
                                     max={5}
-                                    onChange={(value) => setStrikes(value)}
+                                    onChange={(value) => setStrikes(parseInt(value))}
                                 >
                                     <NumberInputField />
                                     <NumberInputStepper>
