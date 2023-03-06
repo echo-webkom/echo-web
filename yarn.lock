@@ -10202,10 +10202,10 @@ sanity-plugin-color-picker@1.0.3:
     rgb2hex "^0.1.10"
     styled-components "^4.4.1"
 
-sanity-plugin-markdown@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-markdown/-/sanity-plugin-markdown-4.0.0.tgz#803b542335e3a97576fb68abe5ed4e4b6dabf906"
-  integrity sha512-SZkMjUTXuACth7FxSxTmy917EpkfZH7zJpukSb6TKsTMrjvY9BhWz3jpf2Kqas/ipDHaTnYTto11X00YAKw5gw==
+sanity-plugin-markdown@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-markdown/-/sanity-plugin-markdown-4.1.0.tgz#fcb8b81dee9de84c78c17d84ef40b57647cb4fe5"
+  integrity sha512-GYJOeYbvjZ2BOCYrK3Dyp+zQ+5FIHsjrFYHw+aIZw7E47VyW6tfsmW5wOfTR+YG/Dv2n+5h5+sPIMUUNXSDTJA==
   dependencies:
     "@sanity/incompatible-plugin" "^1.0.4"
     "@sanity/ui" "^1.0.0"
