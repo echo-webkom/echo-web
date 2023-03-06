@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { parseISO } from 'date-fns';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 import type { ErrorMessage } from '@utils/error';
 import type { Degree } from '@utils/schemas';
 import { degreeSchema } from '@utils/schemas';
@@ -165,6 +167,44 @@ const UserAPI = {
             return {
                 message: JSON.stringify(error),
             };
+        }
+    },
+
+    hasStrikes: async (req: NextApiRequest, res: NextApiResponse) => {
+        const session = await getToken({ req });
+
+        if (session) {
+            const JWT_TOKEN = session.idToken as string;
+            const slug = req.query.slug as string;
+
+            if (!session.email || !session.name) {
+                res.status(401).json({ message: 'Du må være logget inn for å se denne siden.' });
+                return;
+            }
+
+            if (req.method === 'DELETE') {
+                try {
+                    const email = session.email;
+                    const strikes = req.query.strikes as string;
+
+                    const endpoint = `${BACKEND_URL}/registration/${slug}/${email}?strikes=${strikes}`;
+
+                    const response = await fetch(endpoint, {
+                        method: 'DELETE',
+                        headers: {
+                            Authorization: `Bearer ${JWT_TOKEN}`,
+                        },
+                    });
+
+                    if (response.ok) {
+                        res.status(200);
+                        return;
+                    }
+                } catch {
+                    res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
+                    return;
+                }
+            }
         }
     },
 

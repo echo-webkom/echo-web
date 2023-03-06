@@ -40,30 +40,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        if (req.method === 'DELETE') {
-            try {
-                const email = session.email;
-                const strikes = req.query.strikes as string;
-
-                const endpoint = `${BACKEND_URL}/registration/${slug}/${email}?strikes=${strikes}`;
-
-                const response = await fetch(endpoint, {
-                    method: 'DELETE',
-                    headers: {
-                        Authorization: `Bearer ${JWT_TOKEN}`,
-                    },
-                });
-
-                if (response.ok) {
-                    res.status(200);
-                    return;
-                }
-            } catch {
-                res.status(500).json({ message: 'Noe gikk galt. Prøv igjen senere.' });
-                return;
-            }
-        }
-
         res.status(405).json({ message: 'Metode ikke tillatt.' });
     }
 
