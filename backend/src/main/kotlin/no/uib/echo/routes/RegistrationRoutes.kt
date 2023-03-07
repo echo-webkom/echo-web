@@ -510,8 +510,10 @@ fun Route.getUserRegistrations() {
 
         val userRegistrations = transaction {
             Registration.select { Registration.userEmail eq email }
+                .orderBy(Happening.happeningDate to SortOrder.DESC)
                 .map { it[Registration.happeningSlug] }
                 .toList()
+
         }
         call.respond(userRegistrations)
     }

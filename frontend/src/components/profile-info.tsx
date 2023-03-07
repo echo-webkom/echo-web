@@ -32,7 +32,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
-import { isFuture } from 'date-fns';
+import { isAfter, isBefore, isFuture } from 'date-fns';
 import ProfileHappeningPreview from './profile-happening-preview';
 import ErrorBox from '@components/error-box';
 import capitalize from '@utils/capitalize';
@@ -171,25 +171,13 @@ const ProfileInfo = () => {
 
     if (!signedIn || !user) return <Unauthorized />;
 
-    const bedpress = happenings
-        .filter((event: Happening) => {
-            return event.happeningType === 'BEDPRES';
-        })
-        .sort((a: Happening, b: Happening) => {
-            if (new Date(a.date) > new Date(b.date)) return 1;
-            else if (new Date(a.date) < new Date(b.date)) return -1;
-            else return 0;
-        });
+    const bedpress = happenings.filter((event) => {
+        return event.happeningType === 'BEDPRES';
+    });
 
-    const events = happenings
-        .filter((event: Happening) => {
-            return event.happeningType === 'EVENT';
-        })
-        .sort((a: Happening, b: Happening) => {
-            if (new Date(a.date) > new Date(b.date)) return 1;
-            else if (new Date(a.date) < new Date(b.date)) return -1;
-            else return 0;
-        });
+    const events = happenings.filter((event) => {
+        return event.happeningType === 'EVENT';
+    });
 
     return (
         <Skeleton isLoaded={!userLoading}>
@@ -344,7 +332,7 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming events'}
                                 </Center>
                             )}
-                            {eventErrorMessage && <Center textColor="red.300">{eventErrorMessage}</Center>}
+                            {eventErrorMessage && <Center textColor={'red.300'}>{eventErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
@@ -373,7 +361,7 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming bedpres'}
                                 </Center>
                             )}
-                            {bedpressErrorMessage && <Center textColor="red.300">{bedpressErrorMessage}</Center>}
+                            {bedpressErrorMessage && <Center textColor={'red.300'}>{bedpressErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
