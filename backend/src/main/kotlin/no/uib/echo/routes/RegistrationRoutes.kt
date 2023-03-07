@@ -492,7 +492,6 @@ fun Route.postRegistrationCount() {
 
 fun Route.getUserRegistrations() {
     get("/user/{email}/registrations") {
-
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         val userEmail = withContext(Dispatchers.IO) {
@@ -509,12 +508,13 @@ fun Route.getUserRegistrations() {
         }
 
         val userRegistrations = transaction {
-            Registration.select { Registration.userEmail eq email }
-                .orderBy(Happening.happeningDate to SortOrder.DESC)
-                .map { it[Registration.happeningSlug] }
-                .toList()
-
+            (Registration leftJoin Happening).select {
+                Registration.userEmail eq email
+            }.orderBy(Happening.registrationDate to SortOrder.DESC).map {
+                it[Happening.slug]
+            }.toList()
         }
+
         call.respond(userRegistrations)
     }
 }
