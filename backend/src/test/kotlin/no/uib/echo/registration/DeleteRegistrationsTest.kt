@@ -129,8 +129,6 @@ class DeleteRegistrationsTest {
                     res.code shouldBe RegistrationResponse.WaitList
                 }
 
-                // Delete registrations for u in userSublist, such that all the registrations
-                // previously on the wait list are now moved off the wait list.
                 for (u in usersSublist) {
                     val regEmail = u.email.lowercase()
                     val deleteRegCall = client.delete("/registration/${hap9(t).slug}/$regEmail") {
