@@ -33,12 +33,12 @@ const UserStrikesRow = ({ initialUser }: Props) => {
             <Td>{user.email}</Td>
             <Td>{user.strikes}</Td>
             <Td>
-                <Button onClick={onOpen}>Se mer</Button>
+                <Button onClick={onOpen}>Rediger</Button>
 
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
                     <ModalContent>
-                        <ModalHeader>Bruker info</ModalHeader>
+                        <ModalHeader>Brukerinfo</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <Stack>
@@ -58,11 +58,6 @@ const UserStrikesRow = ({ initialUser }: Props) => {
                                     </Flex>
                                 )}
                                 <Flex gap="3">
-                                    <Text fontWeight="bold">Antall prikker:</Text>
-                                    <Text>{user.strikes}</Text>
-                                </Flex>
-
-                                <Flex gap="3">
                                     <Text fontWeight="bold">Studieretning:</Text>
                                     <Text>{user.degree}</Text>
                                 </Flex>
@@ -78,6 +73,16 @@ const UserStrikesRow = ({ initialUser }: Props) => {
                                         {user.memberships.length > 0 &&
                                             user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                     </Text>
+                                </Flex>
+
+                                <Flex gap="3">
+                                    <Text fontWeight="bold">Antall nåværende prikker:</Text>
+                                    <Text>{user.strikes}</Text>
+                                </Flex>
+
+                                <Flex gap="3">
+                                    <Text fontWeight="bold"> Endre prikker</Text>
+                                    <Button bg="green.400">Lagre</Button>
                                 </Flex>
                             </Stack>
                         </ModalBody>

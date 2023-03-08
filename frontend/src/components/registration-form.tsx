@@ -178,22 +178,31 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                     </Text>
                 </Center>
             )}
-            {userIsComplete(user) && differenceInHours(regDate, new Date()) < 24 && (
-                <CountdownButton
-                    data-cy="reg-btn"
-                    w="100%"
-                    colorScheme="teal"
-                    date={regDate}
-                    onClick={() =>
-                        happening.additionalQuestions.length === 0
-                            ? void submitForm({ email: user.email, answers: [] })
-                            : onOpen()
-                    }
-                >
-                    {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
-                </CountdownButton>
+            {user?.strikes === 5 && happening.happeningType === 'BEDPRES' ? (
+                <Alert status="error" borderRadius="0.5rem">
+                    <AlertIcon />
+                    {isNorwegian
+                        ? `Du har 5 prikker og kan ikke melde deg på. Kontakt bedkom om dette er en feil. `
+                        : `You have 5 strikes and can't register. Contact bedkom if this is incorrect. `}
+                </Alert>
+            ) : (
+                userIsComplete(user) &&
+                differenceInHours(regDate, new Date()) < 24 && (
+                    <CountdownButton
+                        data-cy="reg-btn"
+                        w="100%"
+                        colorScheme="teal"
+                        date={regDate}
+                        onClick={() =>
+                            happening.additionalQuestions.length === 0
+                                ? void submitForm({ email: user.email, answers: [] })
+                                : onOpen()
+                        }
+                    >
+                        {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                    </CountdownButton>
+                )
             )}
-
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
