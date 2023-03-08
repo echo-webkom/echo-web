@@ -21,6 +21,8 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    useBoolean,
+    Checkbox,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Section from '@components/section';
@@ -42,7 +44,11 @@ const AdminStrikesPage = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const filteredUsers = users ? users.filter((user) => user.strikes > 0).sort((user) => user.strikes) : [];
+    const [showAll, setShowAll] = useBoolean();
+
+    const filteredUsers = users
+        ? users.filter((user) => showAll || user.strikes > 0).sort((a, b) => b.strikes - a.strikes)
+        : [];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -91,6 +97,9 @@ const AdminStrikesPage = () => {
                             <Heading size={['md', 'lg', 'xl']}>Prikkesystem</Heading>
                             <Spacer />
                             <Stack direction={['column', null, null, 'row']}>
+                                <Checkbox mx="1rem" onInput={setShowAll.toggle} ml="5">
+                                    Vis alle
+                                </Checkbox>
                                 <Button onClick={onOpen} fontSize="sm">
                                     Regler for prikkesystem
                                 </Button>
@@ -107,7 +116,7 @@ const AdminStrikesPage = () => {
                                         <Th>Navn</Th>
                                         <Th>Email</Th>
                                         <Th>Antall prikker</Th>
-                                        <Th>Rediger</Th>
+                                        <Th>Info</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
@@ -132,11 +141,11 @@ const AdminStrikesPage = () => {
                         <Text>Utestengt: utestengt på tre bedpresser</Text>
                         <Text>Oppgitt feil informasjon med vilje: en prikk</Text>
                         <Text>For sent: en prikk</Text>
+                        <Text fontWeight="bold">For å endre prikker må du slette en påmelding på en bedpress.</Text>
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose}>Ok, jeg forstår</Button>
                     </ModalFooter>
-                    <Text as="b">For å endre prikker må du slette en påmelding på en bedpress.</Text>
                 </ModalContent>
             </Modal>
         </>
