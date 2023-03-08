@@ -33,7 +33,7 @@ const UserStrikesRow = ({ initialUser }: Props) => {
             <Td>{user.email}</Td>
             <Td>{user.strikes}</Td>
             <Td>
-                <Button onClick={onOpen}>Rediger</Button>
+                <Button onClick={onOpen}>Mer</Button>
 
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
@@ -78,11 +78,6 @@ const UserStrikesRow = ({ initialUser }: Props) => {
                                 <Flex gap="3">
                                     <Text fontWeight="bold">Antall nåværende prikker:</Text>
                                     <Text>{user.strikes}</Text>
-                                </Flex>
-
-                                <Flex gap="3">
-                                    <Text fontWeight="bold"> Endre prikker</Text>
-                                    <Button bg="green.400">Lagre</Button>
                                 </Flex>
                             </Stack>
                         </ModalBody>

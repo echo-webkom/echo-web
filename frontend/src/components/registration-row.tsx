@@ -176,41 +176,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                     </ModalBody>
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
-                            {/* eslint-disable @typescript-eslint/no-misused-promises */}
-                            <Button
-                                data-cy="confirm-delete-button"
-                                bg="green.400"
-                                onClick={async () => {
-                                    if (!idToken) {
-                                        await handleDelete();
-                                        return;
-                                    }
-                                    const { error } = await RegistrationAPI.deleteRegistration(
-                                        registration.slug,
-                                        registration.email,
-                                        idToken,
-                                        strikes,
-                                    );
-
-                                    if (error === null) {
-                                        setDeleted(true);
-                                        void router.replace(router.asPath, undefined, { scroll: false });
-                                        toast({
-                                            title: 'Påmelding slettet!',
-                                            description: `Slettet påmeding med email '${registration.email}'.`,
-                                            isClosable: true,
-                                        });
-                                    } else {
-                                        toast({
-                                            title: 'Det har skjedd en feil!',
-                                            description: error,
-                                            status: 'error',
-                                            isClosable: true,
-                                        });
-                                    }
-                                }}
-                            >
-                                {/* eslint-enable @typescript-eslint/no-misused-promises */}
+                            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                            <Button data-cy="confirm-delete-button" bg="green.400" onClick={handleDelete}>
                                 Ja, slett
                             </Button>
                             <Button onClick={onCloseDelete}>Nei</Button>
