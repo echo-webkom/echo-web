@@ -152,7 +152,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                         </Text>
                         {strikesPermission && (
                             <>
-                                <Text fontWeight="bold"> Antall prikker </Text>
+                                <Text fontWeight="bold"> Sett antall prikker</Text>
                                 <Text py="0.5rem" lineHeight="1.5">
                                     Tallet som står er antall prikker en bruker har fra før av.
                                 </Text>
