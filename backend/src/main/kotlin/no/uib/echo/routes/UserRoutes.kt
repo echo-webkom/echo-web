@@ -267,7 +267,7 @@ fun Route.getAllUsers() {
             return@get
         }
 
-        if (email !in getGroupMembers("webkom")) {
+        if (email !in getGroupMembers("webkom") && email !in getGroupMembers("bedkom")) {
             call.respond(HttpStatusCode.Forbidden)
             return@get
         }
