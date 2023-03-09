@@ -44,6 +44,7 @@ import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
+import hasOverlap from '@utils/has-overlap';
 
 const ProfileInfo = () => {
     const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
@@ -242,20 +243,11 @@ const ProfileInfo = () => {
                                     </HStack>
                                 </form>
                             </FormProvider>
-                            {user.memberships.includes('webkom') && (
+                            {hasOverlap(user.memberships, ['webkom', 'bedkom']) && (
                                 <LinkBox>
                                     <LinkOverlay as={NextLink} href="/dashboard">
                                         <Button w="100%" as="a" colorScheme="blue" my="1rem">
                                             Til dashboard
-                                        </Button>
-                                    </LinkOverlay>
-                                </LinkBox>
-                            )}
-                            {user.memberships.includes('bedkom') && (
-                                <LinkBox>
-                                    <LinkOverlay as={NextLink} href="/dashboard/prikkesystem">
-                                        <Button w="100%" as="a" colorScheme="blue" my="1rem">
-                                            Til prikkesystem
                                         </Button>
                                     </LinkOverlay>
                                 </LinkBox>
