@@ -136,7 +136,7 @@
         "react-snowfall": "1.2.1",
         "recharts": "2.4.3",
         "remove-markdown": "0.5.0",
-        "zod": "3.21.0"
+        "zod": "3.21.1"
     },
     "devDependencies": {
         "@types/canvas-confetti": "1.6.0",
