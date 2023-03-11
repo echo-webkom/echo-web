@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Destroy Vercel preview
-        uses: snaplet/vercel-action@v2
+        uses: snaplet/vercel-action@v3
         with:
           delete: true
         env:
