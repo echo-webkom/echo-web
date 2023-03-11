@@ -44,7 +44,7 @@ data class SlugJson(
 data class RegistrationCountJson(
     val slug: String,
     val count: Int,
-    val waitListCount: Int,
+    val waitListCount: Int
 )
 
 fun selectSpotRanges(slug: String): List<SpotRangeJson> {

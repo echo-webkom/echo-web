@@ -25,7 +25,7 @@ fun Application.configureRouting(
     audience: String,
     issuer: String,
     secret: String?,
-    jwtConfig: String,
+    jwtConfig: String
 ) {
     routing { getStatus() }
 

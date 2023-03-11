@@ -19,7 +19,7 @@ data class UserJson(
     val memberships: List<String> = emptyList(),
     val strikes: Int,
     val createdAt: String,
-    val modifiedAt: String,
+    val modifiedAt: String
 )
 
 object User : Table() {

@@ -111,14 +111,14 @@ fun Route.getHappeningInfo() {
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        false,
+                        false
                     )
 
                 val waitListCount =
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        true,
+                        true
                     )
 
                 SpotRangeWithCountJson(
@@ -126,7 +126,7 @@ fun Route.getHappeningInfo() {
                     it[SpotRange.minDegreeYear],
                     it[SpotRange.maxDegreeYear],
                     count,
-                    waitListCount,
+                    waitListCount
                 )
             }
         }

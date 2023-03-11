@@ -16,7 +16,7 @@ data class WaitinglistUUIDJson(
     val uuid: String,
     val userEmail: String,
     val happeningSlug: String,
-    val lastNotified: String,
+    val lastNotified: String
 )
 
 object WaitingListUUID : Table("waiting_list_uuid") {
@@ -104,7 +104,7 @@ fun isPromotionLegal(slug: String): Boolean {
             it[Happening.studentGroupName] ?: "",
             it[Happening.studentGroupRegistrationDate].toString(),
             emptyList(),
-            it[Happening.onlyForStudentGroups],
+            it[Happening.onlyForStudentGroups]
 
         )
     } ?: return false

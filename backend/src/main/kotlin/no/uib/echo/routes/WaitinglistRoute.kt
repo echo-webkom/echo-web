@@ -41,7 +41,6 @@ fun Application.waitinglistRoutes(jwtConfig: String, sendGridApiKey: String?) {
 fun Route.promoteFromWaitingListWithoutValidation() {
     post("/registration/promote/{UUID}") {
         try {
-
             val uuid = call.parameters["UUID"]
             if (uuid == null) {
                 call.respond(HttpStatusCode.BadRequest, "the uuid was null")
@@ -114,7 +113,6 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
 
     post("/registration/promote/email/{slug}/{email}") {
         try {
-
             val adminEmail = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
             val happeningSlug = call.parameters["slug"]
             val email = call.parameters["email"]
@@ -199,7 +197,6 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
             }
 
             if (!isPromotionLegal(happeningSlug) || !isPersonLegalToPromote(happeningSlug, email)) {
-
                 call.respond(HttpStatusCode.Forbidden, "promotion from the waiting list was denied")
                 return@post
             }

@@ -69,7 +69,7 @@ suspend fun sendWaitingListEmail(
     sendGridApiKey: String,
     email: String,
     slug: String,
-    uuid: String,
+    uuid: String
 ): Boolean {
     val hap = transaction {
         Happening.select {
@@ -90,9 +90,9 @@ suspend fun sendWaitingListEmail(
                     registration = FormRegistrationJson(
                         email,
                         slug,
-                        emptyList(),
+                        emptyList()
                     ),
-                    "https://echo.uib.no/WaitingList/$uuid",
+                    "https://echo.uib.no/WaitingList/$uuid"
 
                 ),
                 Template.WAITINGLIST_NOTIFY,
@@ -157,10 +157,11 @@ suspend fun sendEmail(
 
     val fromName = fromEmail(from)
     val fromPers =
-        if (fromName != null)
+        if (fromName != null) {
             SendGridEmail(from, fromName)
-        else
+        } else {
             SendGridEmail(from)
+        }
 
     val templateId = when (template) {
         Template.CONFIRM_REG -> "d-1fff3960b2184def9cf8bac082aeac21"
@@ -185,7 +186,8 @@ suspend fun sendEmail(
                             dynamic_template_data = sendGridTemplate
                         )
                     ),
-                    from = fromPers, template_id = templateId
+                    from = fromPers,
+                    template_id = templateId
                 )
             )
         }
