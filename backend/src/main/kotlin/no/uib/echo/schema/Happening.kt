@@ -29,12 +29,12 @@ data class HappeningJson(
     val studentGroupName: String,
     val studentGroupRegistrationDate: String? = null,
     val studentGroups: List<String> = emptyList(),
-    val onlyForStudentGroups: Boolean? = null,
+    val onlyForStudentGroups: Boolean? = null
 )
 
 @Serializable
 data class HappeningInfoJson(
-    val spotRanges: List<SpotRangeWithCountJson>,
+    val spotRanges: List<SpotRangeWithCountJson>
 )
 
 object Happening : Table() {
@@ -55,16 +55,18 @@ object StudentGroupHappeningRegistration : Table("student_group_happening_regist
     val happeningSlug: Column<String> = text("happening_slug").references(Happening.slug)
 
     override val primaryKey: PrimaryKey = PrimaryKey(
-        StudentGroupHappeningRegistration.studentGroupName, StudentGroupHappeningRegistration.happeningSlug
+        StudentGroupHappeningRegistration.studentGroupName,
+        StudentGroupHappeningRegistration.happeningSlug
     )
 }
 
 fun insertOrUpdateHappening(
-    newHappening: HappeningJson,
+    newHappening: HappeningJson
 ): Pair<HttpStatusCode, String> {
     if (newHappening.spotRanges.isEmpty()) {
         return Pair(
-            HttpStatusCode.BadRequest, "No spot range given for happening with slug ${newHappening.slug}."
+            HttpStatusCode.BadRequest,
+            "No spot range given for happening with slug ${newHappening.slug}."
         )
     }
 
@@ -105,7 +107,8 @@ fun insertOrUpdateHappening(
         }
 
         return Pair(
-            HttpStatusCode.OK, "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
+            HttpStatusCode.OK,
+            "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
         )
     }
 
@@ -132,7 +135,8 @@ fun insertOrUpdateHappening(
         """.trimIndent()
 
         return Pair(
-            HttpStatusCode.Accepted, message
+            HttpStatusCode.Accepted,
+            message
         )
     }
 
@@ -179,7 +183,8 @@ fun insertOrUpdateHappening(
     """.trimIndent()
 
     return Pair(
-        HttpStatusCode.OK, message
+        HttpStatusCode.OK,
+        message
     )
 }
 

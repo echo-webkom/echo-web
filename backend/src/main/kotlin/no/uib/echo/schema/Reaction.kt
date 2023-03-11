@@ -9,7 +9,7 @@ enum class ReactionType {
     ROCKET,
     BEER,
     EYES,
-    FIX,
+    FIX
 }
 
 @Serializable

@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 data class FormRegistrationJson(
     val email: String,
     val slug: String,
-    val answers: List<AnswerJson>,
+    val answers: List<AnswerJson>
 )
 
 @Serializable
@@ -28,7 +28,7 @@ data class RegistrationJson(
     val submitDate: String? = null,
     val waitList: Boolean? = null,
     val answers: List<AnswerJson> = emptyList(),
-    val memberships: List<String> = emptyList(),
+    val memberships: List<String> = emptyList()
 )
 
 object Registration : Table() {
@@ -45,7 +45,7 @@ object Registration : Table() {
 fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
-    waitList: Boolean,
+    waitList: Boolean
 ): Int {
     return transaction {
         Registration.select {
@@ -57,8 +57,9 @@ fun countRegistrationsDegreeYear(
 }
 
 fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
-    if (regs.isEmpty())
+    if (regs.isEmpty()) {
         return ""
+    }
 
     val answersHeading =
         when (regs[0].answers.isEmpty()) {

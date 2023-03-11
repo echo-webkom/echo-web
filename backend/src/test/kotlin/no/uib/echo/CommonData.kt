@@ -13,7 +13,8 @@ val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
 val oneTwoSpotRange = listOf(SpotRangeJson(50, 1, 2))
 val threeFiveSpotRange = listOf(SpotRangeJson(50, 3, 5))
 val everyoneSplitSpotRange = listOf(
-    SpotRangeJson(5, 1, 2), SpotRangeJson(5, 3, 5)
+    SpotRangeJson(5, 1, 2),
+    SpotRangeJson(5, 3, 5)
 )
 val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
@@ -145,10 +146,12 @@ val haps: (type: HAPPENING_TYPE) -> List<HappeningJson> = { t ->
 
 val exReg: (slug: String, user: UserJson) -> FormRegistrationJson = { slug, user ->
     FormRegistrationJson(
-        user.email, slug,
+        user.email,
+        slug,
         listOf(
-            AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
-        ),
+            AnswerJson("Skal du ha mat?", "Nei"),
+            AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
+        )
     )
 }
 

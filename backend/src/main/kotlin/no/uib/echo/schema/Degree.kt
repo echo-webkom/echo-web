@@ -10,6 +10,7 @@ enum class Degree {
     PROG,
     ARMNINF,
     POST,
+
     // MISC, IKT and KOGNI should not be used,
     // they are only here for backwards compatibility.
     MISC,

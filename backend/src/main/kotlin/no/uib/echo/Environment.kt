@@ -3,7 +3,7 @@ package no.uib.echo
 enum class Environment {
     PRODUCTION,
     DEVELOPMENT,
-    PREVIEW,
+    PREVIEW
 }
 
 fun String.toEnvironment(): Environment {
@@ -16,5 +16,5 @@ fun String.toEnvironment(): Environment {
 }
 
 data class FeatureToggles(
-    val sendEmailReg: Boolean,
+    val sendEmailReg: Boolean
 )

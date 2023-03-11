@@ -120,7 +120,8 @@ fun Route.getRegistrations() {
                     }.orderBy(Answer.id to SortOrder.ASC).toList()
                 }.map {
                     AnswerJson(
-                        it[Answer.question], it[Answer.answer]
+                        it[Answer.question],
+                        it[Answer.answer]
                     )
                 }
 
@@ -134,7 +135,7 @@ fun Route.getRegistrations() {
                     reg[Registration.submitDate].toString(),
                     reg[Registration.waitList],
                     answers,
-                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList(),
+                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList()
                 )
             }
         }
@@ -145,7 +146,8 @@ fun Route.getRegistrations() {
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
-                    ContentDisposition.Parameters.FileName, fileName
+                    ContentDisposition.Parameters.FileName,
+                    fileName
                 ).toString()
             )
             call.respondBytes(
@@ -198,7 +200,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (userDegreeYear == null || userDegreeYear !in 1..5) {
                 call.respond(
-                    HttpStatusCode.NonAuthoritativeInformation, resToJson(RegistrationResponse.InvalidDegreeYear)
+                    HttpStatusCode.NonAuthoritativeInformation,
+                    resToJson(RegistrationResponse.InvalidDegreeYear)
                 )
                 return@post
             }
@@ -211,7 +214,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (happening == null) {
                 call.respond(
-                    HttpStatusCode.Conflict, resToJson(RegistrationResponse.HappeningDoesntExist)
+                    HttpStatusCode.Conflict,
+                    resToJson(RegistrationResponse.HappeningDoesntExist)
                 )
                 return@post
             }
@@ -233,7 +237,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
-                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                            RegistrationResponse.TooEarly,
+                            regDate = happening[Happening.registrationDate].toString()
                         )
                     )
                     return@post
@@ -243,7 +248,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         resToJson(
-                            RegistrationResponse.TooEarly, regDate = happening[Happening.registrationDate].toString()
+                            RegistrationResponse.TooEarly,
+                            regDate = happening[Happening.registrationDate].toString()
                         )
                     )
                     return@post
@@ -252,7 +258,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
                 call.respond(
-                    HttpStatusCode.Forbidden, resToJson(RegistrationResponse.TooLate)
+                    HttpStatusCode.Forbidden,
+                    resToJson(RegistrationResponse.TooLate)
                 )
                 return@post
             }
@@ -268,7 +275,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (correctRange == null) {
                 call.respond(
-                    HttpStatusCode.Forbidden, resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges)
+                    HttpStatusCode.Forbidden,
+                    resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges)
                 )
                 return@post
             }
@@ -276,12 +284,12 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val countRegsInSpotRange = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                false,
+                false
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                true,
+                true
             )
 
             val totalRegCount = countRegistrationsDegreeYear(registration.slug, 1..5, false)
@@ -303,7 +311,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     false -> RegistrationResponse.AlreadySubmitted
                 }
                 call.respond(
-                    HttpStatusCode.UnprocessableEntity, resToJson(responseCode)
+                    HttpStatusCode.UnprocessableEntity,
+                    resToJson(responseCode)
                 )
                 return@post
             }
@@ -468,7 +477,8 @@ fun Route.postRegistrationCount() {
             }
 
             call.respond(
-                HttpStatusCode.OK, registrationCounts
+                HttpStatusCode.OK,
+                registrationCounts
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")

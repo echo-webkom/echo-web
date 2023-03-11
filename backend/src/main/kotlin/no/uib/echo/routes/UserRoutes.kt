@@ -88,7 +88,7 @@ fun Route.getUser() {
                 memberships,
                 user[User.strikes],
                 user[User.createdAt].toString(),
-                user[User.modifiedAt].toString(),
+                user[User.modifiedAt].toString()
             )
         )
     }
@@ -215,7 +215,7 @@ fun Route.putUser() {
                         emptyList(),
                         newUser[User.strikes],
                         newUser[User.createdAt].toString(),
-                        newUser[User.modifiedAt].toString(),
+                        newUser[User.modifiedAt].toString()
                     )
                 )
                 return@put
@@ -246,7 +246,7 @@ fun Route.putUser() {
                     memberships,
                     updatedUser[User.strikes],
                     updatedUser[User.createdAt].toString(),
-                    updatedUser[User.modifiedAt].toString(),
+                    updatedUser[User.modifiedAt].toString()
                 )
             )
         } catch (e: Exception) {
@@ -289,7 +289,7 @@ fun Route.getAllUsers() {
                             .ifEmpty { emptyList() },
                         it[User.strikes],
                         it[User.createdAt].toString(),
-                        it[User.modifiedAt].toString(),
+                        it[User.modifiedAt].toString()
                     )
                 }
         }

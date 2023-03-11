@@ -44,7 +44,7 @@ val tables: Array<Table> = arrayOf(
     StudentGroupMembership,
     Reaction,
     WaitingListUUID,
-    Whitelist,
+    Whitelist
 )
 
 class DatabaseHandler(

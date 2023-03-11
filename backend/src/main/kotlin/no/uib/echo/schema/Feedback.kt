@@ -22,7 +22,7 @@ data class FeedbackResponseJson(
 
 enum class FeedbackResponse {
     EMPTY,
-    SUCCESS,
+    SUCCESS
 }
 
 object Feedback : Table() {
