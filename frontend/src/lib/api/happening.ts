@@ -189,6 +189,55 @@ const HappeningAPI = {
         }
     },
 
+    getHappeningsBySlugs: async (slugs: Array<string>): Promise<Array<Happening> | ErrorMessage> => {
+        try {
+            const query = groq`
+                *[_type == "happening" && slug.current in "${JSON.stringify(slugs)}" && !(_id in path('drafts.**'))]{
+                    title,
+                    "slug": slug.current,
+                    date,
+                    registrationDate,
+                    registrationDeadline,
+                    studentGroupRegistrationDate,
+                    studentGroups,
+                    onlyForStudentGroups,
+                    body,
+                    deductiblePayment,
+                    location,
+                    locationLink,
+                    companyLink,
+                    happeningType,
+                    contactEmail,
+                    additionalQuestions[] -> {
+                        questionText,
+                        inputType,
+                        alternatives
+                    },
+                    "logoUrl": logo.asset -> url,
+                    studentGroupName,
+                    _createdAt,
+                    spotRanges[] -> {
+                        minDegreeYear,
+                        maxDegreeYear,
+                        spots
+                    }
+                }
+            `;
+
+            const result = await SanityAPI.fetch(query);
+            if (result.length === 0) {
+                return {
+                    message: '404',
+                };
+            }
+            console.log('result: ', result);
+            return happeningSchema.array().parse(result);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { message: JSON.stringify(error) };
+        }
+    },
+
     /**
      * Get the registration status of a happening.
      * @param auth the admin auth token
