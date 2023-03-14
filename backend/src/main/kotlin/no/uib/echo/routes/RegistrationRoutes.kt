@@ -52,7 +52,10 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+<<<<<<< HEAD
 import org.jetbrains.exposed.sql.update
+=======
+>>>>>>> 698710a1 (removed unused imports)
 import org.joda.time.DateTime
 import java.net.URLDecoder
 import java.util.UUID
@@ -490,7 +493,8 @@ fun Route.postRegistrationCount() {
 
 fun Route.getUserRegistrations() {
     get("/user/registrations/{email?}") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase();
+
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
 
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")

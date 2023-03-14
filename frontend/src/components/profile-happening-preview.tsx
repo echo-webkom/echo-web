@@ -1,10 +1,10 @@
 import { Box, Flex, LinkBox, LinkOverlay, Spacer, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
-import type { Happening } from '@api/happening';
 import { format, isToday } from 'date-fns';
 import { nb, enUS } from 'date-fns/locale';
 import { BiCalendar } from 'react-icons/bi';
+import type { Happening } from '@api/happening';
 import useLanguage from '@hooks/use-language';
 
 interface Props {

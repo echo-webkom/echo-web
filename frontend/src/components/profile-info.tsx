@@ -32,6 +32,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
+import { isFuture } from 'date-fns';
+import ProfileHappeningPreview from './profile-happening-preview';
 import ErrorBox from '@components/error-box';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
@@ -44,10 +46,9 @@ import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
-import { Happening, HappeningAPI } from '@api/happening';
+import type { Happening } from '@api/happening';
+import { HappeningAPI } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
-import { isFuture } from 'date-fns';
-import ProfileHappeningPreview from './profile-happening-preview';
 import hasOverlap from '@utils/has-overlap';
 
 const ProfileInfo = () => {
