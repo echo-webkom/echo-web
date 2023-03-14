@@ -45,6 +45,8 @@ import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
 import hasOverlap from '@utils/has-overlap';
+import { Happening, HappeningAPI } from '@api/happening';
+import { RegistrationAPI } from '@api/registration';
 
 const ProfileInfo = () => {
     const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
@@ -52,6 +54,9 @@ const ProfileInfo = () => {
 
     const [saved, setSaved] = useState<boolean>(false);
     const [satisfied, setSatisfied] = useState<boolean>(false);
+
+    const [happenings, setHappenings] = useState<Array<Happening>>([]);
+    const [registrations, setRegistrations] = useState<Array<string>>();
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -75,6 +80,54 @@ const ProfileInfo = () => {
             setLoading(false);
         }
     }, [user, signedIn, setValue]);
+
+    useEffect(() => {
+        const fetchUserRegistrationSlugs = async () => {
+            if (!user?.email || !idToken) return;
+
+            const email = user.email;
+            const res = await RegistrationAPI.getUserRegistrations(email, idToken);
+            if (isErrorMessage(res)) {
+                toast({
+                    title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
+                    description: res.message,
+                    status: 'error',
+                    duration: 8000,
+                    isClosable: true,
+                });
+                setLoading(false);
+                return;
+            } else {
+                setRegistrations(res);
+            }
+        };
+
+        void fetchUserRegistrationSlugs();
+    }, [user]);
+
+    useEffect(() => {
+        console.log('registrations: ', registrations);
+        if (registrations) {
+            const fetchHappeningInfo = async () => {
+                console.log('halloj?');
+                const res = await HappeningAPI.getHappeningsBySlugs(registrations);
+                if (isErrorMessage(res)) {
+                    toast({
+                        title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
+                        description: res.message,
+                        status: 'error',
+                        duration: 8000,
+                        isClosable: true,
+                    });
+                    setLoading(false);
+                    return;
+                } else {
+                    setHappenings(res);
+                }
+            };
+            void fetchHappeningInfo();
+        }
+    }, [registrations]);
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
         if (!user || !idToken || !signedIn) {
