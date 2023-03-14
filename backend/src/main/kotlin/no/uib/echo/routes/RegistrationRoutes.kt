@@ -490,7 +490,7 @@ fun Route.postRegistrationCount() {
 
 fun Route.getUserRegistrations() {
     get("/user/registrations/{email?}") {
-        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase();
 
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")
@@ -501,7 +501,7 @@ fun Route.getUserRegistrations() {
         }
 
         if (email != userEmail) {
-            call.respond(HttpStatusCode.Forbidden)
+            call.respond(HttpStatusCode.Unauthorized)
             return@get
         }
 
@@ -511,7 +511,43 @@ fun Route.getUserRegistrations() {
         }.map {
             it[Registration.happeningSlug]
         }
-        println(userRegistrations)
         call.respond(userRegistrations)
+    }
+}
+
+fun Route.getUserRegistrationStatus() {
+    get("/user/registrations/{slug}/{email}") {
+
+        val email = call.parameters["email"]
+        val slug = call.parameters["slug"]
+
+        val userEmail = withContext(Dispatchers.IO) {
+            URLDecoder.decode(call.parameters["email"], "UTF-8")
+        };
+        if (email == null || userEmail == null){
+            call.respond(HttpStatusCode.BadRequest, "NO EMAIL")
+            return@get
+        }
+
+        if (slug == null) {
+            call.respond(HttpStatusCode.BadRequest, "NO SLUG")
+            return@get
+        }
+
+        if (email != userEmail) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val status = transaction {
+            Registration.select {
+                Registration.userEmail eq email and (
+                        Registration.happeningSlug eq slug
+                        )
+            }.firstOrNull()
+        }
+
+
+        call.respond(status != null)
     }
 }
