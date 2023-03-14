@@ -225,11 +225,6 @@ const HappeningAPI = {
             `;
 
             const result = await SanityAPI.fetch(query);
-            if (result.length === 0) {
-                return {
-                    message: '404',
-                };
-            }
 
             return happeningSchema.array().parse(result);
         } catch (error) {

@@ -44,12 +44,12 @@ import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
-import hasOverlap from '@utils/has-overlap';
-import { Happening, HappeningAPI } from '@api/happening';
+import { Happening, HappeningAPI, HappeningType } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
 import { isFuture } from 'date-fns';
 import BedpresPreview from './bedpres-preview';
 import EventPreview from './event-preview';
+import hasOverlap from '@utils/has-overlap';
 
 const ProfileInfo = () => {
     const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
@@ -109,10 +109,8 @@ const ProfileInfo = () => {
     }, [user]);
 
     useEffect(() => {
-        console.log('registrations: ', registrations);
         if (registrations) {
             const fetchHappeningInfo = async () => {
-                console.log('halloj?');
                 const res = await HappeningAPI.getHappeningsBySlugs(registrations);
                 if (isErrorMessage(res)) {
                     toast({
@@ -182,6 +180,18 @@ const ProfileInfo = () => {
     }
 
     if (!signedIn || !user) return <Unauthorized />;
+
+    const bedpress = happenings
+        .filter((event: Happening) => {
+            return event.happeningType === 'BEDPRES';
+        })
+        .sort((event: Happening) => parseInt(event.date));
+
+    const events = happenings
+        .filter((event: Happening) => {
+            return event.happeningType === 'EVENT';
+        })
+        .sort((event: Happening) => parseInt(event.date));
 
     return (
         <Skeleton isLoaded={!userLoading}>
@@ -317,11 +327,17 @@ const ProfileInfo = () => {
                                     {isNorwegian ? 'Kommende arrangamenter' : 'Upcoming events'}
                                 </Heading>
                             </Center>
-                            {happenings.map((event) => {
-                                if (event.happeningType === 'EVENT' && isFuture(new Date(event.date))) {
-                                    return <EventPreview key={event.slug} event={event} data-testid={event.slug} />;
-                                }
-                            })}
+                            {events.length > 0 ? (
+                                events.map((event) => {
+                                    if (isFuture(new Date(event.date))) {
+                                        return <EventPreview key={event.slug} event={event} data-testid={event.slug} />;
+                                    }
+                                })
+                            ) : (
+                                <Center>
+                                    <>{isNorwegian ? 'Ingen kommende arrangementer :(' : 'No upcoming events :('}</>
+                                </Center>
+                            )}
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
@@ -331,11 +347,23 @@ const ProfileInfo = () => {
                                     {isNorwegian ? 'Kommende bedriftspresentasjoner' : 'Upcoming bedpres'}
                                 </Heading>
                             </Center>
-                            {happenings.map((event) => {
-                                if (event.happeningType === 'BEDPRES' && isFuture(new Date(event.date))) {
-                                    return <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />;
-                                }
-                            })}
+                            {bedpress.length > 0 ? (
+                                bedpress.map((event) => {
+                                    if (isFuture(new Date(event.date))) {
+                                        return (
+                                            <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />
+                                        );
+                                    }
+                                })
+                            ) : (
+                                <Center>
+                                    <>
+                                        {isNorwegian
+                                            ? 'Ingen kommende bedriftspresentasjoner :('
+                                            : 'No upcoming bedpres :('}
+                                    </>
+                                </Center>
+                            )}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
