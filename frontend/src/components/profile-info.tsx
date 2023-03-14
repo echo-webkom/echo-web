@@ -58,10 +58,8 @@ const ProfileInfo = () => {
     const [saved, setSaved] = useState<boolean>(false);
     const [satisfied, setSatisfied] = useState<boolean>(false);
 
-    const [happenings, setHappenings] = useState<Array<Happening>>([]);
-    const [registrations, setRegistrations] = useState<Array<string>>();
-    const [eventErrorMessage, setEventErrorMessage] = useState<string | undefined>();
-    const [bedpressErrorMessage, setBedpressErrorMessage] = useState<string | undefined>();
+    const [upcomingEvents, setUpcomingEvents] = useState<Array<Happening>>([]);
+    const [upcomingBedpresses, setUpcomingBedpresses] = useState<Array<Happening>>([]);
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -87,38 +85,33 @@ const ProfileInfo = () => {
     }, [user, signedIn, setValue]);
 
     useEffect(() => {
-        const fetchUserRegistrationSlugs = async () => {
+        const fetchUpcomingEvents = async () => {
             if (!user?.email || !idToken) return;
 
-            const email = user.email;
-            const res = await RegistrationAPI.getUserRegistrations(email, idToken);
-            if (isErrorMessage(res)) {
-                setEventErrorMessage(res.message);
-                setLoading(false);
-                return;
-            } else {
-                setRegistrations(res);
-            }
+            const eventSlugs = await RegistrationAPI.getUserRegistrations(user.email, idToken);
+            if (isErrorMessage(eventSlugs)) return;
+
+            const happenings = await HappeningAPI.getHappeningsBySlugs(eventSlugs);
+            if (isErrorMessage(happenings)) return;
+
+            const upcomingEvents = happenings.filter((happening) => {
+                return isFuture(new Date(happening.date));
+            });
+
+            const bedpress = upcomingEvents.filter((event) => {
+                return event.happeningType === 'BEDPRES';
+            });
+
+            const events = upcomingEvents.filter((event) => {
+                return event.happeningType === 'EVENT';
+            });
+
+            setUpcomingEvents(events);
+            setUpcomingBedpresses(bedpress);
         };
 
-        void fetchUserRegistrationSlugs();
-    }, [idToken, user]);
-
-    useEffect(() => {
-        if (registrations) {
-            const fetchHappeningInfo = async () => {
-                const res = await HappeningAPI.getHappeningsBySlugs(registrations);
-                if (isErrorMessage(res)) {
-                    setBedpressErrorMessage(res.message);
-                    setLoading(false);
-                    return;
-                } else {
-                    setHappenings(res);
-                }
-            };
-            void fetchHappeningInfo();
-        }
-    }, [registrations]);
+        void fetchUpcomingEvents();
+    }, [idToken, user?.email]);
 
     const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
         if (!user || !idToken || !signedIn) {
@@ -170,14 +163,6 @@ const ProfileInfo = () => {
     }
 
     if (!signedIn || !user) return <Unauthorized />;
-
-    const bedpress = happenings.filter((event) => {
-        return event.happeningType === 'BEDPRES';
-    });
-
-    const events = happenings.filter((event) => {
-        return event.happeningType === 'EVENT';
-    });
 
     return (
         <Skeleton isLoaded={!userLoading}>
@@ -313,17 +298,15 @@ const ProfileInfo = () => {
                                     {isNorwegian ? 'Kommende arrangamenter' : 'Upcoming events'}
                                 </Heading>
                             </Center>
-                            {events.length > 0 ? (
-                                events.map((event) => {
-                                    if (isFuture(new Date(event.date))) {
-                                        return (
-                                            <ProfileHappeningPreview
-                                                key={event.slug}
-                                                event={event}
-                                                data-testid={event.slug}
-                                            />
-                                        );
-                                    }
+                            {upcomingEvents.length > 0 ? (
+                                upcomingEvents.map((event) => {
+                                    return (
+                                        <ProfileHappeningPreview
+                                            key={event.slug}
+                                            event={event}
+                                            data-testid={event.slug}
+                                        />
+                                    );
                                 })
                             ) : (
                                 <Center>
@@ -332,7 +315,6 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming events'}
                                 </Center>
                             )}
-                            {eventErrorMessage && <Center textColor="red.300">{eventErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                     <GridItem colSpan={2}>
@@ -342,17 +324,15 @@ const ProfileInfo = () => {
                                     {isNorwegian ? 'Kommende bedriftspresentasjoner' : 'Upcoming bedpres'}
                                 </Heading>
                             </Center>
-                            {bedpress.length > 0 ? (
-                                bedpress.map((event) => {
-                                    if (isFuture(new Date(event.date))) {
-                                        return (
-                                            <ProfileHappeningPreview
-                                                key={event.slug}
-                                                event={event}
-                                                data-testid={event.slug}
-                                            />
-                                        );
-                                    }
+                            {upcomingBedpresses.length > 0 ? (
+                                upcomingBedpresses.map((bedpres) => {
+                                    return (
+                                        <ProfileHappeningPreview
+                                            key={bedpres.slug}
+                                            event={bedpres}
+                                            data-testid={bedpres.slug}
+                                        />
+                                    );
                                 })
                             ) : (
                                 <Center>
@@ -361,7 +341,6 @@ const ProfileInfo = () => {
                                         : 'You are not registered for any upcoming bedpres'}
                                 </Center>
                             )}
-                            {bedpressErrorMessage && <Center textColor="red.300">{bedpressErrorMessage}</Center>}
                         </Section>
                     </GridItem>
                 </SimpleGrid>
