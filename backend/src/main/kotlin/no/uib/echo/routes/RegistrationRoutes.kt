@@ -42,6 +42,7 @@ import no.uib.echo.schema.nullableStringToDegree
 import no.uib.echo.schema.selectSpotRanges
 import no.uib.echo.schema.toCsv
 import no.uib.echo.sendConfirmationEmail
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -62,6 +63,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
             getRegistrations()
             deleteRegistration()
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
+            getUserRegistrations()
         }
 
         authenticate("auth-admin") {
@@ -121,7 +123,7 @@ fun Route.getRegistrations() {
                 }.map {
                     AnswerJson(
                         it[Answer.question],
-                        it[Answer.answer]
+                        it[Answer.answer],
                     )
                 }
 
@@ -135,7 +137,7 @@ fun Route.getRegistrations() {
                     reg[Registration.submitDate].toString(),
                     reg[Registration.waitList],
                     answers,
-                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList()
+                    if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList(),
                 )
             }
         }
@@ -147,12 +149,12 @@ fun Route.getRegistrations() {
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
                     ContentDisposition.Parameters.FileName,
-                    fileName
-                ).toString()
+                    fileName,
+                ).toString(),
             )
             call.respondBytes(
                 contentType = ContentType.parse("text/csv"),
-                provider = { toCsv(regs, testing = testing).toByteArray() }
+                provider = { toCsv(regs, testing = testing).toByteArray() },
             )
         } else if (json) {
             call.respond(regs)
@@ -201,7 +203,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             if (userDegreeYear == null || userDegreeYear !in 1..5) {
                 call.respond(
                     HttpStatusCode.NonAuthoritativeInformation,
-                    resToJson(RegistrationResponse.InvalidDegreeYear)
+                    resToJson(RegistrationResponse.InvalidDegreeYear),
                 )
                 return@post
             }
@@ -215,7 +217,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             if (happening == null) {
                 call.respond(
                     HttpStatusCode.Conflict,
-                    resToJson(RegistrationResponse.HappeningDoesntExist)
+                    resToJson(RegistrationResponse.HappeningDoesntExist),
                 )
                 return@post
             }
@@ -238,8 +240,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                         HttpStatusCode.Forbidden,
                         resToJson(
                             RegistrationResponse.TooEarly,
-                            regDate = happening[Happening.registrationDate].toString()
-                        )
+                            regDate = happening[Happening.registrationDate].toString(),
+                        ),
                     )
                     return@post
                 }
@@ -249,8 +251,8 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                         HttpStatusCode.Forbidden,
                         resToJson(
                             RegistrationResponse.TooEarly,
-                            regDate = happening[Happening.registrationDate].toString()
-                        )
+                            regDate = happening[Happening.registrationDate].toString(),
+                        ),
                     )
                     return@post
                 }
@@ -259,7 +261,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             if (DateTime(happening[Happening.happeningDate]).isBeforeNow) {
                 call.respond(
                     HttpStatusCode.Forbidden,
-                    resToJson(RegistrationResponse.TooLate)
+                    resToJson(RegistrationResponse.TooLate),
                 )
                 return@post
             }
@@ -276,7 +278,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             if (correctRange == null) {
                 call.respond(
                     HttpStatusCode.Forbidden,
-                    resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges)
+                    resToJson(RegistrationResponse.NotInRange, spotRanges = spotRanges),
                 )
                 return@post
             }
@@ -284,12 +286,12 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
             val countRegsInSpotRange = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                false
+                false,
             )
             val countRegsInSpotRangeWaitList = countRegistrationsDegreeYear(
                 registration.slug,
                 correctRange.minDegreeYear..correctRange.maxDegreeYear,
-                true
+                true,
             )
 
             val totalRegCount = countRegistrationsDegreeYear(registration.slug, 1..5, false)
@@ -312,7 +314,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                 }
                 call.respond(
                     HttpStatusCode.UnprocessableEntity,
-                    resToJson(responseCode)
+                    resToJson(responseCode),
                 )
                 return@post
             }
@@ -346,7 +348,7 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                 }
                 call.respond(
                     HttpStatusCode.Accepted,
-                    resToJson(RegistrationResponse.WaitList, waitListSpot = waitListSpot.toLong())
+                    resToJson(RegistrationResponse.WaitList, waitListSpot = waitListSpot.toLong()),
                 )
 
                 if (sendGridApiKey == null || !sendEmail) {
@@ -452,7 +454,7 @@ fun Route.deleteRegistration() {
             }
             call.respond(
                 HttpStatusCode.OK,
-                "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted"
+                "Registration with email = $decodedParamEmail and slug = ${hap[Happening.slug]} deleted",
             )
             return@delete
         } catch (e: Exception) {
@@ -478,7 +480,7 @@ fun Route.postRegistrationCount() {
 
             call.respond(
                 HttpStatusCode.OK,
-                registrationCounts
+                registrationCounts,
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")
@@ -488,15 +490,14 @@ fun Route.postRegistrationCount() {
 
 fun Route.getUserRegistrations() {
     get("/user/registrations/{email?}") {
-
         val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
         println(email)
         println(call.principal<JWTPrincipal>()?.payload)
 
         val userEmail = withContext(Dispatchers.IO) {
             URLDecoder.decode(call.parameters["email"], "UTF-8")
-        };
-        if (email == null || userEmail == null){
+        }
+        if (email == null || userEmail == null) {
             call.respond(HttpStatusCode.BadRequest, "NO EMAIL")
             return@get
         }
@@ -507,8 +508,8 @@ fun Route.getUserRegistrations() {
         }
 
         val userRegistrations = transaction {
-            Registration.join(Happening, joinType = JoinType.LEFT, additionalConstraint = { Registration.happeningSlug eq Happening.slug})
-                .select( Registration.userEmail eq email).toList()
+            Registration.join(Happening, joinType = JoinType.LEFT, additionalConstraint = { Registration.happeningSlug eq Happening.slug })
+                .select(Registration.userEmail eq email).toList()
         }.map {
             it[Registration.happeningSlug]
         }
