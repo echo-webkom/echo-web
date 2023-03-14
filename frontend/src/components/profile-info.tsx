@@ -47,8 +47,7 @@ import useAuth from '@hooks/use-auth';
 import { Happening, HappeningAPI, HappeningType } from '@api/happening';
 import { RegistrationAPI } from '@api/registration';
 import { isFuture } from 'date-fns';
-import BedpresPreview from './bedpres-preview';
-import EventPreview from './event-preview';
+import ProfileHappeningPreview from './profile-happening-preview';
 import hasOverlap from '@utils/has-overlap';
 
 const ProfileInfo = () => {
@@ -60,6 +59,7 @@ const ProfileInfo = () => {
 
     const [happenings, setHappenings] = useState<Array<Happening>>([]);
     const [registrations, setRegistrations] = useState<Array<string>>();
+    const [onWaitList, setOnWaitList] = useState<boolean>();
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -85,9 +85,28 @@ const ProfileInfo = () => {
     }, [user, signedIn, setValue]);
 
     useEffect(() => {
-        console.log('token: ', idToken);
-        console.log(user?.email);
-    }, []);
+        const fetchUserRegistrationStatus = async () => {
+            if (!user?.email || !idToken) return;
+
+            const email = user.email;
+            const res = await RegistrationAPI.getUserRegistrationStatus(email, idToken, 'mnemonic-2');
+            if (isErrorMessage(res)) {
+                toast({
+                    title: isNorwegian ? 'Det har skjedd en feil' : 'Something went wrong',
+                    description: res.message,
+                    status: 'error',
+                    duration: 8000,
+                    isClosable: true,
+                });
+                setLoading(false);
+                return;
+            } else {
+                setOnWaitList(res.valueOf());
+            }
+        };
+
+        void fetchUserRegistrationStatus();
+    }, [user]);
 
     useEffect(() => {
         const fetchUserRegistrationSlugs = async () => {
@@ -335,7 +354,15 @@ const ProfileInfo = () => {
                             {events.length > 0 ? (
                                 events.map((event) => {
                                     if (isFuture(new Date(event.date))) {
-                                        return <EventPreview key={event.slug} event={event} data-testid={event.slug} />;
+                                        return (
+                                            <ProfileHappeningPreview
+                                                key={event.slug}
+                                                onWaitlist={onWaitList}
+                                                isBedpres={false}
+                                                event={event}
+                                                data-testid={event.slug}
+                                            />
+                                        );
                                     }
                                 })
                             ) : (
@@ -356,7 +383,13 @@ const ProfileInfo = () => {
                                 bedpress.map((event) => {
                                     if (isFuture(new Date(event.date))) {
                                         return (
-                                            <BedpresPreview key={event.slug} bedpres={event} data-testid={event.slug} />
+                                            <ProfileHappeningPreview
+                                                key={event.slug}
+                                                onWaitlist={onWaitList}
+                                                isBedpres={true}
+                                                event={event}
+                                                data-testid={event.slug}
+                                            />
                                         );
                                     }
                                 })
