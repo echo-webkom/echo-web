@@ -192,7 +192,7 @@ const HappeningAPI = {
     getHappeningsBySlugs: async (slugs: Array<string>): Promise<Array<Happening> | ErrorMessage> => {
         try {
             const query = groq`
-                *[_type == "happening" && slug.current in ${JSON.stringify(slugs)} && !(_id in path('drafts.**'))]{
+                *[_type == "happening" && slug.current in $slugs && !(_id in path('drafts.**'))] | order(date asc) {
                     title,
                     "slug": slug.current,
                     date,
@@ -224,7 +224,11 @@ const HappeningAPI = {
                 }
             `;
 
-            const result = await SanityAPI.fetch(query);
+            const params = {
+                slugs,
+            };
+
+            const result = await SanityAPI.fetch(query, params);
 
             return happeningSchema.array().parse(result);
         } catch (error) {
