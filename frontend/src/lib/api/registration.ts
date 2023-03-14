@@ -182,11 +182,10 @@ const RegistrationAPI = {
                 return data;
             }
 
-            // return registrationSchema.array().parse(data);
-            return data;
+            return z.array(z.string()).parse(data);
         } catch {
             return {
-                message: 'Fail @ getRegistrations',
+                message: 'Fail @ getUserRegistrations',
             };
         }
     },
