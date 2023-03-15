@@ -18,7 +18,7 @@ import LanguageMenu from '@components/language-menu';
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
 const sanityLogo = '/sanity-logo.svg';
 const vercelLogo = '/powered-by-vercel.svg';
-const bekkLogo = '/bekk.png';
+const bekkLogo = '/en-bekk.jpg';
 
 const Footer = () => {
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
@@ -80,7 +80,7 @@ const Footer = () => {
                         </Text>
                         <LinkBox m={0}>
                             <LinkOverlay href="https://bekk.no" aria-label="Link til Bekk" isExternal>
-                                <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
+                                <Image alt="bekk" objectFit="contain" src={bekkLogo} />
                             </LinkOverlay>
                         </LinkBox>
                     </SimpleGrid>
