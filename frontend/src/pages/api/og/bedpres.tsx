@@ -21,6 +21,8 @@ export default async function OGImage(req: NextRequest) {
         const title = searchParams.get('title') ?? 'Bedrift';
         const logoUrl = searchParams.get('logoUrl') ?? '../../../assets/small-echo-logo.png';
 
+        const isLongTitle = title.length >= 13;
+
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return new ImageResponse(
             (
@@ -66,14 +68,18 @@ export default async function OGImage(req: NextRequest) {
                         <p
                             style={{
                                 position: 'absolute',
+                                display: 'flex',
+                                flexDirection: isLongTitle ? 'column' : 'row',
+                                gap: 15,
                                 bottom: '0%',
                                 left: '50%',
-                                transform: 'translate(-50%, -20%)',
-                                fontSize: 110,
+                                transform: `translate(-50%, ${isLongTitle ? '0' : '-20'}%)`,
+                                fontSize: isLongTitle ? 80 : 110,
                                 fontFamily: '"Bebas Neue"',
                             }}
                         >
-                            Bedpres med {title}
+                            <span tw="mx-auto">Bedpres med</span>
+                            <span tw="mx-auto">{title}</span>
                         </p>
                     </div>
                 </div>
