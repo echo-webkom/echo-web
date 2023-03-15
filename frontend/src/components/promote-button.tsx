@@ -111,7 +111,9 @@ const PromoteButton = ({ registration }: Props) => {
                             <Button colorScheme="green" onClick={() => void handleEmail()}>
                                 Send e-post
                             </Button>
-                            <Button onClick={() => void handlePromote()}>Gi ledig plass uten å spørre</Button>
+                            <Button onClick={() => void handlePromote()} whiteSpace="initial">
+                                Gi ledig plass uten å spørre
+                            </Button>
                         </SimpleGrid>
                     </ModalFooter>
                 </ModalContent>
