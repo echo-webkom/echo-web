@@ -8,6 +8,20 @@ env:
   IMAGE_NAME: 'ghcr.io/${{ github.repository }}'
 
 jobs:
+  destroy_vercel_preview:
+    name: 'Destroy Vercel preview'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Destroy Vercel preview
+        uses: snaplet/vercel-action@v3
+        with:
+          delete: true
+        env:
+          VERCEL_ACCESS_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
+          VERCEL_TEAM_ID: team_BalajEhvjfBqbkouJFI9761w
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
+
   destroy_backend_preview:
     name: 'Destroy backend preview'
     runs-on: ubuntu-latest

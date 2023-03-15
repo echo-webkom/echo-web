@@ -1,4 +1,4 @@
-import { Box, Spacer, useColorModeValue, Text, Flex, LinkBox, LinkOverlay } from '@chakra-ui/react';
+import { Box, Spacer, useColorModeValue, Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import HappeningKeyInfo from '@components/happening-key-info';
@@ -16,20 +16,22 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props) => {
     const logoUrl = bedpres.logoUrl as string;
 
     return (
-        <LinkBox data-testid={bedpres.slug}>
+        <NextLink data-testid={bedpres.slug} href={`/event/${bedpres.slug}`}>
             <Flex alignItems="center" p={[0, null, null, null, 5]} _hover={{ bg: hoverColor }}>
                 <Flex alignItems="center" gap="5">
-                    <Box display={['none', 'block']}>
-                        <Box pos="relative" overflow="hidden" borderRadius="50%" w="85px" h="85px">
+                    <Box>
+                        <Box
+                            pos="relative"
+                            overflow="hidden"
+                            borderRadius="50%"
+                            w={['75px', '85px']}
+                            h={['75px', '85px']}
+                        >
                             <Image src={logoUrl} alt={bedpres.title} fill />
                         </Box>
                     </Box>
-                    <Box>
-                        <Text fontWeight="regular" fontSize="larger">
-                            <LinkOverlay as={NextLink} href={`/event/${bedpres.slug}`}>
-                                {bedpres.title}
-                            </LinkOverlay>
-                        </Text>
+                    <Box display={['none', null, 'block']}>
+                        <Text fontWeight="regular">{bedpres.title}</Text>
                     </Box>
                 </Flex>
 
@@ -39,7 +41,7 @@ const BedpresPreview = ({ bedpres, registrationCounts }: Props) => {
                     <HappeningKeyInfo event={bedpres} registrationCounts={registrationCounts} />
                 </Box>
             </Flex>
-        </LinkBox>
+        </NextLink>
     );
 };
 

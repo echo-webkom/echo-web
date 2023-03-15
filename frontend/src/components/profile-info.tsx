@@ -5,6 +5,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
 import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
+import { IoIosAlert } from 'react-icons/io';
 import {
     useToast,
     Center,
@@ -19,6 +20,7 @@ import {
     Button,
     useColorModeValue,
     Alert,
+    Text,
     Skeleton,
     LinkOverlay,
     AlertIcon,
@@ -30,6 +32,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { BsQuestion } from 'react-icons/bs';
+import { isFuture } from 'date-fns';
+import ProfileHappeningPreview from './profile-happening-preview';
 import ErrorBox from '@components/error-box';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
@@ -42,6 +46,10 @@ import IconText from '@components/icon-text';
 import Section from '@components/section';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
+import type { Happening } from '@api/happening';
+import { HappeningAPI } from '@api/happening';
+import { RegistrationAPI } from '@api/registration';
+import hasOverlap from '@utils/has-overlap';
 
 const ProfileInfo = () => {
     const { user, loading: userLoading, error, signedIn, setUser, idToken } = useAuth();
@@ -49,6 +57,9 @@ const ProfileInfo = () => {
 
     const [saved, setSaved] = useState<boolean>(false);
     const [satisfied, setSatisfied] = useState<boolean>(false);
+
+    const [upcomingEvents, setUpcomingEvents] = useState<Array<Happening>>([]);
+    const [upcomingBedpresses, setUpcomingBedpresses] = useState<Array<Happening>>([]);
 
     const isNorwegian = useLanguage();
     const methods = useForm<ProfileFormValues>({
@@ -73,6 +84,35 @@ const ProfileInfo = () => {
         }
     }, [user, signedIn, setValue]);
 
+    useEffect(() => {
+        const fetchUpcomingEvents = async () => {
+            if (!user?.email || !idToken) return;
+
+            const eventSlugs = await RegistrationAPI.getUserRegistrations(user.email, idToken);
+            if (isErrorMessage(eventSlugs)) return;
+
+            const happenings = await HappeningAPI.getHappeningsBySlugs(eventSlugs);
+            if (isErrorMessage(happenings)) return;
+
+            const upcomingEvents = happenings.filter((happening) => {
+                return isFuture(new Date(happening.date));
+            });
+
+            const bedpress = upcomingEvents.filter((event) => {
+                return event.happeningType === 'BEDPRES';
+            });
+
+            const events = upcomingEvents.filter((event) => {
+                return event.happeningType === 'EVENT';
+            });
+
+            setUpcomingEvents(events);
+            setUpcomingBedpresses(bedpress);
+        };
+
+        void fetchUpcomingEvents();
+    }, [idToken, user?.email]);
+
     const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
         if (!user || !idToken || !signedIn) {
             toast({
@@ -94,6 +134,7 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
+            strikes: user.strikes,
             createdAt: new Date(),
             modifiedAt: new Date(),
         };
@@ -148,6 +189,18 @@ const ProfileInfo = () => {
                                     icon={BiGroup}
                                     text={user.memberships.map((m: string) => capitalize(m)).join(', ')}
                                 />
+                            )}
+                            {user.strikes !== 0 && (
+                                <HStack>
+                                    <IconText
+                                        data-cy="profile-strikes"
+                                        icon={IoIosAlert}
+                                        text={
+                                            isNorwegian ? 'Antall prikker (bedpres): ' : 'Number of strikes (bedpres): '
+                                        }
+                                    />
+                                    <Text>{user.strikes}</Text>
+                                </HStack>
                             )}
                         </Section>
                     </GridItem>
@@ -227,7 +280,7 @@ const ProfileInfo = () => {
                                     </HStack>
                                 </form>
                             </FormProvider>
-                            {user.memberships.includes('webkom') && (
+                            {hasOverlap(user.memberships, ['webkom', 'bedkom']) && (
                                 <LinkBox>
                                     <LinkOverlay as={NextLink} href="/dashboard">
                                         <Button w="100%" as="a" colorScheme="blue" my="1rem">
@@ -235,6 +288,58 @@ const ProfileInfo = () => {
                                         </Button>
                                     </LinkOverlay>
                                 </LinkBox>
+                            )}
+                        </Section>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                        <Section>
+                            <Center mb="1rem">
+                                <Heading size={['m', null, 'l']}>
+                                    {isNorwegian ? 'Kommende arrangamenter' : 'Upcoming events'}
+                                </Heading>
+                            </Center>
+                            {upcomingEvents.length > 0 ? (
+                                upcomingEvents.map((event) => {
+                                    return (
+                                        <ProfileHappeningPreview
+                                            key={event.slug}
+                                            event={event}
+                                            data-testid={event.slug}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <Center>
+                                    {isNorwegian
+                                        ? 'Du er ikke påmeldt noen kommende arrangementer'
+                                        : 'You are not registered for any upcoming events'}
+                                </Center>
+                            )}
+                        </Section>
+                    </GridItem>
+                    <GridItem colSpan={2}>
+                        <Section>
+                            <Center mb="1rem">
+                                <Heading size={['m', null, 'l']}>
+                                    {isNorwegian ? 'Kommende bedriftspresentasjoner' : 'Upcoming bedpres'}
+                                </Heading>
+                            </Center>
+                            {upcomingBedpresses.length > 0 ? (
+                                upcomingBedpresses.map((bedpres) => {
+                                    return (
+                                        <ProfileHappeningPreview
+                                            key={bedpres.slug}
+                                            event={bedpres}
+                                            data-testid={bedpres.slug}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <Center>
+                                    {isNorwegian
+                                        ? 'Du er ikke påmeldt noen kommende bedpreser'
+                                        : 'You are not registered for any upcoming bedpres'}
+                                </Center>
                             )}
                         </Section>
                     </GridItem>

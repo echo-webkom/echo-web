@@ -27,7 +27,7 @@ fun resToJson(
     regDate: String? = null,
     spotRanges: List<SpotRangeJson>? = null,
     waitListSpot: Long? = null,
-    studentGroups: List<String>? = null,
+    studentGroups: List<String>? = null
 ): RegistrationResponseJson {
     when (res) {
         RegistrationResponse.NotSignedIn ->

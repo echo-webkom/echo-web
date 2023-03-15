@@ -44,7 +44,7 @@ val tables: Array<Table> = arrayOf(
     StudentGroupMembership,
     Reaction,
     WaitingListUUID,
-    Whitelist,
+    Whitelist
 )
 
 class DatabaseHandler(
@@ -88,7 +88,7 @@ class DatabaseHandler(
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     */
     private val flyway: Flyway =
-        Flyway.configure().baselineVersion("30").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
+        Flyway.configure().baselineVersion("31").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
             .load()
 
     private val conn by lazy {
@@ -173,6 +173,7 @@ class DatabaseHandler(
             "test.mctest@student.uib.no",
             "Test McTest",
             memberships = listOf("webkom"),
+            strikes = 0,
             createdAt = DateTime.now().toString(),
             modifiedAt = DateTime.now().toString()
         )

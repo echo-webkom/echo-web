@@ -60,7 +60,8 @@ fun Route.sanitySync() {
                 studentGroupRegistrationDate,
                 studentGroups,
                 onlyForStudentGroups,
-                "happeningDate": date, spotRanges[] -> { 
+                "happeningDate": date,
+                spotRanges[] { 
                     spots, 
                     minDegreeYear, 
                     maxDegreeYear 

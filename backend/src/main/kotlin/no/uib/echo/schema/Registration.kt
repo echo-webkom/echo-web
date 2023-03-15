@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 data class FormRegistrationJson(
     val email: String,
     val slug: String,
-    val answers: List<AnswerJson>,
+    val answers: List<AnswerJson>
 )
 @Serializable
 data class FormDeregistrationJson(
@@ -35,7 +35,7 @@ data class RegistrationJson(
     val reason: String? = null,
     val deregistrationDate: String? = null,
     val answers: List<AnswerJson> = emptyList(),
-    val memberships: List<String> = emptyList(),
+    val memberships: List<String> = emptyList()
 )
 enum class Status {
     REGISTERED, DEREGISTERED, WAITLIST
@@ -70,8 +70,9 @@ fun countRegistrationsDegreeYear(
 }
 
 fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
-    if (regs.isEmpty())
+    if (regs.isEmpty()) {
         return ""
+    }
 
     val answersHeading =
         when (regs[0].answers.isEmpty()) {

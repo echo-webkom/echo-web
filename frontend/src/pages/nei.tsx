@@ -1,22 +1,38 @@
-import { Box, Center, Heading, Text } from '@chakra-ui/react';
+import { Box, Center } from '@chakra-ui/react';
+import Markdown from 'markdown-to-jsx';
 import useLanguage from '@hooks/use-language';
+import Section from '@components/section';
+import MapMarkdownChakra from '@utils/markdown';
+
+const no = `
+# Du er ikke representert av echo
+
+I følge echo sine vedtekter er du ikke representert av echo.
+Om du mener dette ikke stemmer, ta kontakt med echo.
+Dette kan du gjøre ved å sende mail til
+[echo@uib.no](mailto:echo@uib.no).
+`;
+
+const en = `
+# You are not represented by echo
+
+According to echos bylaws, you are not represented by echo.
+If you believe this is incorrect, contact echo.
+You can do this by sending an email to
+[echo@uib.no](mailto:echo@uib.no).
+`;
 
 const NeiPage = () => {
     const isNorwegian = useLanguage();
 
     return (
-        <Center>
-            <Box textAlign="center">
-                <Heading py="3rem" fontSize="8rem">
-                    {isNorwegian ? 'Nei' : 'No'}
-                </Heading>
-                <Text px="20%" fontSize="1.5rem">
-                    {isNorwegian
-                        ? 'I følge echo sine vedtekter er du ikke representert av echo. Om du mener dette ikke stemmer, ta kontakt med Webkom, f.eks. via tilbakemeldingsskjemaet nederst i høyre hjørne eller på mail webkom-styret@echo.uib.no.'
-                        : 'According to echos bylaws, you are not represented by echo. If you believe this is incorrect, please contact Webkom, for example via the feedback form in the bottom right corner or by email webkom-styret@echo.uib.no.'}
-                </Text>
-            </Box>
-        </Center>
+        <Section>
+            <Center>
+                <Box textAlign="center" fontSize="2xl" maxW="3xl">
+                    <Markdown options={{ overrides: MapMarkdownChakra }}>{isNorwegian ? no : en}</Markdown>
+                </Box>
+            </Center>
+        </Section>
     );
 };
 

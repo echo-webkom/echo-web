@@ -131,8 +131,10 @@ const RegistrationAPI = {
         reason: DeregisterFormValues['reason'],
         slug: string,
         email: string,
+        strikes: number,
     ): Promise<string | ErrorMessage> => {
         try {
+            const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
             const response = await fetch(`${BACKEND_URL}/registration`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
@@ -140,6 +142,7 @@ const RegistrationAPI = {
                     slug,
                     reason,
                     email,
+                    strikes,
                 }),
             });
 
@@ -187,6 +190,30 @@ const RegistrationAPI = {
             return status === 200;
         } catch {
             return { message: 'Error @ getUserIsRegistered' };
+        }
+    },
+    getUserRegistrations: async (email: string, idToken: string): Promise<Array<string> | ErrorMessage> => {
+        try {
+            const encodedEmail = encodeURIComponent(email);
+            const response = await fetch(`${BACKEND_URL}/user/${encodedEmail}/registrations`, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
+
+            if (response.status === 404 || response.status === 403) {
+                return [];
+            }
+
+            const data = await response.json();
+
+            if (isErrorMessage(data)) {
+                return data;
+            }
+
+            return z.array(z.string()).parse(data);
+        } catch {
+            return {
+                message: 'Fail @ getUserRegistrations',
+            };
         }
     },
 };

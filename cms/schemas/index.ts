@@ -4,7 +4,6 @@ import meetingMinute from './meetingMinute';
 import profile from './profile';
 import studentGroup from './studentGroup';
 import additionalQuestion from './additionalQuestion';
-import spotRange from './spotRange';
 import happening from './happening';
 import jobAdvert from './jobAdvert';
 import banner from './banner';
@@ -15,7 +14,6 @@ export const schemaTypes = [
     happening,
     post,
     additionalQuestion,
-    spotRange,
     meetingMinute,
     author,
     profile,

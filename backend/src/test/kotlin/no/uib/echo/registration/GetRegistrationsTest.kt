@@ -114,7 +114,7 @@ class GetRegistrationsTest {
                             null,
                             null,
                             newReg.answers,
-                            u.memberships,
+                            u.memberships
                         )
                     )
 

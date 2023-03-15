@@ -146,8 +146,8 @@ export const getStaticProps: GetStaticProps = async () => {
     if (!adminKey) throw new Error('No ADMIN_KEY defined.');
 
     const [bedpresesResponse, eventsResponse, postsResponse, jobsResponse, bannerResponse] = await Promise.all([
-        HappeningAPI.getHappeningsByType(2, 'BEDPRES', true),
-        HappeningAPI.getHappeningsByType(3, 'EVENT', true),
+        HappeningAPI.getHappeningsByType(5, 'BEDPRES', true),
+        HappeningAPI.getHappeningsByType(8, 'EVENT', true),
         PostAPI.getPosts(0),
         JobAdvertAPI.getJobAdverts(3),
         BannerAPI.getBanner(),

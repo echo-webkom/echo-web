@@ -431,27 +431,36 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent mx="5">
-                    <ModalHeader>Slett påmelding</ModalHeader>
+                <ModalContent minW="40%">
+                    <ModalHeader>
+                        <Heading size="lg">Slett påmelding</Heading>
+                    </ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody as={Stack} gap="1">
-                        <Text>
-                            Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt om å bekrefte at du vil
-                            slette påmeldingen. Dersom du godtar dette, vil påmeldingen bli slettet for alltid. Hvis
-                            denne påmeldingen ikke var på venteliste, vil det komme en knapp under &quot;på
-                            venteliste?&quot; for de som er på venteliste. Om du trykker på denne, så kan du velge
-                            mellom å gi dem plassen direkte (med en gang), eller å sende dem en e-post med tilbud om
-                            plass. Hvis du gir personen plassen direkte så blir denne personen ikke automatisk gitt
-                            beskjed om dette, og arrangøren vil selv være ansvarlig for å gi dem beskjed. Hvis du velger
-                            å sende dem en e-post, vil de få en link der de kan velge å ta plassen selv. Det er ikke
-                            garantert at personen vil få e-posten, spesielt hvis de kun har studentmailen sin registrert
-                            hos oss. De vil fortsatt være på venteliste helt til de trykker på knappen for å ta i mot
-                            plassen.
-                        </Text>
-                        <Text>
-                            Påmeldinger som er slettet blir slettet for alltid, og det er ikke mulig å finne denne
-                            informasjonen igjen.
-                        </Text>
+                    <ModalBody>
+                        <VStack>
+                            <Text>
+                                Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt om å bekrefte at du vil
+                                slette påmeldingen. Dersom du godtar dette, vil påmeldingen bli slettet for alltid. Hvis
+                                denne påmeldingen ikke var på venteliste, vil det komme en knapp under &quot;på
+                                venteliste?&quot; for de som er på venteliste. Om du trykker på denne, så kan du velge
+                                mellom å gi dem plassen direkte (med en gang), eller å sende dem en e-post med tilbud om
+                                plass.
+                            </Text>
+                            <Text>
+                                Hvis du gir personen plassen direkte så blir denne personen ikke automatisk gitt beskjed
+                                om dette, og arrangøren vil selv være ansvarlig for å gi dem beskjed.
+                            </Text>
+                            <Text>
+                                Hvis du velger å sende dem en e-post, vil de få en link der de kan velge å ta plassen
+                                selv. Det er ikke garantert at personen vil få e-posten, spesielt hvis de kun har
+                                studentmailen sin registrert hos oss. De vil fortsatt være på venteliste helt til de
+                                trykker på knappen for å ta i mot plassen.
+                            </Text>
+                            <Text>
+                                Påmeldinger som er slettet blir slettet for alltid, og det er ikke mulig å finne denne
+                                informasjonen igjen.
+                            </Text>
+                        </VStack>
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose}>Ok, jeg forstår</Button>

@@ -181,7 +181,7 @@ jobs:
 
       - name: Run Cypress end-to-end tests
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        uses: cypress-io/github-action@v5.0.9
+        uses: cypress-io/github-action@v5.3.0
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
@@ -221,7 +221,7 @@ jobs:
         id: default_value
         run: echo "BACKEND_URL=$BACKEND_URL" >> $GITHUB_OUTPUT
         env:
-          BACKEND_URL: 'https://echo-web-dev.norwayeast.azurecontainer.io'
+          BACKEND_URL: 'https://echo-web-dev.greenisland-73b91cd1.norwayeast.azurecontainerapps.io'
 
       - name: Get changed files, backend
         id: changed-files-backend
@@ -340,19 +340,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy to Vercel Action
-        uses: BetaHuhn/deploy-to-vercel-action@v1
+      - name: Deploy to Vercel
+        uses: snaplet/vercel-action@v3
         with:
-          PR_LABELS: false
-          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_BalajEhvjfBqbkouJFI9761w
-          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
-          BUILD_ENV: |
+          await-for-deployment: true
+          env: |
             SANITY_DATASET=production
             ADMIN_KEY=${{ secrets.ADMIN_KEY_DEV }}
             NEXT_PUBLIC_BACKEND_URL=${{ needs.backend_preview.outputs.preview_backend_url }}
             NEXTAUTH_SECRET=secret123AsDef£123
+        env:
+          VERCEL_ACCESS_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_8VUZLEU0bcCYk0j9aHHgorqmtuM0
+          VERCEL_TEAM_ID: team_BalajEhvjfBqbkouJFI9761w
+          GITHUB_TOKEN: ${{ secrets.REPO_PAT }}
 
       - name: Seed backend with Sanity data
         run: curl -v ${{ needs.backend_preview.outputs.preview_backend_url }}/sanity -u admin:$TF_VAR_admin_key --basic || true

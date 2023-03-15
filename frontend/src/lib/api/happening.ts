@@ -114,7 +114,7 @@ const HappeningAPI = {
                     "logoUrl": logo.asset -> url,
                     studentGroupName,
                     _createdAt,
-                    spotRanges[] -> {
+                    spotRanges[] {
                         minDegreeYear,
                         maxDegreeYear,
                         spots
@@ -164,7 +164,7 @@ const HappeningAPI = {
                     "logoUrl": logo.asset -> url,
                     studentGroupName,
                     _createdAt,
-                    spotRanges[] -> {
+                    spotRanges[] {
                         minDegreeYear,
                         maxDegreeYear,
                         spots
@@ -183,6 +183,52 @@ const HappeningAPI = {
             // Sanity returns a list with a single element,
             // therefore we need [0] to get the element out of the list.
             return happeningSchema.parse(result[0]);
+        } catch (error) {
+            console.log(error); // eslint-disable-line
+            return { message: JSON.stringify(error) };
+        }
+    },
+
+    getHappeningsBySlugs: async (slugs: Array<string>): Promise<Array<Happening> | ErrorMessage> => {
+        try {
+            const query = groq`
+                *[_type == "happening" && slug.current in ${JSON.stringify(
+                    slugs,
+                )} && !(_id in path('drafts.**'))] | order(date asc) {
+                    title,
+                    "slug": slug.current,
+                    date,
+                    registrationDate,
+                    registrationDeadline,
+                    studentGroupRegistrationDate,
+                    studentGroups,
+                    onlyForStudentGroups,
+                    body,
+                    deductiblePayment,
+                    location,
+                    locationLink,
+                    companyLink,
+                    happeningType,
+                    contactEmail,
+                    additionalQuestions[] -> {
+                        questionText,
+                        inputType,
+                        alternatives
+                    },
+                    "logoUrl": logo.asset -> url,
+                    studentGroupName,
+                    _createdAt,
+                    spotRanges[] -> {
+                        minDegreeYear,
+                        maxDegreeYear,
+                        spots
+                    }
+                }
+            `;
+
+            const result = await SanityAPI.fetch(query);
+
+            return happeningSchema.array().parse(result);
         } catch (error) {
             console.log(error); // eslint-disable-line
             return { message: JSON.stringify(error) };

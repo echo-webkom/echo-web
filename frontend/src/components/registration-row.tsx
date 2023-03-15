@@ -15,6 +15,11 @@ import {
     ModalBody,
     ModalFooter,
     SimpleGrid,
+    NumberInput,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInputField,
+    NumberInputStepper,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -40,11 +45,15 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
     const [deleted, setDeleted] = useState(false);
 
+    const [strikes, setStrikes] = useState(0);
+
     const toast = useToast();
 
     const router = useRouter();
 
-    const { idToken, signedIn, user } = useAuth();
+    const { user, idToken, signedIn } = useAuth();
+
+    const strikesPermission = user?.memberships.includes('bedkom');
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -61,6 +70,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             `Slettet av ${user?.email ?? 'arrangør'}`,
             registration.slug,
             registration.email,
+            strikes,
         );
 
         onCloseDelete();
@@ -147,19 +157,37 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                     <ModalCloseButton />
                     <ModalBody>
                         {/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */}
-                        <Heading
-                            size="md"
-                            pb="0.5rem"
-                            lineHeight="1.5"
-                        >{`Er du sikker på at du vil slette påmeldingen med email '${
+                        {`Er du sikker på at du vil slette påmeldingen med email '${
                             registration.alternateEmail || registration.email
-                        }'?`}</Heading>
+                        }'?`}
                         {/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */}
                         <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
                             Den vil bli borte for alltid.
                         </Text>
+                        {strikesPermission && (
+                            <>
+                                <Text fontWeight="bold"> Sett antall prikker</Text>
+                                <Text py="0.5rem" lineHeight="1.5">
+                                    Tallet som står er antall prikker en bruker har fra før av.
+                                </Text>
+                                <NumberInput
+                                    defaultValue={user?.strikes}
+                                    name="numstrikes"
+                                    size="md"
+                                    maxW={100}
+                                    min={0}
+                                    max={5}
+                                    onChange={(value) => setStrikes(Number.parseInt(value))}
+                                >
+                                    <NumberInputField />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                            </>
+                        )}
                     </ModalBody>
-
                     <ModalFooter>
                         <SimpleGrid columns={2} spacingX="2rem">
                             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}

@@ -127,7 +127,7 @@ fun Route.getHappeningInfo() {
                     it[SpotRange.minDegreeYear],
                     it[SpotRange.maxDegreeYear],
                     count,
-                    waitListCount,
+                    waitListCount
                 )
             }
         }

@@ -14,7 +14,8 @@ val everyoneSpotRange = listOf(SpotRangeJson(50, 1, 5))
 val oneTwoSpotRange = listOf(SpotRangeJson(50, 1, 2))
 val threeFiveSpotRange = listOf(SpotRangeJson(50, 3, 5))
 val everyoneSplitSpotRange = listOf(
-    SpotRangeJson(5, 1, 2), SpotRangeJson(5, 3, 5)
+    SpotRangeJson(5, 1, 2),
+    SpotRangeJson(5, 3, 5)
 )
 val everyoneInfiniteSpotRange = listOf(SpotRangeJson(0, 1, 5))
 val onlyOneSpotRange = listOf(SpotRangeJson(1, 1, 5))
@@ -146,10 +147,12 @@ val haps: (type: HAPPENING_TYPE) -> List<HappeningJson> = { t ->
 
 val exReg: (slug: String, user: UserJson) -> FormRegistrationJson = { slug, user ->
     FormRegistrationJson(
-        user.email, slug,
+        user.email,
+        slug,
         listOf(
-            AnswerJson("Skal du ha mat?", "Nei"), AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
-        ),
+            AnswerJson("Skal du ha mat?", "Nei"),
+            AnswerJson("Har du noen allergier?", "Ja masse allergier ass 100")
+        )
     )
 }
 
@@ -168,6 +171,7 @@ val user1 = UserJson(
     2,
     Degree.DSIK,
     listOf("tilde"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -178,6 +182,7 @@ val user2 = UserJson(
     3,
     Degree.DTEK,
     listOf("webkom"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -188,6 +193,7 @@ val user3 = UserJson(
     1,
     Degree.DVIT,
     listOf("bedkom", "tilde"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )
@@ -197,6 +203,7 @@ val user4 = UserJson(
     "bachelor.student4@gmail.com",
     2,
     Degree.BINF,
+    strikes = 4,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -206,6 +213,7 @@ val user5 = UserJson(
     "bachelor.student5@gmail.com",
     3,
     Degree.IMO,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -216,6 +224,7 @@ val user6 = UserJson(
     "master.student1@gmail.com",
     4,
     Degree.INF,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -225,6 +234,7 @@ val user7 = UserJson(
     null,
     5,
     Degree.PROG,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -234,6 +244,7 @@ val user8 = UserJson(
     "master.student3@gmail.com",
     5,
     Degree.INF,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -244,6 +255,7 @@ val user9 = UserJson(
     "post.student@gmail.com",
     3,
     Degree.POST,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -253,6 +265,7 @@ val user10 = UserJson(
     "arinf.student@gmail.com",
     1,
     Degree.ARMNINF,
+    strikes = 2,
     createdAt = DateTime.now().toString(),
     modifiedAt = DateTime.now().toString()
 )
@@ -264,6 +277,7 @@ val adminUser = UserJson(
     5,
     Degree.INF,
     listOf("webkom"),
+    0,
     DateTime.now().toString(),
     DateTime.now().toString()
 )

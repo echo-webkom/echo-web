@@ -65,6 +65,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
             deleteRegistration()
             getUserIsRegistered()
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
+            getUserRegistrations()
         }
 
         authenticate("auth-admin") {
@@ -436,11 +437,19 @@ fun Route.deleteRegistration() {
                 return@delete
             }
 
+            val strikes = call.request.queryParameters["strikes"]?.toIntOrNull()
+
             transaction {
                 Registration.update({ Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail) }) {
                     it[registrationStatus] = Status.DEREGISTERED
                     it[reason] = toDelete.reason
                     it[deregistrationDate] = DateTime.now()
+                }
+
+                if (strikes != null) {
+                    User.update({ User.email.lowerCase() eq decodedParamEmail }) {
+                        it[User.strikes] = strikes
+                    }
                 }
             }
 
@@ -526,5 +535,34 @@ fun Route.postRegistrationCount() {
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error getting registration counts.")
         }
+    }
+}
+
+fun Route.getUserRegistrations() {
+    get("/user/{email}/registrations") {
+        val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        val userEmail = withContext(Dispatchers.IO) {
+            URLDecoder.decode(call.parameters["email"], "UTF-8")
+        }
+        if (email == null || userEmail == null) {
+            call.respond(HttpStatusCode.BadRequest, "NO EMAIL")
+            return@get
+        }
+
+        if (email != userEmail) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val userRegistrations = transaction {
+            (Registration leftJoin Happening).select {
+                Registration.userEmail eq email
+            }.orderBy(Happening.registrationDate to SortOrder.DESC).map {
+                it[Happening.slug]
+            }.toList()
+        }
+
+        call.respond(userRegistrations)
     }
 }
