@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { TbAlertOctagon } from 'react-icons/tb';
-import { useEffect, useRef, useState } from 'react';
 import LanguageMenu from '@components/language-menu';
 
 const echoLogoWhite = '/echo-logo-text-only-white-no-padding-bottom.png';
@@ -22,25 +21,8 @@ const vercelLogo = '/powered-by-vercel.svg';
 const bekkLogo = '/bekk.png';
 
 const Footer = () => {
-    const [showFeet, setShowFeet] = useState(false);
-    const footRef = useRef<HTMLDivElement>(null);
-
     const color = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
-
-    const handleKeyPress = (e: KeyboardEvent) => {
-        e.preventDefault();
-        if (e.metaKey && e.key === 'k') {
-            setShowFeet((prev) => !prev);
-            footRef.current?.scrollIntoView();
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyPress);
-
-        return () => document.removeEventListener('keydown', handleKeyPress);
-    }, []);
 
     return (
         <Flex direction="column">
@@ -177,19 +159,15 @@ const Footer = () => {
                     </SimpleGrid>
                 </SimpleGrid>
             </Box>
-            <div ref={footRef}>
-                {showFeet && (
-                    <Flex px="10">
-                        <Flex>
-                            <Image src="/foot.png" alt="foot" />
-                        </Flex>
-                        <Spacer />
-                        <Flex>
-                            <Image src="/foot.png" alt="foot" transform="scaleX(-1)" />
-                        </Flex>
-                    </Flex>
-                )}
-            </div>
+            <Flex px="10">
+                <Flex>
+                    <Image src="/foot.png" alt="foot" />
+                </Flex>
+                <Spacer />
+                <Flex>
+                    <Image src="/foot.png" alt="foot" transform="scaleX(-1)" />
+                </Flex>
+            </Flex>
         </Flex>
     );
 };
