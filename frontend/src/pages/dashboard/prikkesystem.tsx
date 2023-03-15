@@ -116,7 +116,7 @@ const AdminStrikesPage = () => {
                                         <Th>Navn</Th>
                                         <Th>Email</Th>
                                         <Th>Antall prikker</Th>
-                                        <Th>Info</Th>
+                                        <Th>Rediger</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
