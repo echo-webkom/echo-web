@@ -57,7 +57,7 @@ fun Route.postFeedback() {
                 }
             }
 
-            call.respond(HttpStatusCode.OK, FeedbackResponse.SUCCESS)
+            call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error deleting feedback.")
             e.printStackTrace()
