@@ -13,10 +13,18 @@ import {
     Tr,
     Td,
     useDisclosure,
+    NumberInput,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInputField,
+    NumberInputStepper,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { User } from '@api/user';
+import { UserAPI } from '@api/user';
 import capitalize from '@utils/capitalize';
+import useAuth from '@hooks/use-auth';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     initialUser: User;
@@ -25,7 +33,29 @@ interface Props {
 const UserStrikesRow = ({ initialUser }: Props) => {
     const [user] = useState<User>(initialUser);
 
+    const { idToken } = useAuth();
+
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [strikes, setStrikes] = useState(initialUser.strikes);
+
+    // useEffect(() => {
+    //     const updateStrikes = async () => {
+    //         if (!idToken) return;
+
+    //         const updatedStrikes = await UserAPI.setStrikes(idToken, initialUser.email, strikes);
+
+    //         if (isErrorMessage(updatedStrikes)) return;
+
+    //         setStrikes(updatedStrikes);
+    //     };
+    //     void updateStrikes();
+    // }, [idToken, initialUser.email, strikes]);
+
+    useEffect(() => {
+        // eslint-disable-next-line no-console
+        console.log(strikes);
+    }, []);
 
     return (
         <Tr key={user.email}>
@@ -33,7 +63,7 @@ const UserStrikesRow = ({ initialUser }: Props) => {
             <Td>{user.email}</Td>
             <Td>{user.strikes}</Td>
             <Td>
-                <Button onClick={onOpen}>Mer</Button>
+                <Button onClick={onOpen}>Rediger</Button>
 
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
@@ -78,6 +108,34 @@ const UserStrikesRow = ({ initialUser }: Props) => {
                                 <Flex gap="3">
                                     <Text fontWeight="bold">Antall nåværende prikker:</Text>
                                     <Text>{user.strikes}</Text>
+                                </Flex>
+                                <Flex gap="3">
+                                    <Text fontWeight="bold">Endre prikker:</Text>
+                                    <NumberInput
+                                        defaultValue={user.strikes}
+                                        name="numstrikes"
+                                        size="md"
+                                        maxW={100}
+                                        min={0}
+                                        max={5}
+                                        onChange={(value) => {
+                                            setStrikes(Number.parseInt(value));
+                                        }}
+                                    >
+                                        <NumberInputField />
+                                        <NumberInputStepper>
+                                            <NumberIncrementStepper />
+                                            <NumberDecrementStepper />
+                                        </NumberInputStepper>
+                                    </NumberInput>
+                                </Flex>
+                                <Flex gap="3">
+                                    <Button onClick={() => setStrikes(strikes)} colorScheme="teal">
+                                        Lagre
+                                    </Button>
+                                    <Button onClick={() => setStrikes(0)} colorScheme="red">
+                                        Fjern prikker
+                                    </Button>
                                 </Flex>
                             </Stack>
                         </ModalBody>

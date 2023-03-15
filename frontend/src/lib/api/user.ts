@@ -24,6 +24,10 @@ const userSchema = z.object({
 });
 type User = z.infer<typeof userSchema>;
 
+const strikesSchema = z.object({
+    strikes: z.number(),
+});
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const UserAPI = {
@@ -223,6 +227,24 @@ const UserAPI = {
             // eslint-disable-next-line no-console
             console.log(error);
             return null;
+        }
+    },
+
+    setStrikes: async (idToken: string, email: string, strikes: number): Promise<number | ErrorMessage> => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/${email}?strikes=${strikes}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            const data = strikesSchema.parse(await response.json());
+            return data.strikes;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            return { message: 'Kunne ikke oppdatere prikker.' };
         }
     },
 };
