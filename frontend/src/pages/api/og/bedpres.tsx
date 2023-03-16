@@ -4,14 +4,15 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
-const config = {
+// eslint-disable-next-line import/exports-last
+export const config = {
     runtime: 'edge',
 };
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
 const font = fetch(new URL('../../../assets/BebasNeue-Regular.ttf', import.meta.url)).then((res) => res.arrayBuffer());
 
-async function OGImage(req: NextRequest) {
+export default async function OGImage(req: NextRequest) {
     try {
         const fontData = await font;
 
@@ -102,6 +103,3 @@ async function OGImage(req: NextRequest) {
         });
     }
 }
-
-export default OGImage;
-export { config };
