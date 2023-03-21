@@ -295,7 +295,7 @@ const ProfileInfo = () => {
                         <Section>
                             <Center mb="1rem">
                                 <Heading size={['m', null, 'l']}>
-                                    {isNorwegian ? 'Kommende arrangamenter' : 'Upcoming events'}
+                                    {isNorwegian ? 'Kommende arrangementer' : 'Upcoming events'}
                                 </Heading>
                             </Center>
                             {upcomingEvents.length > 0 ? (
