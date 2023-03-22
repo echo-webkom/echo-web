@@ -31,6 +31,7 @@ import type { ErrorMessage } from '@utils/error';
 import { isErrorMessage } from '@utils/error';
 import type { User } from '@api/user';
 import { UserAPI } from '@api/user';
+import { Strike, StrikesAPI } from '@api/strikes';
 import useAuth from '@hooks/use-auth';
 import ButtonLink from '@components/button-link';
 import UserStrikesRow from '@components/user-strikes-row';
@@ -46,9 +47,23 @@ const AdminStrikesPage = () => {
 
     const [showAll, setShowAll] = useBoolean();
 
-    const filteredUsers = users
-        ? users.filter((user) => showAll || user.strikes > 0).sort((a, b) => b.strikes - a.strikes)
-        : [];
+    // const filteredUsers = users
+    //     ? users.filter((user) => showAll || user.strikes > 0).sort((a, b) => b.strikes - a.strikes)
+    //     : [];
+
+    const createStrike = async () => {
+        if (!idToken) return;
+        const result = StrikesAPI.createStrike(idToken, {
+            userEmail: 'torger.bocianowski@student.uib.no',
+            reason: 'meldte seg av seint',
+            createdAt: new Date(2021, 9, 1, 12, 0, 0, 0),
+            modifiedAt: new Date(2021, 9, 1, 12, 0, 0, 0),
+        });
+        if (isErrorMessage(result)) {
+            console.log('error');
+        }
+        console.log(result);
+    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -77,6 +92,7 @@ const AdminStrikesPage = () => {
     return (
         <>
             <SEO title="Prikkesystem" />
+            <button onClick={() => createStrike()}>Test</button>
             <Section>
                 {(error || userError) && (
                     <Center flexDirection="column" gap="5" py="10">
@@ -120,7 +136,7 @@ const AdminStrikesPage = () => {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {filteredUsers.map((user) => (
+                                    {users.map((user) => (
                                         <UserStrikesRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>

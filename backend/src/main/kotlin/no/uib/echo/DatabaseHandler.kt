@@ -2,23 +2,7 @@ package no.uib.echo
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.uib.echo.schema.Answer
-import no.uib.echo.schema.Feedback
-import no.uib.echo.schema.HAPPENING_TYPE
-import no.uib.echo.schema.Happening
-import no.uib.echo.schema.HappeningJson
-import no.uib.echo.schema.Reaction
-import no.uib.echo.schema.Registration
-import no.uib.echo.schema.SpotRange
-import no.uib.echo.schema.SpotRangeJson
-import no.uib.echo.schema.StudentGroup
-import no.uib.echo.schema.StudentGroupHappeningRegistration
-import no.uib.echo.schema.StudentGroupMembership
-import no.uib.echo.schema.User
-import no.uib.echo.schema.UserJson
-import no.uib.echo.schema.WaitingListUUID
-import no.uib.echo.schema.Whitelist
-import no.uib.echo.schema.validStudentGroups
+import no.uib.echo.schema.*
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -44,7 +28,8 @@ val tables: Array<Table> = arrayOf(
     StudentGroupMembership,
     Reaction,
     WaitingListUUID,
-    Whitelist
+    Whitelist,
+    Strikes,
 )
 
 class DatabaseHandler(
@@ -173,7 +158,6 @@ class DatabaseHandler(
             "test.mctest@student.uib.no",
             "Test McTest",
             memberships = listOf("webkom"),
-            strikes = 0,
             createdAt = DateTime.now().toString(),
             modifiedAt = DateTime.now().toString()
         )

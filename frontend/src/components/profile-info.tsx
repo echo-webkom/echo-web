@@ -134,7 +134,6 @@ const ProfileInfo = () => {
             degree: profileFormVals.degree,
             degreeYear: profileFormVals.degreeYear,
             memberships: [],
-            strikes: user.strikes,
             createdAt: new Date(),
             modifiedAt: new Date(),
         };

@@ -25,6 +25,7 @@ import { UserAPI } from '@api/user';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
 import { isErrorMessage } from '@utils/error';
+import { StrikesAPI } from '@api/strikes';
 
 interface Props {
     initialUser: User;
@@ -37,7 +38,24 @@ const UserStrikesRow = ({ initialUser }: Props) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [strikes, setStrikes] = useState(initialUser.strikes);
+    const [strikes, setStrikes] = useState(0);
+
+    useEffect(() => {
+        const getAllStrikes = async () => {
+            if (!idToken) {
+                console.log('no idToken');
+                return;
+            }
+            const res = await StrikesAPI.getAllStrikes(idToken);
+
+            if (isErrorMessage(res))
+                return {
+                    error: 'Error @ getAllStrikes',
+                };
+            console.log(res);
+        };
+        void getAllStrikes();
+    }, []);
 
     // useEffect(() => {
     //     const updateStrikes = async () => {
@@ -51,17 +69,11 @@ const UserStrikesRow = ({ initialUser }: Props) => {
     //     };
     //     void updateStrikes();
     // }, [idToken, initialUser.email, strikes]);
-
-    useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.log(strikes);
-    }, []);
-
     return (
         <Tr key={user.email}>
             <Td>{user.name}</Td>
             <Td>{user.email}</Td>
-            <Td>{user.strikes}</Td>
+            <Td>{strikes}</Td>
             <Td>
                 <Button onClick={onOpen}>Rediger</Button>
 
@@ -107,12 +119,12 @@ const UserStrikesRow = ({ initialUser }: Props) => {
 
                                 <Flex gap="3">
                                     <Text fontWeight="bold">Antall nåværende prikker:</Text>
-                                    <Text>{user.strikes}</Text>
+                                    <Text>{strikes}</Text>
                                 </Flex>
                                 <Flex gap="3">
                                     <Text fontWeight="bold">Endre prikker:</Text>
                                     <NumberInput
-                                        defaultValue={user.strikes}
+                                        defaultValue={strikes}
                                         name="numstrikes"
                                         size="md"
                                         maxW={100}

@@ -9,14 +9,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import no.uib.echo.Environment
 import no.uib.echo.FeatureToggles
-import no.uib.echo.routes.feedbackRoutes
-import no.uib.echo.routes.happeningRoutes
-import no.uib.echo.routes.reactionRoutes
-import no.uib.echo.routes.registrationRoutes
-import no.uib.echo.routes.sanityRoutes
-import no.uib.echo.routes.studentGroupRoutes
-import no.uib.echo.routes.userRoutes
-import no.uib.echo.routes.waitinglistRoutes
+import no.uib.echo.routes.*
 
 fun Application.configureRouting(
     featureToggles: FeatureToggles,
@@ -41,6 +34,7 @@ fun Application.configureRouting(
     sanityRoutes(env)
     studentGroupRoutes(jwtConfig)
     waitinglistRoutes(jwtConfig, sendGridApiKey)
+    strikesRoutes(jwtConfig)
 }
 
 fun Route.getStatus() {

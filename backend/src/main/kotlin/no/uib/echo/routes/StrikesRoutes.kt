@@ -12,21 +12,27 @@ import no.uib.echo.schema.Strikes
 import no.uib.echo.schema.StrikesJson
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.strikesRoutes(
-    env: Environment,
-    audience: String,
-    issuer: String,
-    secret: String?,
     jwtConfig: String
 ) {
     routing {
-        getToken(env, audience, issuer, secret)
         authenticate(jwtConfig) {
+            getAllStrikes()
             getStrikesCount()
         }
         postStrikes()
+    }
+}
+
+fun Route.getAllStrikes() {
+    get("/strikes") {
+        val strikes = transaction {
+            Strikes.selectAll().toList()
+        }
+        call.respond(HttpStatusCode.OK, strikes)
     }
 }
 

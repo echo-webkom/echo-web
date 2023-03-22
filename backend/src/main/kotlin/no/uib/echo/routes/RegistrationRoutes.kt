@@ -435,11 +435,11 @@ fun Route.deleteRegistration() {
                     Registration.happeningSlug eq hap[Happening.slug] and (Registration.userEmail.lowerCase() eq decodedParamEmail)
                 }
 
-                if (strikes != null) {
+                /*if (strikes != null) {
                     User.update({ User.email.lowerCase() eq decodedParamEmail }) {
                         it[User.strikes] = strikes
                     }
-                }
+                }*/
             }
 
             if (reg[Registration.waitList]) {
