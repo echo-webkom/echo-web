@@ -114,7 +114,7 @@ fun isPromotionLegal(slug: String): Boolean {
     }
 
     val spots = happening.spotRanges.fold(0) { total, spotRange -> total + spotRange.spots }
-    val count = countRegistrationsDegreeYear(slug, 1..5, false)
+    val count = countRegistrationsDegreeYear(slug, 1..5, Status.REGISTERED)
 
     if (count >= spots) {
         return false

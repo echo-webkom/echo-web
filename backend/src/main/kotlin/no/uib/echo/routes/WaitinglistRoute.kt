@@ -13,6 +13,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import no.uib.echo.schema.Happening
 import no.uib.echo.schema.Registration
+import no.uib.echo.schema.Status
 import no.uib.echo.schema.WaitingListUUID
 import no.uib.echo.schema.WaitingListUUID.happeningSlug
 import no.uib.echo.schema.WaitingListUUID.userEmail
@@ -70,7 +71,7 @@ fun Route.promoteFromWaitingListWithoutValidation() {
                     Registration.happeningSlug eq waitingListResult[WaitingListUUID.happeningSlug] and
                         (Registration.userEmail eq waitingListResult[WaitingListUUID.userEmail])
                 }) {
-                    it[waitList] = false
+                    it[registrationStatus] = Status.REGISTERED
                 }
 
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
@@ -206,7 +207,7 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                     Registration.happeningSlug eq happeningSlug and
                         (Registration.userEmail eq email)
                 }) {
-                    it[waitList] = false
+                    it[registrationStatus] = Status.REGISTERED
                 }
                 WaitingListUUID.deleteWhere { WaitingListUUID.uuid eq uuid }
             }

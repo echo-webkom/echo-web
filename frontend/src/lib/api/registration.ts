@@ -18,6 +18,10 @@ const answerSchema = z.object({
 });
 type Answer = z.infer<typeof answerSchema>;
 
+const statusSchema = z.enum(['REGISTERED', 'WAITLIST', 'DEREGISTERED']);
+
+type Status = z.infer<typeof statusSchema>;
+
 const registrationSchema = z.object({
     email: z.string(),
     alternateEmail: z.string().nullable(),
@@ -26,7 +30,9 @@ const registrationSchema = z.object({
     degreeYear: z.number(),
     slug: z.string(),
     submitDate: z.string(),
-    waitList: z.boolean(),
+    registrationStatus: statusSchema,
+    reason: z.string().nullable(),
+    deregistrationDate: z.string().nullable(),
     answers: z.array(answerSchema),
     memberships: z
         .array(z.string())
@@ -52,6 +58,11 @@ const genericError = {
 interface FormValues {
     email: string;
     answers: Array<string>;
+}
+
+interface DeregisterFormValues {
+    reason: string;
+    confirm: boolean;
 }
 
 // The data from the form + slug and type
@@ -116,27 +127,33 @@ const RegistrationAPI = {
     },
 
     deleteRegistration: async (
+        idToken: string,
+        reason: DeregisterFormValues['reason'],
         slug: string,
         email: string,
-        idToken: string,
         strikes: number,
-    ): Promise<{ response: string | null; error: string | null }> => {
+    ): Promise<string | ErrorMessage> => {
         try {
             const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
-
-            const response = await fetch(`${BACKEND_URL}/registration/${paramSlug}/${paramEmail}?strikes=${strikes}`, {
+            const response = await fetch(`${BACKEND_URL}/registration`, {
                 method: 'DELETE',
-                headers: { Authorization: `Bearer ${idToken}` },
+                headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    slug,
+                    reason,
+                    email,
+                    strikes,
+                }),
             });
 
             const responseText = await response.text();
 
-            if (response.status === 200) return { response: responseText, error: null };
+            if (response.status === 200) return responseText;
 
-            return { response: null, error: responseText };
+            return { message: responseText };
         } catch (error) {
             console.log(error); // eslint-disable-line
-            return { response: null, error: JSON.stringify(error) };
+            return { message: JSON.stringify(error) };
         }
     },
 
@@ -153,9 +170,7 @@ const RegistrationAPI = {
                     Authorization: `Basic ${Buffer.from(`admin:${auth}`).toString('base64')}`,
                 },
             });
-
             const data = await response.json();
-
             return registrationCountSchema.array().parse(data);
         } catch (error) {
             console.log(error); // eslint-disable-line
@@ -164,7 +179,19 @@ const RegistrationAPI = {
             };
         }
     },
+    getUserIsRegistered: async (email: string, slug: string, idToken: string): Promise<boolean | ErrorMessage> => {
+        try {
+            const { status } = await fetch(`${BACKEND_URL}/user/registrations/${email}/${slug}`, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
 
+            return status === 200;
+        } catch {
+            return { message: 'Error @ getUserIsRegistered' };
+        }
+    },
     getUserRegistrations: async (email: string, idToken: string): Promise<Array<string> | ErrorMessage> => {
         try {
             const encodedEmail = encodeURIComponent(email);
@@ -197,4 +224,6 @@ export {
     type FormValues as RegFormValues,
     type RegistrationCount,
     type Registration,
+    type DeregisterFormValues,
+    type Status,
 };
