@@ -63,6 +63,7 @@ fun Application.registrationRoutes(sendGridApiKey: String?, sendEmail: Boolean, 
         authenticate(jwtConfig) {
             getRegistrations()
             deleteRegistration()
+            getUserIsRegistered()
             postRegistration(sendGridApiKey = sendGridApiKey, sendEmail = sendEmail)
             getUserRegistrations()
         }
@@ -477,6 +478,40 @@ fun Route.deleteRegistration() {
             call.respond(HttpStatusCode.BadRequest, "Error deleting registration.")
             e.printStackTrace()
         }
+    }
+}
+
+fun Route.getUserIsRegistered() {
+    get("/user/registrations/{email}/{slug}") {
+        val authEmail = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (authEmail == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        val email = call.parameters["email"]?.lowercase()
+        val slug = call.parameters["slug"]
+        if (email == null || slug == null) {
+            call.respond(HttpStatusCode.BadRequest, "email or slug missing")
+            return@get
+        }
+
+        if (authEmail != email) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val userRegistered = transaction {
+            Registration.select { Registration.userEmail eq email and (Registration.happeningSlug eq slug) and (Registration.registrationStatus neq Status.DEREGISTERED) }
+                .firstOrNull()
+        }
+        if (userRegistered == null) {
+            call.respond(HttpStatusCode.NotFound)
+            return@get
+        }
+
+        call.respond(HttpStatusCode.OK)
     }
 }
 
