@@ -33,7 +33,8 @@ export default {
             type: 'slug',
             options: {
                 source: 'title',
-                slugify: (input: string) => slugify(input, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
+                // @ts-expect-error
+                slugify: (input: string) => slugify(input.no, { remove: /[*+~.()'"!:@]/g, lower: true, strict: true }),
             },
         }),
         defineField({
