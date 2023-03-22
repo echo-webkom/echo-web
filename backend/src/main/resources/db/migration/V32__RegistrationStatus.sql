@@ -1,5 +1,5 @@
 ALTER TABLE "registration"
-ADD COLUMN registration_status varchar(32);
+ADD COLUMN IF NOT EXISTS registration_status varchar(32);
 
 UPDATE "registration"
 SET registration_status = 'REGISTERED'

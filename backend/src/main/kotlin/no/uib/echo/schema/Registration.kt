@@ -20,7 +20,8 @@ data class FormRegistrationJson(
 data class FormDeregistrationJson(
     val email: String,
     val slug: String,
-    val reason: String
+    val reason: String,
+    val strikes: Int? = null,
 )
 @Serializable
 data class RegistrationJson(
@@ -47,7 +48,7 @@ object Registration : Table() {
     val degree: Column<String> = text("degree")
     val degreeYear: Column<Int> = integer("degree_year")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
-    val registrationStatus: Column<Status> = enumerationByName("registration_status", 16)
+    val registrationStatus: Column<Status> = enumerationByName("registration_status", 32)
     val reason: Column<String?> = text("deregistration_reason").nullable()
     val deregistrationDate: Column<DateTime?> = datetime("deregistration_date").nullable()
 
