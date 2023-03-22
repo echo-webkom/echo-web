@@ -60,8 +60,9 @@ object Registration : Table() {
 fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
-    status: Status
+    status: Status,
 ): Int {
+
     return transaction {
         Registration.select {
             Registration.happeningSlug eq slug and
