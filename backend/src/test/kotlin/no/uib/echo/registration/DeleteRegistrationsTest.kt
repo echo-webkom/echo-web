@@ -131,7 +131,6 @@ class DeleteRegistrationsTest {
                 }
 
                 for (u in usersSublist) {
-
                     val deleteRegCall = client.delete("/registration") {
                         contentType(ContentType.Application.Json)
                         bearerAuth(adminToken)

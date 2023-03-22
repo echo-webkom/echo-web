@@ -98,7 +98,7 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
                             <VStack spacing={4}>
                                 <FormControl isRequired>
                                     <FormLabel htmlFor="reason">
-                                        {isNorwegian ? 'Hvorfor melder du deg av?' : 'Why are you unregistering?'}
+                                        {isNorwegian ? 'Hvorfor melder du deg av?' : 'Why are you deregistering?'}
                                     </FormLabel>
                                     <Input
                                         id="reason"

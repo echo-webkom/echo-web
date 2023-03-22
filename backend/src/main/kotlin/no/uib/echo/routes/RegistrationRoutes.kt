@@ -316,7 +316,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
 
             if (oldReg != null) {
                 if (oldReg[Registration.registrationStatus] != Status.DEREGISTERED) {
-
                     val responseCode = when (oldReg[Registration.registrationStatus]) {
                         Status.WAITLIST -> RegistrationResponse.AlreadySubmittedWaitList
                         else -> RegistrationResponse.AlreadySubmitted
@@ -327,6 +326,9 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     )
                     return@post
                 }
+            }
+
+            if (oldReg != null) {
                 transaction {
                     Registration.update({ Registration.userEmail eq registration.email.lowercase() and (Registration.happeningSlug eq registration.slug) }) {
                         it[degree] = userDegree.toString()
@@ -335,7 +337,6 @@ fun Route.postRegistration(sendGridApiKey: String?, sendEmail: Boolean) {
                     }
                 }
             } else {
-
                 transaction {
                     Registration.insert {
                         it[userEmail] = registration.email.lowercase()

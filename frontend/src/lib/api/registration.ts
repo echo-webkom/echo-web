@@ -134,7 +134,6 @@ const RegistrationAPI = {
         strikes: number,
     ): Promise<string | ErrorMessage> => {
         try {
-            const [paramSlug, paramEmail] = [encodeURIComponent(slug), encodeURIComponent(email)];
             const response = await fetch(`${BACKEND_URL}/registration`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
