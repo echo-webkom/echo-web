@@ -26,6 +26,7 @@ import no.uib.echo.hap9
 import no.uib.echo.schema.Degree
 import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.RegistrationJson
+import no.uib.echo.schema.Status
 import no.uib.echo.schema.StudentGroup
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
@@ -109,7 +110,9 @@ class GetRegistrationsTest {
                             u.degreeYear ?: 3,
                             newReg.slug,
                             null,
-                            u !in usersSublist,
+                            if (u in usersSublist) Status.REGISTERED else Status.WAITLIST,
+                            null,
+                            null,
                             newReg.answers,
                             u.memberships
                         )
@@ -164,7 +167,7 @@ class GetRegistrationsTest {
                 val registrationsList: List<RegistrationJson> = getRegistrationsListJsonCall.body()
 
                 registrationsList.map {
-                    it.copy(submitDate = null)
+                    it.copy(submitDate = null, deregistrationDate = null, reason = null)
                 } shouldBe regsList
             }
         }

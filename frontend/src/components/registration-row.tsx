@@ -30,6 +30,7 @@ import { RegistrationAPI } from '@api/registration';
 import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
+import { isErrorMessage } from '@utils/error';
 
 interface Props {
     registration: Registration;
@@ -64,29 +65,30 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             return;
         }
 
-        const { error } = await RegistrationAPI.deleteRegistration(
+        const resp = await RegistrationAPI.deleteRegistration(
+            idToken,
+            `Slettet av ${user?.email ?? 'arrangør'} med ${strikes} prikker`,
             registration.slug,
             registration.email,
-            idToken,
             strikes,
         );
 
         onCloseDelete();
 
-        if (error === null) {
+        if (isErrorMessage(resp)) {
+            toast({
+                title: 'Det har skjedd en feil!',
+                description: resp.message,
+                status: 'error',
+                isClosable: true,
+            });
+        } else {
             setDeleted(true);
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
                 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 description: `Slettet påmeding med email '${registration.alternateEmail || registration.email}'.`,
-                isClosable: true,
-            });
-        } else {
-            toast({
-                title: 'Det har skjedd en feil!',
-                description: error,
-                status: 'error',
                 isClosable: true,
             });
         }
@@ -117,15 +119,27 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                         ikke besvart
                     </Td>
                 )}
-                {registration.waitList ? (
-                    <Td fontSize="md" data-cy="reg-row-waitlist-true" fontWeight="bold" color="red.400">
-                        {canPromote ? <PromoteButton registration={registration} /> : 'Ja'}
-                    </Td>
-                ) : (
-                    <Td fontSize="md" data-cy="reg-row-waitlist-false" fontWeight="bold" color="green.400">
-                        Nei
-                    </Td>
-                )}
+                {
+                    {
+                        WAITLIST: (
+                            <Td fontSize="md" fontWeight="bold" color="yellow.400">
+                                {canPromote ? <PromoteButton registration={registration} /> : 'Venteliste'}
+                            </Td>
+                        ),
+                        REGISTERED: (
+                            <Td fontSize="md" fontWeight="bold" color="green.400">
+                                Påmeldt
+                            </Td>
+                        ),
+                        DEREGISTERED: (
+                            <Td fontSize="md" fontWeight="bold" color="red.400">
+                                Avmeldt
+                            </Td>
+                        ),
+                    }[registration.registrationStatus]
+                }
+                <Td fontSize="md">{registration.reason}</Td>
+
                 <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
                     <Button fontSize="sm" data-cy="delete-button" onClick={onOpenDelete} colorScheme="red">

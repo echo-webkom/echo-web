@@ -5,6 +5,8 @@ import type { ErrorMessage } from '@utils/error';
 import { handleError } from '@utils/error';
 import SanityAPI from '@api/sanity';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
+
 const happeningTypeSchema = z.enum(['BEDPRES', 'EVENT']);
 type HappeningType = z.infer<typeof happeningTypeSchema>;
 
@@ -70,8 +72,6 @@ const happeningInfoSchema = z.object({
     spotRanges: z.array(spotRangeCounterSchema),
 });
 type HappeningInfo = z.infer<typeof happeningInfoSchema>;
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
 const HappeningAPI = {
     /**

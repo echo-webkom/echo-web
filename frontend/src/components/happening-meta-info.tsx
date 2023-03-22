@@ -4,7 +4,7 @@ import { CgOrganisation } from 'react-icons/cg';
 import { ImLocation } from 'react-icons/im';
 import { IoMdListBox } from 'react-icons/io';
 import { GiTwoCoins } from 'react-icons/gi';
-import { MdEventSeat, MdLockOutline, MdLogout, MdLockOpen } from 'react-icons/md';
+import { MdEventSeat, MdLockOutline, MdLockOpen, MdOutgoingMail } from 'react-icons/md';
 import { RiTimeLine } from 'react-icons/ri';
 import type { HappeningType, SpotRange, SpotRangeCount } from '@api/happening';
 import IconText from '@components/icon-text';
@@ -163,9 +163,9 @@ const HappeningMetaInfo = ({
             )}
             {contactEmail && (
                 <IconText
-                    icon={MdLogout}
-                    text={isNorwegian ? 'Avmelding' : 'Unregister'}
-                    link={`mailto:${contactEmail}?subject=Avmelding '${title}'`}
+                    icon={MdOutgoingMail}
+                    text={isNorwegian ? 'Kontakt' : 'Contact'}
+                    link={`mailto:${contactEmail}?subject=Hendvendelse om '${title}'`}
                 />
             )}
         </VStack>

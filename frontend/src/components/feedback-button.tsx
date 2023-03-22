@@ -54,11 +54,7 @@ const FeedbackButton = () => {
             isClosable: true,
         });
 
-        reset({
-            email: '',
-            name: '',
-            message: '',
-        });
+        reset();
     };
 
     return (

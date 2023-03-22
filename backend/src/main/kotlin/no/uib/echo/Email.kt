@@ -41,6 +41,7 @@ data class SendGridTemplate(
     val link: String,
     val waitListSpot: Int? = null,
     val registration: FormRegistrationJson? = null,
+
     val waitingListUUID: String? = null
 )
 

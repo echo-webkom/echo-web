@@ -15,6 +15,7 @@ import no.uib.echo.schema.HappeningInfoJson
 import no.uib.echo.schema.Registration
 import no.uib.echo.schema.SpotRange
 import no.uib.echo.schema.SpotRangeWithCountJson
+import no.uib.echo.schema.Status
 import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -111,14 +112,14 @@ fun Route.getHappeningInfo() {
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        false
+                        Status.REGISTERED,
                     )
 
                 val waitListCount =
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        true
+                        Status.WAITLIST,
                     )
 
                 SpotRangeWithCountJson(
@@ -131,7 +132,7 @@ fun Route.getHappeningInfo() {
             }
         }
 
-        val totalCount = countRegistrationsDegreeYear(slug, 1..5, false)
+        val totalCount = countRegistrationsDegreeYear(slug, 1..5, Status.WAITLIST)
 
         val totalCountDiff = totalCount - registrationCount.sumOf { it.regCount }
         if (totalCountDiff > 0) {

@@ -1,7 +1,13 @@
 import {
+    Alert,
+    AlertIcon,
     Box,
     Button,
-    Text,
+    Center,
+    Flex,
+    Input,
+    LinkBox,
+    LinkOverlay,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -9,36 +15,32 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Input,
+    Spinner,
+    Text,
     useDisclosure,
     useToast,
     VStack,
-    Spinner,
-    Alert,
-    AlertIcon,
-    Center,
-    LinkBox,
-    LinkOverlay,
-    Flex,
 } from '@chakra-ui/react';
+import { differenceInHours, format, isBefore } from 'date-fns';
+import { enUS, nb } from 'date-fns/locale';
+import NextLink from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
-import { useState } from 'react';
-import NextLink from 'next/link';
-import { differenceInHours, format, isBefore } from 'date-fns';
-import { enUS, nb } from 'date-fns/locale';
-import CountdownButton from '@components/countdown-button';
+import DeregistrationButton from './deregistration-button';
 import type { Happening, HappeningType, Question } from '@api/happening';
 import type { RegFormValues } from '@api/registration';
-import { userIsComplete } from '@api/user';
 import { RegistrationAPI } from '@api/registration';
+import { userIsComplete } from '@api/user';
+import CountdownButton from '@components/countdown-button';
 import FormQuestion from '@components/form-question';
-import useLanguage from '@hooks/use-language';
-import hasOverlap from '@utils/has-overlap';
-import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
+import useLanguage from '@hooks/use-language';
+import capitalize from '@utils/capitalize';
 import chooseDate from '@utils/choose-date';
+import { isErrorMessage } from '@utils/error';
+import hasOverlap from '@utils/has-overlap';
 
 const codeToStatus = (statusCode: number): 'success' | 'warning' | 'error' => {
     if (statusCode === 200) return 'success';
@@ -67,6 +69,26 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
     );
 
     const toast = useToast();
+    const [registered, setRegistered] = useState(false);
+
+    useEffect(() => {
+        const fetchIsRegistered = async () => {
+            if (user && idToken) {
+                const isRegistered = await RegistrationAPI.getUserIsRegistered(user.email, happening.slug, idToken);
+                if (isErrorMessage(isRegistered)) {
+                    setRegistered(false);
+                    return;
+                }
+                setRegistered(isRegistered);
+
+                return;
+            }
+            setRegistered(false);
+        };
+        void fetchIsRegistered();
+    }, [user, registered, idToken, happening.slug]);
+
+    const initialRef = useRef<HTMLInputElement | null>(null);
 
     const submitForm: SubmitHandler<RegFormValues> = async (data) => {
         if (!signedIn || !idToken) {
@@ -188,22 +210,28 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
             ) : (
                 userIsComplete(user) &&
                 differenceInHours(regDate, new Date()) < 24 && (
-                    <CountdownButton
-                        data-cy="reg-btn"
-                        w="100%"
-                        colorScheme="teal"
-                        date={regDate}
-                        onClick={() =>
-                            happening.additionalQuestions.length === 0
-                                ? void submitForm({ email: user.email, answers: [] })
-                                : onOpen()
-                        }
-                    >
-                        {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
-                    </CountdownButton>
+                    <>
+                        {registered && <DeregistrationButton happening={happening} />}
+                        {!registered && (
+                            <CountdownButton
+                                data-cy="reg-btn"
+                                w="100%"
+                                colorScheme="teal"
+                                date={regDate}
+                                onClick={() =>
+                                    happening.additionalQuestions.length === 0
+                                        ? void submitForm({ email: user.email, answers: [] })
+                                        : onOpen()
+                                }
+                            >
+                                {isNorwegian ? 'Klikk for å melde deg på' : 'Click to register'}
+                            </CountdownButton>
+                        )}
+                    </>
                 )
             )}
-            <Modal isOpen={isOpen} onClose={onClose}>
+
+            <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
