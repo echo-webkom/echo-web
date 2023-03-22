@@ -523,7 +523,7 @@ fun Route.getUserRegistrations() {
 
         val userRegistrations = transaction {
             (Registration leftJoin Happening).select {
-                Registration.userEmail eq email
+                Registration.userEmail eq email and (Registration.registrationStatus inList listOf(Status.WAITLIST, Status.REGISTERED))
             }.orderBy(Happening.registrationDate to SortOrder.DESC).map {
                 it[Happening.slug]
             }.toList()
