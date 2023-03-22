@@ -16,13 +16,15 @@ data class FormRegistrationJson(
     val slug: String,
     val answers: List<AnswerJson>
 )
+
 @Serializable
 data class FormDeregistrationJson(
     val email: String,
     val slug: String,
     val reason: String,
-    val strikes: Int? = null,
+    val strikes: Int? = null
 )
+
 @Serializable
 data class RegistrationJson(
     val email: String,
@@ -58,9 +60,8 @@ object Registration : Table() {
 fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
-    status: Status,
+    status: Status
 ): Int {
-
     return transaction {
         Registration.select {
             Registration.happeningSlug eq slug and
