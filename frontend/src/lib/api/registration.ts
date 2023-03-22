@@ -178,19 +178,6 @@ const RegistrationAPI = {
             };
         }
     },
-    getUserIsRegistered: async (email: string, slug: string, idToken: string): Promise<boolean | ErrorMessage> => {
-        try {
-            const { status } = await fetch(`${BACKEND_URL}/user/registrations/${email}/${slug}`, {
-                headers: {
-                    Authorization: `Bearer ${idToken}`,
-                },
-            });
-
-            return status === 200;
-        } catch {
-            return { message: 'Error @ getUserIsRegistered' };
-        }
-    },
     getUserRegistrations: async (email: string, idToken: string): Promise<Array<string> | ErrorMessage> => {
         try {
             const encodedEmail = encodeURIComponent(email);
