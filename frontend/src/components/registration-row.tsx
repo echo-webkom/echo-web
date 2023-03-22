@@ -157,13 +157,11 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                     <ModalCloseButton />
                     <ModalBody>
                         {/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */}
-                        {`Er du sikker på at du vil slette påmeldingen med email '${
+                        {`Er du sikker på at du vil melde av påmeldingen med email '${
                             registration.alternateEmail || registration.email
                         }'?`}
                         {/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */}
-                        <Text fontWeight="bold" py="0.5rem" lineHeight="1.5">
-                            Den vil bli borte for alltid.
-                        </Text>
+
                         {strikesPermission && (
                             <>
                                 <Text fontWeight="bold"> Sett antall prikker</Text>
