@@ -67,7 +67,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
 
         const resp = await RegistrationAPI.deleteRegistration(
             idToken,
-            `Slettet av ${user?.email ?? 'arrangør'}`,
+            `Slettet av ${user?.email ?? 'arrangør'} med ${strikes} prikker`,
             registration.slug,
             registration.email,
             strikes,
