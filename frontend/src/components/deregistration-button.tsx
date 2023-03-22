@@ -53,7 +53,13 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
             return;
         }
 
-        const resp = await RegistrationAPI.deleteRegistration(idToken, data.reason, happening.slug, user.email);
+        const resp = await RegistrationAPI.deleteRegistration(
+            idToken,
+            data.reason,
+            happening.slug,
+            user.email,
+            user.strikes,
+        );
 
         if (isErrorMessage(resp)) {
             toast({
