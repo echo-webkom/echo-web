@@ -73,16 +73,17 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
-            if (!user || !idToken) {
-                setRegistered(false);
-                return;
+            if (user && idToken) {
+                const userRegistrations = await RegistrationAPI.getUserRegistrations(user.email, idToken);
+                if (isErrorMessage(userRegistrations)) {
+                    setRegistered(false);
+                    return;
+                }
+                if (happening.slug in userRegistrations) {
+                    setRegistered(true);
+                    return;
+                }
             }
-            const isRegistered = await RegistrationAPI.getUserIsRegistered(user.email, happening.slug, idToken);
-            if (isErrorMessage(isRegistered)) {
-                setRegistered(false);
-                return;
-            }
-            setRegistered(isRegistered);
         };
         void fetchIsRegistered();
     }, [user, registered, idToken, happening.slug]);
