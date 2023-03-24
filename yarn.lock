@@ -6945,10 +6945,10 @@ form-urlencoded@^2.0.9:
   resolved "https://registry.yarnpkg.com/form-urlencoded/-/form-urlencoded-2.0.9.tgz#ea07c5dbd9aa739275d53ec5c671ea069fe7d597"
   integrity sha512-fWUzNiOnYa126vFAT6TFXd1mhJrvD8IqmQ9ilZPjkLYQfaRreBr5fIUoOpPlWtqaAG64nzoE7u5zSetifab9IA==
 
-framer-motion@10.6.0:
-  version "10.6.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.6.0.tgz#348a71ca894456ec1a7ce695a19a377c217d4768"
-  integrity sha512-RkZe8iBhdWNs1y2HfYh4WlM9Co11/Vu+JCSQzmLaP5alM3QbBiue6OkeXygfxsRDp4yCar95ExoHE0CZQNyuVQ==
+framer-motion@10.8.2:
+  version "10.8.2"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.8.2.tgz#c310f4cae5c78e4cb93c952ba94eead0378fe37f"
+  integrity sha512-wDXjdbvCfLvt0/d+JeVWd0Xdm5zXHO/yBMdWLr8mvFqyuIivIk6sb0y3n9d9rIv2KpeCSAQ1ZjdaerkK4o14SA==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:
