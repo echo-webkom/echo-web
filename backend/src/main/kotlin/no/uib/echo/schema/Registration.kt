@@ -26,6 +26,12 @@ data class FormDeregistrationJson(
 )
 
 @Serializable
+data class UserRegistrationJson(
+    val slug: String,
+    val status: Status
+)
+
+@Serializable
 data class RegistrationJson(
     val email: String,
     val alternateEmail: String? = null,

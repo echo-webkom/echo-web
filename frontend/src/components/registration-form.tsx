@@ -30,7 +30,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineArrowForward } from 'react-icons/md';
 import DeregistrationButton from './deregistration-button';
 import type { Happening, HappeningType, Question } from '@api/happening';
-import type { RegFormValues } from '@api/registration';
+import type { RegFormValues, UserRegistration } from '@api/registration';
 import { RegistrationAPI } from '@api/registration';
 import { userIsComplete } from '@api/user';
 import CountdownButton from '@components/countdown-button';
@@ -70,6 +70,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
 
     const toast = useToast();
     const [registered, setRegistered] = useState(false);
+    const [isWaitlist, setIsWaitlist] = useState(false);
 
     useEffect(() => {
         const fetchIsRegistered = async () => {
@@ -78,18 +79,21 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 return;
             }
             const userRegistrations = await RegistrationAPI.getUserRegistrations(user.email, idToken);
-            console.log(userRegistrations);
 
             if (isErrorMessage(userRegistrations)) {
                 setRegistered(false);
                 return;
             }
-            if (userRegistrations.includes(happening.slug)) {
+
+            const slugRegistrations = userRegistrations.filter((r: UserRegistration) => r.slug === happening.slug);
+
+            if (slugRegistrations.length > 0) {
                 setRegistered(true);
+                setIsWaitlist(slugRegistrations[0].status === 'WAITLIST');
+            } else {
+                setRegistered(false);
                 return;
             }
-            setRegistered(false);
-            
         };
         void fetchIsRegistered();
     }, [user, registered, idToken, happening.slug]);
@@ -217,7 +221,7 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 userIsComplete(user) &&
                 differenceInHours(regDate, new Date()) < 24 && (
                     <>
-                        {registered && <DeregistrationButton happening={happening} />}
+                        {registered && <DeregistrationButton happening={happening} isWaitlist={isWaitlist} />}
                         {!registered && (
                             <CountdownButton
                                 data-cy="reg-btn"

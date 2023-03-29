@@ -22,6 +22,12 @@ const statusSchema = z.enum(['REGISTERED', 'WAITLIST', 'DEREGISTERED']);
 
 type Status = z.infer<typeof statusSchema>;
 
+const userRegistrationSchema = z.object({
+    slug: z.string(),
+    status: statusSchema,
+});
+type UserRegistration = z.infer<typeof userRegistrationSchema>;
+
 const registrationSchema = z.object({
     email: z.string(),
     alternateEmail: z.string().nullable(),
@@ -178,7 +184,7 @@ const RegistrationAPI = {
             };
         }
     },
-    getUserRegistrations: async (email: string, idToken: string): Promise<Array<string> | ErrorMessage> => {
+    getUserRegistrations: async (email: string, idToken: string): Promise<Array<UserRegistration> | ErrorMessage> => {
         try {
             const encodedEmail = encodeURIComponent(email);
             const response = await fetch(`${BACKEND_URL}/user/${encodedEmail}/registrations`, {
@@ -195,7 +201,8 @@ const RegistrationAPI = {
                 return data;
             }
 
-            return z.array(z.string()).parse(data);
+            return userRegistrationSchema.array().parse(data);
+            // return array
         } catch {
             return {
                 message: 'Fail @ getUserRegistrations',
@@ -212,4 +219,5 @@ export {
     type Registration,
     type DeregisterFormValues,
     type Status,
+    type UserRegistration,
 };

@@ -26,9 +26,10 @@ import { isErrorMessage } from '@utils/error';
 
 interface Props {
     happening: Happening;
+    isWaitlist: boolean;
 }
 
-const DeregistrationButton = ({ happening }: Props): JSX.Element => {
+const DeregistrationButton = ({ happening, isWaitlist }: Props): JSX.Element => {
     const isNorwegian = useLanguage();
     const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,9 +54,11 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
             return;
         }
 
+        const newReason = `Selvmeldt grunn: ${data.reason}`;
+
         const resp = await RegistrationAPI.deleteRegistration(
             idToken,
-            data.reason,
+            newReason,
             happening.slug,
             user.email,
             user.strikes,
@@ -80,10 +83,49 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
         reset();
     };
 
+    const deleteFromWaitlist = async () => {
+        if (!idToken || !user?.email) {
+            toast({
+                title: 'Det har oppstått en feil',
+                description: 'Du er ikke logget inn',
+                status: 'error',
+            });
+            return;
+        }
+
+        const resp = await RegistrationAPI.deleteRegistration(
+            idToken,
+            'Meldt av fra venteliste',
+            happening.slug,
+            user.email,
+            user.strikes,
+        );
+
+        if (isErrorMessage(resp)) {
+            toast({
+                title: 'En feil har skjedd',
+            });
+        } else {
+            toast({
+                title: 'Du er meldt av',
+                description: `Du er meldt av ventelisten til arrangementet: ${happening.title}`,
+                status: 'success',
+            });
+        }
+    };
+
+    if (isWaitlist) {
+        return (
+            <Button data-cy="del-btn" w="100%" colorScheme="yellow" onClick={() => void deleteFromWaitlist()}>
+                {isNorwegian ? 'Meld deg av ventelisten' : 'Deregister from waitlist'}
+            </Button>
+        );
+    }
+
     return (
         <>
             <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onOpen}>
-                {isNorwegian ? 'Meld deg av' : 'Unregister'}
+                {isNorwegian ? 'Meld deg av' : 'Deregister'}
             </Button>
 
             <Modal
@@ -96,7 +138,7 @@ const DeregistrationButton = ({ happening }: Props): JSX.Element => {
             >
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
-                    <ModalHeader>{isNorwegian ? 'Meld deg av' : 'Unregister'}</ModalHeader>
+                    <ModalHeader>{isNorwegian ? 'Meld deg av' : 'Deregister'}</ModalHeader>
                     <ModalCloseButton />
                     {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
                     <form onSubmit={handleSubmit(submitForm)}>

@@ -108,7 +108,7 @@ fun Route.getHappeningInfo() {
             SpotRange.select {
                 SpotRange.happeningSlug eq slug
             }.toList().map {
-                val count =
+                val regcount =
                     countRegistrationsDegreeYear(
                         slug,
                         it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
@@ -126,13 +126,13 @@ fun Route.getHappeningInfo() {
                     it[SpotRange.spots],
                     it[SpotRange.minDegreeYear],
                     it[SpotRange.maxDegreeYear],
-                    count,
+                    regcount,
                     waitListCount
                 )
             }
         }
 
-        val totalCount = countRegistrationsDegreeYear(slug, 1..5, Status.WAITLIST)
+        val totalCount = countRegistrationsDegreeYear(slug, 1..5, Status.REGISTERED)
 
         val totalCountDiff = totalCount - registrationCount.sumOf { it.regCount }
         if (totalCountDiff > 0) {
