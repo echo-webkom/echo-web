@@ -36,6 +36,7 @@ import no.uib.echo.schema.SlugJson
 import no.uib.echo.schema.Status
 import no.uib.echo.schema.StudentGroupHappeningRegistration
 import no.uib.echo.schema.User
+import no.uib.echo.schema.UserRegistrationJson
 import no.uib.echo.schema.WaitingListUUID
 import no.uib.echo.schema.countRegistrationsDegreeYear
 import no.uib.echo.schema.getGroupMembers
@@ -525,7 +526,7 @@ fun Route.getUserRegistrations() {
             (Registration leftJoin Happening).select {
                 Registration.userEmail eq email and (Registration.registrationStatus inList listOf(Status.WAITLIST, Status.REGISTERED))
             }.orderBy(Happening.registrationDate to SortOrder.DESC).map {
-                it[Happening.slug]
+                UserRegistrationJson(it[Happening.slug], it[Registration.registrationStatus])
             }.toList()
         }
 
