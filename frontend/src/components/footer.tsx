@@ -9,7 +9,6 @@ import {
     Box,
     LinkOverlay,
     Flex,
-    Spacer,
 } from '@chakra-ui/react';
 import { FaFacebook, FaGithub, FaInstagram } from 'react-icons/fa';
 import { TbAlertOctagon } from 'react-icons/tb';
@@ -25,150 +24,139 @@ const Footer = () => {
     const textColor = useColorModeValue('button.light.text', 'button.dark.text');
 
     return (
-        <Flex direction="column">
-            <Box bg="bg.dark.secondary" data-testid="footer">
-                <SimpleGrid
-                    row={2}
-                    columns={[1, 2, 4]}
-                    justifyItems="center"
-                    alignItems="center"
-                    spacingX="3em"
-                    spacingY="3em"
-                    py="2em"
-                    px="1em"
-                    maxW="1400px"
-                    mx="auto"
-                >
-                    <SimpleGrid columns={1} alignItems="center" rowGap="15px">
-                        <Center>
-                            <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
-                        </Center>
-                        <SimpleGrid columns={3} pt="0.5rem" spacing="3rem">
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                                <LinkOverlay
-                                    href="https://facebook.com/groups/informatikk"
-                                    aria-label="Link til facebook"
-                                    isExternal
-                                >
-                                    <Icon as={FaFacebook} w={10} h={10} />
-                                </LinkOverlay>
-                            </LinkBox>
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                                <LinkOverlay
-                                    href="https://github.com/echo-webkom/echo-web"
-                                    aria-label="Link til GitHub"
-                                    isExternal
-                                >
-                                    <Icon as={FaGithub} w={10} h={10} />
-                                </LinkOverlay>
-                            </LinkBox>
-                            <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
-                                <LinkOverlay
-                                    href="https://instagram.com/echo_uib"
-                                    aria-label="Link til Instagram"
-                                    isExternal
-                                >
-                                    <Icon as={FaInstagram} w={10} h={10} />
-                                </LinkOverlay>
-                            </LinkBox>
-                        </SimpleGrid>
-                    </SimpleGrid>
-
-                    <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
-                        <Text fontSize="sm" color="white" m={0} textAlign="center" fontWeight="bold">
-                            Hovedsamarbeidspartner
-                        </Text>
-                        <LinkBox m={0}>
-                            <LinkOverlay href="https://bekk.no" aria-label="Link til Bekk" isExternal>
-                                <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
-                            </LinkOverlay>
-                        </LinkBox>
-                    </SimpleGrid>
-
-                    <SimpleGrid columns={[1, 1, 1]} alignItems="center">
-                        <Text fontSize="sm" color="white" m={0} textAlign="center">
-                            POWERED BY
-                        </Text>
-                        <LinkBox m={0}>
-                            <LinkOverlay href="https://sanity.io" aria-label="Link til Sanity" isExternal>
-                                <Image alt="sanity" width={175} height={52.5} src={sanityLogo} />
-                            </LinkOverlay>
-                        </LinkBox>
-                        <LinkBox m={0}>
+        <Box bg="bg.dark.secondary" data-testid="footer">
+            <SimpleGrid
+                row={2}
+                columns={[1, 2, 4]}
+                justifyItems="center"
+                alignItems="center"
+                spacingX="3em"
+                spacingY="3em"
+                py="2em"
+                px="1em"
+                maxW="1400px"
+                mx="auto"
+            >
+                <SimpleGrid columns={1} alignItems="center" rowGap="15px">
+                    <Center>
+                        <Image alt="echo" objectFit="contain" maxH="100px" src={echoLogoWhite} />
+                    </Center>
+                    <SimpleGrid columns={3} pt="0.5rem" spacing="3rem">
+                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <LinkOverlay
-                                href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss"
-                                aria-label="Link til Vercel"
+                                href="https://facebook.com/groups/informatikk"
+                                aria-label="Link til facebook"
                                 isExternal
                             >
-                                <Image alt="Powered by Vercel" width={175} height={52.5} src={vercelLogo} />
+                                <Icon as={FaFacebook} w={10} h={10} />
                             </LinkOverlay>
                         </LinkBox>
-                    </SimpleGrid>
-
-                    <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
-                        <LanguageMenu />
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                            <LinkOverlay href="mailto:echo@uib.no" aria-label="Send mail til echo">
-                                <Text fontSize="md" color={color}>
-                                    echo@uib.no
-                                </Text>
-                            </LinkOverlay>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                            <LinkOverlay href="https://goo.gl/maps/adUsBsoZh3QqNvA36" isExternal>
-                                <Text fontSize="md" color={color}>
-                                    Thormøhlensgate 55
-                                </Text>
-                                <Text fontSize="md" color={color}>
-                                    5006 Bergen
-                                </Text>
-                            </LinkOverlay>
-                        </LinkBox>
-                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
                             <LinkOverlay
-                                href="https://w2.brreg.no/enhet/sok/detalj.jsp?orgnr=998995035"
-                                aria-label="Link til brønnøysundregisteret"
+                                href="https://github.com/echo-webkom/echo-web"
+                                aria-label="Link til GitHub"
                                 isExternal
                             >
-                                <Text fontSize="md" color={color}>
-                                    Org nr: 998 995 035
-                                </Text>
+                                <Icon as={FaGithub} w={10} h={10} />
                             </LinkOverlay>
                         </LinkBox>
-                        <LinkBox mt={2} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
-                            <LinkOverlay href="/om-echo/si-ifra">
-                                <Flex gap={2}>
-                                    <Text fontSize="md" color="#f0f0f0">
-                                        Opplevd noe ugreit?
-                                    </Text>
-                                    <Icon
-                                        as={TbAlertOctagon}
-                                        borderRadius="full"
-                                        p="0.5"
-                                        bg="red.400"
-                                        color={textColor}
-                                        _hover={{ bg: 'red.500', transform: 'scale(1)' }}
-                                        boxSize={12}
-                                        zIndex="100"
-                                        height={6}
-                                        width={6}
-                                    />
-                                </Flex>
+                        <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }} color={color}>
+                            <LinkOverlay
+                                href="https://instagram.com/echo_uib"
+                                aria-label="Link til Instagram"
+                                isExternal
+                            >
+                                <Icon as={FaInstagram} w={10} h={10} />
                             </LinkOverlay>
                         </LinkBox>
                     </SimpleGrid>
                 </SimpleGrid>
-            </Box>
-            <Flex px="10">
-                <Flex>
-                    <Image src="/foot.png" alt="foot" />
-                </Flex>
-                <Spacer />
-                <Flex>
-                    <Image src="/foot.png" alt="foot" transform="scaleX(-1)" />
-                </Flex>
-            </Flex>
-        </Flex>
+
+                <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
+                    <Text fontSize="sm" color="white" m={0} textAlign="center" fontWeight="bold">
+                        Hovedsamarbeidspartner
+                    </Text>
+                    <LinkBox m={0}>
+                        <LinkOverlay href="https://bekk.no" aria-label="Link til Bekk" isExternal>
+                            <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
+                        </LinkOverlay>
+                    </LinkBox>
+                </SimpleGrid>
+
+                <SimpleGrid columns={[1, 1, 1]} alignItems="center">
+                    <Text fontSize="sm" color="white" m={0} textAlign="center">
+                        POWERED BY
+                    </Text>
+                    <LinkBox m={0}>
+                        <LinkOverlay href="https://sanity.io" aria-label="Link til Sanity" isExternal>
+                            <Image alt="sanity" width={175} height={52.5} src={sanityLogo} />
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox m={0}>
+                        <LinkOverlay
+                            href="https://vercel.com/?utm_source=echo-webkom&utm_campaign=oss"
+                            aria-label="Link til Vercel"
+                            isExternal
+                        >
+                            <Image alt="Powered by Vercel" width={175} height={52.5} src={vercelLogo} />
+                        </LinkOverlay>
+                    </LinkBox>
+                </SimpleGrid>
+
+                <SimpleGrid columns={1} maxWidth="400px" textAlign="center">
+                    <LanguageMenu />
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay href="mailto:echo@uib.no" aria-label="Send mail til echo">
+                            <Text fontSize="md" color={color}>
+                                echo@uib.no
+                            </Text>
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay href="https://goo.gl/maps/adUsBsoZh3QqNvA36" isExternal>
+                            <Text fontSize="md" color={color}>
+                                Thormøhlensgate 55
+                            </Text>
+                            <Text fontSize="md" color={color}>
+                                5006 Bergen
+                            </Text>
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay
+                            href="https://w2.brreg.no/enhet/sok/detalj.jsp?orgnr=998995035"
+                            aria-label="Link til brønnøysundregisteret"
+                            isExternal
+                        >
+                            <Text fontSize="md" color={color}>
+                                Org nr: 998 995 035
+                            </Text>
+                        </LinkOverlay>
+                    </LinkBox>
+                    <LinkBox mt={2} transition=".1s ease-out" _hover={{ transform: 'scale(1.05)' }}>
+                        <LinkOverlay href="/om-echo/si-ifra">
+                            <Flex gap={2}>
+                                <Text fontSize="md" color="#f0f0f0">
+                                    Opplevd noe ugreit?
+                                </Text>
+                                <Icon
+                                    as={TbAlertOctagon}
+                                    borderRadius="full"
+                                    p="0.5"
+                                    bg="red.400"
+                                    color={textColor}
+                                    _hover={{ bg: 'red.500', transform: 'scale(1)' }}
+                                    boxSize={12}
+                                    zIndex="100"
+                                    height={6}
+                                    width={6}
+                                />
+                            </Flex>
+                        </LinkOverlay>
+                    </LinkBox>
+                </SimpleGrid>
+            </SimpleGrid>
+        </Box>
     );
 };
 
