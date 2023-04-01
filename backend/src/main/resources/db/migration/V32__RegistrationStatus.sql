@@ -1,7 +1,14 @@
 ALTER TABLE "registration"
 ADD COLUMN IF NOT EXISTS registration_status varchar(32);
+
+ALTER TABLE "registration"
 ADD COLUMN IF NOT EXISTS reason TEXT;
+
+ALTER TABLE "registration"
 ADD COLUMN IF NOT EXISTS deregistration_date TIMESTAMP;
+
+ALTER TABLE "registration"
+ADD COLUMN IF NOT EXISTS wait_list boolean;
 
 UPDATE "registration"
 SET registration_status = 'REGISTERED'

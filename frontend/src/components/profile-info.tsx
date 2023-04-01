@@ -88,8 +88,10 @@ const ProfileInfo = () => {
         const fetchUpcomingEvents = async () => {
             if (!user?.email || !idToken) return;
 
-            const eventSlugs = await RegistrationAPI.getUserRegistrations(user.email, idToken);
-            if (isErrorMessage(eventSlugs)) return;
+            const registrations = await RegistrationAPI.getUserRegistrations(user.email, idToken);
+            if (isErrorMessage(registrations)) return;
+
+            const eventSlugs = registrations.map((registration) => registration.slug);
 
             const happenings = await HappeningAPI.getHappeningsBySlugs(eventSlugs);
             if (isErrorMessage(happenings)) return;
