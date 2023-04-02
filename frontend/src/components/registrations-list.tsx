@@ -439,12 +439,17 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                     <ModalBody>
                         <VStack>
                             <Text>
-                                Dersom du trykker på &quot;Slett påmelding&quot;, blir du spurt om å bekrefte at du vil
-                                slette påmeldingen. Dersom du godtar dette, vil påmeldingen bli slettet for alltid. Hvis
-                                denne påmeldingen ikke var på venteliste, vil det komme en knapp under &quot;på
-                                venteliste?&quot; for de som er på venteliste. Om du trykker på denne, så kan du velge
-                                mellom å gi dem plassen direkte (med en gang), eller å sende dem en e-post med tilbud om
-                                plass.
+                                Påmeldinger har status: Påmeldt, Avmeldt, Venteliste Dersom du trykker &quot;Slett
+                                påmelding&quot;, vil du bli spurt om å bekrefte at du vil slette påmeldingen. Om du
+                                godtar dette, vil status på påmeldingen bli avregistrert og &quot;reason&quot; blir
+                                &quot;slettet av DIN BRUKER&quot;.
+                            </Text>
+                            <Text>Dette gjelder for alle påmeldinger.</Text>
+                            <Text>
+                                Om en påmelding har status &quot;Venteliste&quot; og det er en ledig plass på
+                                arrangementet, vil det dukke opp en knapp på påmeldingen. Om du trykker på denne, så kan
+                                du velge mellom å gi dem plassen direkte (med en gang), eller å sende dem en e-post med
+                                tilbud om plass.
                             </Text>
                             <Text>
                                 Hvis du gir personen plassen direkte så blir denne personen ikke automatisk gitt beskjed
@@ -455,10 +460,6 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                 selv. Det er ikke garantert at personen vil få e-posten, spesielt hvis de kun har
                                 studentmailen sin registrert hos oss. De vil fortsatt være på venteliste helt til de
                                 trykker på knappen for å ta i mot plassen.
-                            </Text>
-                            <Text>
-                                Påmeldinger som er slettet blir slettet for alltid, og det er ikke mulig å finne denne
-                                informasjonen igjen.
                             </Text>
                         </VStack>
                     </ModalBody>
