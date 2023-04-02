@@ -3620,10 +3620,19 @@
     get-it "^8.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@5", "@sanity/client@5.4.0":
+"@sanity/client@5":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-5.4.0.tgz#db916fee7b77abfe761be535d49e309f41057524"
   integrity sha512-9O0zzBOcoji937610qjgDh3/5DCKGZ1w1Tsjnunq+EEdLvl0FBXiBA77an6gZ7CuqUhsjDmSi+Xn7ax28RAsvw==
+  dependencies:
+    "@sanity/eventsource" "5"
+    get-it "^8.1"
+    rxjs "7"
+
+"@sanity/client@5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-5.4.1.tgz#0e39a094d2bc25e0b3560a18ace6d9df88105a9e"
+  integrity sha512-BX6fbxVOBQcTU1YqDDXykgp7AvRoNmfA/NI5JR5XW7uy7WWSvKgEYVG6htNDYdkpoyiHxIIF+OVbWQJNmSsPCw==
   dependencies:
     "@sanity/eventsource" "5"
     get-it "^8.1"
