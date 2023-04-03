@@ -202,7 +202,6 @@ const RegistrationAPI = {
             }
 
             return userRegistrationSchema.array().parse(data);
-            // return array
         } catch {
             return {
                 message: 'Fail @ getUserRegistrations',

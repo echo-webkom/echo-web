@@ -54,7 +54,7 @@ const DeregistrationButton = ({ happening, isWaitlist }: Props): JSX.Element => 
             return;
         }
 
-        const newReason = `Selvmeldt grunn: ${data.reason}`;
+        const newReason = `Selvmeldt grunn: "${data.reason}"`;
 
         const resp = await RegistrationAPI.deleteRegistration(
             idToken,
