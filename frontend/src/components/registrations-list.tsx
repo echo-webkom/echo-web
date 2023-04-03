@@ -441,8 +441,8 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                             <Text>
                                 Påmeldinger har status: Påmeldt, Avmeldt, Venteliste Dersom du trykker &quot;Slett
                                 påmelding&quot;, vil du bli spurt om å bekrefte at du vil slette påmeldingen. Om du
-                                godtar dette, vil status på påmeldingen bli avregistrert og &quot;reason&quot; blir
-                                &quot;slettet av DIN BRUKER&quot;.
+                                godtar dette, vil status på påmeldingen bli avregistrert og &quot;grunn for
+                                avmelding&quot; blir &quot;slettet av DIN BRUKER&quot;.
                             </Text>
                             <Text>Dette gjelder for alle påmeldinger.</Text>
                             <Text>
