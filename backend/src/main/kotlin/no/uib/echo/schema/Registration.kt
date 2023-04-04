@@ -57,7 +57,7 @@ object Registration : Table() {
     val degreeYear: Column<Int> = integer("degree_year")
     val submitDate: Column<DateTime> = datetime("submit_date").defaultExpression(CurrentDateTime)
     val registrationStatus: Column<Status> = enumerationByName("registration_status", 32)
-    val reason: Column<String?> = text("deregistration_reason").nullable()
+    val reason: Column<String?> = text("reason").nullable()
     val deregistrationDate: Column<DateTime?> = datetime("deregistration_date").nullable()
 
     override val primaryKey: PrimaryKey = PrimaryKey(userEmail, happeningSlug)
