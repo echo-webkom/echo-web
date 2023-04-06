@@ -3629,10 +3629,10 @@
     get-it "^8.1"
     rxjs "7"
 
-"@sanity/client@5.4.1":
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-5.4.1.tgz#0e39a094d2bc25e0b3560a18ace6d9df88105a9e"
-  integrity sha512-BX6fbxVOBQcTU1YqDDXykgp7AvRoNmfA/NI5JR5XW7uy7WWSvKgEYVG6htNDYdkpoyiHxIIF+OVbWQJNmSsPCw==
+"@sanity/client@5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-5.4.2.tgz#253b11d76a058de1fe6ec4f191d5872c7825fa80"
+  integrity sha512-M/ebzTGwYq+NDGMfBWxKtwtmCRJbBvXxAIQXu/J0vxnr8mXKw8gBQ7GaG0tI4WJ54w5sI6pnrD6mPiKdRHVNYw==
   dependencies:
     "@sanity/eventsource" "5"
     get-it "^8.1"
