@@ -1,6 +1,6 @@
 import { useBreakpointValue } from '@chakra-ui/react';
 // eslint-disable-next-line camelcase
-import { IBM_Plex_Serif, IBM_Plex_Mono, Raleway, Open_Sans } from '@next/font/google';
+import { IBM_Plex_Serif, IBM_Plex_Mono, Raleway, Open_Sans } from 'next/font/google';
 
 const ibmPlexSerif = IBM_Plex_Serif({
     weight: ['400'],
