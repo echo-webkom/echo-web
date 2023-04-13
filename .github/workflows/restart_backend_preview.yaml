@@ -52,7 +52,7 @@ jobs:
 
       - name: Update comment to remove checkbox
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.REPO_PAT }}
           comment-id: ${{ steps.fc.outputs.comment-id }}

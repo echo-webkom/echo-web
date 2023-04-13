@@ -303,7 +303,7 @@ jobs:
 
       - name: Create comment
         if: steps.fc.outputs.comment-id == '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.REPO_PAT }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -318,7 +318,7 @@ jobs:
 
       - name: Update comment
         if: steps.fc.outputs.comment-id != '' && (steps.changed-files-backend.outputs.any_changed == 'true' || steps.changed-files-tf.outputs.any_changed == 'true')
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.REPO_PAT }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
