@@ -6928,10 +6928,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-framer-motion@10.12.0:
-  version "10.12.0"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.0.tgz#256ffc22ec78d34e1d090759d861704e22426986"
-  integrity sha512-0C+UQ/PRokXULOXDaN/RtcVmsPF+dKTyevWDREDMDw+GXw4sjMTgou/b686l4R2vQ/qUekMtxRds3noZ7MOuDQ==
+framer-motion@10.12.2:
+  version "10.12.2"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.12.2.tgz#2948bf697bfc75aaf04177bb481996e1ca47781d"
+  integrity sha512-DD3Ieqy4pjmL0qBtfNMqnU/IONchUqnhHtgFtu0Nq5jw7bhkksD/Cs4cNhLYd1vs7iB8Q+WInxuBeMmzIoA5Xg==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:
