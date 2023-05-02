@@ -321,6 +321,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                                 ))}
                                                 <Th>Påmeldingsstatus</Th>
                                                 <Th>Grunn for avmelding</Th>
+                                                <Th>Avmeldingstidspunkt</Th>
                                                 <Th>Medlem av</Th>
                                                 <Th>Slett påmelding</Th>
                                             </Tr>

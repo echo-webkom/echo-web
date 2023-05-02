@@ -21,6 +21,8 @@ import {
     NumberInputField,
     NumberInputStepper,
 } from '@chakra-ui/react';
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
@@ -31,6 +33,7 @@ import notEmptyOrNull from '@utils/not-empty-or-null';
 import capitalize from '@utils/capitalize';
 import useAuth from '@hooks/use-auth';
 import { isErrorMessage } from '@utils/error';
+import parseISOOrNull from '@utils/parse-iso-or-null';
 
 interface Props {
     registration: Registration;
@@ -54,6 +57,8 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
     const { user, idToken, signedIn } = useAuth();
 
     const strikesPermission = user?.memberships.includes('bedkom');
+
+    const deregDate = parseISOOrNull(registration.deregistrationDate);
 
     const handleDelete = async () => {
         if (!signedIn || !idToken) {
@@ -139,7 +144,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                     }[registration.registrationStatus]
                 }
                 <Td fontSize="md">{registration.reason}</Td>
-
+                <Td fontSize="md">{deregDate && format(deregDate, 'dd. MMM, HH:mm', { locale: nb })}</Td>
                 <Td fontSize="md">{registration.memberships.map(capitalize).join(', ')}</Td>
                 <Td>
                     <Button fontSize="sm" data-cy="delete-button" onClick={onOpenDelete} colorScheme="red">
