@@ -139,7 +139,7 @@ fun Route.getRegistrations() {
                     reg[Registration.submitDate].toString(),
                     reg[Registration.registrationStatus],
                     reg[Registration.reason],
-                    reg[Registration.deregistrationDate].toString(),
+                    reg[Registration.deregistrationDate]?.toString(),
                     answers,
                     if (user?.get(User.email) != null) getUserStudentGroups(user[User.email]) else emptyList()
                 )

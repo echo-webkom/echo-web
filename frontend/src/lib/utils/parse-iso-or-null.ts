@@ -1,7 +1,7 @@
 import { parseISO } from 'date-fns';
 
 const parseISOOrNull = (value: string | null) => {
-    if (value === null || value === 'null') {
+    if (value === null) {
         return null;
     }
 
