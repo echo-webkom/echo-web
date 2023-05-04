@@ -21,6 +21,7 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
+import va from '@vercel/analytics';
 import { differenceInHours, format, isBefore } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
 import NextLink from 'next/link';
@@ -121,14 +122,16 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 }),
                 type: type,
             },
-            // signedIn === true implies idToken is not null. Fuck off typescript, jeg banker deg opp.
             idToken,
         );
 
         setLoading(false);
 
         if (statusCode === 200 || statusCode === 202) {
+            va.track('Successful registration');
             onClose();
+        } else {
+            va.track('Unsuccessful registration');
         }
 
         toast.closeAll();

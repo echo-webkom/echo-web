@@ -21,6 +21,7 @@ import {
     NumberInputField,
     NumberInputStepper,
 } from '@chakra-ui/react';
+import va from '@vercel/analytics';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useState } from 'react';
@@ -89,6 +90,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
             });
         } else {
             setDeleted(true);
+            va.track('Deleted registration');
             void router.replace(router.asPath, undefined, { scroll: false });
             toast({
                 title: 'Påmelding slettet!',
