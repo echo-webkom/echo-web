@@ -8712,10 +8712,10 @@ next-pwa@5.6.0:
     workbox-webpack-plugin "^6.5.4"
     workbox-window "^6.5.4"
 
-next-sanity@4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-4.3.1.tgz#2357c24beb3d290c9458dec07cbf8ee07b174a12"
-  integrity sha512-rR5iOZ61hw91wT9CcS9M2uAZnWkBY+TlvK+Cx5vIYlT/q77eLGezKe/F3+5YqGkrOnnj7a/3x4kaT1S4HYECcg==
+next-sanity@4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-4.3.2.tgz#c025649b2fd853f35e1aacf85484dc497863a043"
+  integrity sha512-BLO2vrBfPWRirJacmJ+Nkx9PUlH0MTRGaRPm4LcZtEd4ulCDpw3AbfJHvzfaFy62jeIzcdkWBWLAkzjbXKr8gA==
   dependencies:
     "@sanity/client" "^6.0.0"
     "@sanity/preview-kit" "^1.5.0"
