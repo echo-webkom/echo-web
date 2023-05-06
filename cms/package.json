@@ -37,13 +37,13 @@
     "dependencies": {
         "@sanity/color-input": "3.0.2",
         "@sanity/icons": "2.3.1",
-        "@sanity/vision": "3.9.1",
+        "@sanity/vision": "3.10.0",
         "easymde": "2.18.0",
         "prop-types": "15.8.1",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-is": "18.2.0",
-        "sanity": "3.9.1",
+        "sanity": "3.10.0",
         "sanity-plugin-color-picker": "1.0.3",
         "sanity-plugin-markdown": "4.1.0",
         "sanity-plugin-media": "2.0.5",
@@ -51,7 +51,7 @@
         "styled-components": "5.3.10"
     },
     "devDependencies": {
-        "@sanity/cli": "3.9.1",
+        "@sanity/cli": "3.10.0",
         "@sanity/eslint-config-studio": "2.0.1",
         "typescript": "5.0.4"
     }
