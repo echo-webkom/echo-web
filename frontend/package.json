@@ -113,7 +113,7 @@
         "@chakra-ui/react": "2.5.5",
         "@emotion/react": "11.10.8",
         "@emotion/styled": "11.10.8",
-        "@sanity/client": "5.4.2",
+        "@sanity/client": "6.0.1",
         "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "1.0.1",
         "@vercel/og": "0.5.4",
