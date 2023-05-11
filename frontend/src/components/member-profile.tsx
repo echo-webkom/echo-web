@@ -5,7 +5,7 @@ import { imgUrlFor } from '@api/sanity';
 
 const getInitials = (name: string) => {
     const words = name.split(' ');
-    return words.length >= 2 ? `${words[0].charAt(0)}${words.at(-1).charAt(0)}` : words[0].charAt(0);
+    return words.length >= 2 ? `${words[0].charAt(0)}${words.at(-1)?.charAt(0) ?? ''}` : words[0].charAt(0);
 };
 
 interface Props {
