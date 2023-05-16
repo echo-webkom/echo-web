@@ -3673,10 +3673,10 @@
     get-it "^8"
     rxjs "^7"
 
-"@sanity/color-input@3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@sanity/color-input/-/color-input-3.0.2.tgz#03d4d5c948ec23d8db157dbe07dc810e06f55ee6"
-  integrity sha512-jeNLxuVmt2P7LhBKCPwXL/SSjA5uryIje3AdqhJT0nO/9l7Ghmd7h11GaXwMcm5GntUbm/AtLVyQtV3/v686WQ==
+"@sanity/color-input@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@sanity/color-input/-/color-input-3.1.0.tgz#eed5f36bdbe5bf05e2b369517a22979b7e5cc2c7"
+  integrity sha512-eHLrULBA53OIM/76JeEkQdM72gnBOR/CjnTpQUcu+x6PB6d4lghkeU75ESLLIISdyTc4U6cO2N6CMW8bDNuUVg==
   dependencies:
     "@sanity/icons" "^2.0.0"
     "@sanity/incompatible-plugin" "^1.0.4"
