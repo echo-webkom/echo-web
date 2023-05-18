@@ -3655,10 +3655,10 @@
     golden-fleece "^1.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@6.0.1", "@sanity/client@^6.0.0":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.0.1.tgz#e51042a03238820c81f9e70dde44a7f137d85d52"
-  integrity sha512-q2Mi79ttJxoUjZG3LGlfIFoYfMUxra9tRaPbfmQRVJQ2I/TiVGvuE6yt38fgox796wpeZvYeuYH8L7Ms79IXYg==
+"@sanity/client@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.1.0.tgz#d205d619ff1e4abddd9899e2c137b8b941af4bcf"
+  integrity sha512-l+cyCG7HhJJC2IgpFeIkF0e+gbtDqRn8n/K8xVs9x1VYcZu6M7651FE3dAxSYsOlQkYetgxXzWW5Y0BvQMXoyQ==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     get-it "^8.1.0"
@@ -3672,6 +3672,15 @@
     "@sanity/eventsource" "^4"
     get-it "^8"
     rxjs "^7"
+
+"@sanity/client@^6.0.0":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.0.1.tgz#e51042a03238820c81f9e70dde44a7f137d85d52"
+  integrity sha512-q2Mi79ttJxoUjZG3LGlfIFoYfMUxra9tRaPbfmQRVJQ2I/TiVGvuE6yt38fgox796wpeZvYeuYH8L7Ms79IXYg==
+  dependencies:
+    "@sanity/eventsource" "^5.0.0"
+    get-it "^8.1.0"
+    rxjs "^7.0.0"
 
 "@sanity/color-input@3.1.0":
   version "3.1.0"
