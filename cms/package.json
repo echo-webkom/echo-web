@@ -53,6 +53,6 @@
     "devDependencies": {
         "@sanity/cli": "3.11.5",
         "@sanity/eslint-config-studio": "2.0.1",
-        "typescript": "5.0.4"
+        "typescript": "5.1.3"
     }
 }
