@@ -26,7 +26,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             backend/**
@@ -75,7 +75,7 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             backend/**
@@ -120,7 +120,7 @@ jobs:
 
       - name: Get changed files, frontend
         id: changed-files-frontend
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             frontend/**
@@ -146,7 +146,7 @@ jobs:
 
       - name: Get changed files, backend
         id: changed-files-backend
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             backend/**
@@ -225,7 +225,7 @@ jobs:
 
       - name: Get changed files, backend
         id: changed-files-backend
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             backend/**
@@ -243,7 +243,7 @@ jobs:
 
       - name: Get changed files, Terraform
         id: changed-files-tf
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             terraform/**
