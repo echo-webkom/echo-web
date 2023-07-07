@@ -26,8 +26,8 @@ fun Application.configureAuthentication(adminKey: String, audience: String, devI
             }
         }
 
-        val issuer = "https://auth.dataporten.no/openid/jwks"
-        val jwkProvider = JwkProviderBuilder(URL(issuer))
+        val issuer = "https://auth.dataporten.no"
+        val jwkProvider = JwkProviderBuilder(URL("$issuer/openid/jwks"))
             .cached(10, 24, TimeUnit.HOURS)
             .rateLimited(10, 1, TimeUnit.MINUTES)
             .build()
@@ -36,7 +36,7 @@ fun Application.configureAuthentication(adminKey: String, audience: String, devI
             realm = "Verify jwt"
             verifier(jwkProvider, issuer) {
                 acceptLeeway(10)
-                withIssuer("https://auth.dataporten.no")
+                withIssuer(issuer)
             }
             validate { jwtCredential ->
                 JWTPrincipal(jwtCredential.payload)
