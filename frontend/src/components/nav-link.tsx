@@ -1,7 +1,6 @@
 import { Button, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import type { ReactNode } from 'react';
 
 interface Props {
     href: string;
@@ -23,7 +22,7 @@ const NavLink = ({ href, text, 'data-cy': dataCy }: Props) => {
 };
 
 interface NavLinkButtonProps {
-    children: ReactNode;
+    children: React.ReactNode;
     onClick: () => void;
 }
 
