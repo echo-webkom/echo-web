@@ -3347,10 +3347,10 @@
   dependencies:
     "@floating-ui/dom" "^1.0.5"
 
-"@hookform/resolvers@2.0.0-beta.3":
-  version "2.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.0.0-beta.3.tgz#6a13cecb8d261fee9fc53564e3e4ef6212148f16"
-  integrity sha512-sOP+IX7TglN34WbMVt8eRqWgnXAQcvFc4XUU6x3bIiIjTkjV5L3N7sBjff2Ln4QPTMYnmdXaZV2Yf5WxOiC5YQ==
+"@hookform/resolvers@2.9.11":
+  version "2.9.11"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.9.11.tgz#9ce96e7746625a89239f68ca57c4f654264c17ef"
+  integrity sha512-bA3aZ79UgcHj7tFV7RlgThzwSSHZgvfbt2wprldRkYBcMopdMvHyO17Wwp/twcJasNFischFfS7oz8Katz8DdQ==
 
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
@@ -4023,6 +4023,18 @@
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@sanity/ui/-/ui-1.6.0.tgz#88d063c7611a2447c0a62fb40b793ab630a0ac94"
   integrity sha512-iU0TKXmBCQngi3mgy84RwVy8xR7PJUg052qpZdgJCueBWiq28uAU9rwIdNnXSjAJyVYeDZBarL9jNUkH+CKAug==
+  dependencies:
+    "@floating-ui/react-dom" "2.0.0"
+    "@sanity/color" "^2.2.5"
+    "@sanity/icons" "^2.3.1"
+    csstype "^3.1.2"
+    framer-motion "^10.12.16"
+    react-refractor "^2.1.7"
+
+"@sanity/ui@^1.7.0":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@sanity/ui/-/ui-1.7.1.tgz#7656bd6da97a9b15b5e84b49e82abdb36c71fe6a"
+  integrity sha512-N8X/4ZVVvSs4YmfJrfohWX1YtFq8ASnbIADw1/Ak9qQgBzJ7aazILfzxfmqy8HH5KcmXTpXFrZ5WKBIp4x3mWg==
   dependencies:
     "@floating-ui/react-dom" "2.0.0"
     "@sanity/color" "^2.2.5"
@@ -4720,18 +4732,6 @@
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@vercel/stega/-/stega-0.0.5.tgz#96e0efd2c7ecfed35f30bf76c7ce618f613fa288"
   integrity sha512-vvuUYW0rBp4Ea9xv0LilqFyDHAW9tvy4GL70G1ayGisQwpOYIPChmiw/56jqZvpxjE9gjQIApLfglOcdZe3PcA==
-
-"@virtuoso.dev/react-urx@^0.2.12":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@virtuoso.dev/react-urx/-/react-urx-0.2.13.tgz#e2cfc42d259d2a002695e7517d34cb97b64ee9c4"
-  integrity sha512-MY0ugBDjFb5Xt8v2HY7MKcRGqw/3gTpMlLXId2EwQvYJoC8sP7nnXjAxcBtTB50KTZhO0SbzsFimaZ7pSdApwA==
-  dependencies:
-    "@virtuoso.dev/urx" "^0.2.13"
-
-"@virtuoso.dev/urx@^0.2.12", "@virtuoso.dev/urx@^0.2.13":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@virtuoso.dev/urx/-/urx-0.2.13.tgz#a65e7e8d923cb03397ac876bfdd45c7f71c8edf1"
-  integrity sha512-iirJNv92A1ZWxoOHHDYW/1KPoi83939o83iUBQHIim0i3tMeSKEh+bxhJdTHQ86Mr4uXx9xGUTq69cp52ZP8Xw==
 
 "@vitejs/plugin-react@^3.0.0":
   version "3.0.1"
@@ -9969,13 +9969,10 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-virtuoso@^2.11.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/react-virtuoso/-/react-virtuoso-2.13.0.tgz#8b8302c98b3597fbfd6c57f348a573e252aeb002"
-  integrity sha512-c4b4p/uIQVk2+oQ0jNguZ4pMdEJdqtHlxtSBr5hOSCtS9Ci34R3N3iYaEAc/xctk0iKIBkXj+wgTUkw1mHZbow==
-  dependencies:
-    "@virtuoso.dev/react-urx" "^0.2.12"
-    "@virtuoso.dev/urx" "^0.2.12"
+react-virtuoso@^4.3.11:
+  version "4.3.11"
+  resolved "https://registry.yarnpkg.com/react-virtuoso/-/react-virtuoso-4.3.11.tgz#ab24e707287ef1b4bb5b52f3b14795ba896e9768"
+  integrity sha512-0YrCvQ5GsIKRcN34GxrzhSJGuMNI+hGxWci5cTVuPQ8QWTEsrKfCyqm7YNBMmV3pu7onG1YVUBo86CyCXdejXg==
 
 react@18.2.0:
   version "18.2.0"
@@ -10452,15 +10449,16 @@ sanity-plugin-markdown@4.1.0:
     "@sanity/ui" "^1.0.0"
     react-simplemde-editor "^5.2.0"
 
-sanity-plugin-media@2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.0.5.tgz#4db536317ac9cba062d648f98836e8f2c64f639c"
-  integrity sha512-v1SyBezXoiLh2g3olX08cjFpytRF3NkCxCOkFzHz3RVbQQwpYSeazKmGq52XONi/Ci6DpyKmgLWRJCyT/xZc1g==
+sanity-plugin-media@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.1.0.tgz#c28494aaa7a9dd02b053e965c7c2f65ec1473b42"
+  integrity sha512-f/jikNzoDAiNnDUdNXzVFwJt9v5iRv0PvNHMfLyozSIrJH1aPPV1tYChDxQqKoHq/RxjGYnIvzmfhs1lpqYoqA==
   dependencies:
-    "@hookform/resolvers" "2.0.0-beta.3"
+    "@hookform/resolvers" "2.9.11"
     "@reduxjs/toolkit" "^1.9.0"
     "@sanity/incompatible-plugin" "^1.0.4"
-    "@sanity/ui" "^1.0.0"
+    "@sanity/ui" "^1.7.0"
+    "@sanity/uuid" "^3.0.1"
     "@tanem/react-nprogress" "^5.0.0"
     copy-to-clipboard "^3.3.1"
     date-fns "^2.27.0"
@@ -10474,7 +10472,7 @@ sanity-plugin-media@2.0.5:
     react-hook-form "^6.15.1"
     react-redux "^7.2.2"
     react-select "^5.3.2"
-    react-virtuoso "^2.11.0"
+    react-virtuoso "^4.3.11"
     redux "^4.2.0"
     redux-observable "^2.0.0"
     rxjs "^7.0.0"
