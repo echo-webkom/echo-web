@@ -89,8 +89,8 @@ const HappeningAPI = {
             const limit = n === 0 ? `` : `[0...${n}]`;
             const query = groq`
                 *[_type == "happening" && happeningType == "${type}" && ${
-                onlyFuture ? 'dateTime(date) > dateTime(now()) &&' : ''
-            } !(_id in path('drafts.**'))] | order(date asc) {
+                    onlyFuture ? 'dateTime(date) > dateTime(now()) &&' : ''
+                } !(_id in path('drafts.**'))] | order(date asc) {
                     title,
                     "slug": slug.current,
                     date,
