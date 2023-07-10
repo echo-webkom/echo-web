@@ -7055,10 +7055,10 @@ filelist@^1.0.1:
   dependencies:
     minimatch "^5.0.1"
 
-filesize@^8.0.7:
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/filesize/-/filesize-8.0.7.tgz#695e70d80f4e47012c132d57a059e80c6b580bd8"
-  integrity sha512-pjmC+bkIF8XI7fWaH8KxHcZL3DPybs1roSKP4rKDvy20tAWwIObE4+JIseG2byfGKhud5ZnM4YSGKBz7Sh0ndQ==
+filesize@^9.0.0:
+  version "9.0.11"
+  resolved "https://registry.yarnpkg.com/filesize/-/filesize-9.0.11.tgz#4ac3a42c084232dd9b2a1da0107f32d42fcfa5e4"
+  integrity sha512-gTAiTtI0STpKa5xesyTA9hA3LX4ga8sm2nWRcffEa1L/5vQwb4mj2MdzMkoHoGv4QzfDshQZuYscQSf8c4TKOA==
 
 fill-range@^7.0.1:
   version "7.0.1"
@@ -7586,11 +7586,6 @@ groq@3:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/groq/-/groq-3.8.1.tgz#8a14c04cb2f9b95049ff69eeb4e3b9dd4d88e34c"
   integrity sha512-wBT5SFeuB5i4GXO0/OvZr6Z5GNnDnbkFa7AL9qbfQuH3YwvuFjDi6lQKO060VcVjuYtBVJVSFHpkP4RyQc/ICA==
-
-groq@^2.29.3:
-  version "2.29.3"
-  resolved "https://registry.yarnpkg.com/groq/-/groq-2.29.3.tgz#e767152202ab6aad64b2c33dfc904ee4e4c16d8e"
-  integrity sha512-j3HFq8Qwg36rREp2Xl2vecUz47LX6cedD8cqq+JKX0iNj9yiwelOSKpRS5jxhkDZQv5xBAiqtpU2Ylv5DQ5g2A==
 
 groq@^3.0.0:
   version "3.10.0"
@@ -10444,10 +10439,10 @@ sanity-plugin-markdown@4.1.0:
     "@sanity/ui" "^1.0.0"
     react-simplemde-editor "^5.2.0"
 
-sanity-plugin-media@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.2.0.tgz#f12fc0d84ab2cb71ea9a515e7024db9724181739"
-  integrity sha512-T6VdOITAhkRPtvWmalOlcKKlXAmR2HnfBwgRtQ+8s/t6dzGTIXcTwc5Wnm5fzhOGNBAxJoTRjrBhTapr3FU+cA==
+sanity-plugin-media@2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/sanity-plugin-media/-/sanity-plugin-media-2.2.1.tgz#94c2f4c6e10d94dd2b27bdc45dcd02d04b613324"
+  integrity sha512-Eghn2fkaOmZsbY38EWz1FFllCJn4UbEdgRl2l1mshtY8NyNxaO2P2rDCYa/giazVb46ta4EBJMY4KoxGknMebg==
   dependencies:
     "@hookform/resolvers" "^3.1.1"
     "@reduxjs/toolkit" "^1.9.0"
@@ -10457,8 +10452,8 @@ sanity-plugin-media@2.2.0:
     "@tanem/react-nprogress" "^5.0.0"
     copy-to-clipboard "^3.3.1"
     date-fns "^2.27.0"
-    filesize "^8.0.7"
-    groq "^2.29.3"
+    filesize "^9.0.0"
+    groq "^3.0.0"
     is-hotkey "^0.2.0"
     nanoid "^3.3.3"
     pluralize "^8.0.0"
