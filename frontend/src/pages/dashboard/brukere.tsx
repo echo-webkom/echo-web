@@ -70,7 +70,7 @@ const AdminUserPage = () => {
         <>
             <SEO title="Administrer brukere" />
             <Section>
-                {(error || userError) && (
+                {(error ?? userError) && (
                     <Center flexDirection="column" gap="5" py="10">
                         <Heading>En feil har skjedd.</Heading>
                         <Text>{error?.message ?? userError?.message}</Text>
