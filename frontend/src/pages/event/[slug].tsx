@@ -90,7 +90,7 @@ const HappeningPage = ({ happening, happeningInfo, error }: Props) => {
                                         : null
                                 }
                             />
-                            {(happening.registrationDate || happening.studentGroupRegistrationDate) && (
+                            {(happening.registrationDate ?? happening.studentGroupRegistrationDate) && (
                                 <>
                                     <Divider />
                                     {isFuture(regDeadline) && (
