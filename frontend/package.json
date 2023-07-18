@@ -149,7 +149,7 @@
         "@typescript-eslint/parser": "6.1.0",
         "cypress": "12.17.1",
         "eslint-config-next": "13.4.10",
-        "eslint-plugin-unicorn": "47.0.0",
+        "eslint-plugin-unicorn": "48.0.0",
         "typescript": "5.1.6"
     }
 }
