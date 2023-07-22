@@ -116,7 +116,7 @@
         "@sanity/client": "6.1.7",
         "@sanity/image-url": "1.0.2",
         "@vercel/analytics": "1.0.1",
-        "@vercel/og": "0.5.8",
+        "@vercel/og": "0.5.9",
         "calendar-link": "2.5.1",
         "canvas-confetti": "1.6.0",
         "date-fns": "2.30.0",
