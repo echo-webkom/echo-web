@@ -21,7 +21,7 @@ import {
     useToast,
     VStack,
 } from '@chakra-ui/react';
-import va from '@vercel/analytics';
+import * as va from '@vercel/analytics';
 import { differenceInHours, format, isBefore } from 'date-fns';
 import { enUS, nb } from 'date-fns/locale';
 import NextLink from 'next/link';

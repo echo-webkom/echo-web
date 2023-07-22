@@ -21,7 +21,7 @@ import {
     NumberInputField,
     NumberInputStepper,
 } from '@chakra-ui/react';
-import va from '@vercel/analytics';
+import * as va from '@vercel/analytics';
 import { format } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useState } from 'react';

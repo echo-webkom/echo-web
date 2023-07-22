@@ -166,8 +166,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
 
             return (
                 <MenuDropdown title={item.name} isOpen={isFocused ?? false}>
-                    {// eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    item.items?.map((item) => renderMenuItem(item, onClick))}
+                    {item.items?.map((item) => renderMenuItem(item, onClick))}
                 </MenuDropdown>
             );
         }
