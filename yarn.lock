@@ -2608,13 +2608,13 @@
     golden-fleece "^1.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@6.2.0":
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.2.0.tgz#5d2c1f0282b6d2ae5c11fd007c0ba91d58512587"
-  integrity sha512-tgU2p+KlhzXDZ2UNLFUuUNNMmdLfKM8YKuH8VlAE1X615f+UKhbCI2c16ijrHPReM80gpuTYbNrjRqtocY7MOg==
+"@sanity/client@6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.4.0.tgz#35a7c9324f01454cd2c909a4a1a9cbea0289cba0"
+  integrity sha512-nmu9/gtKPruR6CROvKAqvK/vYfEMMi/La8k/w/leQpRtKySivOIsWX+BT7S5xvK+9wBn0Q8dj9L64no3SEa5vg==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
-    get-it "^8.2.0"
+    get-it "^8.3.0"
     rxjs "^7.0.0"
 
 "@sanity/client@^6.1.5":
@@ -5900,10 +5900,10 @@ get-it@^8.0.9, get-it@^8.1.0:
     progress-stream "^2.0.0"
     tunnel-agent "^0.6.0"
 
-get-it@^8.2.0:
-  version "8.3.1"
-  resolved "https://registry.yarnpkg.com/get-it/-/get-it-8.3.1.tgz#bb92c6740a1260275ad13b31a543755b38a8b5c9"
-  integrity sha512-fi5wQakZVHWRy3zP0env52PHXP9Zl/p8Q2Ow8z9SmwpYgfCaA90hCSW2twC5/cpV5M1wB6tSmLqldVMP1tS1qw==
+get-it@^8.3.0:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/get-it/-/get-it-8.4.1.tgz#59def03274cd2ba3317ad4c8cab8a0ecea197505"
+  integrity sha512-B81/lof6jHW2/YyvH4gzKclBMdHNl2B4hRpuIiwVYtZjUiV5mBAQa2GTX6EPTuNhPxw8K5c14cJAFUa78b4A/g==
   dependencies:
     debug "^4.3.4"
     decompress-response "^7.0.0"
