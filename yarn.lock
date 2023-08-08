@@ -7330,10 +7330,10 @@ map-stream@~0.1.0:
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
   integrity sha512-CkYQrPYZfWnu/DAmVCpTSX/xHpKZ80eKh2lAkyA6AJTef6bW+6JpbQZN5rofum7da+SyN1bi5ctTm+lTfcCW3g==
 
-markdown-to-jsx@7.2.1:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-7.2.1.tgz#87061fd3176ad926ef3d99493e5c57f6335e0c51"
-  integrity sha512-9HrdzBAo0+sFz9ZYAGT5fB8ilzTW+q6lPocRxrIesMO+aB40V9MgFfbfMXxlGjf22OpRy+IXlvVaQenicdpgbg==
+markdown-to-jsx@7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-7.3.1.tgz#11bfd95573d3ada43c149d03e8cf81c8a8f7773d"
+  integrity sha512-UQm7q0Pj/OjNoVbSJWb81qQFFZlZluOdn5fAb/GP5ku9LiBvCDqu8laEDsTFXweYQeLxnTexNcjRZdyOW+souw==
 
 marked@^4.1.0:
   version "4.3.0"
