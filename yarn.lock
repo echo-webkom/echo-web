@@ -2746,17 +2746,17 @@
   resolved "https://registry.yarnpkg.com/@sanity/generate-help-url/-/generate-help-url-3.0.0.tgz#60e9cba61b82103ea3761730a53cd9310b98892d"
   integrity sha512-wtMYcV5GIDIhVyF/jjmdwq1GdlK07dRL40XMns73VbrFI7FteRltxv48bhYVZPcLkRXb0SHjpDS/icj9/yzbVA==
 
-"@sanity/groq-store@2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@sanity/groq-store/-/groq-store-2.3.4.tgz#12adb5d99421c3d1851dd6f34e7c1b06104281e1"
-  integrity sha512-7W3ROK858YuAjyoPp9+OfHj00BkJX172b6LyV9peL8DcbMIG0G621Tv+oULLaizkA4y2D+b1sx+AYHWtdtIrew==
+"@sanity/groq-store@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@sanity/groq-store/-/groq-store-4.0.2.tgz#003c23a8e5f51740a6cad0cbd403456c3b2394d9"
+  integrity sha512-YjWjU1uxYMoTFa1UDbDLu6MMIGUqdEQ8udNITzBki1tXjod/sZF9FnH2UQQHCkUqISfRbzKfmJfJ2M2viY0AJQ==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     "@sanity/types" "^3.14.5"
     fast-deep-equal "3.1.3"
     groq "^3.14.5"
     groq-js "1.1.10"
-    mendoza "2.1.2"
+    mendoza "3.0.3"
     simple-get "4.0.1"
     split2 "4.2.0"
     throttle-debounce "5.0.0"
@@ -2839,18 +2839,18 @@
     lodash "^4.17.21"
     slate "0.81.1"
 
-"@sanity/preview-kit@2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@sanity/preview-kit/-/preview-kit-2.4.3.tgz#74d31df333b51f85f5b1a02c62d2e08bde5fb3a7"
-  integrity sha512-Frq9fyzb9IVX7qHrMJtCgBb7w0zeeBPqXpNTW2uHiYmIrGwH/7v7bRP6IauyQUViLBkKNtNDXW11AhHgutqCtQ==
+"@sanity/preview-kit@2.4.7":
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/@sanity/preview-kit/-/preview-kit-2.4.7.tgz#e09bd97a93716ad73f9f62e737830d9b8db569c8"
+  integrity sha512-goh8xDrPuoY1IObtQOc/8S4nKZEI9oPBGS04yAmiSRggZkos0L5ttoa7oPObWOiH92T8RF1LRjsKNTPjCMxUcQ==
   dependencies:
     "@sanity/eventsource" "5.0.0"
-    "@sanity/groq-store" "2.3.4"
+    "@sanity/groq-store" "4.0.2"
     "@vercel/stega" "0.1.0"
     lodash.get "4.4.2"
     lodash.isplainobject "4.0.6"
     lru-cache "10.0.0"
-    mendoza "2.1.2"
+    mendoza "3.0.3"
     react-fast-compare "3.2.2"
     use-sync-external-store "1.2.0"
 
@@ -7365,10 +7365,10 @@ memoize-resolver@~1.0.0:
   resolved "https://registry.yarnpkg.com/memoize-resolver/-/memoize-resolver-1.0.0.tgz#93f01b61909008eb9d9b521fc1db152cc1b47f06"
   integrity sha512-mXfNXte0RSWl0rEIsQhXutfM2R2Oa7UyKDD7XoZMEbKeucTRms04y5y41U8gLqPzRx7ViN/QyYnTR2TX/5tawA==
 
-mendoza@2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/mendoza/-/mendoza-2.1.2.tgz#b2c15b418d422e6e2f9e39af05e5285b1257614d"
-  integrity sha512-Z2orUYO/RR7hJ2WdMtE1+u7X3/FiZrUpZqdctjxjxAfRODHfSvHKH+5tdEq/dXCf3W3CXSqWM46Ye7ww+KMrtQ==
+mendoza@3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/mendoza/-/mendoza-3.0.3.tgz#5fe1725adef67c92711fe40378920c645edea1b7"
+  integrity sha512-xh0Angj7/kuLzJHglH7dVetoSyUt1/2wjmuugB0iBftteS6+xKvwC+bhs+IvF9tITdEdZpIl0XT5QLaL18A5dA==
 
 mendoza@^2.1.1:
   version "2.1.1"
@@ -7551,12 +7551,12 @@ next-pwa@5.6.0:
     workbox-webpack-plugin "^6.5.4"
     workbox-window "^6.5.4"
 
-next-sanity@5.1.5:
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-5.1.5.tgz#9634da5f1af1b12de8eefe50a9dd6d4111392214"
-  integrity sha512-ucXqTJ0PmLB3/gVIbdVwGDEKPb7TJimfKG1Dcy1p32y5Sg9X5LBrQyzGD3QXEYoxn31pWHbnUmcC4VCC3q/ADw==
+next-sanity@5.1.6:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-5.1.6.tgz#4bbdc91ef6ef600e1f89589b91bb70845c2a6183"
+  integrity sha512-k5llu/OZhVxB2PAw6szgYYozwcinIn/gVNSVu+BoZNMoVu1Qzmurm4FHUnW8sFulQFX8g1hILDXa/k2zzzbAyw==
   dependencies:
-    "@sanity/preview-kit" "2.4.3"
+    "@sanity/preview-kit" "2.4.7"
     "@sanity/webhook" "2.0.0"
     groq "^3.0.0"
 
