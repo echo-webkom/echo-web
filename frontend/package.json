@@ -142,7 +142,7 @@
         "@types/canvas-confetti": "1.6.0",
         "@types/node": "18.17.4",
         "@types/randomcolor": "0.5.7",
-        "@types/react": "18.2.19",
+        "@types/react": "18.2.20",
         "@types/react-dom": "18.2.7",
         "@types/remove-markdown": "0.3.1",
         "@typescript-eslint/eslint-plugin": "6.3.0",
