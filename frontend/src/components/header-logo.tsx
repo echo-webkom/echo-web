@@ -23,6 +23,7 @@ const randomHeaderMessage = () => {
             '@echo_webkom',
             '@echo_uib',
             'JAJ FOR FAJ',
+            'Dubkom',
         ];
 
         // Month-based messages
