@@ -120,7 +120,7 @@
         "calendar-link": "2.5.1",
         "canvas-confetti": "1.6.0",
         "date-fns": "2.30.0",
-        "framer-motion": "10.15.1",
+        "framer-motion": "10.15.2",
         "markdown-to-jsx": "7.3.2",
         "next": "13.4.13",
         "next-auth": "4.23.0",
