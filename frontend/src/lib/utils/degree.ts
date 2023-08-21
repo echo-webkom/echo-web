@@ -13,7 +13,7 @@ const allDegrees: Array<Degree> = [
     'ARMNINF',
     'POST',
     'MISC',
-    'MAMN-DSC',
+    'DSC',
 ];
 
 const feideDegreeGroupPrefix = 'fc:fs:fs:prg:uib.no:';
@@ -44,7 +44,7 @@ const degreeToFeideGroup = (degree: Degree): string | null => {
         case 'ARMNINF': {
             return feideDegreeGroupPrefix + 'ÅRMN-INF';
         }
-        case 'MAMN-DSC': {
+        case 'DSC': {
             return feideDegreeGroupPrefix + 'MAMN-DSC';
         }
         case 'POST': {
