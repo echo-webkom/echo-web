@@ -26,8 +26,8 @@ import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
@@ -162,11 +162,9 @@ fun Route.putUser() {
 
             val alternateEmail = user.alternateEmail?.lowercase()
 
-            if (!alternateEmail.isNullOrBlank()) {
-                if (!isEmailValid(alternateEmail)) {
-                    call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gyldig e-post.")
-                    return@put
-                }
+            if (!alternateEmail.isNullOrBlank() && !isEmailValid(alternateEmail)) {
+                call.respond(HttpStatusCode.BadRequest, "Vennligst skriv inn en gyldig e-post.")
+                return@put
             }
 
             if (user.degreeYear != null && user.degreeYear !in 1..5) {
@@ -174,18 +172,12 @@ fun Route.putUser() {
                 return@put
             }
 
-            val degreeMismatch = "Studieretning og årstrinn stemmer ikke overens."
-
-            if (user.degree != null && user.degreeYear != null) {
-                if (!UserValidation.validateDegreeAndDegreeYear(user.degree, user.degreeYear)) {
-                    call.respond(HttpStatusCode.BadRequest, degreeMismatch)
-                    return@put
-                }
+            if (!UserValidation.validateDegreeAndDegreeYear(user.degree, user.degreeYear)) {
+                call.respond(HttpStatusCode.BadRequest, "Studieretning og årstrinn stemmer ikke overens.")
+                return@put
             }
 
-            val result = transaction {
-                User.select { User.email eq email }.firstOrNull()
-            }
+            val result = User.select { User.email eq email }.firstOrNull()
 
             if (result == null) {
                 val newUser = transaction {
@@ -268,8 +260,8 @@ fun Route.getAllUsers() {
         }
 
         val users = transaction {
-            User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
-                .map { it ->
+            User.selectAll()
+                .map {
                     UserJson(
                         it[User.email],
                         it[User.name],
