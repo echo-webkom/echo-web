@@ -10,7 +10,7 @@ enum class Degree {
     PROG,
     ARMNINF,
     POST,
-    DSCI,
+    DSC,
 
     // MISC, IKT and KOGNI should not be used,
     // they are only here for backwards compatibility.
@@ -19,8 +19,8 @@ enum class Degree {
     KOGNI
 }
 
-val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO, Degree.DSCI)
-val masters: List<Degree> = listOf(Degree.INF, Degree.PROG, Degree.DSCI)
+val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO, Degree.DSC)
+val masters: List<Degree> = listOf(Degree.INF, Degree.PROG, Degree.DSC)
 
 fun nullableStringToDegree(str: String?): Degree? {
     return when (str) {
@@ -33,7 +33,7 @@ fun nullableStringToDegree(str: String?): Degree? {
         "PROG" -> Degree.PROG
         "ARMNINF" -> Degree.ARMNINF
         "POST" -> Degree.POST
-        "DSCI" -> Degree.DSCI
+        "DSC" -> Degree.DSC
         // MISC, IKT and KOGNI should not be used,
         // they are only here for backwards compatibility.
         "MISC" -> Degree.MISC
@@ -54,7 +54,7 @@ fun nullableDegreeToString(deg: Degree?): String? {
         Degree.PROG -> "PROG"
         Degree.ARMNINF -> "ARMNINF"
         Degree.POST -> "POST"
-        Degree.DSCI -> "DSCI"
+        Degree.DSC -> "DSC"
         // MISC, IKT and KOGNI should not be used,
         // they are only here for backwards compatibility.
         Degree.MISC -> "MISC"
