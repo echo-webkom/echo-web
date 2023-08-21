@@ -17,15 +17,13 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import no.uib.echo.Environment
 import no.uib.echo.isEmailValid
-import no.uib.echo.schema.Degree
+import no.uib.echo.lib.UserValidation
 import no.uib.echo.schema.StudentGroupMembership
 import no.uib.echo.schema.User
 import no.uib.echo.schema.UserJson
 import no.uib.echo.schema.Whitelist
-import no.uib.echo.schema.bachelors
 import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
-import no.uib.echo.schema.masters
 import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
@@ -179,10 +177,7 @@ fun Route.putUser() {
             val degreeMismatch = "Studieretning og årstrinn stemmer ikke overens."
 
             if (user.degree != null && user.degreeYear != null) {
-                if ((user.degree in bachelors && user.degreeYear !in 1..3) ||
-                    (user.degree in masters && user.degreeYear !in 4..5) ||
-                    (user.degree == Degree.ARMNINF && user.degreeYear != 1)
-                ) {
+                if (!UserValidation.validateDegreeAndDegreeYear(user.degree, user.degreeYear)) {
                     call.respond(HttpStatusCode.BadRequest, degreeMismatch)
                     return@put
                 }
