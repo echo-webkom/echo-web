@@ -37,6 +37,7 @@ const FormDegree = ({ isHeading = false, hideLabel = false, isRequired = false, 
                 <option value="IMO">Informatikk-matematikk-økonomi</option>
                 <option value="INF">Master i informatikk</option>
                 <option value="PROG">Felles master i programvareutvikling</option>
+                <option value="DSCI">Master i Data Science</option>
                 <option value="ARMNINF">Årsstudium i informatikk</option>
                 <option value="POST">Postbachelor</option>
             </Select>
