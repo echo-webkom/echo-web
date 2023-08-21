@@ -19,8 +19,8 @@ enum class Degree {
     KOGNI
 }
 
-val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO)
-val masters: List<Degree> = listOf(Degree.INF, Degree.PROG)
+val bachelors: List<Degree> = listOf(Degree.DTEK, Degree.DSIK, Degree.DVIT, Degree.BINF, Degree.IMO, Degree.DSCI)
+val masters: List<Degree> = listOf(Degree.INF, Degree.PROG, Degree.DSCI)
 
 fun nullableStringToDegree(str: String?): Degree? {
     return when (str) {
