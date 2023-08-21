@@ -10,6 +10,7 @@ enum class Degree {
     PROG,
     ARMNINF,
     POST,
+    DSCI,
 
     // MISC, IKT and KOGNI should not be used,
     // they are only here for backwards compatibility.
@@ -32,6 +33,7 @@ fun nullableStringToDegree(str: String?): Degree? {
         "PROG" -> Degree.PROG
         "ARMNINF" -> Degree.ARMNINF
         "POST" -> Degree.POST
+        "DSCI" -> Degree.DSCI
         // MISC, IKT and KOGNI should not be used,
         // they are only here for backwards compatibility.
         "MISC" -> Degree.MISC
@@ -52,6 +54,7 @@ fun nullableDegreeToString(deg: Degree?): String? {
         Degree.PROG -> "PROG"
         Degree.ARMNINF -> "ARMNINF"
         Degree.POST -> "POST"
+        Degree.DSCI -> "DSCI"
         // MISC, IKT and KOGNI should not be used,
         // they are only here for backwards compatibility.
         Degree.MISC -> "MISC"

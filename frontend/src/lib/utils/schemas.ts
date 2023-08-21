@@ -16,6 +16,7 @@ const degreeSchema = z.enum([
     'IKT',
     'KOGNI',
     'MISC',
+    'MAMN-DSC',
     //
     'INF',
     'PROG',
