@@ -168,6 +168,33 @@ const UserAPI = {
         }
     },
 
+    getPaginatedUsers: async (idToken: string, page: number): Promise<Array<User> | ErrorMessage> => {
+        try {
+            const url = new URL(`${BACKEND_URL}/users/paginated`);
+            url.searchParams.append('page', page.toString());
+
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.status === 200) {
+                return userSchema.array().parse(data);
+            }
+
+            return {
+                message: 'Du har ikke tilgang til denne siden :(',
+            };
+        } catch (error) {
+            return {
+                message: JSON.stringify(error),
+            };
+        }
+    },
+
     getTestToken: async (email: string): Promise<string | ErrorMessage> => {
         try {
             const response = await fetch(`${BACKEND_URL}/token/${email}`);

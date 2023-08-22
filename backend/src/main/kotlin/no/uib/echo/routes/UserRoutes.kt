@@ -26,8 +26,8 @@ import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
@@ -47,6 +47,7 @@ fun Application.userRoutes(
             postUser()
             putUser()
             getAllUsers()
+            getAllUsersPaginated()
             getWhitelist()
             putWhitelist()
         }
@@ -177,7 +178,9 @@ fun Route.putUser() {
                 return@put
             }
 
-            val result = User.select { User.email eq email }.firstOrNull()
+            val result = transaction {
+                User.select { User.email eq email }.firstOrNull()
+            }
 
             if (result == null) {
                 val newUser = transaction {
@@ -260,7 +263,52 @@ fun Route.getAllUsers() {
         }
 
         val users = transaction {
-            User.selectAll()
+            User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
+                .map {
+                    UserJson(
+                        it[User.email],
+                        it[User.name],
+                        it[User.alternateEmail],
+                        it[User.degreeYear],
+                        nullableStringToDegree(it[User.degree]),
+                        StudentGroupMembership.select {
+                            StudentGroupMembership.userEmail eq it[User.email]
+                        }
+                            .toList()
+                            .map { it[StudentGroupMembership.studentGroupName] }
+                            .ifEmpty { emptyList() },
+                        it[User.strikes],
+                        it[User.createdAt].toString(),
+                        it[User.modifiedAt].toString()
+                    )
+                }
+        }
+
+        call.respond(HttpStatusCode.OK, users)
+    }
+}
+
+fun Route.getAllUsersPaginated() {
+    get("/users/paginated") {
+        val email =
+            call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()?.lowercase()
+
+        if (email == null) {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+
+        if (email !in getGroupMembers("webkom") && email !in getGroupMembers("bedkom")) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+        val page = call.parameters["page"]?.toIntOrNull() ?: 1
+        val pageSize = call.parameters["pageSize"]?.toIntOrNull() ?: 10
+
+        val users = transaction {
+            User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
+                .limit(pageSize, (page - 1L) * pageSize)
                 .map {
                     UserJson(
                         it[User.email],

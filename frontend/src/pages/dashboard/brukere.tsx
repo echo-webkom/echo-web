@@ -10,13 +10,9 @@ import {
     Text,
     Center,
     Spinner,
-    Flex,
-    Spacer,
-    useBoolean,
-    Checkbox,
+    Button,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { getTime, startOfYear, isAfter } from 'date-fns';
 import Section from '@components/section';
 import SEO from '@components/seo';
 import UserRow from '@components/user-row';
@@ -31,16 +27,9 @@ const AdminUserPage = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<ErrorMessage | null>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [page, setPage] = useState(1);
 
     const { signedIn, idToken, error: userError } = useAuth();
-
-    const [hideOld, setHideOld] = useBoolean();
-
-    const filteredUsers = users
-        ? users
-              .filter((user) => !(hideOld && isAfter(startOfYear(new Date()), user.modifiedAt)))
-              .sort((a, b) => getTime(b.modifiedAt) - getTime(a.modifiedAt))
-        : [];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -52,7 +41,7 @@ const AdminUserPage = () => {
                 return;
             }
 
-            const result = await UserAPI.getUsers(idToken);
+            const result = await UserAPI.getPaginatedUsers(idToken, page);
 
             if (isErrorMessage(result)) {
                 setError(result);
@@ -64,7 +53,7 @@ const AdminUserPage = () => {
         };
 
         void fetchUsers();
-    }, [idToken, signedIn]);
+    }, [idToken, page, signedIn]);
 
     return (
         <>
@@ -84,19 +73,8 @@ const AdminUserPage = () => {
                     </Center>
                 )}
                 {users && (
-                    <>
-                        <Flex mb="1.5rem">
-                            <Heading size={['md', 'lg', 'xl']}>Administrer brukere</Heading>
-                            <Spacer />
-                            <Stack direction={['column', null, null, 'row']}>
-                                <Checkbox mx="1rem" onInput={setHideOld.toggle} ml="5">
-                                    Skjul gamle
-                                </Checkbox>
-                                <ButtonLink size={['sm', null, 'md']} href="/dashboard">
-                                    Tilbake
-                                </ButtonLink>
-                            </Stack>
-                        </Flex>
+                    <Stack spacing="1rem">
+                        <Heading size={['md', 'lg', 'xl']}>Administrer brukere</Heading>
 
                         <TableContainer>
                             <Table variant="simple" size="sm">
@@ -110,13 +88,22 @@ const AdminUserPage = () => {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {filteredUsers.map((user) => (
+                                    {users.map((user) => (
                                         <UserRow key={user.email} initialUser={user} />
                                     ))}
                                 </Tbody>
                             </Table>
                         </TableContainer>
-                    </>
+
+                        <Center gap="1rem">
+                            <Button isDisabled={page <= 1} onClick={() => setPage(page - 1)}>
+                                Forrige
+                            </Button>
+                            <Button isDisabled={users.length < 10} onClick={() => setPage(page + 1)}>
+                                Neste
+                            </Button>
+                        </Center>
+                    </Stack>
                 )}
             </Section>
         </>
