@@ -122,7 +122,7 @@
         "date-fns": "2.30.0",
         "framer-motion": "10.15.2",
         "markdown-to-jsx": "7.3.2",
-        "next": "13.4.13",
+        "next": "13.4.19",
         "next-auth": "4.23.0",
         "next-pwa": "5.6.0",
         "next-sanity": "5.4.3",
@@ -148,7 +148,7 @@
         "@typescript-eslint/eslint-plugin": "6.4.0",
         "@typescript-eslint/parser": "6.4.0",
         "cypress": "12.17.4",
-        "eslint-config-next": "13.4.13",
+        "eslint-config-next": "13.4.19",
         "eslint-plugin-unicorn": "48.0.1",
         "typescript": "5.1.6"
     }
