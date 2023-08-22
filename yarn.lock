@@ -2608,13 +2608,13 @@
     golden-fleece "^1.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@6.4.6", "@sanity/client@^6.4.5":
-  version "6.4.6"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.4.6.tgz#719e81c965f97f29d22604b2ac4ef0a7b012cb93"
-  integrity sha512-MtSYgmDkYyQSosO2GTtlYa0xl9K5fpQvTA1dcgk2XxIqweZEHVi4iDdsEA3JvyoEaURUtQkng8MdYcMzWxPAUg==
+"@sanity/client@6.4.9":
+  version "6.4.9"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.4.9.tgz#453fc7127cc959cbb929b91d3990cf3943362973"
+  integrity sha512-9y/exbu9kBgIuXouUWlHLGfPm3/jxRP8bSaysteILTQknLQZHExSyjFsYD/CxH3Xk43NzELqktvEXlP1/kZ6LA==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
-    get-it "^8.4.2"
+    get-it "^8.4.3"
     rxjs "^7.0.0"
 
 "@sanity/client@^6.1.5":
@@ -2630,6 +2630,15 @@
   version "6.4.5"
   resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.4.5.tgz#3d21041a9b950b9a9d8b8f036fe96ca3001ad282"
   integrity sha512-IL+fzoZ2ZJKke07fFzq8Y6/NbWHvcQqSc4FLSO2O4xyCdZl6H/hyvOODvWRP01NFS63IJS2GHLjufD9II8pLYQ==
+  dependencies:
+    "@sanity/eventsource" "^5.0.0"
+    get-it "^8.4.2"
+    rxjs "^7.0.0"
+
+"@sanity/client@^6.4.5":
+  version "6.4.6"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.4.6.tgz#719e81c965f97f29d22604b2ac4ef0a7b012cb93"
+  integrity sha512-MtSYgmDkYyQSosO2GTtlYa0xl9K5fpQvTA1dcgk2XxIqweZEHVi4iDdsEA3JvyoEaURUtQkng8MdYcMzWxPAUg==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     get-it "^8.4.2"
@@ -6022,6 +6031,22 @@ get-it@^8.4.2:
   version "8.4.2"
   resolved "https://registry.yarnpkg.com/get-it/-/get-it-8.4.2.tgz#dd247bd855aa7f8583a586fe0b81bc324995e943"
   integrity sha512-xseDj1loKLcPYKhdlP2k7ZYDE03jTrHgRNt0AURtALOu+8pREmBn+UxZ4JbsxpQ8AvupgmpYuuTa3cS1mtuy2w==
+  dependencies:
+    debug "^4.3.4"
+    decompress-response "^7.0.0"
+    follow-redirects "^1.15.2"
+    into-stream "^6.0.0"
+    is-plain-object "^5.0.0"
+    is-retry-allowed "^2.2.0"
+    is-stream "^2.0.1"
+    parse-headers "^2.0.5"
+    progress-stream "^2.0.0"
+    tunnel-agent "^0.6.0"
+
+get-it@^8.4.3:
+  version "8.4.3"
+  resolved "https://registry.yarnpkg.com/get-it/-/get-it-8.4.3.tgz#f5d05fb95644c5414afa6f5dfd3a927820472f7f"
+  integrity sha512-H9YbPCN3QCbxtojv42fvmrkIYe434qKg1nKpMMtBqwL8U3XprnHMgDbQwMJIxSIFOPpajQPf0BxhjsHoFI0cEQ==
   dependencies:
     debug "^4.3.4"
     decompress-response "^7.0.0"
