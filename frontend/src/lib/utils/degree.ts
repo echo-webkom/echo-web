@@ -45,7 +45,7 @@ const degreeToFeideGroup = (degree: Degree): string | null => {
             return feideDegreeGroupPrefix + 'ÅRMN-INF';
         }
         case 'DSC': {
-            return feideDegreeGroupPrefix + 'MAMN-DSC';
+            return feideDegreeGroupPrefix + '5MAMN-DSC';
         }
         case 'POST': {
             return feideDegreeGroupPrefix + 'POST';
