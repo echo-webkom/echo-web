@@ -99,6 +99,9 @@ const AdminUserPage = () => {
                             <Button isDisabled={page <= 1} onClick={() => setPage(page - 1)}>
                                 Forrige
                             </Button>
+
+                            <Text>Side {page}</Text>
+
                             <Button isDisabled={users.length < 10} onClick={() => setPage(page + 1)}>
                                 Neste
                             </Button>
