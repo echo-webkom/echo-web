@@ -181,7 +181,7 @@ jobs:
 
       - name: Run Cypress end-to-end tests
         if: steps.changed-files-frontend.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        uses: cypress-io/github-action@v5.8.4
+        uses: cypress-io/github-action@v6.0.0
         with:
           working-directory: frontend
           install-command: yarn --frozen-lockfile
