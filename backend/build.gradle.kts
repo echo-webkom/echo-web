@@ -1,6 +1,7 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kotlin_version: String by project
 val ktor_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
@@ -14,8 +15,8 @@ project.setProperty("mainClassName", "no.uib.echo.ApplicationKt")
 
 plugins {
     application
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.serialization") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     id("com.adarshr.test-logger") version "3.2.0"
@@ -66,7 +67,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 
     testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
 }
