@@ -66,7 +66,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
 
     testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
 }
