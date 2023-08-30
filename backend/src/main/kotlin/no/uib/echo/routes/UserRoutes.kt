@@ -25,6 +25,7 @@ import no.uib.echo.schema.Whitelist
 import no.uib.echo.schema.getGroupMembers
 import no.uib.echo.schema.getUserStudentGroups
 import no.uib.echo.schema.nullableStringToDegree
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
@@ -308,6 +309,7 @@ fun Route.getAllUsersPaginated() {
 
         val users = transaction {
             User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
+                .orderBy(User.modifiedAt, SortOrder.DESC)
                 .limit(pageSize, (page - 1L) * pageSize)
                 .map {
                     UserJson(
