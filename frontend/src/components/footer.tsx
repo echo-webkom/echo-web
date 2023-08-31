@@ -72,13 +72,13 @@ const Footer = () => {
                     </SimpleGrid>
                 </SimpleGrid>
 
-                <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="8px">
+                <SimpleGrid columns={[1, 1]} alignItems="center" rowGap="0px">
                     <Text fontSize="sm" color="white" m={0} textAlign="center" fontWeight="bold">
                         Hovedsamarbeidspartner
                     </Text>
                     <LinkBox m={0}>
                         <LinkOverlay href="https://bekk.no" aria-label="Link til Bekk" isExternal>
-                            <Image alt="bekk" objectFit="contain" maxH="58px" src={bekkLogo} />
+                            <Image alt="bekk" objectFit="contain" maxH="90px" src={bekkLogo} />
                         </LinkOverlay>
                     </LinkBox>
                 </SimpleGrid>
