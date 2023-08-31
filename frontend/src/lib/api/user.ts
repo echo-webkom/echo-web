@@ -11,6 +11,11 @@ interface FormValues {
     degreeYear: number | null;
 }
 
+interface SearchOptions {
+    page: number;
+    searchTerm: string;
+}
+
 const userSchema = z.object({
     email: z.string(),
     alternateEmail: z.string().nullable(),
@@ -168,10 +173,11 @@ const UserAPI = {
         }
     },
 
-    getPaginatedUsers: async (idToken: string, page: number): Promise<Array<User> | ErrorMessage> => {
+    getUsersWithOptions: async (idToken: string, options: SearchOptions): Promise<Array<User> | ErrorMessage> => {
         try {
             const url = new URL(`${BACKEND_URL}/users/paginated`);
-            url.searchParams.append('page', page.toString());
+            url.searchParams.append('page', options.page.toString());
+            url.searchParams.append('searchTerm', options.searchTerm);
 
             const response = await fetch(url, {
                 headers: {
@@ -260,4 +266,4 @@ const userIsComplete = (user: User | null): user is User =>
     typeof user.degree === 'string' &&
     typeof user.degreeYear === 'number';
 
-export { UserAPI, userSchema, type FormValues as ProfileFormValues, type User, userIsComplete };
+export { UserAPI, userSchema, type FormValues as ProfileFormValues, type User, userIsComplete, type SearchOptions };
