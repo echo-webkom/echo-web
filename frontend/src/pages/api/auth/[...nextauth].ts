@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import * as va from '@vercel/analytics';
 import { FeideGroupAPI } from '@api/feide-group';
 import { UserAPI } from '@api/user';
 import { isErrorMessage } from '@utils/error';
@@ -70,6 +71,11 @@ export const authOptions: NextAuthOptions = {
             const isWhitelisted = await UserAPI.getWhitelist(account.id_token).then((res) => res);
 
             if (!isMember && !isWhitelisted) {
+                va.track('Unsuccessful sign in', {
+                    email: profile.email,
+                    groups: JSON.stringify(groups),
+                });
+
                 if (signInOnlyCollectData) {
                     // eslint-disable-next-line no-console
                     console.log('User is not a member of any valid group, but only collecting data');
