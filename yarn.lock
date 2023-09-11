@@ -2974,10 +2974,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@types/canvas-confetti@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@types/canvas-confetti/-/canvas-confetti-1.6.0.tgz#c525f22f1042e73dec6a7e86c1f5bb0191c09fea"
-  integrity sha512-Yq6rIccwcco0TLD5SMUrIM7Fk7Fe/C0jmNRxJJCLtAF6gebDkPuUjK5EHedxecm69Pi/aA+It39Ux4OHmFhjRw==
+"@types/canvas-confetti@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@types/canvas-confetti/-/canvas-confetti-1.6.1.tgz#2189ef37b6336c69bb6abd8c35b409804fd1038e"
+  integrity sha512-wTSI/k/586KnzL8Inm0yXe/U9x0sO2tc4j/osIAZVsE+hyj2S/M+sdR5zDDLygEkohhlG948zNVBG5QiI4Z2mw==
 
 "@types/codemirror@^5.60.4", "@types/codemirror@~5.60.5":
   version "5.60.8"
