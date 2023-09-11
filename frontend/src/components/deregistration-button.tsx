@@ -124,9 +124,15 @@ const DeregistrationButton = ({ happening, isWaitlist }: Props): JSX.Element => 
 
     return (
         <>
-            <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onOpen}>
-                {isNorwegian ? 'Meld deg av' : 'Deregister'}
-            </Button>
+            {happening.happeningType === 'BEDPRES' ? (
+                <Button data-cy="del-btn" w="100%" colorScheme="red" isDisabled={true}>
+                    {isNorwegian ? 'Du er allerede meldt på' : 'Already registered'}
+                </Button>
+            ) : (
+                <Button data-cy="del-btn" w="100%" colorScheme="red" onClick={onOpen}>
+                    {isNorwegian ? 'Meld deg av' : 'Deregister'}
+                </Button>
+            )}
 
             <Modal
                 isOpen={isOpen}
