@@ -38,7 +38,7 @@ const JobAdvertAPI = {
 
     getJobAdverts: async (n: number): Promise<Array<JobAdvert> | ErrorMessage> => {
         try {
-            const query = groq`*[_type == "jobAdvert" && dateTime(deadline) > dateTime(now()) && !(_id in path('drafts.**'))] | order(_createdAt desc) [0..${
+            const query = groq`*[_type == "jobAdvert" && dateTime(deadline) > dateTime(now()) && !(_id in path('drafts.**'))] | order(_createdAt desc) | order(weight desc) [0..${
                 n - 1
             }] {
                     "slug": slug.current,
