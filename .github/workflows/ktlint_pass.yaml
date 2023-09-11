@@ -3,6 +3,7 @@ on:
   pull_request:
     branches: [master]
     paths-ignore: ['backend/**']
+  merge_group: [checks_requested]
 
 jobs:
   ktlint_checks:

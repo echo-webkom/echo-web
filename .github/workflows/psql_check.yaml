@@ -3,6 +3,8 @@ on:
   pull_request:
     branches: [master]
     paths: ['backend/src/main/resources/db/migration/**']
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   psql_check:
