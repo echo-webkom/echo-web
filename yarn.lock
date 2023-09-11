@@ -2667,10 +2667,10 @@
   dependencies:
     diff-match-patch "^1.0.4"
 
-"@sanity/eslint-config-studio@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@sanity/eslint-config-studio/-/eslint-config-studio-3.0.0.tgz#56824f64314bb4db287e1775e86f04a02f7ed62d"
-  integrity sha512-Z+dHfpvHnhtJBNLULPOFfCZcc5V3BXu28gicPSJGguhqjTjSW8uc/Oerf9ooLdHn0pupcP4owUTlrvpbGyzVrg==
+"@sanity/eslint-config-studio@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@sanity/eslint-config-studio/-/eslint-config-studio-3.0.1.tgz#c51d3119123ff948778d42d71cf81d8f4040efd5"
+  integrity sha512-N7IFd/VZuL0UyJ2T5t5WWWf9DrhgY6lt0bnnScwwyX4ijA7WMFtxR5rgL2EDGdhI2eYyxOeleeBaK9QEXgiA1A==
   dependencies:
     "@babel/core" "^7.22.8"
     "@babel/eslint-parser" "^7.22.7"
