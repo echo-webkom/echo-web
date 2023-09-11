@@ -3,6 +3,7 @@ on:
   pull_request:
     branches: [master]
     paths-ignore: ['frontend/**']
+  merge_group: [checks_requested]
 
 jobs:
   cypress_component_tests:

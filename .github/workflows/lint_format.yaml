@@ -2,6 +2,8 @@ name: Lint & format
 on:
   pull_request:
     branches: [master]
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   lint_format:

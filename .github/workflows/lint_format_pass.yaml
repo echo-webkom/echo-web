@@ -3,6 +3,7 @@ on:
   pull_request:
     branches: [master]
     paths-ignore: ['cms/**', 'frontend/**', '**/node_modules/**', 'yarn.lock']
+  merge_group: [checks_requested]
 
 jobs:
   lint_format:

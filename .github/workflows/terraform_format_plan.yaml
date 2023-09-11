@@ -3,6 +3,8 @@ on:
   pull_request:
     branches: [master]
     paths: ['terraform/**']
+  merge_group:
+    types: [checks_requested]
 
 permissions:
   pull-requests: write
