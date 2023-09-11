@@ -13,51 +13,59 @@ const Countdown = ({ title, endAt }: Props) => {
         <Center textColor="white" flexDir="column" gap="1" bg="#18A0B3" px="3" py="2">
             <Text fontSize="md">{title}</Text>
 
-            <Flex justifyContent="space-between" gap="2">
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _after={{
-                        content: ['" d."', '" dager"'],
-                    }}
-                >
-                    <Text as="span" fontFamily="mono" suppressHydrationWarning>
-                        {days}
-                    </Text>
+            <Flex flexDir="row" gap="3" alignItems="center">
+                <Text fontSize="2xl" transform="scale(-1, 1)">
+                    🎉
                 </Text>
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _after={{
-                        content: ['" t."', '" timer"'],
-                    }}
-                >
-                    <Text as="span" fontFamily="mono" suppressHydrationWarning>
-                        {hours}
+
+                <Flex justifyContent="space-between" gap="2">
+                    <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        _after={{
+                            content: ['" d."', '" dager"'],
+                        }}
+                    >
+                        <Text as="span" fontFamily="mono" suppressHydrationWarning>
+                            {days}
+                        </Text>
                     </Text>
-                </Text>
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _after={{
-                        content: ['" m."', '" minutter"'],
-                    }}
-                >
-                    <Text as="span" fontFamily="mono" suppressHydrationWarning>
-                        {minutes}
+                    <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        _after={{
+                            content: ['" t."', '" timer"'],
+                        }}
+                    >
+                        <Text as="span" fontFamily="mono" suppressHydrationWarning>
+                            {hours}
+                        </Text>
                     </Text>
-                </Text>
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _after={{
-                        content: ['" s."', '" sekunder"'],
-                    }}
-                >
-                    <Text as="span" fontFamily="mono" suppressHydrationWarning>
-                        {seconds}
+                    <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        _after={{
+                            content: ['" m."', '" minutter"'],
+                        }}
+                    >
+                        <Text as="span" fontFamily="mono" suppressHydrationWarning>
+                            {minutes}
+                        </Text>
                     </Text>
-                </Text>
+                    <Text
+                        fontSize="md"
+                        fontWeight="bold"
+                        _after={{
+                            content: ['" s."', '" sekunder"'],
+                        }}
+                    >
+                        <Text as="span" fontFamily="mono" suppressHydrationWarning>
+                            {seconds}
+                        </Text>
+                    </Text>
+                </Flex>
+
+                <Text fontSize="2xl">🎉</Text>
             </Flex>
         </Center>
     );
