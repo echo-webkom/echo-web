@@ -1,8 +1,9 @@
 import { useSound } from 'use-sound';
 import { Alert, AlertIcon, Box, Center, Flex, Spacer } from '@chakra-ui/react';
-import { getMonth } from 'date-fns';
+import { getMonth, isFuture } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Snowfall from 'react-snowfall';
+import CountdownLink from './countdown';
 import AnimatedIcons from '@components/animated-icons';
 import FeedbackButton from '@components/feedback-button';
 import Footer from '@components/footer';
@@ -33,12 +34,15 @@ const Layout = ({ children }: Props): JSX.Element => {
         void pingBackend();
     }, []);
 
+    const progbardate = new Date('2023-09-16T19:00:00');
+
     return (
         <AnimatedIcons n={50}>
             {!SSR && getMonth(new Date()) === 11 && (
                 <Snowfall style={{ zIndex: -1 }} snowflakeCount={200} color="#ffffff" />
             )}
             <Flex direction="column" minH="100vh" data-testid="layout">
+                {isFuture(progbardate) && <CountdownLink title="Programmerbar åpner snart!" endAt={progbardate} />}
                 {backendError && (
                     <Center>
                         <Alert onMouseEnter={() => play()} borderRadius="0.5rem" m="1rem" maxW="600px" status="warning">
