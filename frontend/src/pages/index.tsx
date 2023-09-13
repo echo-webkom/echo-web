@@ -117,6 +117,9 @@ const IndexPage = ({
                 {enableJobAdverts ? (
                     <Grid w="100%" gap={5} templateColumns={['1', null, null, 'repeat(2, 1fr)']}>
                         <GridItem>
+                            <PostEntryBox />
+                        </GridItem>
+                        <GridItem>
                             <EntryBox
                                 titles={
                                     isNorwegian
@@ -128,9 +131,6 @@ const IndexPage = ({
                                 linkTo="/jobb"
                                 type="job-advert"
                             />
-                        </GridItem>
-                        <GridItem>
-                            <PostEntryBox />
                         </GridItem>
                     </Grid>
                 ) : (

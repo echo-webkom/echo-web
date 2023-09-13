@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { groq } from 'next-sanity';
+import { createFilterString } from './utils';
 import SanityAPI from '@api/sanity';
 import { slugSchema } from '@utils/schemas';
 import type { ErrorMessage } from '@utils/error';
@@ -20,6 +21,11 @@ const jobAdvertSchema = z.object({
 });
 type JobAdvert = z.infer<typeof jobAdvertSchema>;
 
+interface GetJobAdvertsOptions {
+    filter: 'only' | 'exclude';
+    companies: Array<string>;
+}
+
 const JobAdvertAPI = {
     getPaths: async (): Promise<Array<string>> => {
         try {
@@ -36,11 +42,16 @@ const JobAdvertAPI = {
         }
     },
 
-    getJobAdverts: async (n: number): Promise<Array<JobAdvert> | ErrorMessage> => {
+    getJobAdverts: async (n: number, options?: GetJobAdvertsOptions): Promise<Array<JobAdvert> | ErrorMessage> => {
+        const hasOptions = options !== undefined;
+        const companiesFilter = hasOptions && createFilterString(options);
+
         try {
-            const query = groq`*[_type == "jobAdvert" && dateTime(deadline) > dateTime(now()) && !(_id in path('drafts.**'))] | order(_createdAt desc) | order(weight desc) [0..${
-                n - 1
-            }] {
+            const query = groq`*[_type == "jobAdvert"
+                && dateTime(deadline) > dateTime(now())
+                && !(_id in path('drafts.**'))
+                ${hasOptions ? '&& ' + companiesFilter : ''}]
+                | order(_createdAt desc) | order(weight desc) [0..${n - 1}] {
                     "slug": slug.current,
                     body,
                     companyName,
@@ -90,4 +101,4 @@ const JobAdvertAPI = {
     },
 };
 
-export { JobAdvertAPI, type JobAdvert };
+export { JobAdvertAPI, type JobAdvert, type GetJobAdvertsOptions };

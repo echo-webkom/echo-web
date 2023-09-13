@@ -18,7 +18,7 @@ import degreeYearText from '@utils/degree-year-text';
 import translateJobType from '@utils/translate-job-type';
 import useLanguage from '@hooks/use-language';
 
-const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }): JSX.Element => {
+const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }) => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
