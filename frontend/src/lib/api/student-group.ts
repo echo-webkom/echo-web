@@ -71,6 +71,7 @@ const StudentGroupAPI = {
                     "members": members[] {
                         role,
                         "profile": profile -> {
+                            _id,
                             name,
                             "imageUrl": picture.asset -> url
                         }
@@ -99,6 +100,7 @@ const StudentGroupAPI = {
                     "members": members[] {
                         role,
                         "profile": profile -> {
+                            _id,
                             name,
                             "imageUrl": picture.asset -> url
                         }

@@ -4,6 +4,7 @@ import SanityAPI from '@api/sanity';
 import type { ErrorMessage } from '@utils/error';
 
 const profileSchema = z.object({
+    _id: z.string(),
     name: z.string(),
     imageUrl: z.string().nullable(),
 });
@@ -14,6 +15,7 @@ const ProfileAPI = {
         try {
             const query = groq`
                 *[_type == "profile" && name == ${name}] {
+                    _id,
                     name,
                     "imageUrl": picture.asset -> url
                 }
@@ -33,6 +35,7 @@ const ProfileAPI = {
         try {
             const query = groq`
                 *[_type == "profile" && name in $names] | order(name asc) {
+                    _id,
                     name,
                     "imageUrl": picture.asset -> url
                 }

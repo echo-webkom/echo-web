@@ -6,6 +6,7 @@ const SanityAPI = createClient({
     projectId: 'pgq2pd26',
     dataset: process.env.SANITY_DATASET ?? 'production',
     apiVersion: '2021-04-10',
+    useCdn: false,
 });
 
 const builder = imageUrlBuilder(SanityAPI);
