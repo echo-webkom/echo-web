@@ -1,7 +1,6 @@
 import type { ParsedUrlQuery } from 'querystring';
-import { Center, Divider, Heading, Spinner, Wrap, WrapItem, Image } from '@chakra-ui/react';
+import { Center, Divider, Heading, Wrap, WrapItem, Image } from '@chakra-ui/react';
 import type { GetStaticPaths, GetStaticProps } from 'next';
-import { useRouter } from 'next/router';
 import Markdown from 'markdown-to-jsx';
 import SEO from '@components/seo';
 import type { StudentGroup, Member } from '@api/student-group';
@@ -16,53 +15,42 @@ interface Props {
 }
 
 const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
-    const router = useRouter();
-
     return (
         <>
-            {router.isFallback && (
-                <Center>
-                    <Spinner />
-                </Center>
-            )}
-            {!router.isFallback && (
-                <>
-                    <SEO title={studentGroup.name} />
-                    <SidebarWrapper>
-                        <Heading textAlign="center" size="2xl" pb="2rem">
-                            {studentGroup.name}
-                        </Heading>
-                        <Divider mb="1rem" />
-                        {studentGroup.info && (
-                            <>
-                                <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
-                                <Divider my="5" />
-                            </>
-                        )}
-                        {studentGroup.imageUrl && (
-                            <>
-                                <Center>
-                                    <Image
-                                        src={studentGroup.imageUrl}
-                                        alt=""
-                                        objectFit="cover"
-                                        maxHeight="570px"
-                                        minWidth="100%"
-                                    />
-                                </Center>
-                                <Divider my="5" />
-                            </>
-                        )}
-                        <Wrap spacing={['1em', null, '2.5em']} justify="center">
-                            {studentGroup.members.map((member: Member) => (
-                                <WrapItem key={member.profile.name}>
-                                    <MemberProfile profile={member.profile} role={member.role} />
-                                </WrapItem>
-                            ))}
-                        </Wrap>
-                    </SidebarWrapper>
-                </>
-            )}
+            <SEO title={studentGroup.name} />
+            <SidebarWrapper>
+                <Heading textAlign="center" size="2xl" pb="2rem">
+                    {studentGroup.name}
+                </Heading>
+                <Divider mb="1rem" />
+                {studentGroup.info && (
+                    <>
+                        <Markdown options={{ overrides: MapMarkdownChakra }}>{studentGroup.info}</Markdown>
+                        <Divider my="5" />
+                    </>
+                )}
+                {studentGroup.imageUrl && (
+                    <>
+                        <Center>
+                            <Image
+                                src={studentGroup.imageUrl}
+                                alt=""
+                                objectFit="cover"
+                                maxHeight="570px"
+                                minWidth="100%"
+                            />
+                        </Center>
+                        <Divider my="5" />
+                    </>
+                )}
+                <Wrap spacing={['1em', null, '2.5em']} justify="center">
+                    {studentGroup.members.map((member: Member, i) => (
+                        <WrapItem key={`${member.profile._id}${i}`}>
+                            <MemberProfile profile={member.profile} role={member.role} />
+                        </WrapItem>
+                    ))}
+                </Wrap>
+            </SidebarWrapper>
         </>
     );
 };
@@ -80,7 +68,7 @@ const getStaticPaths: GetStaticPaths = async () => {
                 slug,
             },
         })),
-        fallback: true,
+        fallback: false,
     };
 };
 
@@ -93,12 +81,9 @@ const getStaticProps: GetStaticProps = async (context) => {
     const studentGroup = await StudentGroupAPI.getStudentGroupBySlug(slug);
 
     if (isErrorMessage(studentGroup)) {
-        if (studentGroup.message === '404') {
-            return {
-                notFound: true,
-            };
-        }
-        throw new Error(studentGroup.message);
+        return {
+            notFound: true,
+        };
     }
 
     const props: Props = {
