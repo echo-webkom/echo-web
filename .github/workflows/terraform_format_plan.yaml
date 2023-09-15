@@ -2,6 +2,7 @@ name: Terraform format & plan
 on:
   pull_request:
     branches: [master]
+    paths: ['terraform/**']
   merge_group:
     types: [checks_requested]
 
