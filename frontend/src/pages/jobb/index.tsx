@@ -299,7 +299,7 @@ export const getStaticProps: GetStaticProps = async () => {
         };
     }
 
-    const jobAdverts = await JobAdvertAPI.getJobAdverts(10);
+    const jobAdverts = await JobAdvertAPI.getJobAdverts(100);
 
     if (isErrorMessage(jobAdverts)) throw new Error(jobAdverts.message);
 
