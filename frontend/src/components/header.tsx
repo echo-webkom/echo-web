@@ -1,5 +1,5 @@
 import { Center, Flex, Icon, IconButton, Spacer, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { memo, useRef } from 'react';
+import { useRef } from 'react';
 import { IoIosMenu } from 'react-icons/io';
 import NavBar from '@components/navbar';
 import HeaderLogo from '@components/header-logo';
@@ -43,4 +43,4 @@ const Header = () => {
     );
 };
 
-export default memo(Header);
+export default Header;
