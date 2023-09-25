@@ -3624,13 +3624,13 @@
   resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-1.0.2.tgz#7af719a1bf33734840aee6f04eb548d2cedab9ec"
   integrity sha512-BZFxVrv24VbNNl5xMxqUojQIegEeXMI6rX3rg1uVLYUEXsuKNBSAEQf4BWEcjQDp/8aYJOj6m8V4PUA3x/cxgg==
 
-"@vercel/og@0.5.16":
-  version "0.5.16"
-  resolved "https://registry.yarnpkg.com/@vercel/og/-/og-0.5.16.tgz#7bac826d888e2015e33f22530d80de5d05a86199"
-  integrity sha512-rhRm9IxEPSIQkd+kfTNQrJkTivJd9Yj2ACVRvDGvr9+hyZgF96M54F9Sx3Bg2483oWdUJ31rCXQt/YhVTxgF1Q==
+"@vercel/og@0.5.17":
+  version "0.5.17"
+  resolved "https://registry.yarnpkg.com/@vercel/og/-/og-0.5.17.tgz#270d4a9f9c94fcfe4c38aad7a2a6fff4ac59c8ed"
+  integrity sha512-/GOyUBq3MhB3ygbhTJoZ0cHvwlyKdt0g8f4npuj4mwFlp57S7j4XWwgtqILK3XdFf25esN9i77fInrDkeRJfgA==
   dependencies:
     "@resvg/resvg-wasm" "2.4.1"
-    satori "0.10.7"
+    satori "0.10.8"
     yoga-wasm-web "0.3.3"
 
 "@vercel/stega@0.1.0":
@@ -9419,10 +9419,10 @@ sanity@3.16.7:
     vite "^4.4.4"
     yargs "^17.3.0"
 
-satori@0.10.7:
-  version "0.10.7"
-  resolved "https://registry.yarnpkg.com/satori/-/satori-0.10.7.tgz#45a5d6dee5b8354b0cd887af033ddc46821a9b39"
-  integrity sha512-PizTQJuWSo1B2NTKUBAOYY7Cy9CDeRrW2aK0d+OTNaNz/1WcjfdZjl5Y6uapwrPB1DxG48XfaFaL2M5C0CL5Vw==
+satori@0.10.8:
+  version "0.10.8"
+  resolved "https://registry.yarnpkg.com/satori/-/satori-0.10.8.tgz#15dac06ef46d08e8fbc5bbb7e372eadbb7d2eded"
+  integrity sha512-WlPLxgpx5kIyMuOO6qi98DhZGIbRk5XJRqENkt6D6gyDBWGyo3M5kcSl0X/oSFHUH+n4unlzwMejoPM47s4zug==
   dependencies:
     "@shuding/opentype.js" "1.4.0-beta.0"
     css-background-parser "^0.1.0"
