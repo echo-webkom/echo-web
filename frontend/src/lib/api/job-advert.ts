@@ -14,7 +14,7 @@ const jobAdvertSchema = z.object({
     deadline: z.string(),
     locations: z.array(z.string()),
     advertLink: z.string(),
-    jobType: z.enum(['fulltime', 'parttime', 'internship', 'summerjob']),
+    jobType: z.enum(['fulltime', 'parttime', 'internship', 'summerjob', 'event']),
     degreeYears: z.array(z.number()),
     _createdAt: z.string(),
     weight: z.number(),
