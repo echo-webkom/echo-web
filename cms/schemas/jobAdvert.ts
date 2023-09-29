@@ -7,6 +7,7 @@ const JOB_TYPES = [
     { title: 'Deltid', value: 'parttime' },
     { title: 'Internship', value: 'internship' },
     { title: 'Sommerjobb', value: 'summerjob' },
+    { title: 'Event', value: 'event' },
 ];
 
 export default defineType({

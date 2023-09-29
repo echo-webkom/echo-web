@@ -1,7 +1,6 @@
-const translateJobType = (
-    jobType: 'fulltime' | 'parttime' | 'internship' | 'summerjob',
-    isNorwegian: boolean = true,
-): string => {
+import type { JobAdvert } from '@api/job-advert';
+
+const translateJobType = (jobType: JobAdvert['jobType'], isNorwegian: boolean = true): string => {
     switch (jobType) {
         case 'fulltime': {
             return isNorwegian ? 'Fulltid' : 'Full time';
@@ -14,6 +13,9 @@ const translateJobType = (
         }
         case 'summerjob': {
             return isNorwegian ? 'Sommerjobb' : 'Summer internship';
+        }
+        case 'event': {
+            return 'Event';
         }
     }
 };

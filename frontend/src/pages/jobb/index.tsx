@@ -118,6 +118,7 @@ const JobPage = ({ jobAdverts }: Props) => {
                                 <option value="parttime">Deltid</option>
                                 <option value="fulltime">Fulltid</option>
                                 <option value="internship">Internship</option>
+                                <option value="event">Event</option>
                             </Select>
                         </Stack>
                         <Stack w="100%">
