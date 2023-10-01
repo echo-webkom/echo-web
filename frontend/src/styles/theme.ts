@@ -1,5 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
-import { getYear, isSameDay, isWithinInterval } from 'date-fns';
+import { getYear, getMonth, isWithinInterval } from 'date-fns';
 import { mainTheme, halloweenTheme, christmasTheme } from '@styles/themes';
 
 // global config
@@ -12,7 +12,7 @@ const currentTheme = () => {
     const now = new Date();
     const currentYear = getYear(now);
 
-    if (isSameDay(now, new Date(currentYear, 9, 31))) return halloweenTheme;
+    if (getMonth(now) === 9) return halloweenTheme;
     else if (isWithinInterval(now, { start: new Date(currentYear, 11, 20), end: new Date(currentYear, 11, 31) }))
         return christmasTheme;
 
