@@ -4213,10 +4213,10 @@ caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001538:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001539.tgz#325a387ab1ed236df2c12dc6cd43a4fff9903a44"
   integrity sha512-hfS5tE8bnNiNvEOEkm8HElUHroYwlqMMENEzELymy77+tJ6m+gA2krtHl5hxJaj71OlpC2cHZbdSMX1/YEqEkA==
 
-canvas-confetti@1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/canvas-confetti/-/canvas-confetti-1.6.0.tgz#193f71aa8f38fc850a5ba94f59091a7afdb43ead"
-  integrity sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==
+canvas-confetti@1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/canvas-confetti/-/canvas-confetti-1.6.1.tgz#fb13834bb7cc199c95d423a2dc65fe05a979a1d2"
+  integrity sha512-CgGR5DL9+dkne4AwcpvWQc0LIQq43yDIxlwdZcyrq3yklricNfuPHoOSoM6Ya7yCQ+sXmZ2iNV2feiKjVG8C1g==
 
 caseless@~0.12.0:
   version "0.12.0"
