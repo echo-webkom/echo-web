@@ -4,8 +4,8 @@ const halloweenPalette = {
     ...defaultPalette,
     text: {
         dark: {
-            primary: '#000000',
-            secondary: '#ffffff',
+            primary: '#ffffff',
+            secondary: '#000000',
         },
         light: {
             primary: '#000000',
@@ -36,10 +36,12 @@ const halloweenPalette = {
         light: {
             primary: '#FC9E31',
             secondary: '#A998C3',
+            tertiary: '#F2EFF6',
         },
         dark: {
             primary: '#FDB35E',
             secondary: '#A998C3',
+            tertiary: '#302640',
         },
     },
     orange: {
