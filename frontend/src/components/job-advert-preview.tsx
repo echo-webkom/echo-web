@@ -22,6 +22,12 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }) => {
     const borderColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const bgColor = useColorModeValue('bg.light.tertiary', 'bg.dark.tertiary');
 
+    const subtleTagBg = useColorModeValue('purple.200', 'purple.500');
+    const solidTagBg = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
+    const solidTagColor = useColorModeValue('text.dark.primary', 'text.dark.secondary');
+    const outlineTagBg = useColorModeValue('highlight.light.tertiary', 'highlight.dark.tertiary');
+    const subtleOutlineTagColor = useColorModeValue('highlight.dark.tertiary', 'text.dark.primary');
+
     const isNorwegian = useLanguage();
 
     return (
@@ -46,15 +52,15 @@ const JobAdvertPreview = ({ jobAdvert }: { jobAdvert: JobAdvert }) => {
                             </Text>
                         </LinkOverlay>
                         <Wrap>
-                            <Tag colorScheme="teal" variant="subtle">
+                            <Tag bg={subtleTagBg} color={subtleOutlineTagColor} variant="subtle">
                                 {translateJobType(jobAdvert.jobType, isNorwegian)}
                             </Tag>
                             {jobAdvert.locations.map((location: string, index: number) => (
-                                <Tag colorScheme="teal" variant="solid" key={`${location}-${index}`}>
+                                <Tag bg={solidTagBg} color={solidTagColor} variant="solid" key={`${location}-${index}`}>
                                     {location}
                                 </Tag>
                             ))}
-                            <Tag colorScheme="teal" variant="outline">
+                            <Tag bg={outlineTagBg} color={subtleOutlineTagColor} variant="outline">
                                 {degreeYearText(jobAdvert.degreeYears, isNorwegian)}
                             </Tag>
                             <Spacer />
