@@ -36,7 +36,7 @@
     },
     "dependencies": {
         "@sanity/color-input": "3.1.0",
-        "@sanity/icons": "2.4.1",
+        "@sanity/icons": "2.5.0",
         "@sanity/vision": "3.17.0",
         "easymde": "2.18.0",
         "prop-types": "15.8.1",
