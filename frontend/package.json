@@ -115,7 +115,7 @@
         "@emotion/styled": "11.11.0",
         "@sanity/client": "6.4.12",
         "@sanity/image-url": "1.0.2",
-        "@vercel/analytics": "1.0.2",
+        "@vercel/analytics": "1.1.0",
         "@vercel/og": "0.5.17",
         "calendar-link": "2.6.0",
         "canvas-confetti": "1.9.0",
