@@ -141,6 +141,7 @@ const Sidebar = ({ onClick }: { onClick?: () => void }) => {
                 { name: 'Tilbakemeldinger', href: '/om-echo/anonyme-tilbakemeldinger' },
                 { name: 'Utlegg', href: '/om-echo/utlegg' },
                 { name: 'Si ifra', href: '/om-echo/si-ifra' },
+                { name: 'Brosjyre', href: '/om-echo/brosjyre' },
             ],
         },
         {
