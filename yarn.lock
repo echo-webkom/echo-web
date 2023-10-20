@@ -2601,10 +2601,10 @@
     redux-thunk "^2.4.2"
     reselect "^4.1.8"
 
-"@resvg/resvg-wasm@2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@resvg/resvg-wasm/-/resvg-wasm-2.4.1.tgz#88f7a08107bf5ea691b016e55e6db955c85d845c"
-  integrity sha512-yi6R0HyHtsoWTRA06Col4WoDs7SvlXU3DLMNP2bdAgs7HK18dTEVl1weXgxRzi8gwLteGUbIg29zulxIB3GSdg==
+"@resvg/resvg-wasm@2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@resvg/resvg-wasm/-/resvg-wasm-2.5.0.tgz#d7b9627ce3488339939987c35bd217a722e78d72"
+  integrity sha512-jM0zG54ykoGFiMMVvRxzHFVXhxCdQTGp+okLCWGIXt8bN2GLlsWpjvyU0vZJWkTsd+qLmy2dmYcPU02zC0IVMQ==
 
 "@rexxars/react-json-inspector@^8.0.1":
   version "8.0.1"
@@ -3593,12 +3593,12 @@
   dependencies:
     server-only "^0.0.1"
 
-"@vercel/og@0.5.18":
-  version "0.5.18"
-  resolved "https://registry.yarnpkg.com/@vercel/og/-/og-0.5.18.tgz#a2ba7970357cf8473c2e39627b989644f2b91f85"
-  integrity sha512-l519y6hscj14VkORBKshExoWaXWB4MqGUCIhY3gcXYir4aJ3J+9BU1E/CQ9yKsNmkgY+1VXOgjnq9zUT4B49KQ==
+"@vercel/og@0.5.19":
+  version "0.5.19"
+  resolved "https://registry.yarnpkg.com/@vercel/og/-/og-0.5.19.tgz#72c2344c2bc85014af5d46042fae7128e7c129b0"
+  integrity sha512-U/Oi+5/eCZ1YPZxSObSoiyDqqZnNJIjCd6qs9BlCHscrwP2OTfbs88hkT5qMT3HanK1lDFquONjlnrE696fgxA==
   dependencies:
-    "@resvg/resvg-wasm" "2.4.1"
+    "@resvg/resvg-wasm" "2.5.0"
     satori "0.10.9"
     yoga-wasm-web "0.3.3"
 
