@@ -3254,10 +3254,10 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.7.tgz#f9361f7b87fd5d8188b2c998db0a1f47e9fb391a"
   integrity sha512-FbtmBWCcSa2J4zL781Zf1p5YUBXQomPEcep9QZCfRfQgTxz3pJWiDFLebohZ9fFntX5ibzOkSsrJ0TEew8cAog==
 
-"@types/randomcolor@0.5.7":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@types/randomcolor/-/randomcolor-0.5.7.tgz#314b84f571cb11bc3a7785c42d50efc7fa327147"
-  integrity sha512-LPcG96dGYRCsXlk1fslUNIg6ebEi+bKNyn84uBL/pu2cRSf5i/djD3ArJZOyzszVMVV/DB87va6pMZP+tRSl/w==
+"@types/randomcolor@0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@types/randomcolor/-/randomcolor-0.5.8.tgz#7c88b81931d43323931e2b9bf7a3a7900fc98f99"
+  integrity sha512-hCajbxWpZsGKf6gHiJyEJPCQ6jJaYYcryqtrXNGFnGjreXyws8xCvVln/Gg6ms/AqNntoFHxa2754E7WhpBTEg==
 
 "@types/react-copy-to-clipboard@^5.0.2":
   version "5.0.4"
