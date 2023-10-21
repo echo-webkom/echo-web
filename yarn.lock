@@ -3076,10 +3076,10 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
-"@types/canvas-confetti@1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@types/canvas-confetti/-/canvas-confetti-1.6.1.tgz#2189ef37b6336c69bb6abd8c35b409804fd1038e"
-  integrity sha512-wTSI/k/586KnzL8Inm0yXe/U9x0sO2tc4j/osIAZVsE+hyj2S/M+sdR5zDDLygEkohhlG948zNVBG5QiI4Z2mw==
+"@types/canvas-confetti@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@types/canvas-confetti/-/canvas-confetti-1.6.2.tgz#69474d32271f347ff291ccde23268ecc3e426961"
+  integrity sha512-ozy7d+7AmYnPEgzdGwwAIA0/yLHnT9YBUQAOm5Ucu+P2ptxq2P464SZDVzYp71wD10ZPYckyeC665bPxQM78kw==
 
 "@types/codemirror@^5.60.4", "@types/codemirror@~5.60.5":
   version "5.60.10"
