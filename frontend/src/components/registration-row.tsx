@@ -40,11 +40,12 @@ interface Props {
     registration: Registration;
     questions: Array<string> | null;
     canPromote: boolean;
+    rowNumber?: number;
 }
 
 const MotionTr = motion<TableRowProps>(Tr);
 
-const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
+const RegistrationRow = ({ registration, questions, canPromote, rowNumber }: Props) => {
     const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
 
     const [deleted, setDeleted] = useState(false);
@@ -109,6 +110,7 @@ const RegistrationRow = ({ registration, questions, canPromote }: Props) => {
                 data-cy={`reg-row-${registration.email}`}
                 key={JSON.stringify(registration)}
             >
+                {rowNumber && <Td fontSize="md">#{rowNumber}</Td>}
                 {/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */}
                 <Td fontSize="md">{registration.alternateEmail || registration.email}</Td>
                 {/* eslint-enable @typescript-eslint/prefer-nullish-coalescing */}

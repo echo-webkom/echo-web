@@ -36,6 +36,7 @@ import {
     ModalCloseButton,
     ModalFooter,
     ModalBody,
+    Checkbox,
 } from '@chakra-ui/react';
 import { getTime, parseISO, isBefore, isAfter } from 'date-fns';
 import { useState, useEffect } from 'react';
@@ -90,6 +91,8 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
     const [studentGroup, setStudentGroup] = useState<StudentGroupType>('all');
 
     const [canPromote, setCanPromote] = useState(false);
+
+    const [showRowNumber, setShowRowNumber] = useState(false);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -304,7 +307,20 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                             </Button>
                                         </Flex>
                                     </Center>
-                                    <Text>Antall resultater: {numberOfRegistrations}</Text>
+                                    <Flex>
+                                        <Text>Antall resultater: {numberOfRegistrations}</Text>
+
+                                        <Spacer />
+
+                                        <Flex gap="2" alignItems="center">
+                                            <label htmlFor="show-number">Vis nummer:</label>
+                                            <Checkbox
+                                                id="show-number"
+                                                isChecked={showRowNumber}
+                                                onChange={(e) => setShowRowNumber(e.target.checked)}
+                                            />
+                                        </Flex>
+                                    </Flex>
                                 </Stack>
                                 <Divider my="1rem" />
                                 {/* mx value is the the negative of Section padding */}
@@ -312,6 +328,7 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                     <Table size={tableSize} variant="striped">
                                         <Thead>
                                             <Tr>
+                                                {showRowNumber && <Th>Nummer</Th>}
                                                 <Th>Email</Th>
                                                 <Th>Navn</Th>
                                                 <Th>Studieretning</Th>
@@ -339,13 +356,14 @@ const RegistrationsList = ({ slug, title, registrationDate }: Props) => {
                                                         statusOrder[b.registrationStatus]
                                                     );
                                                 })
-                                                .map((reg) => {
+                                                .map((reg, i) => {
                                                     return (
                                                         <RegistrationRow
                                                             key={reg.email}
                                                             registration={reg}
                                                             questions={questions}
                                                             canPromote={canPromote}
+                                                            rowNumber={showRowNumber ? i + 1 : undefined}
                                                         />
                                                     );
                                                 })}
