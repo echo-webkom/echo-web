@@ -123,7 +123,7 @@
         "framer-motion": "10.16.4",
         "markdown-to-jsx": "7.3.2",
         "next": "13.5.6",
-        "next-auth": "4.24.3",
+        "next-auth": "4.24.4",
         "next-pwa": "5.6.0",
         "next-sanity": "5.5.10",
         "nextjs-progressbar": "0.0.16",
