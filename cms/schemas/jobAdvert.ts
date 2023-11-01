@@ -96,8 +96,11 @@ export default defineType({
         defineField({
             name: 'advertLink',
             title: 'Lenke til søknad',
-            validation: (Rule) => Rule.required(),
             type: 'url',
+            validation: (Rule) =>
+                Rule.uri({
+                    scheme: ['http', 'https', 'mailto'],
+                }),
         }),
         defineField({
             name: 'degreeYears',
