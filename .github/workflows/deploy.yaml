@@ -117,7 +117,7 @@ jobs:
 
       - name: Setup Terraform
         if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Apply Terraform changes
         if: steps.changed-files-tf.outputs.any_changed == 'true' || steps.changed-files-backend.outputs.any_changed == 'true'
