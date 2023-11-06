@@ -1,4 +1,5 @@
 name: Terraform format & plan
+
 on:
   pull_request:
     branches: [master]
@@ -18,10 +19,10 @@ env:
   TF_VAR_auth_secret: ${{ secrets.AUTH_SECRET }}
   TF_VAR_sendgrid_api_key: ${{ secrets.SENDGRID_API_KEY }}
   TF_VAR_revision_suffix: ${{ github.sha }}
-  ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
-  ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
 jobs:
   terraform_format:

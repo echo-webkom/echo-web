@@ -1,4 +1,5 @@
 name: Lint & format
+
 on:
   pull_request:
     branches: [master]
