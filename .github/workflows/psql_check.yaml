@@ -1,4 +1,5 @@
 name: Check SQL migration syntax
+
 on:
   pull_request:
     branches: [master]

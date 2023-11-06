@@ -1,12 +1,8 @@
 name: Restart backend preview
+
 on:
   issue_comment:
     types: [edited]
-
-env:
-  ARM_CLIENT_ID: 225cb793-e592-482e-8612-2318bd5e0a6c
-  ARM_SUBSCRIPTION_ID: f16e6916-1e71-42a0-9df3-0246b805f432
-  ARM_TENANT_ID: 10086e44-d4c5-4039-ab23-dc49610f7879
 
 jobs:
   restart_preview:
@@ -40,7 +36,7 @@ jobs:
       - name: Sign in to Azure
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
 
       - name: Restart container
         if: contains(${{ steps.fc.outputs.comment_body }}, '- [x] check this box to restart the backend preview, if you are getting errors.')
