@@ -2738,6 +2738,15 @@
     get-it "^8.4.3"
     rxjs "^7.0.0"
 
+"@sanity/client@^6.7.1":
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.7.1.tgz#5a22570962d85a4239ccb69f5b1495de6db63c01"
+  integrity sha512-rOnTg4MLAFTo8MkeZv2aL5RybHY1xl84L5KhfgKSU53jp0VAVikeCEbknyMJhavaMJmo8MYf1sEq2h4bmYiCKg==
+  dependencies:
+    "@sanity/eventsource" "^5.0.0"
+    get-it "^8.4.4"
+    rxjs "^7.0.0"
+
 "@sanity/color-input@3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@sanity/color-input/-/color-input-3.1.0.tgz#eed5f36bdbe5bf05e2b369517a22979b7e5cc2c7"
@@ -6425,6 +6434,11 @@ groq@^3.0.0, groq@^3.14.5:
   resolved "https://registry.yarnpkg.com/groq/-/groq-3.16.7.tgz#abc39e12b8e9decbe874a8fe117ee71338b4d40a"
   integrity sha512-4Qlmwi9uQOyvc8YLFP5d+y8YssFnfK4imY3ZzP+U06LrV/KectnLsl/nDUQS2YfyTrQ7sGZQVNbhKw8DjT3phw==
 
+groq@^3.19:
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/groq/-/groq-3.19.1.tgz#fb3070404611cca1b9c4c14df7339d6069cda1cc"
+  integrity sha512-LL42fPvihtIvLyx4sPgS9KDLKc62H+xuPyZ41LPIcPoru8yT8k2GwmmkwvcXaRwOAz+xBxd+paqouhob2XjbDQ==
+
 gunzip-maybe@^1.4.1:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/gunzip-maybe/-/gunzip-maybe-1.4.2.tgz#b913564ae3be0eda6f3de36464837a9cd94b98ac"
@@ -7788,15 +7802,15 @@ next-pwa@5.6.0:
     workbox-webpack-plugin "^6.5.4"
     workbox-window "^6.5.4"
 
-next-sanity@5.5.10:
-  version "5.5.10"
-  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-5.5.10.tgz#ac6fd27b3e2ba7bda7d9d44fe2e0994cda2496d4"
-  integrity sha512-S/ZFq3xs3WTFl8awDjbcQI8TxzEqPfKEXFze2yTJEu3Ny0yAvSHxF6AysYyCvb8nAnpCMTJsxiHZX6OambVlpg==
+next-sanity@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-6.0.0.tgz#595d8481b9eb7806b400ad9e60ab2c44f1a07f8b"
+  integrity sha512-+t5hT5PUYRYXiREKYB4B53fUY8Z3+Pp+ADziCXiqhjoE+8P2iDey44azeuZSi5HKGQBjIlTXftk7srn4IqY+zg==
   dependencies:
-    "@sanity/client" "^6.7.0"
+    "@sanity/client" "^6.7.1"
     "@sanity/preview-kit" "3.2.6"
     "@sanity/webhook" "3.0.1"
-    groq "^3.0.0"
+    groq "^3.19"
 
 next@13.5.6:
   version "13.5.6"
