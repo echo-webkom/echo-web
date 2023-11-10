@@ -7,7 +7,7 @@ interface Props extends ButtonProps {
     isExternal?: boolean;
 }
 
-const ButtonLink = ({ href, isExternal, ...props }: Props): JSX.Element => {
+const ButtonLink = ({ href, isExternal, ...props }: Props) => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');

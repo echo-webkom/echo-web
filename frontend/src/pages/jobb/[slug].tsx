@@ -27,7 +27,7 @@ interface Props {
     jobAdvert: JobAdvert | null;
 }
 
-const JobAdvertPage = ({ jobAdvert }: Props): JSX.Element => {
+const JobAdvertPage = ({ jobAdvert }: Props) => {
     const router = useRouter();
     const isNorwegian = useLangugage();
 

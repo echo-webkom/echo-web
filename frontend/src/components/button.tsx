@@ -1,7 +1,7 @@
 import type { ButtonProps } from '@chakra-ui/react';
 import { Button, useColorModeValue } from '@chakra-ui/react';
 
-const ButtonLink = ({ ...props }: ButtonProps): JSX.Element => {
+const ButtonLink = ({ ...props }: ButtonProps) => {
     const bg = useColorModeValue('button.light.primary', 'button.dark.primary');
     const hover = useColorModeValue('button.light.primaryHover', 'button.dark.primaryHover');
     const active = useColorModeValue('button.light.primaryActive', 'button.dark.primaryActive');

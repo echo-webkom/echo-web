@@ -13,7 +13,7 @@ interface Props {
     role: string;
 }
 
-const MemberProfile = ({ profile, role }: Props): JSX.Element => {
+const MemberProfile = ({ profile, role }: Props) => {
     const imgSize = useBreakpointValue([96, 96, 128]);
 
     return (

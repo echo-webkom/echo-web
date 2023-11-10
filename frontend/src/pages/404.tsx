@@ -1,7 +1,7 @@
 import { Box, Center, Heading, Text } from '@chakra-ui/react';
 import SEO from '@components/seo';
 
-const NotFoundPage = (): JSX.Element => (
+const NotFoundPage = () => (
     <>
         <SEO title="Fant ikke siden" />
         <Center>

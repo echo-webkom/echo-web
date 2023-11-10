@@ -14,7 +14,7 @@ interface Props {
     staticInfo: StaticInfo;
 }
 
-const StaticInfoPage = ({ staticInfo }: Props): JSX.Element => {
+const StaticInfoPage = ({ staticInfo }: Props) => {
     const router = useRouter();
 
     return (

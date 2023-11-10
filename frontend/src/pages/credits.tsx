@@ -9,7 +9,7 @@ import { ProfileAPI } from '@api/profile';
 import { isErrorMessage } from '@utils/error';
 import MemberProfile from '@components/member-profile';
 
-const CreditsPage = ({ profiles }: { profiles: Array<Profile> }): JSX.Element => {
+const CreditsPage = ({ profiles }: { profiles: Array<Profile> }) => {
     const fireConfetti = () => {
         void confetti({
             spread: 180,

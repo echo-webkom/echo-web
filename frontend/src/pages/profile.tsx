@@ -4,7 +4,7 @@ import ProfileInfo from '@components/profile-info';
 import SEO from '@components/seo';
 import useAuth from '@hooks/use-auth';
 
-const ProfilePage = (): JSX.Element => {
+const ProfilePage = () => {
     const { loading, signedIn } = useAuth();
 
     return (

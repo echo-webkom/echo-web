@@ -5,7 +5,7 @@
     "prHourlyLimit": 0,
     "stabilityDays": 3,
     "prCreation": "not-pending",
-    "ignoreDeps": ["openjdk", "node", "postgres", "@types/react", "@types/react-dom"],
+    "ignoreDeps": ["openjdk", "node", "postgres"],
     "updateInternalDeps": true,
     "additionalBranchPrefix": "{{#if (containsString depName 'azurerm')}}{{else}}{{parentDir}}-{{/if}}",
     "rangeStrategy": "pin",

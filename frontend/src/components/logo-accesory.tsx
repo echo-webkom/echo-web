@@ -8,7 +8,7 @@ interface Props {
     h: number;
 }
 
-const LogoAccesory = ({ iconSrc, w, h }: Props): JSX.Element => {
+const LogoAccesory = ({ iconSrc, w, h }: Props) => {
     return (
         <Box display={{ base: 'none', md: 'block' }}>
             <motion.div

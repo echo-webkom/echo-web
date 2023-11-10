@@ -15,7 +15,7 @@ interface Props {
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props): JSX.Element => {
+const EntryList = ({ entries, entryLimit, type, registrationCounts }: Props) => {
     const enableJobAdverts = process.env.NEXT_PUBLIC_ENABLE_JOB_ADVERTS?.toLowerCase() === 'true';
 
     if (entryLimit) {

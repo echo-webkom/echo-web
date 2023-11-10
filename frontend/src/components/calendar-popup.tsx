@@ -29,7 +29,7 @@ interface Props {
     slug: string;
 }
 
-const CalendarPopup = ({ date, location, title, type, slug }: Props): JSX.Element => {
+const CalendarPopup = ({ date, location, title, type, slug }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const event = {
         title: `${title} ${type === 'EVENT' ? 'Arrangement' : 'Bedriftspresentasjon'}`,

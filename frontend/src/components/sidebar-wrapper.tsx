@@ -24,7 +24,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const SidebarWrapper = ({ children }: Props): JSX.Element => {
+const SidebarWrapper = ({ children }: Props) => {
     const separatorColor = useColorModeValue('bg.light.border', 'bg.dark.border');
     const highlightColor = useColorModeValue('highlight.light.primary', 'highlight.dark.primary');
     const bgColor = useColorModeValue('bg.light.secondary', 'bg.dark.secondary');

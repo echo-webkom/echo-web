@@ -14,7 +14,7 @@ interface Props {
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props): JSX.Element => {
+const HappeningKeyInfo = ({ event, registrationCounts = [] }: Props) => {
     const isNorwegian = useLanguage();
     const { user } = useAuth();
 

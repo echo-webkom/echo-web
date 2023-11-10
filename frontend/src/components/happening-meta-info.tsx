@@ -40,7 +40,7 @@ const HappeningMetaInfo = ({
     spotRangeCounts,
     spotRangesFromCms,
     deductiblePayment,
-}: Props): JSX.Element => {
+}: Props) => {
     const isNorwegian = useLanguage();
     // If spotrangeCounts (from backend) is null, we transform spotRangesFromCms
     // to the type spotRangeCount with regCount = 0 and waitListCount = 0.

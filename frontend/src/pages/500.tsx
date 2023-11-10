@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import SEO from '@components/seo';
 import useLanguage from '@hooks/use-language';
 
-const ErrorPage = (): JSX.Element => {
+const ErrorPage = () => {
     const router = useRouter();
     const isNorwegian = useLanguage();
 

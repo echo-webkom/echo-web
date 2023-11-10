@@ -4,7 +4,7 @@ import { BsSun } from 'react-icons/bs';
 import { BiMoon } from 'react-icons/bi';
 import Head from 'next/head';
 
-const ColorModeButton = (): JSX.Element => {
+const ColorModeButton = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const sunBg = useColorModeValue('yellow.500', 'yellow.200');
     const moonBg = useColorModeValue('blue.500', 'blue.200');

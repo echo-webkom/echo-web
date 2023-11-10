@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Divider, Flex, useColorModeValue } from '@chakra-ui/react';
 
-const LanguageMenu = (): JSX.Element => {
+const LanguageMenu = () => {
     const [language, setLanguage] = useState('no');
     const hoverColor = useColorModeValue('gray.600', 'gray.700');
     useEffect(() => {

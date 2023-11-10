@@ -19,7 +19,7 @@ interface Props {
     post: Post;
 }
 
-const PostPage = ({ post }: Props): JSX.Element => {
+const PostPage = ({ post }: Props) => {
     const router = useRouter();
     const isNorwegian = useLanguage();
     // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary

@@ -4,10 +4,10 @@ import useCountdown from '@hooks/use-countdown';
 
 interface Props extends ButtonProps {
     date: Date;
-    children: JSX.Element | string;
+    children: React.ReactNode | string;
 }
 
-const CountdownButton = ({ date, children, ...props }: Props): JSX.Element => {
+const CountdownButton = ({ date, children, ...props }: Props) => {
     const { hours, minutes, seconds } = useCountdown(date);
 
     if (hours + minutes + seconds <= 0) {
