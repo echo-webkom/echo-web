@@ -13,7 +13,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const Layout = ({ children }: Props): JSX.Element => {
+const Layout = ({ children }: Props) => {
     // https://nextjs.org/docs/messages/react-hydration-error
     const [SSR, setSSR] = useState(true);
     const [backendError, setBackendError] = useState(false);

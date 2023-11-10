@@ -54,7 +54,7 @@ interface Props {
     type: HappeningType;
 }
 
-const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
+const RegistrationForm = ({ happening, type }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const isNorwegian = useLanguage();
     const methods = useForm<RegFormValues>();
@@ -248,8 +248,11 @@ const RegistrationForm = ({ happening, type }: Props): JSX.Element => {
                 <ModalOverlay />
                 <ModalContent mx="2" minW={['275px', '500px', null, '700px']}>
                     <FormProvider {...methods}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-                        <form data-cy="reg-form" onSubmit={handleSubmit(submitForm)}>
+                        <form
+                            data-cy="reg-form"
+                            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                            onSubmit={handleSubmit(submitForm)}
+                        >
                             <ModalHeader>{isNorwegian ? 'Påmelding' : 'Registration'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody pb="8px">

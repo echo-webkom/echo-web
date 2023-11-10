@@ -14,7 +14,7 @@ interface Props {
     studentGroup: StudentGroup;
 }
 
-const StudentGroupPage = ({ studentGroup }: Props): JSX.Element => {
+const StudentGroupPage = ({ studentGroup }: Props) => {
     return (
         <>
             <SEO title={studentGroup.name} />

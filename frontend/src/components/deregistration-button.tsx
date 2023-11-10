@@ -29,7 +29,7 @@ interface Props {
     isWaitlist: boolean;
 }
 
-const DeregistrationButton = ({ happening, isWaitlist }: Props): JSX.Element => {
+const DeregistrationButton = ({ happening, isWaitlist }: Props) => {
     const isNorwegian = useLanguage();
     const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();

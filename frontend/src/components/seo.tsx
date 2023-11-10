@@ -10,7 +10,7 @@ const SEO = ({
     description = 'Nettsiden til echo – Linjeforeningen for informatikk.',
     title,
     image = '/maskable-icon-192x192.png',
-}: Props): JSX.Element => {
+}: Props) => {
     return (
         <Head>
             <title>{title}</title>

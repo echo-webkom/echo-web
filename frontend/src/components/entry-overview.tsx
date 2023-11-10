@@ -9,7 +9,7 @@ interface Props {
     type: 'event' | 'bedpres';
 }
 
-const EntryOverview = ({ entries, type }: Props): JSX.Element => {
+const EntryOverview = ({ entries, type }: Props) => {
     const alt = type === 'event' ? 'arrangementer' : 'bedriftspresentasjoner';
     const isNorwegian = useLanguage();
 

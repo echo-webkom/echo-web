@@ -4,7 +4,7 @@ interface Props {
     error: string;
 }
 
-const ErrorBox = ({ error }: Props): JSX.Element => {
+const ErrorBox = ({ error }: Props) => {
     return (
         <Center>
             <Box p="1em">

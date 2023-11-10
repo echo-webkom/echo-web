@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { signOut } from 'next-auth/react';
-import type { SubmitHandler } from 'react-hook-form';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { MdOutlineEmail } from 'react-icons/md';
 import { BiGroup } from 'react-icons/bi';
 import { CgProfile } from 'react-icons/cg';
@@ -9,14 +8,9 @@ import { IoIosAlert } from 'react-icons/io';
 import {
     useToast,
     Center,
-    Tooltip,
     Divider,
-    Input,
     HStack,
     Heading,
-    FormControl,
-    InputGroup,
-    InputRightAddon,
     Button,
     useColorModeValue,
     Alert,
@@ -27,13 +21,12 @@ import {
     SimpleGrid,
     GridItem,
     Spinner,
-    Icon,
     LinkBox,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { BsQuestion } from 'react-icons/bs';
 import { isFuture } from 'date-fns';
 import ProfileHappeningPreview from './profile-happening-preview';
+import FormAlternativeEmail from './form-alternative-email';
 import ErrorBox from '@components/error-box';
 import capitalize from '@utils/capitalize';
 import type { ProfileFormValues, User } from '@api/user';
@@ -62,27 +55,26 @@ const ProfileInfo = () => {
     const [upcomingBedpresses, setUpcomingBedpresses] = useState<Array<Happening>>([]);
 
     const isNorwegian = useLanguage();
-    const methods = useForm<ProfileFormValues>({
+    const form = useForm<ProfileFormValues>({
         defaultValues: {
             degree: user?.degree ?? null,
             degreeYear: user?.degreeYear ?? null,
             alternateEmail: user?.alternateEmail ?? null,
         },
     });
-    const { handleSubmit, register, setValue } = methods;
     const toast = useToast();
     const iconColor = useColorModeValue('black', 'white');
 
     useEffect(() => {
         if (signedIn && user) {
-            setValue('degree', user.degree);
-            setValue('degreeYear', user.degreeYear);
-            setValue('alternateEmail', user.alternateEmail);
+            form.setValue('degree', user.degree);
+            form.setValue('degreeYear', user.degreeYear);
+            form.setValue('alternateEmail', user.alternateEmail);
 
             setSatisfied(userIsComplete(user));
             setLoading(false);
         }
-    }, [user, signedIn, setValue]);
+    }, [user, signedIn, form]);
 
     useEffect(() => {
         const fetchUpcomingEvents = async () => {
@@ -115,7 +107,7 @@ const ProfileInfo = () => {
         void fetchUpcomingEvents();
     }, [idToken, user?.email]);
 
-    const submitForm: SubmitHandler<ProfileFormValues> = async (profileFormVals: ProfileFormValues) => {
+    const onSubmit = form.handleSubmit(async (profileFormVals) => {
         if (!user || !idToken || !signedIn) {
             toast({
                 title: isNorwegian ? 'Du er ikke logget inn' : 'You are not signed in',
@@ -158,7 +150,7 @@ const ProfileInfo = () => {
         setUser(res);
         setSaved(true);
         setLoading(false);
-    };
+    });
 
     if (error) {
         return error.message === '401' ? <Unauthorized /> : <ErrorBox error={error.message} />;
@@ -218,39 +210,15 @@ const ProfileInfo = () => {
                                     </Alert>
                                 </Skeleton>
                             )}
-                            <FormProvider {...methods}>
-                                {/* eslint-disable @typescript-eslint/no-misused-promises */}
+                            <FormProvider {...form}>
                                 <form
                                     data-cy="profile-form"
                                     id="profile-form"
-                                    onSubmit={handleSubmit(submitForm)}
+                                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                                    onSubmit={onSubmit}
                                     onChange={() => setSaved(false)}
                                 >
-                                    {/* eslint-enable @typescript-eslint/no-misused-promises */}
-                                    <FormControl>
-                                        <InputGroup>
-                                            <Input
-                                                data-cy="profile-alt-email"
-                                                type="email"
-                                                placeholder={isNorwegian ? 'Alternativ e-post' : 'Alternate email'}
-                                                mb="1rem"
-                                                {...register('alternateEmail')}
-                                            />
-                                            <InputRightAddon>
-                                                <Tooltip
-                                                    label={
-                                                        isNorwegian
-                                                            ? 'Denne vil bli brukt i stedet for studentmailen din når du melder deg på et arrangement'
-                                                            : 'Your alternate email will be used instead of your student email when you sign up for an event.'
-                                                    }
-                                                >
-                                                    <span>
-                                                        <Icon as={BsQuestion} p="0.1rem" w={8} h={8} />
-                                                    </span>
-                                                </Tooltip>
-                                            </InputRightAddon>
-                                        </InputGroup>
-                                    </FormControl>
+                                    <FormAlternativeEmail data-cy="profile-alt-email" py="1rem" />
                                     <FormDegree data-cy="profile-degree" hideLabel py="1rem" />
                                     <FormDegreeYear data-cy="profile-degree-year" hideLabel py="1rem" />
                                     <HStack mt={4} gap={4}>

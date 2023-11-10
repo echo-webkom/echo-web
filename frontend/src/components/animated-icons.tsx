@@ -8,7 +8,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const AnimatedIcons = ({ n, children }: Props): JSX.Element => {
+const AnimatedIcons = ({ n, children }: Props) => {
     const month = getMonth(new Date());
     // Only for Halloween, no animated icons for Christmas
     if (month !== 9) return <>{children}</>;
@@ -56,7 +56,7 @@ const AnimatedIcon = ({
     delay: number;
     repeatDelay: number;
     iconSrc: string;
-}): JSX.Element => (
+}) => (
     <motion.div
         style={{
             position: 'absolute',

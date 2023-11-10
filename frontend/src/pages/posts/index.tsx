@@ -12,7 +12,7 @@ interface Props {
     posts: Array<Post>;
 }
 
-const PostCollectionPage = ({ posts }: Props): JSX.Element => {
+const PostCollectionPage = ({ posts }: Props) => {
     const router = useRouter();
     const { page } = router.query;
     const pageNumber = Number.parseInt(page as string) || 1;

@@ -12,7 +12,7 @@ interface Props {
     minutes: Array<Minute>;
 }
 
-const MinutesPage = ({ minutes }: Props): JSX.Element => {
+const MinutesPage = ({ minutes }: Props) => {
     const router = useRouter();
 
     return (

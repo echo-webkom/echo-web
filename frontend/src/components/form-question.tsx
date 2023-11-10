@@ -8,7 +8,7 @@ interface Props {
     index: number;
 }
 
-const FormQuestion = ({ q, index }: Props): JSX.Element => {
+const FormQuestion = ({ q, index }: Props) => {
     const { register } = useFormContext<RegFormValues>();
 
     return q.inputType === 'radio' ? (

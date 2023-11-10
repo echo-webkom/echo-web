@@ -6,7 +6,7 @@ interface Props {
     posts: Array<Post>;
 }
 
-const PostList = ({ posts }: Props): JSX.Element => {
+const PostList = ({ posts }: Props) => {
     return (
         <Center>
             <Wrap pt="1rem" className="post-list" spacing={8} paddingBottom="20px" w="100%" justify="center">

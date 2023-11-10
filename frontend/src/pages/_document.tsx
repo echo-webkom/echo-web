@@ -8,7 +8,7 @@ const getInitialProps = async (ctx: DocumentContext): Promise<DocumentInitialPro
     return { ...initialProps };
 };
 
-const CustomDocument = (): JSX.Element => {
+const CustomDocument = () => {
     return (
         <Html lang="nb">
             <Head>

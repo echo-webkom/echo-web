@@ -10,7 +10,7 @@ interface Props {
     registrationCounts?: Array<RegistrationCount>;
 }
 
-const HappeningPreview = ({ happening, registrationCounts }: Props): JSX.Element => {
+const HappeningPreview = ({ happening, registrationCounts }: Props) => {
     const hoverColor = useColorModeValue('bg.light.hover', 'bg.dark.hover');
 
     return (

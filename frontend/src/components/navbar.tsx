@@ -18,7 +18,7 @@ import ColorModeButton from '@components/color-mode-button';
 import useLanguage from '@hooks/use-language';
 import useAuth from '@hooks/use-auth';
 
-const NavLinks = (): JSX.Element => {
+const NavLinks = () => {
     const isNorwegian = useLanguage();
     const { signedIn, loading } = useAuth();
     const router = useRouter();
@@ -63,7 +63,7 @@ interface Props {
     btnRef: RefObject<HTMLButtonElement>;
 }
 
-const NavBar = ({ isOpen, onClose, btnRef }: Props): JSX.Element => {
+const NavBar = ({ isOpen, onClose, btnRef }: Props) => {
     const isNorwegian = useLanguage();
 
     return (
