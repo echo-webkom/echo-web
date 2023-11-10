@@ -3378,10 +3378,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/remove-markdown@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@types/remove-markdown/-/remove-markdown-0.3.3.tgz#850f327ed66057eedaa5a14db5c44998d3e36535"
-  integrity sha512-Ga6BahW66yyp6QyxDOrHdsSLVTwyM1or4rfeTt/2DpC20R8aClQcflvVWR0Z9FU3cv5tUykc9GZ3Tns7Khlgvg==
+"@types/remove-markdown@0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@types/remove-markdown/-/remove-markdown-0.3.4.tgz#b90c2e7117fbb30e51d5d849afac744715db4f91"
+  integrity sha512-i753EH/p02bw7bLlpfS/4CV1rdikbGiLabWyVsAvsFid3cA5RNU1frG7JycgY+NSnFwtoGlElvZVceCytecTDA==
 
 "@types/resolve@1.17.1":
   version "1.17.1"
