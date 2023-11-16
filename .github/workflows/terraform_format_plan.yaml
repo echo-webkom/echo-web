@@ -57,7 +57,7 @@ jobs:
           terraform init -lockfile=readonly
           terraform plan -lock-timeout=15m -no-color
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.tf_plan.outputs.stdout }}"
