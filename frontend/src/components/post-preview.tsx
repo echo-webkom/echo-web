@@ -53,8 +53,8 @@ const PostPreview = ({ post, ...props }: Props) => {
                     isNorwegian
                         ? post.body.no.slice(0, 100)
                         : post.body.en
-                        ? post.body.en.slice(0, 100)
-                        : post.body.no.slice(0, 100),
+                          ? post.body.en.slice(0, 100)
+                          : post.body.no.slice(0, 100),
                 )} ...»`}
             </Text>
             <Text

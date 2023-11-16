@@ -62,9 +62,9 @@ const PostPage = ({ post }: Props): JSX.Element => {
                                 {isNorwegian
                                     ? post.body.no
                                     : // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
-                                    post.body.en
-                                    ? post.body.en
-                                    : '(No english version avalible) \n\n' + post.body.no}
+                                      post.body.en
+                                      ? post.body.en
+                                      : '(No english version avalible) \n\n' + post.body.no}
                             </Markdown>
                         </Section>
                     </Box>

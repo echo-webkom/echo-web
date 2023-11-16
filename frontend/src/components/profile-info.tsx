@@ -268,8 +268,8 @@ const ProfileInfo = () => {
                                                     ? 'Endringer lagret!'
                                                     : 'Changes saved!'
                                                 : isNorwegian
-                                                ? 'Lagre endringer'
-                                                : 'Save changes'}
+                                                  ? 'Lagre endringer'
+                                                  : 'Save changes'}
                                         </Button>
                                         <Button
                                             data-cy="sign-out-btn"
