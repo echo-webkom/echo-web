@@ -2720,10 +2720,10 @@
     golden-fleece "^1.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@6.8.0":
-  version "6.8.0"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.8.0.tgz#c47528a6fac5b35c045bab91954bf6de82b2823c"
-  integrity sha512-SshNs8WfL3PxStBLqgq5FZJAmJO/Nj2IPynPYa+ze+h4SUZU6L/LyIj6848C91nHABICocuUJ3gwZRhK6YNNdw==
+"@sanity/client@6.8.4":
+  version "6.8.4"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.8.4.tgz#7e3c60988062a15ced3b1c6f0a28bb04ede5487e"
+  integrity sha512-ewmfiN54qy7cHiZFFFLq2+L/5gR8vnJT8LYoe1Cyw76aZNDEDUtEHuyIZbEy5LovAmW2CJVs3I+GV6vxJwsrfw==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     "@vercel/stega" "0.1.0"
