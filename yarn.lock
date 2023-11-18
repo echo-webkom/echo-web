@@ -2720,10 +2720,10 @@
     golden-fleece "^1.0.9"
     pkg-dir "^5.0.0"
 
-"@sanity/client@6.8.5":
-  version "6.8.5"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.8.5.tgz#5993afa1a87fe373f357967b371d620e22d202eb"
-  integrity sha512-RVToi17kmTzGh3SBj6oeEDcp6PzM4LrvnOlSf580rjgejT806jvVdiOKLaR0yKul264vg1rEJhZT1A594BxmLA==
+"@sanity/client@6.8.6", "@sanity/client@^6.8.5":
+  version "6.8.6"
+  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.8.6.tgz#e5bc98c525f50ef8c2ecf1f41c1ea8441b9ac9a6"
+  integrity sha512-Va4KZ4mRnyIbV+61VIJ+Op/amNAwWTo/ET3egtnEqPuXYLg60VWffNoAtAjuaZ5qM9BpTOCGJZjTKCHq+/5CEw==
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     "@vercel/stega" "0.1.0"
@@ -2746,16 +2746,6 @@
   dependencies:
     "@sanity/eventsource" "^5.0.0"
     get-it "^8.4.3"
-    rxjs "^7.0.0"
-
-"@sanity/client@^6.8.5":
-  version "6.8.6"
-  resolved "https://registry.yarnpkg.com/@sanity/client/-/client-6.8.6.tgz#e5bc98c525f50ef8c2ecf1f41c1ea8441b9ac9a6"
-  integrity sha512-Va4KZ4mRnyIbV+61VIJ+Op/amNAwWTo/ET3egtnEqPuXYLg60VWffNoAtAjuaZ5qM9BpTOCGJZjTKCHq+/5CEw==
-  dependencies:
-    "@sanity/eventsource" "^5.0.0"
-    "@vercel/stega" "0.1.0"
-    get-it "^8.4.4"
     rxjs "^7.0.0"
 
 "@sanity/color-input@3.1.0":
