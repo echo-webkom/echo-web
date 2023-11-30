@@ -139,7 +139,7 @@
         "zod": "3.22.4"
     },
     "devDependencies": {
-        "@types/canvas-confetti": "1.6.3",
+        "@types/canvas-confetti": "1.6.4",
         "@types/node": "18.18.13",
         "@types/randomcolor": "0.5.9",
         "@types/react": "18.2.38",
