@@ -2941,10 +2941,10 @@
   resolved "https://registry.yarnpkg.com/@sanity/preview-kit-compat/-/preview-kit-compat-1.0.2.tgz#fe76f9727b5e5125d5f665c7e85a262aab0fc969"
   integrity sha512-TnmbxyKDJiWVBx0ByI4MfyZUJoAWwBoq1Luh1dRsiVrXMubxw7/N22PjLnmNb4SyFCqJpVZ4KWufURD2QRCKoA==
 
-"@sanity/preview-kit@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@sanity/preview-kit/-/preview-kit-5.0.0.tgz#6637192fd64848496ee520e4e0f52f4d7385bdbb"
-  integrity sha512-dj2HZvfkInoIQLwFPoFfYHBQaUvEDC5TgW3EjX/zSbJmd2+JFRNSLinuEi7jeyMytT+zSaAP3NxvevVe+jMvNw==
+"@sanity/preview-kit@5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@sanity/preview-kit/-/preview-kit-5.0.1.tgz#ed3d1d9cecb75ab713d8bc58f630975e8cd69fad"
+  integrity sha512-MFkOGPegwvQ0EJ9H5nzLnYvVxLCzamevb8rdEgsubL4rTswkRKL52zogFuYOr3/XlBmQgC2y1/jSTlyEtqwslw==
   dependencies:
     "@sanity/preview-kit-compat" "1.0.2"
     "@vercel/stega" "0.1.0"
@@ -7928,13 +7928,13 @@ next-auth@4.24.5:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
-next-sanity@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-7.0.0.tgz#d56ae73a39b24ff0342fb588ccedfe88110075af"
-  integrity sha512-k5b9HWhNjnr/rCT/DbLiuc01SreCT5gcRnyGWEvQ0xv5lfhdQT++lY5PgeTrqNsNA+R7A7Yn4pNcCKw27bnFuQ==
+next-sanity@7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/next-sanity/-/next-sanity-7.0.1.tgz#f2d54be5f184d1bc723800018527db85306a81ed"
+  integrity sha512-WezHXY5Wt0SArjl6Ddg0pmu+yy3ygULEgVA44UJpM5VvZIn8lHNDrq2gTduJxYgrBvDx/m5RR48nAW86bbGxyQ==
   dependencies:
     "@sanity/client" "^6.9.1"
-    "@sanity/preview-kit" "5.0.0"
+    "@sanity/preview-kit" "5.0.1"
     "@sanity/webhook" "4.0.0"
     groq "^3.19"
 
