@@ -6204,10 +6204,10 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-framer-motion@10.16.10:
-  version "10.16.10"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.16.10.tgz#4db8cb0faafd69b7364dc80cf722277b9ddb0bea"
-  integrity sha512-oq+u3GZ9G3GThquW6y0EQgKVMOAyD86qLgH+UPVniQZBr+E7xjSjg1KfmwAovxhqPFe0yUJLDgI5ucjnQeS70Q==
+framer-motion@10.16.12:
+  version "10.16.12"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-10.16.12.tgz#8aca3ffa4801953dd873de422a3c1f78b2aa7bfa"
+  integrity sha512-w7Yzx0OzQ5Uh6uNkxaX+4TuAPuOKz3haSbjmHpdrqDpGuCJCpq6YP9Dy7JJWdZ6mJjndrg3Ao3vUwDajKNikCA==
   dependencies:
     tslib "^2.4.0"
   optionalDependencies:
