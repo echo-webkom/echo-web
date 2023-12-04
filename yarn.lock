@@ -3388,6 +3388,15 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/react@18.2.40":
+  version "18.2.40"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.40.tgz#b1cc2bafdc81da3c9bb105cfe8b91211bbce2e0d"
+  integrity sha512-H+BUhb9C1zBtogDLAk+KCNRKiHDrqSwQT/0z0PVTwMFBxqg3011ByLomADtgkgMkfwj4AMOiXBReyLTUBg681g==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/remove-markdown@0.3.4":
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/@types/remove-markdown/-/remove-markdown-0.3.4.tgz#b90c2e7117fbb30e51d5d849afac744715db4f91"
