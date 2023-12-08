@@ -26,6 +26,7 @@ jobs:
       - name: Install PgSanity & dependencies
         run: |
           pip install -r requirements.txt
+          sudo apt-get -y update
           sudo apt-get -y install libecpg-dev
 
       - name: Run PgSanity
