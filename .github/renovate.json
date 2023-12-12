@@ -29,6 +29,19 @@
         {
             "matchPackagePatterns": ["^azurerm"],
             "groupName": "Azure terraform provider"
+        },
+        {
+            "matchDepTypes": ["devDependencies"],
+            "matchPackagePatterns": [
+                "@types/*",
+                "@typescript-eslint/*",
+                "eslint",
+                "eslint-plugin-*",
+                "eslint-config-*",
+                "prettier",
+                "@typescript-eslint/*"
+            ],
+            "automerge": true
         }
     ]
 }
