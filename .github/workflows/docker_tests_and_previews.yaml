@@ -202,7 +202,7 @@ jobs:
           FEIDE_CLIENT_SECRET: ${{ secrets.FEIDE_CLIENT_SECRET }}
 
       - name: Upload Cypress screenshots (only on failure)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
