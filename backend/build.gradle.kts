@@ -68,7 +68,7 @@ dependencies {
 
     testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.20")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
 }
 
 // Used for Shadow. Sets main class in JAR-file.
