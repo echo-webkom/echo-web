@@ -112,7 +112,7 @@
     "dependencies": {
         "@chakra-ui/react": "2.5.5",
         "@ducanh2912/next-pwa": "10.0.0",
-        "@emotion/react": "11.11.1",
+        "@emotion/react": "11.11.3",
         "@emotion/styled": "11.11.0",
         "@sanity/client": "6.10.0",
         "@sanity/image-url": "1.0.2",
