@@ -57,12 +57,13 @@ import kotlin.test.Test
 
 class GetRegistrationsTest {
     companion object {
-        val db = DatabaseHandler(
-            env = Environment.PREVIEW,
-            migrateDb = false,
-            dbUrl = URI(System.getenv("DATABASE_URL")),
-            mbMaxPoolSize = null
-        )
+        val db =
+            DatabaseHandler(
+                env = Environment.PREVIEW,
+                migrateDb = false,
+                dbUrl = URI(System.getenv("DATABASE_URL")),
+                mbMaxPoolSize = null,
+            )
     }
 
     @BeforeTest
@@ -82,12 +83,13 @@ class GetRegistrationsTest {
     @Test
     fun `Should get correct count of registrations and wait list registrations, and produce correct CSV list`() =
         testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
+            val client =
+                createClient {
+                    install(Logging)
+                    install(ContentNegotiation) {
+                        json()
+                    }
                 }
-            }
             val usersSublist = listOf(user1, user2, user3, user4, user5)
             val waitListUsers = listOf(user6, user7, user8, user9, user10)
 
@@ -114,8 +116,8 @@ class GetRegistrationsTest {
                             null,
                             null,
                             newReg.answers,
-                            u.memberships
-                        )
+                            u.memberships,
+                        ),
                     )
 
                     val getTokenCall = client.get("/token/${u.email}")
@@ -123,11 +125,12 @@ class GetRegistrationsTest {
                     getTokenCall.status shouldBe HttpStatusCode.OK
                     val token: String = getTokenCall.body()
 
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        bearerAuth(token)
-                        setBody(newReg)
-                    }
+                    val submitRegCall =
+                        client.post("/registration") {
+                            contentType(ContentType.Application.Json)
+                            bearerAuth(token)
+                            setBody(newReg)
+                        }
 
                     if (u in usersSublist) {
                         submitRegCall.status shouldBe HttpStatusCode.OK
@@ -142,9 +145,10 @@ class GetRegistrationsTest {
                     }
                 }
 
-                val getHappeningInfoCall = client.get("/happening/${hap9(t).slug}") {
-                    basicAuth("admin", System.getenv("ADMIN_KEY"))
-                }
+                val getHappeningInfoCall =
+                    client.get("/happening/${hap9(t).slug}") {
+                        basicAuth("admin", System.getenv("ADMIN_KEY"))
+                    }
 
                 getHappeningInfoCall.status shouldBe HttpStatusCode.OK
                 val happeningInfo: HappeningInfoJson = getHappeningInfoCall.body()
@@ -152,16 +156,18 @@ class GetRegistrationsTest {
                 happeningInfo.spotRanges[0].regCount shouldBe hap9(t).spotRanges[0].spots
                 happeningInfo.spotRanges[0].waitListCount shouldBe waitListUsers.size
 
-                val getRegistrationsListCall = client.get("/registration/${hap9(t).slug}?download=y&testing=y") {
-                    bearerAuth(adminToken)
-                }
+                val getRegistrationsListCall =
+                    client.get("/registration/${hap9(t).slug}?download=y&testing=y") {
+                        bearerAuth(adminToken)
+                    }
 
                 getRegistrationsListCall.status shouldBe HttpStatusCode.OK
                 getRegistrationsListCall.bodyAsText() shouldBe toCsv(regsList, testing = true)
 
-                val getRegistrationsListJsonCall = client.get("/registration/${hap9(t).slug}?json=y&testing=y") {
-                    bearerAuth(adminToken)
-                }
+                val getRegistrationsListJsonCall =
+                    client.get("/registration/${hap9(t).slug}?json=y&testing=y") {
+                        bearerAuth(adminToken)
+                    }
 
                 getRegistrationsListJsonCall.status shouldBe HttpStatusCode.OK
                 val registrationsList: List<RegistrationJson> = getRegistrationsListJsonCall.body()
@@ -175,16 +181,18 @@ class GetRegistrationsTest {
     @Test
     fun `Should respond properly when given invalid slug of happening when happening info is requested`() =
         testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
+            val client =
+                createClient {
+                    install(Logging)
+                    install(ContentNegotiation) {
+                        json()
+                    }
                 }
-            }
             for (t in be) {
-                val getHappeningInfoCall = client.get("/happening/random-slug-som-ikke-finnes") {
-                    basicAuth("admin", System.getenv("ADMIN_KEY"))
-                }
+                val getHappeningInfoCall =
+                    client.get("/happening/random-slug-som-ikke-finnes") {
+                        basicAuth("admin", System.getenv("ADMIN_KEY"))
+                    }
 
                 getHappeningInfoCall.status shouldBe HttpStatusCode.NotFound
                 getHappeningInfoCall.bodyAsText() shouldBe "Happening doesn't exist."

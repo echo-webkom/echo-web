@@ -13,7 +13,13 @@ import io.ktor.server.auth.jwt.jwt
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-fun Application.configureAuthentication(adminKey: String, audience: String, devIssuer: String, secret: String?, devRealm: String) {
+fun Application.configureAuthentication(
+    adminKey: String,
+    audience: String,
+    devIssuer: String,
+    secret: String?,
+    devRealm: String,
+) {
     install(Authentication) {
         basic("auth-admin") {
             realm = "Access to registrations and happenings."
@@ -27,10 +33,11 @@ fun Application.configureAuthentication(adminKey: String, audience: String, devI
         }
 
         val issuer = "https://auth.dataporten.no"
-        val jwkProvider = JwkProviderBuilder(URL("$issuer/openid/jwks"))
-            .cached(10, 24, TimeUnit.HOURS)
-            .rateLimited(10, 1, TimeUnit.MINUTES)
-            .build()
+        val jwkProvider =
+            JwkProviderBuilder(URL("$issuer/openid/jwks"))
+                .cached(10, 24, TimeUnit.HOURS)
+                .rateLimited(10, 1, TimeUnit.MINUTES)
+                .build()
 
         jwt("auth-jwt") {
             realm = "Verify jwt"
@@ -51,7 +58,7 @@ fun Application.configureAuthentication(adminKey: String, audience: String, devI
                         .require(Algorithm.HMAC256(secret))
                         .withAudience(audience)
                         .withIssuer(devIssuer)
-                        .build()
+                        .build(),
                 )
                 validate { credential ->
                     if (credential.payload.getClaim("email").asString() != "") {

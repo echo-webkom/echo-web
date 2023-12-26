@@ -32,26 +32,27 @@ import java.net.URI
 private const val DEFAULT_DEV_POOL_SIZE = 7
 private const val DEFAULT_PROD_POOL_SIZE = 20
 
-val tables: Array<Table> = arrayOf(
-    Happening,
-    StudentGroupHappeningRegistration,
-    Registration,
-    Answer,
-    SpotRange,
-    User,
-    Feedback,
-    StudentGroup,
-    StudentGroupMembership,
-    Reaction,
-    WaitingListUUID,
-    Whitelist
-)
+val tables: Array<Table> =
+    arrayOf(
+        Happening,
+        StudentGroupHappeningRegistration,
+        Registration,
+        Answer,
+        SpotRange,
+        User,
+        Feedback,
+        StudentGroup,
+        StudentGroupMembership,
+        Reaction,
+        WaitingListUUID,
+        Whitelist,
+    )
 
 class DatabaseHandler(
     private val env: Environment,
     private val migrateDb: Boolean,
     dbUrl: URI,
-    mbMaxPoolSize: String?
+    mbMaxPoolSize: String?,
 ) {
     private val dbPort = if (dbUrl.port == -1) 5432 else dbUrl.port
     private val dbUrlStr = "jdbc:postgresql://${dbUrl.host}:${dbPort}${dbUrl.path}"
@@ -76,7 +77,7 @@ class DatabaseHandler(
                 driverClassName = "org.postgresql.Driver"
                 connectionTimeout = 1000
                 maximumPoolSize = maxPoolSize
-            }
+            },
         )
     }
 
@@ -86,7 +87,7 @@ class DatabaseHandler(
         GIVEN BY THE NAME OF THE SQL FILE IN src/main/resources/db/migration
         WITH THE HIGHEST PREFIX. I.E., "V29__xyz_abc.sql" IS VERSION "29".
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    */
+     */
     private val flyway: Flyway =
         Flyway.configure().baselineVersion("31").cleanDisabled(false).dataSource(dbUrlStr, dbUsername, dbPassword)
             .load()
@@ -131,52 +132,56 @@ class DatabaseHandler(
     }
 
     private fun insertTestData() {
-        val happenings = listOf(
-            HappeningJson(
-                "bedriftspresentasjon-med-bekk",
-                "Bedpres med Bekk",
-                "021-05-06T16:46+01:00",
-                "2030-03-09T16:15+01:00",
-                spotRanges = listOf(
-                    SpotRangeJson(
-                        11,
-                        1,
-                        2
-                    ),
-                    SpotRangeJson(
-                        9,
-                        3,
-                        5
-                    )
+        val happenings =
+            listOf(
+                HappeningJson(
+                    "bedriftspresentasjon-med-bekk",
+                    "Bedpres med Bekk",
+                    "021-05-06T16:46+01:00",
+                    "2030-03-09T16:15+01:00",
+                    spotRanges =
+                        listOf(
+                            SpotRangeJson(
+                                11,
+                                1,
+                                2,
+                            ),
+                            SpotRangeJson(
+                                9,
+                                3,
+                                5,
+                            ),
+                        ),
+                    HAPPENING_TYPE.BEDPRES,
+                    validStudentGroups[1],
                 ),
-                HAPPENING_TYPE.BEDPRES,
-                validStudentGroups[1]
-            ),
-            HappeningJson(
-                "fest-med-tilde",
-                "Fest med Tilde!",
-                "2021-05-06T16:46+01:00",
-                "2030-06-02T14:20+01:00",
-                spotRanges = listOf(
-                    SpotRangeJson(
-                        20,
-                        1,
-                        5
-                    )
+                HappeningJson(
+                    "fest-med-tilde",
+                    "Fest med Tilde!",
+                    "2021-05-06T16:46+01:00",
+                    "2030-06-02T14:20+01:00",
+                    spotRanges =
+                        listOf(
+                            SpotRangeJson(
+                                20,
+                                1,
+                                5,
+                            ),
+                        ),
+                    HAPPENING_TYPE.EVENT,
+                    validStudentGroups[2],
                 ),
-                HAPPENING_TYPE.EVENT,
-                validStudentGroups[2]
             )
-        )
 
-        val adminTestUser = UserJson(
-            "test.mctest@student.uib.no",
-            "Test McTest",
-            memberships = listOf("webkom"),
-            strikes = 0,
-            createdAt = DateTime.now().toString(),
-            modifiedAt = DateTime.now().toString()
-        )
+        val adminTestUser =
+            UserJson(
+                "test.mctest@student.uib.no",
+                "Test McTest",
+                memberships = listOf("webkom"),
+                strikes = 0,
+                createdAt = DateTime.now().toString(),
+                modifiedAt = DateTime.now().toString(),
+            )
 
         try {
             transaction {

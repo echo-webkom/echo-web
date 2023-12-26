@@ -15,15 +15,16 @@ class SanityClient(
     projectId: String,
     dataset: String,
     apiVersion: String,
-    useCdn: Boolean
+    useCdn: Boolean,
 ) {
     private val domain = if (useCdn) "apicdn.sanity.io" else "api.sanity.io"
     private val baseUrl = "https://$projectId.$domain/$apiVersion/data/query/$dataset"
 
     suspend fun fetch(query: String): HttpResponse {
-        val encodedQuery = withContext(Dispatchers.IO) {
-            URLEncoder.encode(query, "UTF-8")
-        }
+        val encodedQuery =
+            withContext(Dispatchers.IO) {
+                URLEncoder.encode(query, "UTF-8")
+            }
 
         val url = "$baseUrl?query=$encodedQuery"
 
@@ -34,7 +35,7 @@ class SanityClient(
                     Json {
                         ignoreUnknownKeys = true
                         coerceInputValues = true
-                    }
+                    },
                 )
             }
         }.use {

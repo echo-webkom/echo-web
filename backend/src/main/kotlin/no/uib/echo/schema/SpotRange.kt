@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 data class SpotRangeJson(
     val spots: Int,
     val minDegreeYear: Int,
-    val maxDegreeYear: Int
+    val maxDegreeYear: Int,
 )
 
 @Serializable
@@ -22,7 +22,7 @@ data class SpotRangeWithCountJson(
     val minDegreeYear: Int,
     val maxDegreeYear: Int,
     val regCount: Int,
-    val waitListCount: Int
+    val waitListCount: Int,
 )
 
 object SpotRange : Table() {
@@ -37,14 +37,14 @@ object SpotRange : Table() {
 
 @Serializable
 data class SlugJson(
-    val slugs: List<String>
+    val slugs: List<String>,
 )
 
 @Serializable
 data class RegistrationCountJson(
     val slug: String,
     val count: Int,
-    val waitListCount: Int
+    val waitListCount: Int,
 )
 
 fun selectSpotRanges(slug: String): List<SpotRangeJson> {
@@ -56,7 +56,7 @@ fun selectSpotRanges(slug: String): List<SpotRangeJson> {
         SpotRangeJson(
             it[spots],
             it[minDegreeYear],
-            it[maxDegreeYear]
+            it[maxDegreeYear],
         )
     }
 }

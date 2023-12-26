@@ -26,12 +26,13 @@ import kotlin.test.Test
 
 class DeleteHappeningTest {
     companion object {
-        val db = DatabaseHandler(
-            env = Environment.PREVIEW,
-            migrateDb = false,
-            dbUrl = URI(System.getenv("DATABASE_URL")),
-            mbMaxPoolSize = null
-        )
+        val db =
+            DatabaseHandler(
+                env = Environment.PREVIEW,
+                migrateDb = false,
+                dbUrl = URI(System.getenv("DATABASE_URL")),
+                mbMaxPoolSize = null,
+            )
     }
 
     @BeforeTest
@@ -51,16 +52,18 @@ class DeleteHappeningTest {
     @Test
     fun `When trying to delete a happening, server should respond with OK`() =
         testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
+            val client =
+                createClient {
+                    install(Logging)
+                    install(ContentNegotiation) {
+                        json()
+                    }
                 }
-            }
             for (t in be) {
-                val testCall = client.delete("/happening/${hap1(t).slug}") {
-                    basicAuth("admin", System.getenv("ADMIN_KEY"))
-                }
+                val testCall =
+                    client.delete("/happening/${hap1(t).slug}") {
+                        basicAuth("admin", System.getenv("ADMIN_KEY"))
+                    }
 
                 testCall.status shouldBe HttpStatusCode.OK
             }
@@ -69,16 +72,18 @@ class DeleteHappeningTest {
     @Test
     fun `When trying to delete a happening with wrong Authorization header, server should respond with UNAUTHORIZED`() =
         testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
+            val client =
+                createClient {
+                    install(Logging)
+                    install(ContentNegotiation) {
+                        json()
+                    }
                 }
-            }
             for (t in be) {
-                val testCall = client.delete("/happening/${hap1(t).slug}") {
-                    basicAuth("admin", "wrong-password")
-                }
+                val testCall =
+                    client.delete("/happening/${hap1(t).slug}") {
+                        basicAuth("admin", "wrong-password")
+                    }
 
                 testCall.status shouldBe HttpStatusCode.Unauthorized
             }

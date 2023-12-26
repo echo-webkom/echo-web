@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 @Serializable
 data class WhitelistJson(
     val email: String,
-    val expiresAt: String
+    val expiresAt: String,
 )
 
 object Whitelist : Table("whitelist") {

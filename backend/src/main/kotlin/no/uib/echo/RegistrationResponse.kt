@@ -19,7 +19,7 @@ enum class RegistrationResponse {
     TooLate,
     WaitList,
     NotInRange,
-    OK
+    OK,
 }
 
 fun resToJson(
@@ -27,7 +27,7 @@ fun resToJson(
     regDate: String? = null,
     spotRanges: List<SpotRangeJson>? = null,
     waitListSpot: Long? = null,
-    studentGroups: List<String>? = null
+    studentGroups: List<String>? = null,
 ): RegistrationResponseJson {
     when (res) {
         RegistrationResponse.NotSignedIn ->
@@ -37,7 +37,11 @@ fun resToJson(
         RegistrationResponse.InvalidDegreeYear ->
             return RegistrationResponseJson(res, "Vennligst velg et gyldig trinn.", "")
         RegistrationResponse.DegreeYearMismatch ->
-            return RegistrationResponseJson(res, "Årstrinn og studiretning stemmer ikke overens.", "Vennligst gå inn på profilen din og endre til riktig informasjon.")
+            return RegistrationResponseJson(
+                res,
+                "Årstrinn og studiretning stemmer ikke overens.",
+                "Vennligst gå inn på profilen din og endre til riktig informasjon.",
+            )
         RegistrationResponse.AlreadySubmitted ->
             return RegistrationResponseJson(res, "Du er allerede påmeldt.", "Du har allerede fått plass.")
         RegistrationResponse.AlreadySubmittedWaitList ->
@@ -47,27 +51,28 @@ fun resToJson(
         RegistrationResponse.TooLate ->
             return RegistrationResponseJson(res, "Påmeldingen er stengt.", "Det er ikke mulig å melde seg på lenger.", regDate)
         RegistrationResponse.WaitList -> {
-            val desc = when (waitListSpot) {
-                null -> "Du har blitt satt på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
-                else -> "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
-            }
+            val desc =
+                when (waitListSpot) {
+                    null -> "Du har blitt satt på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+                    else -> "Du er på plass nr. $waitListSpot på ventelisten, og vil bli kontaktet om det åpner seg en ledig plass."
+                }
             return RegistrationResponseJson(
                 res,
                 "Alle plassene er dessverre fylt opp.",
-                desc
+                desc,
             )
         }
         RegistrationResponse.HappeningDoesntExist ->
             return RegistrationResponseJson(
                 res,
                 "Dette arrangementet finnes ikke.",
-                "Om du mener dette ikke stemmer, ta kontakt med Webkom."
+                "Om du mener dette ikke stemmer, ta kontakt med Webkom.",
             )
         RegistrationResponse.OnlyOpenForStudentGroups ->
             return RegistrationResponseJson(
                 res,
                 "Du kan ikke melde deg på.",
-                "Dette arrangementet er kun åpent for ${studentGroups?.joinToString(", ") ?: "visse studentgrupper"}."
+                "Dette arrangementet er kun åpent for ${studentGroups?.joinToString(", ") ?: "visse studentgrupper"}.",
             )
         RegistrationResponse.NotInRange -> {
             var desc = "Dette arrangementet er kun åpent for "
@@ -90,14 +95,14 @@ fun resToJson(
             return RegistrationResponseJson(
                 res,
                 "Du kan dessverre ikke melde deg på.",
-                desc
+                desc,
             )
         }
         RegistrationResponse.OK ->
             return RegistrationResponseJson(
                 res,
                 "Påmeldingen din er registrert!",
-                "Du har fått plass på arrangementet."
+                "Du har fått plass på arrangementet.",
             )
     }
 }

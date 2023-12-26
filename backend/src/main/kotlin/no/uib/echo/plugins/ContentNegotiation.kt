@@ -12,7 +12,7 @@ fun Application.configureContentNegotiation() {
             Json {
                 ignoreUnknownKeys = true
                 encodeDefaults = true
-            }
+            },
         )
     }
 }

@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.Table
 @Serializable
 data class AnswerJson(
     val question: String,
-    val answer: String
+    val answer: String,
 )
 
 object Answer : Table() {
@@ -25,7 +25,7 @@ object Answer : Table() {
             happeningSlug to Registration.happeningSlug,
             registrationEmail to Registration.userEmail,
             onUpdate = ReferenceOption.RESTRICT,
-            onDelete = ReferenceOption.RESTRICT
+            onDelete = ReferenceOption.RESTRICT,
         )
     }
 }

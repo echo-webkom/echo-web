@@ -28,7 +28,10 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-fun Application.waitinglistRoutes(jwtConfig: String, sendGridApiKey: String?) {
+fun Application.waitinglistRoutes(
+    jwtConfig: String,
+    sendGridApiKey: String?,
+) {
     routing {
         if (sendGridApiKey != null) {
             authenticate(jwtConfig) {
@@ -48,11 +51,12 @@ fun Route.promoteFromWaitingListWithoutValidation() {
                 return@post
             }
 
-            val waitingListResult = transaction {
-                WaitingListUUID.select {
-                    WaitingListUUID.uuid eq uuid
-                }.firstOrNull()
-            }
+            val waitingListResult =
+                transaction {
+                    WaitingListUUID.select {
+                        WaitingListUUID.uuid eq uuid
+                    }.firstOrNull()
+                }
             if (waitingListResult == null) {
                 call.respond(HttpStatusCode.BadRequest, "the UUID '$uuid' was not found in the database")
                 return@post
@@ -62,7 +66,10 @@ fun Route.promoteFromWaitingListWithoutValidation() {
             val email = waitingListResult[userEmail]
 
             if (!isPromotionLegal(happeningSlug) || !isPersonLegalToPromote(happeningSlug, email)) {
-                call.respond(HttpStatusCode.Accepted, "user ($email) was denied promotion from the waiting list, person or promotion was illegal")
+                call.respond(
+                    HttpStatusCode.Accepted,
+                    "user ($email) was denied promotion from the waiting list, person or promotion was illegal",
+                )
                 return@post
             }
 
@@ -92,11 +99,12 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
             return@get
         }
 
-        val slug = transaction {
-            Happening.select {
-                Happening.slug eq happeningSlug
-            }.firstOrNull()
-        }
+        val slug =
+            transaction {
+                Happening.select {
+                    Happening.slug eq happeningSlug
+                }.firstOrNull()
+            }
         if (slug == null) {
             call.respond(HttpStatusCode.NotFound, "could not find event")
             return@get
@@ -123,11 +131,12 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                 return@post
             }
 
-            val slug = transaction {
-                Happening.select {
-                    Happening.slug eq happeningSlug
-                }.firstOrNull()
-            }
+            val slug =
+                transaction {
+                    Happening.select {
+                        Happening.slug eq happeningSlug
+                    }.firstOrNull()
+                }
 
             if (slug == null) {
                 call.respond(HttpStatusCode.NotFound, "could not find event")
@@ -168,11 +177,12 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                 return@post
             }
 
-            val slug = transaction {
-                Happening.select {
-                    Happening.slug eq happeningSlug
-                }.firstOrNull()
-            }
+            val slug =
+                transaction {
+                    Happening.select {
+                        Happening.slug eq happeningSlug
+                    }.firstOrNull()
+                }
 
             if (slug == null) {
                 call.respond(HttpStatusCode.NotFound, "Slug was not found in database")
@@ -184,13 +194,14 @@ fun Route.promoteFromWaitingList(sendGridApiKey: String) {
                 return@post
             }
 
-            val reg = transaction {
-                Registration.select {
-                    Registration.happeningSlug eq happeningSlug and(
-                        Registration.userEmail eq email
+            val reg =
+                transaction {
+                    Registration.select {
+                        Registration.happeningSlug eq happeningSlug and(
+                            Registration.userEmail eq email
                         )
-                }.firstOrNull()
-            }
+                    }.firstOrNull()
+                }
 
             if (reg == null) {
                 call.respond(HttpStatusCode.NotFound, "the email was not registered to the slug")

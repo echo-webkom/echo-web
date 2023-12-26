@@ -9,7 +9,7 @@ enum class ReactionType {
     ROCKET,
     BEER,
     EYES,
-    FIX
+    FIX,
 }
 
 @Serializable
@@ -19,7 +19,7 @@ data class ReactionsJson(
     val beer: Int,
     val eyes: Int,
     val fix: Int,
-    val reactedTo: List<ReactionType>
+    val reactedTo: List<ReactionType>,
 )
 
 object Reaction : Table() {

@@ -14,8 +14,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
+@Suppress("ktlint:standard:class-naming")
 enum class HAPPENING_TYPE {
-    BEDPRES, EVENT
+    BEDPRES,
+    EVENT,
 }
 
 @Serializable
@@ -29,12 +31,12 @@ data class HappeningJson(
     val studentGroupName: String,
     val studentGroupRegistrationDate: String? = null,
     val studentGroups: List<String> = emptyList(),
-    val onlyForStudentGroups: Boolean? = null
+    val onlyForStudentGroups: Boolean? = null,
 )
 
 @Serializable
 data class HappeningInfoJson(
-    val spotRanges: List<SpotRangeWithCountJson>
+    val spotRanges: List<SpotRangeWithCountJson>,
 )
 
 object Happening : Table() {
@@ -54,34 +56,35 @@ object StudentGroupHappeningRegistration : Table("student_group_happening_regist
     val studentGroupName: Column<String> = text("student_group_name").references(StudentGroup.name)
     val happeningSlug: Column<String> = text("happening_slug").references(Happening.slug)
 
-    override val primaryKey: PrimaryKey = PrimaryKey(
-        StudentGroupHappeningRegistration.studentGroupName,
-        StudentGroupHappeningRegistration.happeningSlug
-    )
+    override val primaryKey: PrimaryKey =
+        PrimaryKey(
+            StudentGroupHappeningRegistration.studentGroupName,
+            StudentGroupHappeningRegistration.happeningSlug,
+        )
 }
 
-fun insertOrUpdateHappening(
-    newHappening: HappeningJson
-): Pair<HttpStatusCode, String> {
+fun insertOrUpdateHappening(newHappening: HappeningJson): Pair<HttpStatusCode, String> {
     if (newHappening.spotRanges.isEmpty()) {
         return Pair(
             HttpStatusCode.BadRequest,
-            "No spot range given for happening with slug ${newHappening.slug}."
+            "No spot range given for happening with slug ${newHappening.slug}.",
         )
     }
 
-    val happening = transaction {
-        Happening.select {
-            Happening.slug eq newHappening.slug
-        }.firstOrNull()
-    }
+    val happening =
+        transaction {
+            Happening.select {
+                Happening.slug eq newHappening.slug
+            }.firstOrNull()
+        }
 
     val spotRanges = selectSpotRanges(newHappening.slug)
-    val studentGroups = transaction {
-        StudentGroupHappeningRegistration.select {
-            StudentGroupHappeningRegistration.happeningSlug eq newHappening.slug
-        }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
-    }
+    val studentGroups =
+        transaction {
+            StudentGroupHappeningRegistration.select {
+                StudentGroupHappeningRegistration.happeningSlug eq newHappening.slug
+            }.toList().map { it[StudentGroupHappeningRegistration.studentGroupName] }
+        }
 
     if (happening == null) {
         transaction {
@@ -108,20 +111,22 @@ fun insertOrUpdateHappening(
 
         return Pair(
             HttpStatusCode.OK,
-            "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}."
+            "${newHappening.type.toString().lowercase()} submitted with slug = ${newHappening.slug}.",
         )
     }
 
-    if (happening[Happening.slug] == newHappening.slug && happening[Happening.title] == newHappening.title && DateTime(
-            happening[Happening.registrationDate]
-        ) == DateTime(newHappening.registrationDate) && DateTime(happening[Happening.happeningDate]) == DateTime(
-                newHappening.happeningDate
-            ) && spotRanges == newHappening.spotRanges && happening[Happening.studentGroupName]?.lowercase() == newHappening.studentGroupName.lowercase() && happening[Happening.studentGroupRegistrationDate] == DateTime(
-                newHappening.studentGroupRegistrationDate
-            ) && studentGroups == newHappening.studentGroups && happening[Happening.onlyForStudentGroups] == newHappening.onlyForStudentGroups
-
+    if (happening[Happening.slug] == newHappening.slug &&
+        happening[Happening.title] == newHappening.title &&
+        DateTime(happening[Happening.registrationDate]) == DateTime(newHappening.registrationDate) &&
+        DateTime(happening[Happening.happeningDate]) == DateTime(newHappening.happeningDate) &&
+        spotRanges == newHappening.spotRanges &&
+        happening[Happening.studentGroupName]?.lowercase() == newHappening.studentGroupName.lowercase() &&
+        happening[Happening.studentGroupRegistrationDate] == DateTime(newHappening.studentGroupRegistrationDate) &&
+        studentGroups == newHappening.studentGroups &&
+        happening[Happening.onlyForStudentGroups] == newHappening.onlyForStudentGroups
     ) {
-        val message = """
+        val message =
+            """
             Happening with
             slug = ${newHappening.slug},
             title = ${newHappening.title},
@@ -132,11 +137,11 @@ fun insertOrUpdateHappening(
             studentGroups = ${newHappening.studentGroups.joinToString(",", prefix = "[", postfix = "[")},
             onlyForStudentGroups = ${newHappening.onlyForStudentGroups}
             and studentGroupName = ${newHappening.studentGroupName} has already been submitted."
-        """.trimIndent()
+            """.trimIndent()
 
         return Pair(
             HttpStatusCode.Accepted,
-            message
+            message,
         )
     }
 
@@ -171,7 +176,8 @@ fun insertOrUpdateHappening(
         }
     }
 
-    val message = """
+    val message =
+        """
         Updated ${newHappening.type} with slug = ${newHappening.slug} to
         title = ${newHappening.title},
         registrationDate = ${newHappening.registrationDate},
@@ -180,18 +186,18 @@ fun insertOrUpdateHappening(
         studentGroupRegistrationDate = ${newHappening.studentGroupRegistrationDate},
         studentGroups = ${newHappening.studentGroups.joinToString(",", prefix = "[", postfix = "]")}
         and studentGroupName = ${newHappening.studentGroupName}.
-    """.trimIndent()
+        """.trimIndent()
 
     return Pair(
         HttpStatusCode.OK,
-        message
+        message,
     )
 }
 
 fun spotRangesToString(spotRanges: List<SpotRangeJson>): String {
     return "[ ${
-    spotRanges.map {
-        "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
-    }
+        spotRanges.map {
+            "(spots = ${it.spots}, minDegreeYear = ${it.minDegreeYear}, maxDegreeYear = ${it.maxDegreeYear}), "
+        }
     } ]"
 }

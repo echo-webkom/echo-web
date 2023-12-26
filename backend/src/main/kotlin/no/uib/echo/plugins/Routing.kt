@@ -25,14 +25,14 @@ fun Application.configureRouting(
     audience: String,
     issuer: String,
     secret: String?,
-    jwtConfig: String
+    jwtConfig: String,
 ) {
     routing { getStatus() }
 
     registrationRoutes(
         sendEmail = featureToggles.sendEmailReg,
         sendGridApiKey = sendGridApiKey,
-        jwtConfig = jwtConfig
+        jwtConfig = jwtConfig,
     )
     happeningRoutes()
     feedbackRoutes(jwtConfig)
