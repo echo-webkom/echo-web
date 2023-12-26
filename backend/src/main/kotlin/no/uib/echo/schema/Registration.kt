@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 data class FormRegistrationJson(
     val email: String,
     val slug: String,
-    val answers: List<AnswerJson>
+    val answers: List<AnswerJson>,
 )
 
 @Serializable
@@ -22,13 +22,13 @@ data class FormDeregistrationJson(
     val email: String,
     val slug: String,
     val reason: String,
-    val strikes: Int? = null
+    val strikes: Int? = null,
 )
 
 @Serializable
 data class UserRegistrationJson(
     val slug: String,
-    val status: Status
+    val status: Status,
 )
 
 @Serializable
@@ -44,10 +44,13 @@ data class RegistrationJson(
     val reason: String? = null,
     val deregistrationDate: String? = null,
     val answers: List<AnswerJson> = emptyList(),
-    val memberships: List<String> = emptyList()
+    val memberships: List<String> = emptyList(),
 )
+
 enum class Status {
-    REGISTERED, DEREGISTERED, WAITLIST
+    REGISTERED,
+    DEREGISTERED,
+    WAITLIST,
 }
 
 object Registration : Table() {
@@ -66,7 +69,7 @@ object Registration : Table() {
 fun countRegistrationsDegreeYear(
     slug: String,
     range: IntRange,
-    status: Status
+    status: Status,
 ): Int {
     return transaction {
         Registration.select {
@@ -77,7 +80,10 @@ fun countRegistrationsDegreeYear(
     }.toInt()
 }
 
-fun toCsv(regs: List<RegistrationJson>, testing: Boolean = false): String {
+fun toCsv(
+    regs: List<RegistrationJson>,
+    testing: Boolean = false,
+): String {
     if (regs.isEmpty()) {
         return ""
     }

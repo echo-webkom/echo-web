@@ -18,7 +18,7 @@ import no.uib.echo.schema.insertOrUpdateHappening
 @Serializable
 data class SanityResponse(
     val query: String,
-    val result: List<HappeningJson>
+    val result: List<HappeningJson>,
 )
 
 fun Application.sanityRoutes(env: Environment) {
@@ -39,14 +39,16 @@ fun Route.sanitySync() {
             return@get
         }
 
-        val client = SanityClient(
-            projectId = "pgq2pd26",
-            dataset = dataset,
-            apiVersion = "v2021-10-21",
-            useCdn = false
-        )
+        val client =
+            SanityClient(
+                projectId = "pgq2pd26",
+                dataset = dataset,
+                apiVersion = "v2021-10-21",
+                useCdn = false,
+            )
 
-        val query = """
+        val query =
+            """
             *[_type == 'happening' &&
               (
                 (defined(registrationDate) && defined(spotRanges) && count(spotRanges) > 0) ||
@@ -69,20 +71,21 @@ fun Route.sanitySync() {
                 "type": happeningType, 
                 studentGroupName
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val response = client.fetch(query).body<SanityResponse>()
 
-        val result = response.result.map {
-            val (code, string) = insertOrUpdateHappening(it)
+        val result =
+            response.result.map {
+                val (code, string) = insertOrUpdateHappening(it)
 
-            if (code != HttpStatusCode.OK && code != HttpStatusCode.Accepted) {
-                call.respond(code, string)
-                return@get
+                if (code != HttpStatusCode.OK && code != HttpStatusCode.Accepted) {
+                    call.respond(code, string)
+                    return@get
+                }
+
+                string
             }
-
-            string
-        }
 
         call.respond(HttpStatusCode.OK, result)
     }

@@ -17,12 +17,12 @@ data class FeedbackResponseJson(
     val name: String?,
     val message: String,
     val sentAt: String,
-    val isRead: Boolean
+    val isRead: Boolean,
 )
 
 enum class FeedbackResponse {
     EMPTY,
-    SUCCESS
+    SUCCESS,
 }
 
 object Feedback : Table() {

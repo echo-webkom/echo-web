@@ -9,9 +9,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 val validStudentGroups = listOf("webkom", "bedkom", "gnist", "tilde", "hovedstyret", "hyggkom", "esc", "makerspace", "programmerbar")
 
 object StudentGroup : Table("student_group") {
-    val name: Column<String> = text("group_name").check("valid_student_group") {
-        it inList validStudentGroups
-    }
+    val name: Column<String> =
+        text("group_name").check("valid_student_group") {
+            it inList validStudentGroups
+        }
 
     override val primaryKey: PrimaryKey = PrimaryKey(name)
 }
@@ -36,6 +37,7 @@ fun getGroupMembers(group: String?): List<String> {
     }
 }
 
+@Suppress("ktlint:standard:function-naming")
 fun _getGroupMembers(group: String?): List<String> {
     if (group == null) {
         return emptyList()
@@ -48,12 +50,13 @@ fun _getGroupMembers(group: String?): List<String> {
     }
 }
 
-fun getUserStudentGroups(email: String): List<String> = transaction {
-    StudentGroupMembership.select {
-        StudentGroupMembership.userEmail eq email
-    }.toList().map {
-        it[StudentGroupMembership.studentGroupName]
-    }.ifEmpty {
-        emptyList()
+fun getUserStudentGroups(email: String): List<String> =
+    transaction {
+        StudentGroupMembership.select {
+            StudentGroupMembership.userEmail eq email
+        }.toList().map {
+            it[StudentGroupMembership.studentGroupName]
+        }.ifEmpty {
+            emptyList()
+        }
     }
-}

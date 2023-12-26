@@ -40,7 +40,7 @@ fun Application.userRoutes(
     audience: String,
     issuer: String,
     secret: String?,
-    jwtConfig: String
+    jwtConfig: String,
 ) {
     routing {
         getToken(env, audience, issuer, secret)
@@ -67,9 +67,10 @@ fun Route.getUser() {
             return@get
         }
 
-        val user = transaction {
-            User.select { User.email eq email }.firstOrNull()
-        }
+        val user =
+            transaction {
+                User.select { User.email eq email }.firstOrNull()
+            }
 
         if (user == null) {
             call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
@@ -89,8 +90,8 @@ fun Route.getUser() {
                 memberships,
                 user[User.strikes],
                 user[User.createdAt].toString(),
-                user[User.modifiedAt].toString()
-            )
+                user[User.modifiedAt].toString(),
+            ),
         )
     }
 }
@@ -114,9 +115,10 @@ fun Route.postUser() {
                 return@post
             }
 
-            val existingUser = transaction {
-                User.select { User.email eq email }.firstOrNull()
-            }
+            val existingUser =
+                transaction {
+                    User.select { User.email eq email }.firstOrNull()
+                }
 
             if (existingUser != null) {
                 call.respond(HttpStatusCode.Conflict, "User already exists.")
@@ -132,7 +134,7 @@ fun Route.postUser() {
 
             call.respond(
                 HttpStatusCode.OK,
-                "New user created with email = $email and name = ${user.name}."
+                "New user created with email = $email and name = ${user.name}.",
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
@@ -150,7 +152,7 @@ fun Route.putUser() {
         if (email == null) {
             call.respond(
                 HttpStatusCode.Unauthorized,
-                "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen."
+                "Det har skjedd en feil. Vennligst prøv å logg inn og ut igjen.",
             )
             return@put
         }
@@ -180,22 +182,24 @@ fun Route.putUser() {
                 return@put
             }
 
-            val result = transaction {
-                User.select { User.email eq email }.firstOrNull()
-            }
+            val result =
+                transaction {
+                    User.select { User.email eq email }.firstOrNull()
+                }
 
             if (result == null) {
-                val newUser = transaction {
-                    User.insert {
-                        it[User.email] = email
-                        it[name] = user.name
-                        it[User.alternateEmail] = alternateEmail
-                        it[degree] = user.degree.toString()
-                        it[degreeYear] = user.degreeYear
-                    }
+                val newUser =
+                    transaction {
+                        User.insert {
+                            it[User.email] = email
+                            it[name] = user.name
+                            it[User.alternateEmail] = alternateEmail
+                            it[degree] = user.degree.toString()
+                            it[degreeYear] = user.degreeYear
+                        }
 
-                    User.select { User.email eq email }.first()
-                }
+                        User.select { User.email eq email }.first()
+                    }
                 call.respond(
                     HttpStatusCode.OK,
                     UserJson(
@@ -207,23 +211,24 @@ fun Route.putUser() {
                         emptyList(),
                         newUser[User.strikes],
                         newUser[User.createdAt].toString(),
-                        newUser[User.modifiedAt].toString()
-                    )
+                        newUser[User.modifiedAt].toString(),
+                    ),
                 )
                 return@put
             }
 
-            val updatedUser = transaction {
-                User.update({ User.email eq email }) {
-                    it[name] = user.name
-                    it[User.alternateEmail] = alternateEmail
-                    it[degree] = user.degree.toString()
-                    it[degreeYear] = user.degreeYear
-                    it[modifiedAt] = DateTime.now()
-                }
+            val updatedUser =
+                transaction {
+                    User.update({ User.email eq email }) {
+                        it[name] = user.name
+                        it[User.alternateEmail] = alternateEmail
+                        it[degree] = user.degree.toString()
+                        it[degreeYear] = user.degreeYear
+                        it[modifiedAt] = DateTime.now()
+                    }
 
-                User.select { User.email eq email }.first()
-            }
+                    User.select { User.email eq email }.first()
+                }
 
             val memberships = getUserStudentGroups(email)
 
@@ -238,8 +243,8 @@ fun Route.putUser() {
                     memberships,
                     updatedUser[User.strikes],
                     updatedUser[User.createdAt].toString(),
-                    updatedUser[User.modifiedAt].toString()
-                )
+                    updatedUser[User.modifiedAt].toString(),
+                ),
             )
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError)
@@ -264,27 +269,28 @@ fun Route.getAllUsers() {
             return@get
         }
 
-        val users = transaction {
-            User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
-                .map {
-                    UserJson(
-                        it[User.email],
-                        it[User.name],
-                        it[User.alternateEmail],
-                        it[User.degreeYear],
-                        nullableStringToDegree(it[User.degree]),
-                        StudentGroupMembership.select {
-                            StudentGroupMembership.userEmail eq it[User.email]
-                        }
-                            .toList()
-                            .map { it[StudentGroupMembership.studentGroupName] }
-                            .ifEmpty { emptyList() },
-                        it[User.strikes],
-                        it[User.createdAt].toString(),
-                        it[User.modifiedAt].toString()
-                    )
-                }
-        }
+        val users =
+            transaction {
+                User.select { User.email like "%@student.uib.no" or (User.email like "%@uib.no") }
+                    .map {
+                        UserJson(
+                            it[User.email],
+                            it[User.name],
+                            it[User.alternateEmail],
+                            it[User.degreeYear],
+                            nullableStringToDegree(it[User.degree]),
+                            StudentGroupMembership.select {
+                                StudentGroupMembership.userEmail eq it[User.email]
+                            }
+                                .toList()
+                                .map { it[StudentGroupMembership.studentGroupName] }
+                                .ifEmpty { emptyList() },
+                            it[User.strikes],
+                            it[User.createdAt].toString(),
+                            it[User.modifiedAt].toString(),
+                        )
+                    }
+            }
 
         call.respond(HttpStatusCode.OK, users)
     }
@@ -310,39 +316,45 @@ fun Route.getAllUsersPaginated() {
         val page = call.parameters["page"]?.toIntOrNull() ?: 1
         val searchTerm = call.parameters["searchTerm"]?.lowercase() ?: ""
 
-        val users = transaction {
-            User.select {
-                (User.email like "%@student.uib.no" or (User.email like "%@uib.no")) and
-                    (User.email like "%$searchTerm%" or (User.name like "%$searchTerm%"))
-            }
-                .orderBy(User.modifiedAt, SortOrder.DESC)
-                .limit(pageSize, (page - 1L) * pageSize)
-                .map {
-                    UserJson(
-                        it[User.email],
-                        it[User.name],
-                        it[User.alternateEmail],
-                        it[User.degreeYear],
-                        nullableStringToDegree(it[User.degree]),
-                        StudentGroupMembership.select {
-                            StudentGroupMembership.userEmail eq it[User.email]
-                        }
-                            .toList()
-                            .map { it[StudentGroupMembership.studentGroupName] }
-                            .ifEmpty { emptyList() },
-                        it[User.strikes],
-                        it[User.createdAt].toString(),
-                        it[User.modifiedAt].toString()
-                    )
+        val users =
+            transaction {
+                User.select {
+                    (User.email like "%@student.uib.no" or (User.email like "%@uib.no")) and
+                        (User.email like "%$searchTerm%" or (User.name like "%$searchTerm%"))
                 }
-        }
+                    .orderBy(User.modifiedAt, SortOrder.DESC)
+                    .limit(pageSize, (page - 1L) * pageSize)
+                    .map {
+                        UserJson(
+                            it[User.email],
+                            it[User.name],
+                            it[User.alternateEmail],
+                            it[User.degreeYear],
+                            nullableStringToDegree(it[User.degree]),
+                            StudentGroupMembership.select {
+                                StudentGroupMembership.userEmail eq it[User.email]
+                            }
+                                .toList()
+                                .map { it[StudentGroupMembership.studentGroupName] }
+                                .ifEmpty { emptyList() },
+                            it[User.strikes],
+                            it[User.createdAt].toString(),
+                            it[User.modifiedAt].toString(),
+                        )
+                    }
+            }
 
         call.respond(HttpStatusCode.OK, users)
     }
 }
 
 /** Used for testing purposes */
-fun Route.getToken(env: Environment, audience: String, issuer: String, secret: String?) {
+fun Route.getToken(
+    env: Environment,
+    audience: String,
+    issuer: String,
+    secret: String?,
+) {
     get("/token/{email}") {
         val email = call.parameters["email"]
 
@@ -376,11 +388,12 @@ fun Route.getWhitelist() {
             return@get
         }
 
-        val whitelist = transaction {
-            Whitelist.select {
-                Whitelist.email eq email
-            }.firstOrNull()
-        }
+        val whitelist =
+            transaction {
+                Whitelist.select {
+                    Whitelist.email eq email
+                }.firstOrNull()
+            }
 
         if (whitelist == null) {
             call.respond(HttpStatusCode.NotFound)

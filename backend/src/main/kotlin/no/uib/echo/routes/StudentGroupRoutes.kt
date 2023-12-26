@@ -43,7 +43,7 @@ fun Route.studentGroup() {
         if (group == null || userEmail == null) {
             call.respond(
                 HttpStatusCode.BadRequest,
-                "Expected values for query parameters 'group' and 'user'. Got 'group'=$group and 'user'=$userEmail"
+                "Expected values for query parameters 'group' and 'user'. Got 'group'=$group and 'user'=$userEmail",
             )
             return@put
         }

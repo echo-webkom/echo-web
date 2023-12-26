@@ -53,12 +53,13 @@ import kotlin.test.Test
 
 class DeleteRegistrationsTest {
     companion object {
-        val db = DatabaseHandler(
-            env = Environment.PREVIEW,
-            migrateDb = false,
-            dbUrl = URI(System.getenv("DATABASE_URL")),
-            mbMaxPoolSize = null
-        )
+        val db =
+            DatabaseHandler(
+                env = Environment.PREVIEW,
+                migrateDb = false,
+                dbUrl = URI(System.getenv("DATABASE_URL")),
+                mbMaxPoolSize = null,
+            )
     }
 
     @BeforeTest
@@ -78,12 +79,13 @@ class DeleteRegistrationsTest {
     @Test
     fun `Should delete registrations properly`() =
         testApplication {
-            val client = createClient {
-                install(Logging)
-                install(ContentNegotiation) {
-                    json()
+            val client =
+                createClient {
+                    install(Logging)
+                    install(ContentNegotiation) {
+                        json()
+                    }
                 }
-            }
 
             val usersSublist = listOf(user1, user2, user3, user4, user5)
             val waitListUsers = listOf(user6, user7, user8, user9, user10)
@@ -100,11 +102,12 @@ class DeleteRegistrationsTest {
                     getTokenCall.status shouldBe HttpStatusCode.OK
                     val token: String = getTokenCall.body()
 
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        bearerAuth(token)
-                        setBody(exReg(hap9(t).slug, u))
-                    }
+                    val submitRegCall =
+                        client.post("/registration") {
+                            contentType(ContentType.Application.Json)
+                            bearerAuth(token)
+                            setBody(exReg(hap9(t).slug, u))
+                        }
 
                     submitRegCall.status shouldBe HttpStatusCode.OK
                     val res: RegistrationResponseJson = submitRegCall.body()
@@ -118,11 +121,12 @@ class DeleteRegistrationsTest {
                     getTokenCall.status shouldBe HttpStatusCode.OK
                     val token: String = getTokenCall.body()
 
-                    val submitRegCall = client.post("/registration") {
-                        contentType(ContentType.Application.Json)
-                        bearerAuth(token)
-                        setBody(exReg(hap9(t).slug, u))
-                    }
+                    val submitRegCall =
+                        client.post("/registration") {
+                            contentType(ContentType.Application.Json)
+                            bearerAuth(token)
+                            setBody(exReg(hap9(t).slug, u))
+                        }
 
                     submitRegCall.status shouldBe HttpStatusCode.Accepted
                     val res: RegistrationResponseJson = submitRegCall.body()
@@ -131,15 +135,16 @@ class DeleteRegistrationsTest {
                 }
 
                 for (u in usersSublist) {
-                    val deleteRegCall = client.delete("/registration") {
-                        contentType(ContentType.Application.Json)
-                        bearerAuth(adminToken)
-                        setBody(deReg(hap9(t).slug, u))
-                    }
+                    val deleteRegCall =
+                        client.delete("/registration") {
+                            contentType(ContentType.Application.Json)
+                            bearerAuth(adminToken)
+                            setBody(deReg(hap9(t).slug, u))
+                        }
 
                     deleteRegCall.status shouldBe HttpStatusCode.OK
                     deleteRegCall.bodyAsText() shouldContain "Registration with email = ${u.email} and slug = ${
-                    hap9(t).slug
+                        hap9(t).slug
                     } deleted"
                 }
             }

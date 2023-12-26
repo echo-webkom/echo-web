@@ -41,44 +41,45 @@ fun Route.deleteHappening() {
             return@delete
         }
 
-        val hapDeleted = transaction {
-            val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
-            if (!happeningExists) {
-                return@transaction false
-            }
+        val hapDeleted =
+            transaction {
+                val happeningExists = Happening.select { Happening.slug eq slug }.firstOrNull() != null
+                if (!happeningExists) {
+                    return@transaction false
+                }
 
-            SpotRange.deleteWhere {
-                SpotRange.happeningSlug eq slug
-            }
+                SpotRange.deleteWhere {
+                    SpotRange.happeningSlug eq slug
+                }
 
-            Answer.deleteWhere {
-                Answer.happeningSlug eq slug
-            }
+                Answer.deleteWhere {
+                    Answer.happeningSlug eq slug
+                }
 
-            Registration.deleteWhere {
-                Registration.happeningSlug eq slug
-            }
+                Registration.deleteWhere {
+                    Registration.happeningSlug eq slug
+                }
 
-            StudentGroupHappeningRegistration.deleteWhere {
-                StudentGroupHappeningRegistration.happeningSlug eq slug
-            }
+                StudentGroupHappeningRegistration.deleteWhere {
+                    StudentGroupHappeningRegistration.happeningSlug eq slug
+                }
 
-            Happening.deleteWhere {
-                Happening.slug eq slug
-            }
+                Happening.deleteWhere {
+                    Happening.slug eq slug
+                }
 
-            return@transaction true
-        }
+                return@transaction true
+            }
 
         if (hapDeleted) {
             call.respond(
                 HttpStatusCode.OK,
-                "Happening with slug = $slug deleted."
+                "Happening with slug = $slug deleted.",
             )
         } else {
             call.respond(
                 HttpStatusCode.NotFound,
-                "Happening with slug = $slug does not exist."
+                "Happening with slug = $slug does not exist.",
             )
         }
     }
@@ -93,52 +94,55 @@ fun Route.getHappeningInfo() {
             return@get
         }
 
-        val happening = transaction {
-            Happening.select {
-                Happening.slug eq slug
-            }.firstOrNull()
-        }
+        val happening =
+            transaction {
+                Happening.select {
+                    Happening.slug eq slug
+                }.firstOrNull()
+            }
 
         if (happening == null) {
             call.respond(HttpStatusCode.NotFound, "Happening doesn't exist.")
             return@get
         }
 
-        val registrationCount = transaction {
-            SpotRange.select {
-                SpotRange.happeningSlug eq slug
-            }.toList().map {
-                val regcount =
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        Status.REGISTERED
-                    )
+        val registrationCount =
+            transaction {
+                SpotRange.select {
+                    SpotRange.happeningSlug eq slug
+                }.toList().map {
+                    val regcount =
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            Status.REGISTERED,
+                        )
 
-                val waitListCount =
-                    countRegistrationsDegreeYear(
-                        slug,
-                        it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
-                        Status.WAITLIST
-                    )
+                    val waitListCount =
+                        countRegistrationsDegreeYear(
+                            slug,
+                            it[SpotRange.minDegreeYear]..it[SpotRange.maxDegreeYear],
+                            Status.WAITLIST,
+                        )
 
-                SpotRangeWithCountJson(
-                    it[SpotRange.spots],
-                    it[SpotRange.minDegreeYear],
-                    it[SpotRange.maxDegreeYear],
-                    regcount,
-                    waitListCount
-                )
+                    SpotRangeWithCountJson(
+                        it[SpotRange.spots],
+                        it[SpotRange.minDegreeYear],
+                        it[SpotRange.maxDegreeYear],
+                        regcount,
+                        waitListCount,
+                    )
+                }
             }
-        }
 
         val totalCount = countRegistrationsDegreeYear(slug, 1..5, Status.REGISTERED)
 
         val totalCountDiff = totalCount - registrationCount.sumOf { it.regCount }
         if (totalCountDiff > 0) {
-            val newRegistrationCount = listOf(
-                registrationCount.first().copy(regCount = registrationCount.first().regCount + totalCountDiff)
-            ) + registrationCount.drop(1)
+            val newRegistrationCount =
+                listOf(
+                    registrationCount.first().copy(regCount = registrationCount.first().regCount + totalCountDiff),
+                ) + registrationCount.drop(1)
 
             call.respond(HttpStatusCode.OK, HappeningInfoJson(newRegistrationCount))
         }
@@ -146,8 +150,8 @@ fun Route.getHappeningInfo() {
         call.respond(
             HttpStatusCode.OK,
             HappeningInfoJson(
-                registrationCount
-            )
+                registrationCount,
+            ),
         )
     }
 }

@@ -19,7 +19,7 @@ data class UserJson(
     val memberships: List<String> = emptyList(),
     val strikes: Int,
     val createdAt: String,
-    val modifiedAt: String
+    val modifiedAt: String,
 )
 
 object User : Table() {
@@ -35,6 +35,7 @@ object User : Table() {
     override val primaryKey: PrimaryKey = PrimaryKey(email)
 }
 
-fun getAllUserEmails(): List<String> = transaction {
-    User.selectAll().toList().map { it[User.email].lowercase() }
-}
+fun getAllUserEmails(): List<String> =
+    transaction {
+        User.selectAll().toList().map { it[User.email].lowercase() }
+    }

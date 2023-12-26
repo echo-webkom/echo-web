@@ -48,11 +48,12 @@ fun Route.getReactions() {
             return@get
         }
 
-        val slugExists = transaction {
-            Happening.select {
-                Happening.slug eq slug
-            }.count() > 0
-        }
+        val slugExists =
+            transaction {
+                Happening.select {
+                    Happening.slug eq slug
+                }.count() > 0
+            }
         if (!slugExists) {
             call.respond(HttpStatusCode.NotFound, "No happening with slug $slug.")
             return@get
@@ -69,8 +70,8 @@ fun Route.getReactions() {
                 reactions[ReactionType.BEER] ?: 0,
                 reactions[ReactionType.EYES] ?: 0,
                 reactions[ReactionType.FIX] ?: 0,
-                reactedTo
-            )
+                reactedTo,
+            ),
         )
     }
 }
@@ -83,11 +84,12 @@ fun Route.putReaction() {
             return@put
         }
 
-        val user = transaction {
-            User.select {
-                User.email eq email
-            }.firstOrNull()
-        }
+        val user =
+            transaction {
+                User.select {
+                    User.email eq email
+                }.firstOrNull()
+            }
 
         if (user == null) {
             call.respond(HttpStatusCode.NotFound, "User with email not found (email = $email).")
@@ -103,11 +105,12 @@ fun Route.putReaction() {
 
         val reaction = ReactionType.valueOf(reactionQuery.uppercase()).name
 
-        val reactionExists = transaction {
-            Reaction.select {
-                userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
-            }.count() > 0
-        }
+        val reactionExists =
+            transaction {
+                Reaction.select {
+                    userEmail eq email and (happeningSlug eq slug) and (Reaction.reaction eq reaction)
+                }.count() > 0
+            }
 
         if (reactionExists) {
             transaction {
@@ -136,34 +139,39 @@ fun Route.putReaction() {
                 reactions[ReactionType.BEER] ?: 0,
                 reactions[ReactionType.EYES] ?: 0,
                 reactions[ReactionType.FIX] ?: 0,
-                reactedTo
-            )
+                reactedTo,
+            ),
         )
     }
 }
 
 fun getReactionsBySlug(slug: String): Map<ReactionType, Int> {
-    val reactions: Map<ReactionType, Int> = transaction {
-        Reaction.select {
-            happeningSlug eq slug
-        }.groupBy {
-            ReactionType.valueOf(it[Reaction.reaction])
-        }.mapValues {
-            it.value.count()
+    val reactions: Map<ReactionType, Int> =
+        transaction {
+            Reaction.select {
+                happeningSlug eq slug
+            }.groupBy {
+                ReactionType.valueOf(it[Reaction.reaction])
+            }.mapValues {
+                it.value.count()
+            }
         }
-    }
 
     return reactions
 }
 
-fun getReactedTo(slug: String, email: String): List<ReactionType> {
-    val reactions: List<ReactionType> = transaction {
-        Reaction.select {
-            userEmail eq email and (happeningSlug eq slug)
-        }.map {
-            ReactionType.valueOf(it[Reaction.reaction])
-        }.toList()
-    }
+fun getReactedTo(
+    slug: String,
+    email: String,
+): List<ReactionType> {
+    val reactions: List<ReactionType> =
+        transaction {
+            Reaction.select {
+                userEmail eq email and (happeningSlug eq slug)
+            }.map {
+                ReactionType.valueOf(it[Reaction.reaction])
+            }.toList()
+        }
 
     return reactions
 }

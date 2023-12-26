@@ -26,10 +26,11 @@ fun Application.module() {
 
     val mbMaxPoolSize = environment.config.propertyOrNull("ktor.maxPoolSize")?.getString()
     val maybeSendGridApiKey = environment.config.propertyOrNull("ktor.sendGridApiKey")?.getString()
-    val sendGridApiKey = when (maybeSendGridApiKey.isNullOrEmpty()) {
-        true -> null
-        false -> maybeSendGridApiKey
-    }
+    val sendGridApiKey =
+        when (maybeSendGridApiKey.isNullOrEmpty()) {
+            true -> null
+            false -> maybeSendGridApiKey
+        }
 
     val secret = environment.config.propertyOrNull("jwt.secret")?.getString()
     val issuer = environment.config.property("jwt.issuer").getString()
@@ -51,7 +52,7 @@ fun Application.module() {
             env,
             migrateDb,
             databaseUrl,
-            mbMaxPoolSize
+            mbMaxPoolSize,
         ).init()
     }
 
@@ -65,7 +66,7 @@ fun Application.module() {
         audience = audience,
         issuer = issuer,
         secret = secret,
-        jwtConfig = jwtConfig
+        jwtConfig = jwtConfig,
     )
     configureRateLimit()
     if (env != Environment.PRODUCTION) configureDocs()

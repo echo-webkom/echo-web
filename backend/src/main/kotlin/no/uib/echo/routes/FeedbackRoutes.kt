@@ -79,18 +79,19 @@ fun Route.getFeedback() {
             return@get
         }
 
-        val feedback = transaction {
-            Feedback.selectAll().map {
-                FeedbackResponseJson(
-                    it[Feedback.id],
-                    it[Feedback.email],
-                    it[Feedback.name],
-                    it[Feedback.message],
-                    it[Feedback.sentAt].toString(),
-                    it[Feedback.isRead]
-                )
+        val feedback =
+            transaction {
+                Feedback.selectAll().map {
+                    FeedbackResponseJson(
+                        it[Feedback.id],
+                        it[Feedback.email],
+                        it[Feedback.name],
+                        it[Feedback.message],
+                        it[Feedback.sentAt].toString(),
+                        it[Feedback.isRead],
+                    )
+                }
             }
-        }
 
         call.respond(HttpStatusCode.OK, feedback)
     }
