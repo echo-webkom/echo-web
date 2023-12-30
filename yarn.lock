@@ -2068,10 +2068,10 @@
   dependencies:
     tslib "^2.0.0"
 
-"@ducanh2912/next-pwa@10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@ducanh2912/next-pwa/-/next-pwa-10.0.0.tgz#d56c92c32ab74a7eff0af8e367c49791fc2e1a6c"
-  integrity sha512-6VWpF0IzP9Az9n0jmqL9XH8iWA6LYJrC72b8GDEn7Swfi1mR+hYPItNFKJnraqwJheIqeeZXIHAqs5/VdyDF5A==
+"@ducanh2912/next-pwa@10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@ducanh2912/next-pwa/-/next-pwa-10.0.2.tgz#9020de491f8bd43e65ba095a6f786ead4d68657e"
+  integrity sha512-6/6+l0L+xHCD9TluaoXlwKHl65iZ0OlvTO2L1YPV9zyZjN9sl4DbEjQ7JbOADnUGGbGVicPE4MhViGJA0+ezjQ==
   dependencies:
     clean-webpack-plugin "4.0.0"
     fast-glob "3.3.2"
