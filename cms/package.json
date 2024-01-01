@@ -53,7 +53,7 @@
     "devDependencies": {
         "@sanity/cli": "3.23.4",
         "@sanity/eslint-config-studio": "3.0.1",
-        "@types/react": "18.2.45",
+        "@types/react": "18.2.46",
         "@types/react-dom": "18.2.18",
         "typescript": "5.3.3"
     }
